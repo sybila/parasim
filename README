@@ -1,0 +1,9 @@
+Parallel Simulation and Verification Tool
+=========================================
+The source files for the org.sybila.* writen by Honza Papoušek are not yet
+used and are in a separate repository sybila/cuda.
+
+D:\Dokumenty\Informatika\Projekty\cuda-simulation-sven\java\src
+
+Change the Project Properties settings of Run to match the path were you
+will store your data.
