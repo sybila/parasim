@@ -1,0 +1,3 @@
+ -Xms64m -Xmx768m
+vizualizace
+vizualizace.jar,core.jar,opengl.jar,jogl.jar,gluegen-rt.jar

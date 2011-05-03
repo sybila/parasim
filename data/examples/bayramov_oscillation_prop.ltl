@@ -1,0 +1,31 @@
+#never { /* G(((prop) -> F(!prop)) && ((!prop) -> F(prop))) */
+#T0_init :    /* init */
+#	if
+#	:: (1) -> goto T0_init
+#	:: (!prop) -> goto T1_S1
+#	fi;
+#T1_S1 :    /* 1 */
+#	if
+#	:: (1) -> goto T1_S1
+#	:: (prop) -> goto accept_S1
+#	fi;
+#accept_S1 :    /* 2 */
+#	if
+#	:: (1) -> goto T0_init
+#	:: (!prop) -> goto T1_S1
+#	fi;
+#}
+#http://www.lsv.ens-cachan.fr/~gastin/ltl2ba/index.php
+#
+process LTL_property {
+state q1, q2, q3;
+init q1;
+accept q3;
+trans
+q1 -> q1 {},
+q1 -> q2 { guard not (Y>0.001) },
+q2 -> q2 {},
+q2 -> q3 { guard (Y>0.001) },
+q3 -> q2 { guard not (Y>0.001) },
+q3 -> q1 {},
+}

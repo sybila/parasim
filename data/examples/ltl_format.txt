@@ -1,0 +1,37 @@
+# LTL file format
+# ===============
+# Restricted version of the DVE syntax for propery processes, restrictions:
+#
+# One property process per file.
+# One transition per line.
+# Transitions may only have guards (synchronization and effects forbidden).
+# Guard expressions must follow restricted grammar of DVE Expr:
+#
+# guard EXPR; | guard COMPLEX; 
+# EXPR     := ATOM | not ATOM | (COMPLEX) | not (COMPLEX) •
+# ATOM     := VAR OP NUM | VAR OP VAR | dVAR OP NUM | dVAR OP dVAR •
+# VAR      := variable name (case sensitive)
+# NUM      := number (floating point or int)
+# OP       := < | <= | == | >= | > | != •
+# COMPLEX  := ANDGROUP | ORGROUP •
+# ANDGROUP := EXPR | EXPR && ANDGROUP •
+# ORGROUP  := EXPR | EXPR || ORGROUP •
+# 
+# Note: The grammar above generates expressions with explicit braceting of
+#       all subexpressions with only exceptions of multiple conjuctions
+#       and disjunctions.
+# 
+# Exactly one initial state, at least one accepting state or more,
+# at most one transition from qx -> qy. 
+
+# Example 
+
+process LTL_property {
+state q1, q2;
+init q1;
+accept q2;
+trans
+q1 -> q2 { guard X>0.001 && Y<3.6; },
+q1 -> q1 {},
+q2 -> q2 {};
+}

@@ -1,0 +1,48 @@
+# prop1 defines a compact part of the attractor region of equilibrium 1
+# prop2 defines a compact part of the attractor region of equilibrium 2
+#
+# Bistability: G((prop1 => G prop1) && (prop2 => G prop2))
+#
+# LTL to Buchi: http://www.lsv.ens-cachan.fr/~gastin/ltl2ba/index.php
+#
+# never { /* G((prop1 -> G prop1) && (prop2 -> G prop2)) */
+# accept_init :    /* init */
+#   if
+#   :: (prop1 && prop2) -> goto accept_S2
+#	  :: (prop1 && !prop2) -> goto accept_S3
+#	  :: (!prop1 && prop2) -> goto accept_S4
+#	  :: (!prop1 && !prop2) -> goto accept_init
+#	  fi;
+# accept_S2 :    /* 1 */
+#   if
+#   :: (prop1 && prop2) -> goto accept_S2
+#   fi;
+# accept_S3 :    /* 2 */
+#   if
+#   :: (prop1 && prop2) -> goto accept_S2
+#   :: (prop1 && !prop2) -> goto accept_S3
+#   fi;
+# accept_S4 :    /* 3 */
+#   if
+#   :: (prop1 && prop2) -> goto accept_S2
+#   :: (!prop1 && prop2) -> goto accept_S4
+#   fi;
+# }
+# Since atractors of equilibria are disjunct objects, this follows:
+# since( stable_prop1 => not stable_prop2 && stable_prop2 => not stable_prop1 )
+# => stable_prop1 && stable_prop2 <==> false
+# Therefore accept_S2 is unreachable
+#
+# prop1 == X<1 && Y<1
+# prop2 == X>4 && Y>4
+process bistable_LTL {
+state q1, q2, q3;
+init q1;
+accept q1, q2, q3;
+trans 
+q1 -> q1 { guard not (X<1 && Y<1) && not (X>4 && Y>4) },
+q1 -> q2 { guard X<1 && Y<1 },
+q1 -> q3 { guard X>4 && Y>4 },
+q2 -> q2 { guard X<1 && Y<1 },
+q3 -> q3 { guard X>4 && Y>4 };
+}

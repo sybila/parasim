@@ -1,0 +1,9 @@
+process LTL_property {
+state q1, q2;
+init q1;
+accept q2;
+trans
+q1 -> q2 { guard B>6 && C>6 },
+q1 -> q1 {},
+q2 -> q2 {};
+}

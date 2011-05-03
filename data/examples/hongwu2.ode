@@ -1,0 +1,41 @@
+# J. Barnat, L. Brim, I. Cerna, S. Drazan, J. Fabrikova, 
+# J. Lanik, D. Safranek and Hongwu Ma. 
+# BioDiVinE: A Framework for Parallel Analysis of Biological Models. 
+#
+# In Electronic Proceedings in Theoretical Computer Science (COMPMOD 2009), 
+# volume 6, pages 31–45. 2009
+
+VARS: NH3in, NH4in, AmtB, AmtBNH3, AmtBNH4;
+
+EQ: dAmtB   =  (-2486.0285195)*AmtB + (5000)*AmtBNH4 + (50)*AmtBNH3;
+EQ: dAmtBNH3 =  (50)*AmtBNH4 + (-50)*AmtBNH3;
+EQ: dAmtBNH4 =  (2486.0285195)*AmtB + (-5000)*AmtBNH4 + (-50)*AmtBNH4;
+EQ: dNH3in   =  (50)*AmtBNH3 + (-30014000)*NH3in + (562000)*NH4in + (3.91201e-04);
+EQ: dNH4in   =  (30000000)*NH3in + (-562000)*NH4in + (-80)*NH4in;
+
+BOUNDS:AmtB:    0, 1e-05;
+BOUNDS:AmtBNH3: 0, 1e-05;
+BOUNDS:AmtBNH4: 0, 1e-05;
+BOUNDS:NH3in:   0, 1e-05;
+BOUNDS:NH4in:   0, 1e-05;
+
+#INIT: AmtB: 99e-07, 1e-05;
+#INIT: AmtBNH3:	0, 1e-07;
+#INIT: AmtBNH4:  0, 1e-07;
+#INIT: NH3in: 1e-06, 11e-07;
+#INIT: NH4in: 2e-06, 21e-07;
+
+INIT: AmtB: 99e-07, 1e-05;
+INIT: AmtBNH3:	0, 1e-06;
+INIT: AmtBNH4:  0, 1e-06;
+INIT: NH3in: 1e-06, 1e-05;
+INIT: NH4in: 2e-06, 1e-05;
+
+DIV: AmtB: 3;
+DIV: AmtBNH3: 3;
+DIV: AmtBNH4: 3;
+DIV: NH3in: 3;
+DIV: NH4in: 5;
+
+TIME_LIMIT: 120;
+MAX_TIME_STEP: 0.0001;

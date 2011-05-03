@@ -1,0 +1,22 @@
+# A -> B + C        k1 = 0.1
+# B -> C            k2 = 1
+# C -> B            k3 = 1
+#
+VARS: A,B,C;
+EQ: dA = -0.1*A;
+EQ: dB = 0.1*A + (-1.0)*B + 1.0*C;
+EQ: dC = 0.1*A + (-1.0)*C + 1.0*B;
+BOUNDS: A: 0, 10;
+BOUNDS: B: 0, 10;
+BOUNDS: C: 0, 10;
+INIT: A: 4, 6;
+INIT: B: 0, 2;
+INIT: C: 2, 4;
+DIV: A: 5;
+DIV: B: 5;
+DIV: C: 5;
+TIME_LIMIT: 240;
+MAX_TIME_STEP: 0.1;
+MAX_DIST: A: 0.5;
+MAX_DIST: B: 0.5;
+MAX_DIST: C: 0.5;
