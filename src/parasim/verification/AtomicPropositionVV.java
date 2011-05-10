@@ -33,8 +33,8 @@ public class AtomicPropositionVV implements Evaluable
    * @param var2 index of the second variable the AP speaks about
    * @param var2_str name of variable2
    **/
-  AtomicPropositionVV(int var1, String var1_str,
-                      int op, int var2, String var2_str)
+  public AtomicPropositionVV(int var1, String var1_str,
+                             int op, int var2, String var2_str)
   {
     var1_index = var1;
     this.var1_str = var1_str;
@@ -46,8 +46,8 @@ public class AtomicPropositionVV implements Evaluable
   /* Returns true if the proposition is valid in given state. */
   public boolean valid(Point p)
   {
-    float val1 = p.c[var1_index];
-    float val2 = p.c[var2_index];
+    float val1 = p.get(var1_index);
+    float val2 = p.get(var2_index);
 
     switch(operator) {
       case Utils.AP_LESS:

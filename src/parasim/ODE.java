@@ -6,7 +6,6 @@
 package parasim;
 
 import java.util.HashMap;
-import processing.core.PApplet;
 
 /**
  *
@@ -157,7 +156,7 @@ public class ODE {
     Point rvect = new Point(dims);
     for (int i = 0; i < dims; i++)
     {
-      rvect.c[i] = x.c[i] + dt*dx[i];
+      rvect.set(i, x.get(i) + dt*dx[i]);
     }
     return rvect;
   }
@@ -247,10 +246,10 @@ public class ODE {
         for (fcv[index] = 0; fcv[index] < dimensions[index]; fcv[index]++)
         {
           Point p = new Point(dims);
-          p.c[0] = ic_min[0];
+          p.set(0, ic_min[0]);
           for (i = 1; i < dims; i++)
           {
-            p.c[i] = ic_min[i]+dx[i]*fcv[i-1];
+            p.set(i, ic_min[i]+dx[i]*fcv[i-1]);
           }
           point_set.set_point(cnt, p);
           point_set.set_point_neighbours(cnt, fcv, subgrid);
@@ -277,7 +276,7 @@ public class ODE {
   {
     if (dist.length == max_check_dist.length)
     {
-      PApplet.arrayCopy(dist, max_check_dist);
+      Utils.arrayCopy(dist, max_check_dist);
     }
   }
 
@@ -285,7 +284,7 @@ public class ODE {
   {
     if (dist.length == min_check_dist.length)
     {
-      PApplet.arrayCopy(dist, min_check_dist);
+      Utils.arrayCopy(dist, min_check_dist);
     }
   }
 
@@ -316,7 +315,7 @@ public class ODE {
   {
     if (gl_min.length == this.gl_min.length)
     {
-      PApplet.arrayCopy(gl_min, this.gl_min);
+      Utils.arrayCopy(gl_min, this.gl_min);
     }
   }
 
@@ -324,7 +323,7 @@ public class ODE {
   {
     if (gl_max.length == this.gl_max.length)
     {
-      PApplet.arrayCopy(gl_max, this.gl_max);
+      Utils.arrayCopy(gl_max, this.gl_max);
     }
   }
 
@@ -333,8 +332,8 @@ public class ODE {
     if (ic_min.length == this.ic_min.length &&
         ic_max.length == this.ic_max.length )
     {
-      PApplet.arrayCopy(ic_min, this.ic_min);
-      PApplet.arrayCopy(ic_max, this.ic_max);
+      Utils.arrayCopy(ic_min, this.ic_min);
+      Utils.arrayCopy(ic_max, this.ic_max);
     }
   }
 
@@ -356,14 +355,14 @@ public class ODE {
     {
       for (int i=start; i<min_check_dist.length; i++)
       {
-        if (Math.abs(a.c[i]-b.c[i]) > min_check_dist[i]) return false;
+        if (Math.abs(a.get(i)-b.get(i)) > min_check_dist[i]) return false;
       }
     }
     else if (min_max == 1)
     {
       for (int i=start; i<max_check_dist.length; i++)
       {
-        if (Math.abs(a.c[i]-b.c[i]) > max_check_dist[i]) return false;
+        if (Math.abs(a.get(i)-b.get(i)) > max_check_dist[i]) return false;
       }
     }
     return true;
@@ -377,10 +376,10 @@ public class ODE {
    **/
   boolean point_dist_comp(Point a, Point b, float[] dist)
   {
-    int dim = a.c.length-dist.length;
+    int dim = a.getDims()-dist.length;
     for (int i=0; i<dist.length; i++)
     {
-      if (Math.abs(a.c[dim]-b.c[dim]) > dist[i]) return false;
+      if (Math.abs(a.get(dim)-b.get(dim)) > dist[i]) return false;
       dim++;
     }
     return true;
@@ -393,9 +392,9 @@ public class ODE {
    **/
   boolean points_equal(Point a, Point b, boolean time)
   {
-    for (int i=(time?0:1); i<a.c.length; i++)
+    for (int i=(time?0:1); i<a.getDims(); i++)
     {
-      if (a.c[i] != b.c[i]) return false;
+      if (a.get(i) != b.get(i)) return false;
     }
     return true;
   }
@@ -410,12 +409,12 @@ public class ODE {
   {
     for (int i=0; i<gl_max.length; i++)
     {
-      if (a.c[i] > gl_max[i])
+      if (a.get(i) > gl_max[i])
       {
         status.set(i);
         return false;
       }
-      else if (a.c[i] < gl_min[i])
+      else if (a.get(i) < gl_min[i])
       {
         status.set(-i);
         return false;
@@ -428,7 +427,7 @@ public class ODE {
   public String toString()
   {
     String s = "Model name: "+model+"\n";
-    s += "Variables: "+PApplet.join(var_names,", ")+";\n";
+    s += "Variables: "+Utils.join(var_names,", ")+";\n";
     s += "Equations: \n";
     for (int i=0; i<equations.length; i++)
     {

@@ -170,7 +170,7 @@ public class SimulationData
   {
     int base_length;
     int last = 0;
-    PointsDataBlock curr_pdb;
+    PointsDataBlock curr_pdb;    
 
     if (mode == 0) {
       base_length = 1+(total_dense_length-1)/n;
@@ -189,7 +189,7 @@ public class SimulationData
 
     while (cnt < base_length)
     {
-      while (i < curr_pdb.count)
+      while (i < curr_pdb.count && (cnt+last) < subset.length)
       {
         subset[cnt] = curr_pdb.points[i];
         cnt++;

@@ -5,9 +5,7 @@
 
 package parasim;
 
-import processing.core.PApplet;
 import java.util.HashMap;
-import java.lang.Math;
 
 /**
  * Reads and parses ODE fiels in the Numeric Simulation Verifier format.
@@ -78,10 +76,8 @@ public class ODEParser
    *
    */
   String parse_ode_file(String filename)
-  {
-    PApplet dummyApplet = new PApplet();
-    /* HACK I didn't want to write my own loadStrings method. */
-    String lines[] = dummyApplet.loadStrings(filename);
+  {    
+    String lines[] = Utils.loadStrings(filename);
     if (lines == null)
     {
       return "File "+filename+" not found or not readable.";
@@ -103,12 +99,12 @@ public class ODEParser
         line_cntr++;
       }
     }
-    lines = (String[]) PApplet.expand(lines, line_cntr);     /* cut away end of array */
+    lines = (String[]) Utils.expand(lines, line_cntr);     /* cut away end of array */
     /* join all lines, cut apart on whitespace boundaries, trim, join and cut
        apart again on semicolon boundaries */
-    String[] tokens = PApplet.splitTokens(Utils.combine("", lines));
-    tokens = PApplet.trim(tokens);
-    tokens = PApplet.split(PApplet.join(tokens, ""), ";");
+    String[] tokens = Utils.splitTokens(Utils.combine("", lines));
+    tokens = Utils.trim(tokens);
+    tokens = Utils.split(Utils.join(tokens, ""), ';');
 
     if (tokens.length < 1)
     {
@@ -121,7 +117,7 @@ public class ODEParser
     }
 
     /* load the variable names and set the number of dimensions */
-    var_names = PApplet.split("Time,"+tokens[0].substring(5),',');
+    var_names = Utils.split("Time,"+tokens[0].substring(5),',');
     dims = var_names.length;
     if (dims == 1)
     {
@@ -130,7 +126,7 @@ public class ODEParser
     }
     for (i=0; i<dims; i++)
     {
-      String[] reg_match = PApplet.match(var_names[i],"[\\w]+");
+      String[] reg_match = Utils.match(var_names[i],"[\\w]+");
       {
         if (reg_match.length != 1 || !reg_match[0].equals(var_names[i]))
         {
@@ -329,13 +325,13 @@ public class ODEParser
       return "Unknown variable "+left_var+" near "+token;
     }
     int left_var_index = ((Integer)var_indexes.get(left_var)).intValue();
-    String[] products = PApplet.split(token.substring(token.indexOf('=')+1),"+");
+    String[] products = Utils.split(token.substring(token.indexOf('=')+1),'+');
 
     equations[left_var_index-1] = new TermProduct[products.length];
 
     for (int i=0; i<products.length; i++)
     {
-      String[] terms = PApplet.split(products[i],"*");
+      String[] terms = Utils.split(products[i],'*');
       if (terms.length == 0)
       {
         return "Bad product term at "+token;
@@ -367,7 +363,7 @@ public class ODEParser
         term_var_indexes[j-1] = ((Integer)var_indexes.get(terms[j])).intValue();
       }
       equations[left_var_index-1][i] =
-        new TermProduct(constant, term_var_indexes, PApplet.subset(terms,1));
+        new TermProduct(constant, term_var_indexes, Utils.subset(terms,1));
       //print("equations["+(left_var_index-1)+"]["+i+"] = "+constant+" * ");
       //print_array(term_var_indexes);
       //println();
@@ -435,7 +431,7 @@ public class ODEParser
     }
 
     String mode_str = Utils.ODEP_MODE_STR[mode];
-    String[] token_parts = PApplet.split(token, ":");
+    String[] token_parts = Utils.split(token, ':');
     int var_index = -1;
     String number_str[] = null;
 
@@ -459,7 +455,7 @@ public class ODEParser
         return "Bad definition order or duplicity near "+mode_str+":"+
                token+" check format definition";
       }
-      number_str = PApplet.split(token_parts[1],",");
+      number_str = Utils.split(token_parts[1],',');
     }
     else
     {

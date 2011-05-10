@@ -5,7 +5,6 @@
 
 package parasim.verification;
 
-import processing.core.PApplet;
 import java.util.HashMap;
 import parasim.ODE;
 import parasim.Utils;
@@ -35,7 +34,7 @@ class PropertyParser
                                    therefore must be updated before calling
                                    transition.enabled() */
 
-  PropertyParser()
+  public PropertyParser()
   {
     state_indexes = new HashMap();
     clear();
@@ -70,10 +69,8 @@ class PropertyParser
   {
     err_str = null;
     this.ode = ode;
-
-    /* HACK Using PApplet instead of writing own loadStrings method. */
-    PApplet dummyApplet = new PApplet();
-    String lines[] = dummyApplet.loadStrings(filename);
+    
+    String lines[] = Utils.loadStrings(filename);
     if (lines == null)
     {
       clear();
@@ -85,11 +82,11 @@ class PropertyParser
     {
       if (lines[i].length() > 0 && lines[i].charAt(0) != '#')
       { /* copy useful lines to front of array */
-        lines[line_cntr] = PApplet.trim(lines[i]);
+        lines[line_cntr] = Utils.trim(lines[i]);
         line_cntr++;
       }
     }
-    lines = (String[]) PApplet.expand(lines, line_cntr);     /* cut away end of array */
+    lines = (String[]) Utils.expand(lines, line_cntr);     /* cut away end of array */
     if (lines.length < 7)
     {
       clear();
@@ -117,10 +114,10 @@ class PropertyParser
             return "Bad state definition near "+lines[i];
           }
           state_names =
-            PApplet.trim(PApplet.split(lines[i].substring(6,lines[i].length()-1),","));
+            Utils.trim(Utils.split(lines[i].substring(6,lines[i].length()-1),','));
           for (int j=0; j<state_names.length; j++)
           {
-            String[] reg_match = PApplet.match(state_names[j],"[\\w]+");
+            String[] reg_match = Utils.match(state_names[j],"[\\w]+");
             {
               if (reg_match.length != 1 || !reg_match[0].equals(state_names[j]))
               {
@@ -150,7 +147,7 @@ class PropertyParser
             return "Bad init definition near "+lines[i];
           }
           String[] init_states =
-            PApplet.trim(PApplet.split(lines[i].substring(5,lines[i].length()-1),','));
+            Utils.trim(Utils.split(lines[i].substring(5,lines[i].length()-1),','));
           initial_states = new int[init_states.length];
           for (int j=0; j<init_states.length; j++)
           {
@@ -170,7 +167,7 @@ class PropertyParser
             return "Bad accept definition near "+lines[i];
           }
           String[] acc_states =
-            PApplet.trim(PApplet.split(lines[i].substring(7,lines[i].length()-1),","));
+            Utils.trim(Utils.split(lines[i].substring(7,lines[i].length()-1),','));
           accepting_states = new int[acc_states.length];
           int acc_state;
           for (int j=0; j<acc_states.length; j++)
@@ -227,7 +224,7 @@ class PropertyParser
     for (i=0; i<transitions.length; i++)
     { /* trim the transition array to real sizes */
       transitions[i] =
-        (Transition[]) PApplet.expand(transitions[i], transition_count[i]);
+        (Transition[]) Utils.expand(transitions[i], transition_count[i]);
     }
 
     ode = null;
@@ -257,10 +254,10 @@ class PropertyParser
     {
       return "Missing '}' in transition "+token;
     }
-    String state1 = PApplet.trim(token.substring(0,token.indexOf("->")));
-    String state2 = PApplet.trim(token.substring(token.indexOf("->")+2,
+    String state1 = Utils.trim(token.substring(0,token.indexOf("->")));
+    String state2 = Utils.trim(token.substring(token.indexOf("->")+2,
                                          token.indexOf('{')));
-    String guard_str = PApplet.trim(token.substring(token.indexOf('{')+1,
+    String guard_str = Utils.trim(token.substring(token.indexOf('{')+1,
                                          token.indexOf('}')));
     if (guard_str.length()>0)
     {
@@ -268,13 +265,13 @@ class PropertyParser
       {
         return "Missing keyword 'guard' in transition '"+token+"'";
       }
-      guard_str = PApplet.trim(guard_str.substring(6));
+      guard_str = Utils.trim(guard_str.substring(6));
     }
     if (guard_str.length()>0)
     {
       if (guard_str.charAt(guard_str.length()-1) == ';')
       {
-        guard_str = PApplet.trim(guard_str.substring(0,guard_str.length()-1));
+        guard_str = Utils.trim(guard_str.substring(0,guard_str.length()-1));
       }
     }
 
@@ -359,7 +356,7 @@ class PropertyParser
         if (op_mode == 0)
         {
           op_mode = 1;
-          parts[part_count] = PApplet.trim(token.substring(part_start, i));
+          parts[part_count] = Utils.trim(token.substring(part_start, i));
           part_count++;
           part_start = i;
         }
@@ -381,7 +378,7 @@ class PropertyParser
         if (op_mode == 0)
         {
           op_mode = 2;
-          parts[part_count] = PApplet.trim(token.substring(part_start, i));
+          parts[part_count] = Utils.trim(token.substring(part_start, i));
           part_count++;
           part_start = i;
         }
@@ -412,11 +409,11 @@ class PropertyParser
     }
     if (part_start < token.length())
     {
-      parts[part_count] = PApplet.trim(token.substring(part_start));
+      parts[part_count] = Utils.trim(token.substring(part_start));
       part_count++;
     }
 
-    return PApplet.expand(parts, part_count);
+    return Utils.expand(parts, part_count);
   }
 
   /**
@@ -429,7 +426,7 @@ class PropertyParser
    **/
   private Evaluable parse_expression(String token, HashMap var_indexes)
   {
-    token = PApplet.trim(token);
+    token = Utils.trim(token);
 
     /* if token does not contain bracets and & or | it must
        be ATOM or not ATOM */
@@ -489,7 +486,7 @@ class PropertyParser
                  part.charAt(part.length()-1) == ')')
         {
           /* strip left and right brackets and whitespace */
-          part = PApplet.trim(part.substring(1,part.length()-1));
+          part = Utils.trim(part.substring(1,part.length()-1));
           return parse_expression(part, var_indexes);
         }
         else
@@ -544,7 +541,7 @@ class PropertyParser
 
   private Evaluable parse_atomic_proposition(String token, HashMap var_indexes)
   {
-    token = PApplet.trim(token);
+    token = Utils.trim(token);
     if (token.length() == 0)
     {
       err_str = "Empty proposition";
@@ -591,8 +588,8 @@ class PropertyParser
       return null;
     }
 
-    String str1 = PApplet.trim(token.substring(0,op_start));
-    String str2 = PApplet.trim(token.substring(op_start+op_len));
+    String str1 = Utils.trim(token.substring(0,op_start));
+    String str2 = Utils.trim(token.substring(op_start+op_len));
 
     int var1_index;
     int var1_type = -1; /* type of first operand */

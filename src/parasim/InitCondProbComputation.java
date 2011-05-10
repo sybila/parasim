@@ -6,7 +6,6 @@
 package parasim;
 
 import parasim.verification.Property;
-import processing.core.PApplet;
 
 /**
  *
@@ -234,6 +233,7 @@ public class InitCondProbComputation implements ComputationInterface
                 //System.out.println("Active simulations = "+tmp_cnt);
             }
             //println("check_simulation_distances()");
+
             if (distance_checks_active > 0 && dc_batch > 0)
             {
                 tmp_cnt = check_simulation_distances(sims, ode, dc_batch);
@@ -311,10 +311,10 @@ public class InitCondProbComputation implements ComputationInterface
                     Point local_point = dc_data.local.first_s_pdb.points[0];
                     Point neighbour_point = dc_data.neighbour.first_s_pdb.points[0];
 
-                    Point initial_cond = new Point(local_point.c.length);
-                    for (int k = 0; k<local_point.c.length; k++)
+                    Point initial_cond = new Point(local_point.getDims());
+                    for (int k = 0; k<local_point.getDims(); k++)
                     {
-                      initial_cond.c[k] = (local_point.c[k] + neighbour_point.c[k])/2.0f;
+                      initial_cond.set(k, (local_point.get(k) + neighbour_point.get(k))/2.0f);
                     }
                     SimulationData[] neighbours = new SimulationData[]
                       {dc_data.local, dc_data.neighbour};
@@ -655,7 +655,7 @@ public class InitCondProbComputation implements ComputationInterface
           for (int j=0; j<sim.dist_check.length; j++)
           {
             smallest_needed_pdb_index =
-              PApplet.min(smallest_needed_pdb_index, sim.dist_check[j].local_pos.pdb.first_point_index);
+              Utils.min(smallest_needed_pdb_index, sim.dist_check[j].local_pos.pdb.first_point_index);
           }
         }
         while (sim.first_d_pdb.first_point_index < smallest_needed_pdb_index)

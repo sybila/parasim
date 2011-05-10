@@ -8,6 +8,7 @@ package parasim;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.opengl.*;
+import java.io.File;
 
 
 /**
@@ -23,7 +24,7 @@ public class ComputationView extends PApplet {
 
    public ComputationView()
    {
-       //
+       //basefont = createFont("verdana", 30);
    }
 
    public void setComputation(InitCondProbComputation c)
@@ -32,7 +33,20 @@ public class ComputationView extends PApplet {
      view = new ViewPort(c.getODE());
      println("setComputation");
 
+     //println("CWD = "+Utils.getCWD());     
+     //println("FontPath = "+dataPath("Verdana-30.vlw"));
+     /*
+     File f = new File(dataPath("Verdana-30.vlw"));
+
+     if (!f.exists())
+     {
+       println("Font not found");
+       exit();
+     }*/
+     
+     
      basefont = loadFont("Verdana-30.vlw");
+     //basefont = createFont("verdana", 30);
      textFont(basefont);
    }
 
@@ -43,8 +57,9 @@ public class ComputationView extends PApplet {
            oldHeight = height;
 
            PGraphicsOpenGL pgl = (PGraphicsOpenGL) g;
-           pgl.gl.glViewport(0, 0, width, height);
-
+           pgl.gl.glViewport(0, 0, width, height);           
+           
+           //basefont = createFont("verdana", 30);
            basefont = loadFont("Verdana-30.vlw");
            textFont(basefont);
        }
@@ -284,33 +299,33 @@ public class ComputationView extends PApplet {
    private class ViewPort
     {
       private ODE ode;
-      float[] rotation;    // rotation of the viewport
-      float[] translation; // translation of the viewport
-      float[] zoom;        // zooming on each variable axes
-      float max_zoom;
+      private float[] rotation;    // rotation of the viewport
+      private float[] translation; // translation of the viewport
+      private float[] zoom;        // zooming on each variable axes
+      private float max_zoom;
       /* the maximum of all selected visible axial zooms */
-      float ozoom;
+      private float ozoom;
       /* OpenGL Zoom: when max_zoom is too large numerical approximations
          are visible during rendering, therefore ozoom is increased and
          the scale factor of the drwaing matrix is decreased. */
-      int[] axes;
+      private int[] axes;
       /* 3 element field, variables displayed on individual axes */
-      int d_view;
+      private int d_view;
       /* controls the 3D/2D view, if 2D is chosen, first 2 elements of axes are used
        */
-      int traj_detail;
+      private int traj_detail;
       /* every n-th point of the trajectory is added to curveVertex */
 
-      int selected_trajectory;
+      private int selected_trajectory;
       /* index of selected trajectory or -1 if not selected */
-      int closest_trajectory;
+      private int closest_trajectory;
       /* index of closest trajectory to mouse cursor, or -1 if no trajectory
          point is closer than 10px in current detail level */      
 
-      boolean show_traj_comp;
-      boolean show_traj_fin;
-      boolean show_prop_validity;
-      boolean draw_if_not_focused;
+      private boolean show_traj_comp;
+      private boolean show_traj_fin;
+      private boolean show_prop_validity;
+      private boolean draw_if_not_focused;
 
       /*ViewPort()
       {
@@ -416,7 +431,7 @@ public class ComputationView extends PApplet {
 
       /* called after loading ODE or selecting different dimensions for axes
          adjusts zoom scales according to size of global max bounds */
-      void adjust_zoom(ODE ode)
+      private void adjust_zoom(ODE ode)
       {
         max_zoom = 0;
         for (int i = 0; i < axes.length; i++)
@@ -439,16 +454,16 @@ public class ComputationView extends PApplet {
       /**
        * Draws a line between two points using the current ViewPort setting.
        **/
-      void point_line(Point a, Point b)
+      private void point_line(Point a, Point b)
       {
         //if (d_view == 3)
         //{
-          line(a.c[axes[0]]*ozoom,
-              -a.c[axes[1]]*ozoom,
-               a.c[axes[2]]*ozoom,
-               b.c[axes[0]]*ozoom,
-              -b.c[axes[1]]*ozoom,
-               b.c[axes[2]]*ozoom);
+          line(a.get(axes[0])*ozoom,
+              -a.get(axes[1])*ozoom,
+               a.get(axes[2])*ozoom,
+               b.get(axes[0])*ozoom,
+              -b.get(axes[1])*ozoom,
+               b.get(axes[2])*ozoom);
         //}
         /*else if (d_view == 2)
         {
@@ -470,13 +485,13 @@ public class ComputationView extends PApplet {
         } */
       }
 
-      void point_vertex(Point a)
+      private void point_vertex(Point a)
       {
         /*if (d_view == 3)
         { */
-          vertex(a.c[axes[0]]*ozoom,
-                -a.c[axes[1]]*ozoom,
-                 a.c[axes[2]]*ozoom);
+          vertex(a.get(axes[0])*ozoom,
+                -a.get(axes[1])*ozoom,
+                 a.get(axes[2])*ozoom);
         /*}
         else if (d_view == 2)
         {
@@ -492,13 +507,13 @@ public class ComputationView extends PApplet {
         }   */
       }
 
-      void point_curveVertex(Point a)
+      private void point_curveVertex(Point a)
       {
         /*if (d_view == 3)
         { */
-          curveVertex(a.c[axes[0]]*ozoom,
-                     -a.c[axes[1]]*ozoom,
-                      a.c[axes[2]]*ozoom);
+          curveVertex(a.get(axes[0])*ozoom,
+                     -a.get(axes[1])*ozoom,
+                      a.get(axes[2])*ozoom);
         /*}
         else if (d_view == 2)
         {
@@ -517,7 +532,7 @@ public class ComputationView extends PApplet {
       void setup_viewport()
       {
         background(0);
-        textFont(basefont);        
+        textFont(basefont);
         translate(width/2, height/2);        
 
         if (d_view == 3)
@@ -593,23 +608,23 @@ public class ComputationView extends PApplet {
 
       void point_translate(Point a)
       {
-        translate(a.c[axes[0]]*ozoom,
-                 -a.c[axes[1]]*ozoom,
-                  a.c[axes[2]]*ozoom);
+        translate(a.get(axes[0])*ozoom,
+                 -a.get(axes[1])*ozoom,
+                  a.get(axes[2])*ozoom);
       }
 
       float point_screenX(Point a)
       {
-        return screenX( a.c[axes[0]]*ozoom,
-                       -a.c[axes[1]]*ozoom,
-                        a.c[axes[2]]*ozoom);
+        return screenX( a.get(axes[0])*ozoom,
+                       -a.get(axes[1])*ozoom,
+                        a.get(axes[2])*ozoom);
       }
 
       float point_screenY(Point a)
       {
-        return screenY( a.c[axes[0]]*ozoom,
-                       -a.c[axes[1]]*ozoom,
-                        a.c[axes[2]]*ozoom);
+        return screenY( a.get(axes[0])*ozoom,
+                       -a.get(axes[1])*ozoom,
+                        a.get(axes[2])*ozoom);
       }
 
       /**
@@ -1022,9 +1037,9 @@ public class ComputationView extends PApplet {
             }
             pushMatrix();
             Point p = sim.get_first_point();
-            translate( p.c[axes[0]]*ozoom,
-                      -p.c[axes[1]]*ozoom,
-                       p.c[axes[2]]*ozoom);
+            translate( p.get(axes[0])*ozoom,
+                      -p.get(axes[1])*ozoom,
+                       p.get(axes[2])*ozoom);
 
             scale(max_zoom/zoom[axes[0]],
                   max_zoom/zoom[axes[1]],
@@ -1068,9 +1083,9 @@ public class ComputationView extends PApplet {
                 for (int i = 0; i<count; i++)
                 {
                     point_curveVertex(data[i]);
-                    tmp_distance = mouseDist3D( data[i].c[axes[0]]*ozoom,
-                                               -data[i].c[axes[1]]*ozoom,
-                                                data[i].c[axes[2]]*ozoom);
+                    tmp_distance = mouseDist3D( data[i].get(axes[0])*ozoom,
+                                               -data[i].get(axes[1])*ozoom,
+                                                data[i].get(axes[2])*ozoom);
                     if (selected_point_distance > 0 &&
                         tmp_distance < selected_point_distance)
                     {
@@ -1092,9 +1107,9 @@ public class ComputationView extends PApplet {
                     for (int i = 0; i<count; i++)
                     {
                         pushMatrix();
-                        translate( data[i].c[axes[0]]*ozoom,
-                                  -data[i].c[axes[1]]*ozoom,
-                                   data[i].c[axes[2]]*ozoom);
+                        translate( data[i].get(axes[0])*ozoom,
+                                  -data[i].get(axes[1])*ozoom,
+                                   data[i].get(axes[2])*ozoom);
                         scale(max_zoom/zoom[axes[0]],
                               max_zoom/zoom[axes[1]],
                               max_zoom/zoom[axes[2]]);
@@ -1111,9 +1126,9 @@ public class ComputationView extends PApplet {
                 stroke(255,100,0,200);
                 fill(255,100,0,200);
                 pushMatrix();
-                translate( data[count-1].c[axes[0]]*ozoom,
-                          -data[count-1].c[axes[1]]*ozoom,
-                           data[count-1].c[axes[2]]*ozoom);
+                translate( data[count-1].get(axes[0])*ozoom,
+                          -data[count-1].get(axes[1])*ozoom,
+                           data[count-1].get(axes[2])*ozoom);
 
                 scale(max_zoom/zoom[axes[0]],
                       max_zoom/zoom[axes[1]],
@@ -1163,7 +1178,7 @@ public class ComputationView extends PApplet {
             }
             else if (d_view == 1)
             {
-                int dims = data[0].c.length;
+                int dims = data[0].getDims();
                 /*int[] dim_colors = new int[dims];
                 for (int j=1; j<dims; j++)
                 {
@@ -1184,13 +1199,13 @@ public class ComputationView extends PApplet {
                     }
                     noFill();
                     beginShape();
-                    curveVertex(data[0].c[j]*ozoom, -data[0].c[j]*ozoom, 0);
+                    curveVertex(data[0].get(j)*ozoom, -data[0].get(j)*ozoom, 0);
 
                     for (int i = 0; i<count; i++)
                     {
-                        curveVertex(data[i].c[0]*ozoom, -data[i].c[j]*ozoom, 0);
-                        tmp_distance = mouseDist3D( data[i].c[0]*ozoom,
-                                                   -data[i].c[j]*ozoom,
+                        curveVertex(data[i].get(0)*ozoom, -data[i].get(j)*ozoom, 0);
+                        tmp_distance = mouseDist3D( data[i].get(0)*ozoom,
+                                                   -data[i].get(j)*ozoom,
                                                     0);
                         if (selected_point_distance > 0 &&
                             tmp_distance < selected_point_distance)
@@ -1199,7 +1214,7 @@ public class ComputationView extends PApplet {
                             selected_point_distance = tmp_distance;
                         }
                     }
-                    curveVertex(data[count-1].c[0]*ozoom, -data[count-1].c[j]*ozoom, 0);
+                    curveVertex(data[count-1].get(0)*ozoom, -data[count-1].get(j)*ozoom, 0);
                     endShape();
 
                     float radius = 5/max_zoom*ozoom;
@@ -1213,7 +1228,7 @@ public class ComputationView extends PApplet {
                         for (int i = 0; i<count; i++)
                         {
                             pushMatrix();
-                            translate( data[i].c[0]*ozoom, -data[i].c[j]*ozoom, 0);
+                            translate( data[i].get(0)*ozoom, -data[i].get(j)*ozoom, 0);
                             scale(max_zoom/zoom[0], max_zoom/zoom[j], 0);
                             if (cycle_start != -1 && i >= cycle_start)
                             {
@@ -1227,8 +1242,8 @@ public class ComputationView extends PApplet {
                     stroke(255,100,0,200);
                     fill(255,100,0,200);
                     pushMatrix();
-                    translate( data[count-1].c[0]*ozoom,
-                              -data[count-1].c[j]*ozoom, 0);
+                    translate( data[count-1].get(0)*ozoom,
+                              -data[count-1].get(j)*ozoom, 0);
                     scale(max_zoom/zoom[0], max_zoom/zoom[j], 0);
 
                     box(radius);
@@ -1319,15 +1334,15 @@ public class ComputationView extends PApplet {
                 textSize(20);
                 if (d_view == 3)
                 {
-                    String coord_info = "["+selected_point.c[axes[0]]+","+
-                                          selected_point.c[axes[1]]+","+
-                                          selected_point.c[axes[2]]+"]";
+                    String coord_info = "["+selected_point.get(axes[0])+","+
+                                          selected_point.get(axes[1])+","+
+                                          selected_point.get(axes[2])+"]";
                     print3d(coord_info, selected_point);
                     //println("POINT INFO, sim["+closest_trajectory+"][?] = "+coord_info);
                     pushMatrix();
-                    float tmpx = selected_point.c[axes[0]]*ozoom;
-                    float tmpy = selected_point.c[axes[1]]*ozoom;
-                    float tmpz = selected_point.c[axes[2]]*ozoom;
+                    float tmpx = selected_point.get(axes[0])*ozoom;
+                    float tmpy = selected_point.get(axes[1])*ozoom;
+                    float tmpz = selected_point.get(axes[2])*ozoom;
                     translate(tmpx/2.0f, -tmpy/2.0f, tmpz/2.0f);
                     noFill();
                     box(tmpx, -tmpy, tmpz);
@@ -1335,12 +1350,12 @@ public class ComputationView extends PApplet {
                 }
                 else if (d_view == 2)
                 {
-                    String coord_info = "["+selected_point.c[axes[0]]+","+
-                                          selected_point.c[axes[1]]+"]";
+                    String coord_info = "["+selected_point.get(axes[0])+","+
+                                          selected_point.get(axes[1])+"]";
                     print3d(coord_info, selected_point);
                     pushMatrix();
-                    float tmpx = selected_point.c[axes[0]]*ozoom;
-                    float tmpy = selected_point.c[axes[1]]*ozoom;
+                    float tmpx = selected_point.get(axes[0])*ozoom;
+                    float tmpy = selected_point.get(axes[1])*ozoom;
                     translate(tmpx/2.0f, -tmpy/2.0f, 0);
                     noFill();
                     box(tmpx, -tmpy, 0);

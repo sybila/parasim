@@ -1,9 +1,31 @@
 Parallel Simulation and Verification Tool
 =========================================
-The source files for the org.sybila.* writen by Honza Papoušek are not yet
-used and are in a separate repository sybila/cuda.
+Only source files (src) and essential libraries (lib) are included together with
+basic data (data) such as fonts and model examples (examples).
 
-D:\Dokumenty\Informatika\Projekty\cuda-simulation-sven\java\src
+To create a NetBeans project from the repository %repo% directory:
+1. Click on "New Project"
+2. Categories: Java, Projects: Java Project with Existing Sources -> Next
+3. Choose another directory from %repo% to be the project folder
+   leave "Use Dedicated Folder for Storing Libraries" checked) with .\lib
+   -> Next
+4. Add source package folder as %repo%\src -> Next
+5. Do nothing just Finish (include all **)
+6. Click on the "Libraries" folder and pick "ADD Jar/Folder"
+   Select the 4 appropriate *.jar files from the %repo%\lib directory
+   (core.jar, gluegen-rt.jar, jogl.jar, opengl.jar)
+7. Copy the appropriate *.dll, *.so or *.jnilib files from %repo%\lib\%system%
+   to %repo%\lib where %system% is your operating system
+8. Click on File -> Project properties -> Run
+   Choose working directory as the %repo%
+   Specify the VM Options as:
+   -Djava.library.path="%repo%\lib"
+   where %repo% is the absolute path to your repository directory
 
-Change the Project Properties settings of Run to match the path were you
-will store your data.
+On first Run confirm "parasim.Window" to be the main class.
+
+-----------------------------------------
+
+When commiting to the online repo please check, that you again commit only
+source files together with possible data or examples.
+

@@ -6,7 +6,6 @@
 package parasim;
 
 import parasim.verification.Property;
-import processing.core.PApplet;
 
 /**
  * Object for storing simulations.
@@ -64,7 +63,7 @@ public class SimulationStorage
     while (curr_point < point_set.get_point_count() && count < Utils.MAX_SIMULATIONS)
     {
       neighbours = (SimulationData[])
-                   PApplet.expand(neighbours, point_set.get_neighbour_count(curr_point));
+                   Utils.expand(neighbours, point_set.get_neighbour_count(curr_point));
       for (i = 0; i<neighbours.length; i++)
       {
         neighbours[i] = simulations[sim_offset+point_set.get_point_neighbour(curr_point,i)];

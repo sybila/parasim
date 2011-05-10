@@ -39,7 +39,7 @@ public class TermProduct {
     float result = constant;
     for (int i=0; i<var_indexes.length; i++)
     {
-      result *= p.c[var_indexes[i]];
+      result *= p.get(var_indexes[i]);
     }
     return result;
   }

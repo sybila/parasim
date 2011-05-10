@@ -5,8 +5,12 @@
 
 package parasim;
 
-import java.io.InputStream;
+//import java.io.InputStream;
 import processing.core.PApplet;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
 
 /**
  *
@@ -14,7 +18,7 @@ import processing.core.PApplet;
  */
 public class Utils {
 
-    static String combine(String glue, String... s)
+    static public String combine(String glue, String... s)
     {
       if (s.length == 0) return "";
       StringBuilder out = new StringBuilder();
@@ -25,6 +29,281 @@ public class Utils {
       }
       return out.toString();
     }
+
+    static public String nf(float val, int left, int right)
+    {
+        return PApplet.nf(val, left, right);
+    }
+
+    static public String join(String[] pieces, String glue)
+    {
+        return PApplet.join(pieces, glue);
+    }
+
+    static public String[] match(String what, String regexp) {
+      return PApplet.match(what, regexp);
+    }
+
+    static public String[] loadStrings(String filename){
+        PApplet dummyApplet = new PApplet();
+        return dummyApplet.loadStrings(filename);
+    }
+
+    /* Taken from processing.core.PApplet.java *************/
+
+    static final String WHITESPACE = " \t\n\r\f\u00A0";
+
+    static public boolean[] expand(boolean list[]) {
+        return expand(list, list.length << 1);
+    }
+
+    static public boolean[] expand(boolean list[], int newSize) {
+        boolean temp[] = new boolean[newSize];
+        System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+        return temp;
+    }
+
+    static public byte[] expand(byte list[]) {
+        return expand(list, list.length << 1);
+    }
+
+    static public byte[] expand(byte list[], int newSize) {
+        byte temp[] = new byte[newSize];
+        System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+        return temp;
+    }
+
+    static public char[] expand(char list[]) {
+        return expand(list, list.length << 1);
+    }
+
+  static public char[] expand(char list[], int newSize) {
+    char temp[] = new char[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+
+  static public int[] expand(int list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public int[] expand(int list[], int newSize) {
+    int temp[] = new int[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+
+  static public float[] expand(float list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public float[] expand(float list[], int newSize) {
+    float temp[] = new float[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+
+  static public String[] expand(String list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public String[] expand(String list[], int newSize) {
+    String temp[] = new String[newSize];
+    // in case the new size is smaller than list.length
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+  static public Object expand(Object array) {
+    return expand(array, Array.getLength(array) << 1);
+  }
+
+  static public Object expand(Object list, int newSize) {
+    Class<?> type = list.getClass().getComponentType();
+    Object temp = Array.newInstance(type, newSize);
+    System.arraycopy(list, 0, temp, 0,
+                     Math.min(Array.getLength(list), newSize));
+    return temp;
+  }
+
+    static public int[] sort(int what[]) {
+    return sort(what, what.length);
+  }
+
+
+  static public int[] sort(int[] what, int count) {
+    int[] outgoing = new int[what.length];
+    System.arraycopy(what, 0, outgoing, 0, what.length);
+    Arrays.sort(outgoing, 0, count);
+    return outgoing;
+  }
+
+  static public String[] split(String what, char delim)
+  {
+    return PApplet.split(what, delim);
+  }
+
+  static public String[] subset(String list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public String[] subset(String list[], int start, int count) {
+    String output[] = new String[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+  /**
+   * Remove whitespace characters from the beginning and ending
+   * of a String. Works like String.trim() but includes the
+   * unicode nbsp character as well.
+   */
+  static public String trim(String str) {
+    return str.replace('\u00A0', ' ').trim();
+  }
+
+  /**
+   * Trim the whitespace from a String array. This returns a new
+   * array and does not affect the passed-in array.
+   */
+  static public String[] trim(String[] array) {
+    String[] outgoing = new String[array.length];
+    for (int i = 0; i < array.length; i++) {
+      if (array[i] != null) {
+        outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+      }
+    }
+    return outgoing;
+  }
+
+    /**
+   * Split the provided String at wherever whitespace occurs.
+   * Multiple whitespace (extra spaces or tabs or whatever)
+   * between items will count as a single break.
+   * <P>
+   * The whitespace characters are "\t\n\r\f", which are the defaults
+   * for java.util.StringTokenizer, plus the unicode non-breaking space
+   * character, which is found commonly on files created by or used
+   * in conjunction with Mac OS X (character 160, or 0x00A0 in hex).
+   * <PRE>
+   * i.e. splitTokens("a b") -> { "a", "b" }
+   *      splitTokens("a    b") -> { "a", "b" }
+   *      splitTokens("a\tb") -> { "a", "b" }
+   *      splitTokens("a \t  b  ") -> { "a", "b" }</PRE>
+   */
+  static public String[] splitTokens(String what) {
+    return splitTokens(what, WHITESPACE);
+  }
+
+
+  /**
+   * Splits a string into pieces, using any of the chars in the
+   * String 'delim' as separator characters. For instance,
+   * in addition to white space, you might want to treat commas
+   * as a separator. The delimeter characters won't appear in
+   * the returned String array.
+   * <PRE>
+   * i.e. splitTokens("a, b", " ,") -> { "a", "b" }
+   * </PRE>
+   * To include all the whitespace possibilities, use the variable
+   * WHITESPACE, found in PConstants:
+   * <PRE>
+   * i.e. splitTokens("a   | b", WHITESPACE + "|");  ->  { "a", "b" }</PRE>
+   */
+  static public String[] splitTokens(String what, String delim) {
+    StringTokenizer toker = new StringTokenizer(what, delim);
+    String pieces[] = new String[toker.countTokens()];
+
+    int index = 0;
+    while (toker.hasMoreTokens()) {
+      pieces[index++] = toker.nextToken();
+    }
+    return pieces;
+  }
+
+  static public final int min(int a, int b) {
+    return (a < b) ? a : b;
+  }
+  /*
+  static public final float min(float a, float b) {
+    return (a < b) ? a : b;
+  }
+
+
+  static public final int min(int a, int b, int c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+
+  static public final float min(float a, float b, float c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+  */
+
+  /**
+   * Find the minimum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+   * @param list the source array
+   * @return The minimum value
+   */
+  /*static public final int min(int[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    int min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }*/
+  /**
+   * Find the minimum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+   * @param list the source array
+   * @return The minimum value
+   */
+  /*static public final float min(float[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    float min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }*/
+
+  /**
+   * Calls System.arraycopy(), included here so that we can
+   * avoid people needing to learn about the System object
+   * before they can just copy an array.
+   */
+  static public void arrayCopy(Object src, int srcPosition,
+                               Object dst, int dstPosition,
+                               int length) {
+    System.arraycopy(src, srcPosition, dst, dstPosition, length);
+  }
+
+
+  /**
+   * Convenience method for arraycopy().
+   * Identical to <CODE>arraycopy(src, 0, dst, 0, length);</CODE>
+   */
+  static public void arrayCopy(Object src, Object dst, int length) {
+    System.arraycopy(src, 0, dst, 0, length);
+  }
+
+
+  /**
+   * Shortcut to copy the entire contents of
+   * the source into the destination array.
+   * Identical to <CODE>arraycopy(src, 0, dst, 0, src.length);</CODE>
+   */
+  static public void arrayCopy(Object src, Object dst) {
+    System.arraycopy(src, 0, dst, 0, Array.getLength(src));
+  }
 
     /****************************** Status Constants ******************************/
 
@@ -201,28 +480,39 @@ public class Utils {
       return num+".0";
     }
 
-    void print_array(float[] arr)
+    public static void print_array(Point p)
     {
-      if (arr == null || arr.length == 0) return;
-      PApplet.print("array(");
-      for (int i=0; i<arr.length; i++)
+      if (p == null || p.getDims() == 0) return;
+      System.out.print("Point[");
+      for (int i=0; i<p.getDims(); i++)
       {
-        if (i>0) PApplet.print("; ");
-        //print(arr[i]);
-        PApplet.print(PApplet.nf(arr[i],1,8));
+        if (i>0) System.out.print("; ");        
+        System.out.print(nf(p.get(i),1,8));
       }
-      PApplet.println(")");
+      System.out.println(")");
     }
 
-    void print_array(float[][] arr)
+    public static void print_array(float[] arr)
+    {
+      if (arr == null || arr.length == 0) return;
+      System.out.print("array(");
+      for (int i=0; i<arr.length; i++)
+      {
+        if (i>0) System.out.print("; ");
+        System.out.print(nf(arr[i],1,8));
+      }
+      System.out.println(")");
+    }
+
+    public static void print_array(float[][] arr)
     {
       if (arr == null || arr.length == 0) return;
       for (int i=0; i<arr.length; i++)
       {
         if (arr[i] != null)
         {
-          PApplet.print("  ["+i+"] => ");
-          this.print_array(arr[i]);
+          System.out.print("  ["+i+"] => ");
+          print_array(arr[i]);
         }
         else
         {
@@ -232,15 +522,15 @@ public class Utils {
       }
     }
 
-    void print_array(Point[] arr)
+    public static void print_array(Point[] arr)
     {
       if (arr == null || arr.length == 0) return;
       for (int i=0; i<arr.length; i++)
       {
         if (arr[i] != null)
         {
-          PApplet.print("  ["+i+"] => ");
-          this.print_array(arr[i].c);
+          System.out.print("  ["+i+"] => ");
+          print_array(arr[i]);
         }
         else
         {
@@ -250,27 +540,27 @@ public class Utils {
       }
     }
 
-    void print_array(int[] arr)
+    public static void print_array(int[] arr)
     {
       if (arr == null || arr.length == 0) return;
-      PApplet.print("array(");
+      System.out.print("array(");
       for (int i=0; i<arr.length; i++)
       {
-        if (i>0) PApplet.print("; ");
-        PApplet.print(arr[i]);
+        if (i>0) System.out.print("; ");
+        System.out.print(arr[i]);
       }
-      PApplet.println(")");
+      System.out.println(")");
     }
 
-    void print_array(int[][] arr)
+    public static void print_array(int[][] arr)
     {
       if (arr == null || arr.length == 0) return;
       for (int i=0; i<arr.length; i++)
       {
         if (arr[i] != null)
         {
-          PApplet.print("  ["+i+"] => ");
-          this.print_array(arr[i]);
+          System.out.print("  ["+i+"] => ");
+          print_array(arr[i]);
         }
         else
         {

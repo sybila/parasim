@@ -5,8 +5,6 @@
 
 package parasim;
 
-import processing.core.PApplet;
-
 /**
  * Cycles are detected by holding the last extreme points in every dimension
  * and comparing them to newly computed extremes.
@@ -25,7 +23,7 @@ public class CycleDetectionDataBlock
 
   CycleDetectionDataBlock(Point initial_point, int stack_size)
   {
-    dim_extremes = new PositionStack[initial_point.c.length-1];
+    dim_extremes = new PositionStack[initial_point.getDims()-1];
     for (int i = 0; i<dim_extremes.length; i++)
     {
       dim_extremes[i] = new PositionStack(stack_size);
@@ -44,12 +42,12 @@ public class CycleDetectionDataBlock
    **/
   int[] detect_extremes(Point new_point)
   {
-    int[] ex_dims = new int[new_point.c.length-1];
+    int[] ex_dims = new int[new_point.getDims()-1];
     int ex_dims_counter = 0;
 
-    for (int i=1; i<new_point.c.length; i++) /* i=1 time is not accounted */
+    for (int i=1; i<new_point.getDims(); i++) /* i=1 time is not accounted */
     {
-      if (p2.c[i] > p1.c[i] && new_point.c[i] < p2.c[i])
+      if (p2.get(i) > p1.get(i) && new_point.get(i) < p2.get(i))
       {
         ex_dims[ex_dims_counter] = i;
         ex_dims_counter++;
@@ -59,7 +57,7 @@ public class CycleDetectionDataBlock
     p2 = new_point;
     if (ex_dims_counter > 0)
     {
-      return ((int[]) PApplet.expand(ex_dims, ex_dims_counter));
+      return ((int[]) Utils.expand(ex_dims, ex_dims_counter));
     }
     return null;
   }

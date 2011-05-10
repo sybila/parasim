@@ -36,8 +36,8 @@ class AtomicPropositionDD implements Evaluable
    * @param var2_str name of variable2
    * @param ode the ODE system, used to obtain the derivatives
    **/
-  AtomicPropositionDD(int var1, String var1_str, int op,
-                      int var2, String var2_str, ODE ode)
+  public AtomicPropositionDD(int var1, String var1_str, int op,
+                             int var2, String var2_str, ODE ode)
   {
     var1_index = var1;
     this.var1_str = var1_str;

@@ -6,9 +6,9 @@
 package parasim.verification;
 
 import java.util.HashMap;
-import processing.core.PApplet;
 import parasim.ODE;
 import parasim.Point;
+import parasim.Utils;
 
 /**
  * Represents an LTL property automaton to express properties of numerical
@@ -111,7 +111,7 @@ public class Property
         succs_count++;
       }
     }
-    return PApplet.expand(succs, succs_count);
+    return Utils.expand(succs, succs_count);
   }
 
   public int get_state_count()
@@ -151,7 +151,7 @@ public class Property
         }
       }
     }
-    succs = (int[]) PApplet.expand(succs, succs_count);
+    succs = (int[]) Utils.expand(succs, succs_count);
     return succs;
   }
 
@@ -174,7 +174,7 @@ public class Property
         }
       }
     }
-    trans = (Transition[]) PApplet.expand(trans, enabled_count);
+    trans = (Transition[]) Utils.expand(trans, enabled_count);
     return trans;
   }
 
@@ -226,7 +226,7 @@ public class Property
         }
       }
     }
-    inter = (int[]) PApplet.expand(inter, inter_count);
+    inter = (int[]) Utils.expand(inter, inter_count);
     return inter;
   }
 
@@ -252,7 +252,7 @@ public class Property
   public String toString()
   {
     String s = "property LTL {\n";
-    s += "state "+PApplet.join(state_names, ", ")+";\n";
+    s += "state "+Utils.join(state_names, ", ")+";\n";
     s += "init "+state_names[initial_states[0]];
     for (int i=1; i<initial_states.length; i++)
     {

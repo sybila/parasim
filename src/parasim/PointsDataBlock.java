@@ -5,8 +5,6 @@
 
 package parasim;
 
-import processing.core.PApplet;
-
 /**
  * Structure to hold simulation points
  * @author sven
@@ -51,13 +49,13 @@ public class PointsDataBlock
   {
     if (length <= points.length-count)
     {
-      PApplet.arrayCopy(pts, offset, points, count, length);
+      Utils.arrayCopy(pts, offset, points, count, length);
       count += length;
       return this;
     }
     else
     {
-      PApplet.arrayCopy(pts, offset, points, count, points.length-count);
+      Utils.arrayCopy(pts, offset, points, count, points.length-count);
       length -= points.length-count;
       offset += points.length-count;
       count = points.length;
@@ -94,6 +92,6 @@ public class PointsDataBlock
    **/
   void conserve_points()
   {
-    points = (Point[]) PApplet.expand(points, count);
+    points = (Point[]) Utils.expand(points, count);
   }
 }

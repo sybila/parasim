@@ -13,9 +13,9 @@ import parasim.PointsDataBlock;
  */
 public class GuardValidityBoundary
 {
-  PointsDataBlock pdb;
-  int offset;
-  Transition[] possible_transitions;
+  private PointsDataBlock pdb;
+  private int offset;
+  private Transition[] possible_transitions;
 
   public GuardValidityBoundary(PointsDataBlock pdb, int offset, Transition[] trans)
   {

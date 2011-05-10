@@ -45,8 +45,11 @@ public class GUI
     model_loaded = false;
     //ode_file = null;
     property_file = null;
-    ode_file = "data/examples/bayramov.ode";
-    property_file = "data/examples/bayramov_oscillation_prop.ltl";
+    
+    System.out.println(Utils.getCWD());
+
+    ode_file = "models/bayramov.ode";
+    property_file = "models/bayramov_oscillation_prop.ltl";
     dialog_status = Utils.GUI_DIALOG_STATUS_NONE;
     dialog_type = Utils.GUI_DIALOG_TYPE_NONE;
 
@@ -109,7 +112,7 @@ public class GUI
     //filter.setDescription("NumSimVer ODE file");
     //chooser.setFileFilter(filter);
 
-    File dataDir = new File(Utils.getCWD(), "data");
+    File dataDir = new File(Utils.getCWD(), "models");
     chooser.setSelectedFile(dataDir);
 
     int returnVal = chooser.showOpenDialog(null);
@@ -133,7 +136,7 @@ public class GUI
     //filter.setDescription("NumSimVer ODE file");
     //chooser.setFileFilter(filter);
 
-    File dataDir = new File(Utils.getCWD(), "data");
+    File dataDir = new File(Utils.getCWD(), "models");
     chooser.setSelectedFile(dataDir);
 
     int returnVal = chooser.showOpenDialog(null);

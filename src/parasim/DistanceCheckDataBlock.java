@@ -5,8 +5,6 @@
 
 package parasim;
 
-import processing.core.PApplet;
-
 /**
  * Class to hold data for neighbour distance checking and methods
  * to carry it out.
@@ -254,7 +252,7 @@ public class DistanceCheckDataBlock
               /* if not equal then introduce a new interval */
               if (ni_count == new_intervals.length)
               {
-                new_intervals = (Interval[]) PApplet.expand(new_intervals);
+                new_intervals = (Interval[]) Utils.expand(new_intervals);
               }
               new_intervals[ni_count] = new Interval(
                 new PointPosition(curr_pos.pdb, curr_pos.offset, curr_pos.index),
@@ -329,7 +327,7 @@ public class DistanceCheckDataBlock
         last_pos = curr_pos;
       } /* for i<intervals.length end */
 
-      intervals = (Interval[]) PApplet.expand(new_intervals, ni_count);
+      intervals = (Interval[]) Utils.expand(new_intervals, ni_count);
       local_pos = new_local_pos;
 
       if (ni_count == 0)

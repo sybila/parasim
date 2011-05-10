@@ -34,7 +34,7 @@ class AtomicPropositionDN implements Evaluable
    * @param c constant to which to compare
    * @param ode the ODE system, used to obtain the derivatives
    **/
-  AtomicPropositionDN(int var, String var_str, int op, float c, ODE ode)
+  public AtomicPropositionDN(int var, String var_str, int op, float c, ODE ode)
   {
     var_index = var;
     this.var_str = var_str;

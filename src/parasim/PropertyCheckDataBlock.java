@@ -8,7 +8,6 @@ package parasim;
 import parasim.verification.Property;
 import parasim.verification.Transition;
 import parasim.verification.GuardValidityBoundary;
-import processing.core.PApplet;
 
 /**
  *
@@ -32,8 +31,8 @@ public class PropertyCheckDataBlock
   {
     int[] old_states = new int[states.length];
     int[] new_states = null;
-    PApplet.arrayCopy(states, old_states);
-    old_states = PApplet.sort(old_states);
+    Utils.arrayCopy(states, old_states);
+    old_states = Utils.sort(old_states);
     new_states = prop.get_successors(old_states, p, false);
     boolean same;
 
@@ -45,7 +44,7 @@ public class PropertyCheckDataBlock
       {
         return false;
       }
-      new_states = PApplet.sort(new_states);
+      new_states = Utils.sort(new_states);
       if (new_states.length == old_states.length)
       {
         same = true;
@@ -103,7 +102,7 @@ public class PropertyCheckDataBlock
   void check_property()
   {
     int[] curr_states = new int[prop.get_initial_states().length];
-    PApplet.arrayCopy(prop.get_initial_states(), curr_states);
+    Utils.arrayCopy(prop.get_initial_states(), curr_states);
     int[] new_states;
 
     boolean stop = false;
@@ -155,7 +154,7 @@ public class PropertyCheckDataBlock
       {
         if (cp_count == check_points.length)
         {
-          check_points = (GuardValidityBoundary[]) PApplet.expand(check_points, cp_count*2);
+          check_points = (GuardValidityBoundary[]) Utils.expand(check_points, cp_count*2);
         }
         if (on_cycle && cycle_guard_boundry_index == -1)
         {
@@ -187,7 +186,7 @@ public class PropertyCheckDataBlock
         case Utils.SIM_END_STATUS_CYC:
           if (on_cycle)
           {
-            new_states = PApplet.sort(new_states);
+            new_states = Utils.sort(new_states);
             if (new_states.length != cycle_start_states.length)
             {
               status = Utils.PC_STATUS_DONTKNOW;
@@ -223,7 +222,7 @@ public class PropertyCheckDataBlock
           else
           {
             on_cycle = true;
-            cycle_start_states = PApplet.sort(new_states);
+            cycle_start_states = Utils.sort(new_states);
           }
           break;
         case Utils.SIM_END_STATUS_MERGE:

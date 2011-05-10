@@ -13,9 +13,9 @@ import parasim.Point;
  */
 public class Negation implements Evaluable
 {
-  Evaluable target;
+  private Evaluable target;
 
-  Negation(Evaluable target)
+  public Negation(Evaluable target)
   {
     this.target = target;
   }

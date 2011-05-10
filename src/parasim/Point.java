@@ -10,9 +10,30 @@ package parasim;
  * @author sven
  */
 public class Point {
-  public float[] c; /* coordinates */
-  Point(int dims)
-  {
-    c = new float[dims];
-  }
+    private float[] coords; /* coordinates */
+
+    public Point(int dims)
+    {
+        coords = new float[dims];
+    }
+
+    public Point (float[] c)
+    {
+        coords = c;
+    }
+
+    public void set(int index, float val)
+    {
+        coords[index] = val;
+    }
+
+    public float get(int index)
+    {
+        return coords[index];
+    }
+
+    public int getDims()
+    {
+        return coords.length;
+    }
 }

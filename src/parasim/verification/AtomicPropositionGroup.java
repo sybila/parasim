@@ -7,7 +7,6 @@ package parasim.verification;
 
 import parasim.Utils;
 import parasim.Point;
-import processing.core.PApplet;
 
 /**
  *
@@ -15,10 +14,10 @@ import processing.core.PApplet;
  */
 public class AtomicPropositionGroup implements Evaluable
 {
-  int type; /* one of AP_GROUP_ constants */
-  Evaluable[] sub_aps;
+  private int type; /* one of AP_GROUP_ constants */
+  private Evaluable[] sub_aps;
 
-  AtomicPropositionGroup(Evaluable[] sub_aps, int type)
+  public AtomicPropositionGroup(Evaluable[] sub_aps, int type)
   {
     this.type = type;
     this.sub_aps = sub_aps;
@@ -58,6 +57,6 @@ public class AtomicPropositionGroup implements Evaluable
     {
       sub_str[i] = sub_aps[i].toString();
     }
-    return '('+PApplet.join(sub_str,(type == Utils.AP_GROUP_AND)?" && ":" || ")+')';
+    return '('+Utils.join(sub_str,(type == Utils.AP_GROUP_AND)?" && ":" || ")+')';
   }
 }

@@ -31,7 +31,7 @@ public class AtomicPropositionVN implements Evaluable
    * @param op operator inside the atomic proposition
    * @param c constant to which to compare
    **/
-  AtomicPropositionVN(int var, String var_str, int op, float c)
+  public AtomicPropositionVN(int var, String var_str, int op, float c)
   {
     var_index = var;
     this.var_str = var_str;
@@ -42,7 +42,7 @@ public class AtomicPropositionVN implements Evaluable
   /* Returns true if the proposition is valid in given state. */
   public boolean valid(Point p)
   {
-    float val = p.c[var_index];
+    float val = p.get(var_index);
 
     switch(operator) {
       case Utils.AP_LESS:

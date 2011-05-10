@@ -12,11 +12,12 @@
 package parasim;
 
 import javax.swing.*;
+
 /**
  *
  * @author sven
  */
-public class Window extends javax.swing.JFrame {    
+public class Window extends JFrame {    
     private static GUI gui;
     private static ComputationManager compMan;
 
