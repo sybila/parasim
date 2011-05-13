@@ -29,7 +29,7 @@ public class Window extends JFrame {
         
         //jPanel1.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         compMan = new ComputationManager();
-        compMan.start();
+        new Thread(compMan).start();
         gui = new GUI(jPanel1, compMan);
 
         String threadName = Thread.currentThread().getName();

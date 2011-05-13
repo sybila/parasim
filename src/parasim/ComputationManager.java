@@ -6,23 +6,29 @@
 package parasim;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Logger;
 
 /**
  * Manages all existing comuptations.
  *
  * @author sven
  */
-public class ComputationManager extends Thread {
-    private LinkedList<ComputationInterface> activeComps;
-    private LinkedList<ComputationInterface> finishedComps;
-    
+public class ComputationManager implements Runnable {
+
+	private List<ComputationInterface> activeComps;
+
+	private List<ComputationInterface> finishedComps;
+
+	private static Logger logger = Logger.getLogger(ComputationManager.class.getName());
+
     ComputationManager ()
     {
         activeComps = new LinkedList();
         finishedComps = new LinkedList();
         String threadName = Thread.currentThread().getName();
-        System.out.println(threadName+" CompMan"); //FIXME
+        logger.info(threadName+" CompMan"); //FIXME
     }
 
     /**
@@ -31,10 +37,10 @@ public class ComputationManager extends Thread {
      */
     public boolean add(ComputationInterface c)
     {
-        System.out.print("Adding computation to manager... ");
+        logger.info("Adding computation to manager... ");
         if (!c.finished())
         {
-            System.out.println("Active");
+            logger.info("Active");
             return activeComps.add(c);
         }
         else
@@ -129,10 +135,10 @@ public class ComputationManager extends Thread {
                 }
             }
             String threadName = Thread.currentThread().getName();
-            //System.out.println(threadName+" CompMan running...");
+            //logger.info(threadName+" CompMan running...");
             try
             {
-                sleep(sleepTime);
+                Thread.sleep(sleepTime);
             }
             catch (InterruptedException e)
             {
