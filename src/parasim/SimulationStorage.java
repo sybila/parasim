@@ -5,7 +5,7 @@
 
 package parasim;
 
-import parasim.verification.Property;
+import parasim.computation.verification.Property;
 
 /**
  * Object for storing simulations.

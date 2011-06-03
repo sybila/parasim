@@ -5,9 +5,9 @@
 
 package parasim;
 
-import parasim.verification.Property;
-import parasim.verification.Transition;
-import parasim.verification.GuardValidityBoundary;
+import parasim.computation.verification.Property;
+import parasim.computation.verification.Transition;
+import parasim.computation.verification.GuardValidityBoundary;
 
 /**
  *

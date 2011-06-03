@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package parasim.verification;
+package parasim.computation.verification;
 
 import java.util.HashMap;
 import parasim.ODE;
