@@ -7,10 +7,6 @@ public class PointTrajectory extends AbstractTrajectory implements Trajectory
 
     /** First point of the trajectory. */
     private Point initialPoint;    
-    /** List of trajectory segments which are subtrajectories. */
-    private ArrayList<Trajectory> segments;
-    /** Number of points in all segments together. */
-    private int length;
 
     PointTrajectory(Point initialPoint) {
 		super(initialPoint.getDimension(), 1);
