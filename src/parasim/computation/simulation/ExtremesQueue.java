@@ -7,6 +7,7 @@ package parasim.computation.simulation;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import parasim.computation.Point;
 
 /**
  *

@@ -1,6 +1,8 @@
 
 package parasim.computation.simulation;
 
+import parasim.computation.Point;
+
 /**
  * Enables cycle detecion on a trajectory.
  *

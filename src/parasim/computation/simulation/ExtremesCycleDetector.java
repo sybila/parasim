@@ -1,6 +1,8 @@
 
 package parasim.computation.simulation;
 
+import parasim.computation.Point;
+
 /**
  * The ExtremesCycleDetector provides means to detect cycles on trajectories.
  * A cycle is considered the repetition of points who's values are close enough

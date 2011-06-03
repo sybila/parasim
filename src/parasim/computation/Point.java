@@ -1,5 +1,5 @@
 
-package parasim.computation.simulation;
+package parasim.computation;
 
 /**
  * Represents a single simulated point in time and space.
@@ -30,17 +30,5 @@ public interface Point {
      * @return Values of all dimensions as an array, time is on dimension 0.
      */
     float[] toArray();
-
-    /**
-     * @param dest Destination where to copy dimension values.
-     * @param destPos Position inside destination where to copy values.
-     */
-    void arrayCopy(float[] dest, int destPos);
-
-    /**
-     * Returns the position of this point on it's trajectory.
-     * @return position on trajectory
-     */
-    int getPositionOnTrajectory();
 
 }

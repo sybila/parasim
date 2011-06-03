@@ -1,6 +1,7 @@
 
 package parasim.computation.simulation;
 
+import parasim.computation.Trajectory;
 import java.util.List;
 
 /**
