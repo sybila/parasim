@@ -1,14 +1,14 @@
-package org.sybila.parasim.computation.simulation;
+package org.sybila.parasim.computation;
 
 /**
- * Thrown when a simulations crashes.
+ * Thrown when a module computation crashes.
  * 
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SimulationException extends Exception {
+public class ModuleComputationException extends Exception {
 
     /**
-     * Constructs a <tt>SimulationException</tt> with the specified cause and a detail
+     * Constructs a <tt>ModuleComputationException</tt> with the specified cause and a detail
      * message of <tt>(cause==null ? null : cause.toString())</tt> (which
      * typically contains the class and detail message of <tt>cause</tt>).
      * 
@@ -16,13 +16,13 @@ public class SimulationException extends Exception {
      *      {@link Throwable#getCause()} method).  (A <tt>null</tt> value is
      *      permitted, and indicates that the cause is nonexistent or
      *      unknown.)
-     */
-    public SimulationException(Throwable cause) {
+     */    
+    public ModuleComputationException(Throwable cause) {
         super(cause);
     }
 
     /**
-     * Constructs a <tt>SimulationException</tt> with the specified detail message and
+     * Constructs a <tt>ModuleComputationException</tt> with the specified detail message and
      * cause.
      *
      * <p>Note that the detail message associated with <code>cause</code> is
@@ -34,24 +34,24 @@ public class SimulationException extends Exception {
      *      {@link Throwable#getCause()} method).  (A <tt>null</tt> value
      *      is permitted, and indicates that the cause is nonexistent or
      *      unknown.)
-     */
-    public SimulationException(String message, Throwable cause) {
+     */    
+    public ModuleComputationException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * Constructs a <tt>SimulationException</tt> with the specified detail message.
+     * Constructs a <tt>ModuleComputationException</tt> with the specified detail message.
      * A detail message is a String that describes this particular exception. 
      * 
      * @param message the String that contains a detailed message
-     */
-    public SimulationException(String message) {
+     */    
+    public ModuleComputationException(String message) {
         super(message);
     }
-
+    
     /**
-     * Constructs a <tt>SimulationException</tt> with no detail message.
+     * Constructs a <tt>ModuleComputationException</tt> with no detail message.
      */
-    public SimulationException() {
+    public ModuleComputationException() {
     }
 }

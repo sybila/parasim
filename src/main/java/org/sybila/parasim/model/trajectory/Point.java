@@ -1,4 +1,3 @@
-
 package org.sybila.parasim.model.trajectory;
 
 /**
@@ -29,5 +28,4 @@ public interface Point {
      * @return Values of all dimensions as an array without time
      */
     float[] toArray();
-
 }

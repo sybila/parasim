@@ -1,4 +1,3 @@
-
 package org.sybila.parasim.model.trajectory;
 
 import java.util.Iterator;
@@ -54,10 +53,9 @@ public interface Trajectory extends Iterable<Point> {
      * @param index position on trajectory
      * @return the point with the specified position
      */
-    Point getPoint(int index);    
+    Point getPoint(int index);
 
-
-	/**
+    /**
      * Iterates over points of the trajectory starting from point with given index.
      * Complexity of next() is constant.
      *
@@ -66,7 +64,4 @@ public interface Trajectory extends Iterable<Point> {
      *         on success.
      */
     Iterator<Point> iterator(int index);
-
-
 }
-
