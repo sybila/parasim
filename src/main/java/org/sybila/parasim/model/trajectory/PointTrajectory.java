@@ -1,7 +1,10 @@
-package parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
 import java.util.ArrayList;
 
+/**
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ */
 public class PointTrajectory extends AbstractTrajectory implements Trajectory
 {
 

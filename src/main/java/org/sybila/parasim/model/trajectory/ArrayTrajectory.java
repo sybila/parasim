@@ -1,5 +1,10 @@
-package parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
+import java.util.Iterator;
+
+/**
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ */
 public class ArrayTrajectory extends AbstractTrajectory {
 
 	private float[] points;
@@ -17,11 +22,17 @@ public class ArrayTrajectory extends AbstractTrajectory {
 		this.times = times;
 	}
 
+    @Override
 	public Point getPoint(int index) {
 		if (index <= 0 || index >= getLength()) {
 			throw new IllegalArgumentException("The point index is out of the range [0, " + (getLength() - 1) + "]");
 		}
 		return new ArrayPoint(points, times[index], index * getDimension(), getDimension());
 	}
+
+    @Override
+    public Iterator<Point> iterator(int index) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

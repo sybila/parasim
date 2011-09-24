@@ -1,8 +1,11 @@
-package parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ */
 abstract public class AbstractTrajectory implements Trajectory {
 
 	private int dimension;
@@ -19,22 +22,27 @@ abstract public class AbstractTrajectory implements Trajectory {
 		this.length = length;
 	}
 
+    @Override
 	public boolean hasPoint(int index) {
 		return index >= 0 && index < getLength();
 	}
 
+    @Override
 	public int getDimension() {
 		return dimension;
 	}
 
+    @Override
 	public Point getFirstPoint() {
 		return getPoint(0);
 	}
 
+    @Override
 	public Point getLastPoint() {
 		return getPoint(getLength() - 1);
 	}
 
+    @Override
 	public int getLength() {
 		return length;
 	}
@@ -46,26 +54,42 @@ abstract public class AbstractTrajectory implements Trajectory {
 		this.length = length;
 	}
 
+    @Override
 	public Iterator<Point> iterator() {
-		return new TrajectoryIterator(this);
+		return iterator(0);
 	}
 
+    @Override
+    public Iterator<Point> iterator(int index) {
+        return new TrajectoryIterator(this, index);
+    }
+    
 	private class TrajectoryIterator implements Iterator<Point> {
 
 		private Trajectory trajectory;
-		private int index = 0;
+		private int index;
 
 		public TrajectoryIterator(Trajectory trajectory) {
+			this(trajectory, 0);
+		}
+        
+		public TrajectoryIterator(Trajectory trajectory, int index) {
 			if (trajectory == null) {
 				throw new IllegalArgumentException("The parameter [trajectory] is NULL.");
 			}
+            if (index < 0 || index >= trajectory.getLength()) {
+                throw new IndexOutOfBoundsException("The index is out of the range [0, " + trajectory.getLength() + "]");
+            }
 			this.trajectory = trajectory;
-		}
+            this.index = index;
+		}        
 
+        @Override
 		public boolean hasNext() {
 			return index < trajectory.getLength();
 		}
 
+        @Override
 		public Point next() {
 			if (index == trajectory.getLength()) {
 				throw new NoSuchElementException();
@@ -73,6 +97,7 @@ abstract public class AbstractTrajectory implements Trajectory {
 			return trajectory.getPoint(index++);
 		}
 
+        @Override
 		public void remove() {
 			throw new UnsupportedOperationException("Not supported yet.");
 		}

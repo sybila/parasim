@@ -1,12 +1,11 @@
 
-package parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
 /**
  * Represents a single simulated point in time and space.
- * Time is the 0 dimension and at least one more spatial dimension must
- * be present, therefore getDimension >= 2.
  * 
- * @author sven
+ * @author <a href="mailto:xdrazan@fi.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Point {
 
@@ -16,7 +15,7 @@ public interface Point {
     int getDimension();
 
     /**
-     * @return Value of time dimension 0, is equal to getValue(0)
+     * @return time of the point
      */
     float getTime();
 
@@ -27,7 +26,7 @@ public interface Point {
     float getValue(int index);
 
     /**
-     * @return Values of all dimensions as an array, time is on dimension 0.
+     * @return Values of all dimensions as an array without time
      */
     float[] toArray();
 

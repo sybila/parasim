@@ -9,17 +9,17 @@ To create a NetBeans project from the repository %repo% directory:
 3. Choose another directory from %repo% to be the project folder
    leave "Use Dedicated Folder for Storing Libraries" checked) with .\lib
    -> Next
-4. Add source package folder as %repo%\src -> Next
+4. Add source package folder as %repo%\src\main\java -> Next
 5. Do nothing just Finish (include all **)
 6. Click on the "Libraries" folder and pick "ADD Jar/Folder"
-   Select the 4 appropriate *.jar files from the %repo%\lib directory
+   Select the 4 appropriate *.jar files from the %repo%\src\main\lib directory
    (core.jar, gluegen-rt.jar, jogl.jar, opengl.jar)
-7. Copy the appropriate *.dll, *.so or *.jnilib files from %repo%\lib\%system%
-   to %repo%\lib where %system% is your operating system
+7. Copy the appropriate *.dll, *.so or *.jnilib files from %repo%\src\main\lib\%system%
+   to %repo%\src\main\lib where %system% is your operating system
 8. Click on File -> Project properties -> Run
    Choose working directory as the %repo%
    Specify the VM Options as:
-   -Djava.library.path="%repo%\lib"
+   -Djava.library.path="%repo%\src\main\lib"
    where %repo% is the absolute path to your repository directory
 
 On first Run confirm "parasim.Window" to be the main class.

@@ -1,9 +1,12 @@
-package parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ */
 public class LinkedTrajectory extends AbstractTrajectory {
 
 	private List<Trajectory> trajectories = new ArrayList<Trajectory>();
@@ -34,6 +37,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
 		return trajectories.get(trajectories.size() - 1).getLastPoint();
 	}
 
+    @Override
 	public Point getPoint(int index) {
 		if (index < 0) {
 			throw new IllegalArgumentException("The index has to be non negative number.");
@@ -54,8 +58,13 @@ public class LinkedTrajectory extends AbstractTrajectory {
 
 	@Override
 	public Iterator<Point> iterator() {
-		return new LinkedTrajectoryIterator(this);
+		return iterator(0);
 	}
+    
+    @Override
+    public Iterator<Point> iterator(int index) {
+        return new LinkedTrajectoryIterator(this, index);
+    }
 
 	private class LinkedTrajectoryIterator implements Iterator<Point> {
 
@@ -63,18 +72,30 @@ public class LinkedTrajectory extends AbstractTrajectory {
 		private int trajectoryIndex = 0;
 		private Iterator<Point> iterator;
 
-		public LinkedTrajectoryIterator(LinkedTrajectory trajectory) {
+		public LinkedTrajectoryIterator(LinkedTrajectory trajectory, int index) {
 			if (trajectory == null) {
 				throw new IllegalArgumentException("The parameter [trajectory] is NULL.");
 			}
+            if (index < 0 || index >= trajectory.getLength()) {
+                throw new IndexOutOfBoundsException("The index is out of the range [0, " + trajectory.getLength() + "]");
+            }
 			this.trajectory = trajectory;
-			this.iterator = trajectories.get(0).iterator();
+            int startIndex = 0;
+			for (Trajectory t : trajectories) {
+                if (index >= startIndex && index < startIndex + t.getLength()) {
+                    iterator = t.iterator(startIndex - index);
+                }
+                trajectoryIndex++;
+                startIndex += t.getLength();
+            }
 		}
 
+        @Override
 		public boolean hasNext() {
 			return iterator != null && iterator.hasNext();
 		}
 
+        @Override
 		public Point next() {
 			Point point = iterator.next();
 			if (!iterator.hasNext()) {
@@ -89,6 +110,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
 			return point;
 		}
 
+        @Override
 		public void remove() {
 			throw new UnsupportedOperationException("Not supported yet.");
 		}

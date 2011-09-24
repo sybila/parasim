@@ -1,5 +1,8 @@
-package parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
+/**
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ */
 public class ArrayPoint implements Point {
 
 	private float[] data;

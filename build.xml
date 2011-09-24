@@ -1,0 +1,49 @@
+
+<project name="org.sybila.parasim" default="main" basedir=".">
+    <property name="src.main.java" value="src/main/java"/>
+    <property name="src.main.lib" value="src/main/lib"/>
+    <property name="src.test.java" value="src/test/java" />
+    <property name="target" value="target" />
+    <property name="target.main.build" value="target/main/build" />
+    <property name="target.test.build" value="target/test/build" />
+    <property name="target.doc" value="target/doc" />
+    
+    <path id="classpath">
+		<dirset dir="${src.main.lib}"/>
+		<fileset dir="${src.main.lib}" includes="*.jar"/>
+		<dirset dir="${target.main.build}"/>
+		<dirset dir="${target.test.build}"/>
+	</path>
+    
+	<target name="clean">
+		<delete dir="${target}" />
+	</target>    
+    
+    <target name="init">
+		<mkdir dir="${target.main.build}"/>
+		<mkdir dir="${target.test.build}"/>
+    </target>
+    
+	<target name="main-build" depends="init">
+		<javac includeantruntime="false" fork="true" srcdir="${src.main.java}" destdir="${target.main.build}" classpathref="classpath" debug="on" debuglevel="lines,source"/>
+	</target>    
+    
+    <target name="test-build" depends="main-build">
+		<javac includeantruntime="false" fork="true" srcdir="${src.test.java}" destdir="${target.test.build}" classpathref="classpath" debug="on" debuglevel="lines,source"/>
+	</target>
+    
+    <target name="javadoc" depends="init">
+        <javadoc
+            access="public"
+            destdir="${target.doc}"
+            author="true"
+            version="true"
+            use="true"
+            windowtitle="org.sybila.parasim API">
+            <fileset dir="${src.main.java}" defaultexcludes="yes">
+                <include name="**/*.java"/>
+                <exclude name="org/test/**/*.java" />
+            </fileset>
+        </javadoc>
+    </target>
+</project>
