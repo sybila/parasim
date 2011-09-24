@@ -12,26 +12,37 @@ import java.util.Iterator;
 public interface Trajectory extends Iterable<Point> {
 
     /**
+     * Returns number of dimensions of each point of the trajectory
+     * 
      * @return Number of dimensions of each point of the trajectory.
      */
     int getDimension();
 
     /**
+     * Returns the first point of the trajectory to be yet computed.
+     * 
      * @return The first point of the trajectory to be yet computed.
      */
     Point getFirstPoint();
 
     /**
+     * Returns the last point of the trajectory to be yet computed.
+     * 
      * @return The last point of the trajectory to be yet computed.
      */
     Point getLastPoint();
 
     /**
+     * Returns the total number of points of the trajectory yet computed.
+     * 
      * @return The total number of points of the trajectory yet computed.
      */
     int getLength();
 
     /**
+     * Checks whether the trajectory contains the point on the specified
+     * position.
+     * 
      * @param index
      * @return true if trajectory contains point with such index
      */
@@ -41,7 +52,7 @@ public interface Trajectory extends Iterable<Point> {
      * Returns the point with specified position from this trajectory.
      *
      * @param index position on trajectory
-     * @return
+     * @return the point with the specified position
      */
     Point getPoint(int index);    
 

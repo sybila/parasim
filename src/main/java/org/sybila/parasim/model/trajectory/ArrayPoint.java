@@ -34,10 +34,12 @@ public class ArrayPoint implements Point {
 		this.time = time;
 	}
 
+    @Override
 	public int getDimension() {
 		return dimension;
 	}
 
+    @Override
 	public float getValue(int index) {
 		if (index < 0 || index >= dimension) {
 			throw new IllegalArgumentException("The index is out of the range [0, " + (dimension - 1) + "].");
@@ -45,10 +47,12 @@ public class ArrayPoint implements Point {
 		return data[startIndex + index];
 	}
 
+    @Override
 	public float getTime() {
 		return time;
 	}
 
+    @Override
 	public float[] toArray() {
 		if (dataInArray == null) {
 			dataInArray = new float[dimension];

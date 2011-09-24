@@ -16,6 +16,11 @@ public class LinkedTrajectory extends AbstractTrajectory {
 		trajectories.add(trajectory);
 	}
 
+    /**
+     * Appends the given trajectory on the end of this trajectory
+     * 
+     * @param trajectory the trajectory which will be appended
+     */
 	public void append(Trajectory trajectory) {
 		if (trajectory == null) {
 			throw new IllegalArgumentException("The parameter [trajectory] is NULL.");

@@ -29,7 +29,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
 		}
 		return new ArrayPoint(points, times[index], index * getDimension(), getDimension());
 	}
-
+   
     @Override
     public Iterator<Point> iterator(int index) {
         throw new UnsupportedOperationException("Not supported yet.");
