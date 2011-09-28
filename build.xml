@@ -11,6 +11,7 @@
     <property name="system.os" value="linux64" />
     
     <path id="classpath">
+        <dirset dir="${src.main.lib}/${system.os}/native" />
         <fileset dir="${src.main.lib}/${system.os}" includes="*" />
         <fileset dir="${src.test.lib}" includes="*.jar" />
         <fileset dir="${src.main.lib}" includes="*.jar"/>
@@ -38,7 +39,7 @@
     <target name="test" depends="test-build">
         <junit printsummary="no">
             <formatter type="plain" usefile="false"/>
-            <sysproperty key="java.library.path" value="${src.test.lib}/${system.os}/native"/>
+            <sysproperty key="java.library.path" value="${src.main.lib}/${system.os}/native"/>
             <classpath>
                 <path refid="classpath"/>
             </classpath>
