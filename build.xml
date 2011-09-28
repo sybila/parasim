@@ -3,34 +3,50 @@
     <property name="src.main.java" value="src/main/java"/>
     <property name="src.main.lib" value="src/main/lib"/>
     <property name="src.test.java" value="src/test/java" />
+    <property name="src.test.lib" value="src/test/lib" />
     <property name="target" value="target" />
     <property name="target.main.build" value="target/main/build" />
     <property name="target.test.build" value="target/test/build" />
     <property name="target.doc" value="target/doc" />
+    <property name="system.os" value="linux64" />
     
     <path id="classpath">
-		<dirset dir="${src.main.lib}"/>
-		<fileset dir="${src.main.lib}" includes="*.jar"/>
-		<dirset dir="${target.main.build}"/>
-		<dirset dir="${target.test.build}"/>
-	</path>
+        <fileset dir="${src.main.lib}/${system.os}" includes="*" />
+        <fileset dir="${src.test.lib}" includes="*.jar" />
+        <fileset dir="${src.main.lib}" includes="*.jar"/>
+        <dirset dir="${target.main.build}"/>
+        <dirset dir="${target.test.build}"/>
+    </path>
     
-	<target name="clean">
-		<delete dir="${target}" />
-	</target>    
+    <target name="clean">
+        <delete dir="${target}" />
+    </target>    
     
     <target name="init">
-		<mkdir dir="${target.main.build}"/>
-		<mkdir dir="${target.test.build}"/>
+        <mkdir dir="${target.main.build}"/>
+        <mkdir dir="${target.test.build}"/>
     </target>
     
-	<target name="main-build" depends="init">
-		<javac includeantruntime="false" fork="true" srcdir="${src.main.java}" destdir="${target.main.build}" classpathref="classpath" debug="on" debuglevel="lines,source"/>
-	</target>    
+    <target name="main-build" depends="init">
+        <javac includeantruntime="false" fork="true" srcdir="${src.main.java}" destdir="${target.main.build}" classpathref="classpath" debug="on" debuglevel="lines,source"/>
+    </target>    
     
     <target name="test-build" depends="main-build">
-		<javac includeantruntime="false" fork="true" srcdir="${src.test.java}" destdir="${target.test.build}" classpathref="classpath" debug="on" debuglevel="lines,source"/>
-	</target>
+        <javac includeantruntime="false" fork="true" srcdir="${src.test.java}" destdir="${target.test.build}" classpathref="classpath" debug="on" debuglevel="lines,source"/>
+    </target>
+    
+    <target name="test" depends="test-build">
+        <junit printsummary="no">
+            <formatter type="plain" usefile="false"/>
+            <sysproperty key="java.library.path" value="${src.test.lib}/${system.os}"/>
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+            <batchtest fork="yes">
+                <fileset dir="${target.test.build}" includes="**/Test*.class" excludes="**/Abstract*"/>
+            </batchtest>
+        </junit>
+    </target>
     
     <target name="javadoc" depends="init">
         <javadoc
