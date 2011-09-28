@@ -38,7 +38,7 @@
     <target name="test" depends="test-build">
         <junit printsummary="no">
             <formatter type="plain" usefile="false"/>
-            <sysproperty key="java.library.path" value="${src.test.lib}/${system.os}"/>
+            <sysproperty key="java.library.path" value="${src.test.lib}/${system.os}/native"/>
             <classpath>
                 <path refid="classpath"/>
             </classpath>
