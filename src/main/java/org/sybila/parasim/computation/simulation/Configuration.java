@@ -1,7 +1,6 @@
 package org.sybila.parasim.computation.simulation;
 
-import org.sybila.parasim.computation.DataBlock;
-import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.ode.OdeSystem;
 
 /**
  * The simulation descriptor
@@ -42,6 +41,13 @@ public interface Configuration {
      */
     float[] getMinBounds();
 
+    /**
+     * Returns ODE system which is used for the simulation
+     * 
+     * @return ODE system
+     */
+    OdeSystem getOdeSystem();
+    
     /**
      * Returns the maximum distance of two consecutive points
      * of one trajectory in all dimensions. If some dimension is not
