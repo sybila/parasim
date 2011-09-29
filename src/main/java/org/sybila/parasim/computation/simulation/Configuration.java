@@ -8,7 +8,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  * 
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Simulation {
+public interface Configuration {
 
     /**
      * Returns number of dimensions of points on all trajectories to be
@@ -66,6 +66,4 @@ public interface Simulation {
      * @return maximum time distance of two two consecutive points
      */
     float getTimeStep();
-
-    DataBlock<Trajectory> simulate() throws SimulationException;
 }

@@ -5,7 +5,7 @@ package org.sybila.parasim.computation.simulation;
  * 
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface AdaptiveStepSimulation extends Simulation {
+public interface AdaptiveStepConfiguration extends Configuration {
 
     /**
      * Returns maximal absolute error which has to be kept by the simulation

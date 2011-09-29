@@ -18,7 +18,7 @@ public interface DataBlock<T extends Trajectory> extends Iterable<T> {
      * @return the trajectory at the specified position in this data block
      * @throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
      */
-    T get(int index);
+    T getTrajectory(int index);
 
     /**
      * Returns the number of trajectories in this data block.  If this data block
