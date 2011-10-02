@@ -16,6 +16,7 @@ public class ListTrajectory extends AbstractTrajectory {
      */
     public ListTrajectory(List<Point> points) {
         super(points.get(0).getDimension(), points.size());        
+        this.points = points;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
 
     @Override
     public Point getPoint(int index) {
-        if (index <= 0 || index >= getLength()) {
+        if (index < 0 || index >= getLength()) {
             throw new IllegalArgumentException("The point index is out of the range [0, " + (getLength() - 1) + "]");
         }
         return new ArrayPoint(points, times[index], index * getDimension(), getDimension());
