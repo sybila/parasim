@@ -1,5 +1,7 @@
 package org.sybila.parasim.model.trajectory;
 
+import java.util.Arrays;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -60,4 +62,8 @@ public class ArrayPoint implements Point {
 		}
 		return dataInArray;
 	}
+    
+    public String toString() {
+        return time + ":" + Arrays.toString(data);
+    }
 }

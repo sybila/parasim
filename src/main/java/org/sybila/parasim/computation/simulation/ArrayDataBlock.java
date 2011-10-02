@@ -28,7 +28,7 @@ public class ArrayDataBlock<T extends Trajectory> implements DataBlock<T> {
 
     @Override
     public Status getStatus(int index) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return statuses[index];
     }    
     
     @Override

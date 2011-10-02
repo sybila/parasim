@@ -5,7 +5,7 @@ package org.sybila.parasim.computation.simulation;
  */
 public enum Status {
 
-    OK, TIMEOUT, PRECISION;
+    OK, BOUNDS, PRECISION, TIMEOUT;
 
     /**
      * Converts an integer to the simulation status
@@ -19,9 +19,12 @@ public enum Status {
             case 0:
                 return OK;
             case 1:
-                return TIMEOUT;
+                return BOUNDS;
             case 2:
                 return PRECISION;
+            case 3:
+                return TIMEOUT;
+                
             default:
                 throw new IllegalStateException("There is no status corresponding to the number [" + status + "].");
         }
