@@ -44,7 +44,11 @@
                 <path refid="classpath"/>
             </classpath>
             <batchtest fork="yes">
-                <fileset dir="${target.test.build}" includes="**/Test*.class" excludes="**/Abstract*"/>
+                <fileset dir="${target.test.build}">
+                    <include name="**/Test*.class" />
+                    <exclude name="**/Abstract*.class" />
+                    <exclude name="**/*$*.class" />
+                </fileset>
             </batchtest>
         </junit>
     </target>

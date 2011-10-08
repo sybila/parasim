@@ -1,6 +1,7 @@
 package org.sybila.parasim.computation.simulation.cpu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.ArrayDataBlock;
@@ -134,7 +135,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Data
             // Absolute error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
                 absoluteError[dim] = Math.abs(R1 * computation.k1[dim] + R3 * computation.k3[dim] + R4 * computation.k4[dim] + R5 * computation.k5[dim] + R6 * computation.k6[dim]);
-                if (absoluteError[dim] > computation.configuration.getMaxAbsoluteError()) {
+                if (absoluteError[dim] > computation.configuration.getMaxAbsoluteError()[dim]) {
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;
@@ -149,7 +150,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Data
             }
             // Relative error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-                if (Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getMaxRelativeError()) {
+                if (Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getMaxRelativeError()[dim]) {
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;
