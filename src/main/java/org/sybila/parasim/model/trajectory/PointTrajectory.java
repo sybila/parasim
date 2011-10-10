@@ -3,7 +3,7 @@ package org.sybila.parasim.model.trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class PointTrajectory extends AbstractTrajectory implements Trajectory {
+public class PointTrajectory extends AbstractTrajectory {
 
     /** First point of the trajectory. */
     private Point initialPoint;
@@ -20,4 +20,5 @@ public class PointTrajectory extends AbstractTrajectory implements Trajectory {
         }
         return initialPoint;
     }
+
 }

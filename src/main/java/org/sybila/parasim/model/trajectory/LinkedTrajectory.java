@@ -17,7 +17,8 @@ public class LinkedTrajectory extends AbstractTrajectory {
     }
 
     /**
-     * Appends the given trajectory on the end of this trajectory
+     * Appends the given trajectory on the end of this trajectory. After calling
+     * this method, the reference of the given trajectory will point to this trajectory.
      * 
      * @param trajectory the trajectory which will be appended
      */
@@ -30,6 +31,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
         }
         setLength(getLength() + trajectory.getLength());
         trajectories.add(trajectory);
+        trajectory.getReference().setTrajectory(this);
     }
 
     @Override

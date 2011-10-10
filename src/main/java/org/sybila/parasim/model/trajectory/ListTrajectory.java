@@ -22,6 +22,6 @@ public class ListTrajectory extends AbstractTrajectory {
     @Override
     public Point getPoint(int index) {
         return points.get(index);
-    }
+    }  
     
 }

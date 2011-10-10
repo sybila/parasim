@@ -6,10 +6,11 @@ import java.util.NoSuchElementException;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-abstract public class AbstractTrajectory implements Trajectory {
+abstract public class AbstractTrajectory implements Trajectory{
 
     private int dimension;
     private int length;
+    private TrajectoryReference reference;
 
     public AbstractTrajectory(int dimension, int length) {
         if (dimension <= 0) {
@@ -46,14 +47,29 @@ abstract public class AbstractTrajectory implements Trajectory {
     public int getLength() {
         return length;
     }
+    
+    @Override
+    public TrajectoryReference getReference() {
+        if (reference == null) {
+            final Trajectory thisTrajectory = this;
+            reference = new TrajectoryReference() {
 
-    protected final void setLength(int length) {
-        if (length <= 0) {
-            throw new IllegalArgumentException("The length has to be a positive number.");
+                private Trajectory referencedTrajectory = thisTrajectory;
+                
+                @Override
+                public Trajectory getTrajectory() {
+                    return referencedTrajectory;
+                }
+
+                @Override
+                public void setTrajectory(Trajectory trajectory) {
+                    referencedTrajectory = trajectory;
+                }
+            };
         }
-        this.length = length;
-    }
-
+        return reference;
+    }    
+    
     @Override
     public Iterator<Point> iterator() {
         return iterator(0);
@@ -102,4 +118,12 @@ abstract public class AbstractTrajectory implements Trajectory {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
+    
+    protected final void setLength(int length) {
+        if (length <= 0) {
+            throw new IllegalArgumentException("The length has to be a positive number.");
+        }
+        this.length = length;
+    }    
+    
 }

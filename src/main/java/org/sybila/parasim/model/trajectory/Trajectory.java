@@ -39,6 +39,22 @@ public interface Trajectory extends Iterable<Point> {
     int getLength();
 
     /**
+     * Returns the point with specified position from this trajectory.
+     *
+     * @param index position on trajectory
+     * @return the point with the specified position
+     */
+    Point getPoint(int index);
+
+    /**
+     * Returns the reference pointed to this trajectory
+     * 
+     * @return reference pointed to this trajectory
+     */
+    TrajectoryReference getReference();
+    
+    
+    /**
      * Checks whether the trajectory contains the point on the specified
      * position.
      * 
@@ -46,14 +62,6 @@ public interface Trajectory extends Iterable<Point> {
      * @return true if trajectory contains point with such index
      */
     boolean hasPoint(int index);
-
-    /**
-     * Returns the point with specified position from this trajectory.
-     *
-     * @param index position on trajectory
-     * @return the point with the specified position
-     */
-    Point getPoint(int index);
 
     /**
      * Iterates over points of the trajectory starting from point with given index.
