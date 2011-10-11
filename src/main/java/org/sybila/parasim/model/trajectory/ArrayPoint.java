@@ -1,6 +1,7 @@
 package org.sybila.parasim.model.trajectory;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -55,6 +56,30 @@ public class ArrayPoint implements Point {
 	}
 
     @Override
+    public Iterator<Float> iterator() {
+        return new Iterator<Float>() {
+
+            private int index = -1;
+            
+            @Override
+            public boolean hasNext() {
+                return index < getDimension();
+            }
+
+            @Override
+            public Float next() {
+                index++;
+                return getValue(index);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+    }    
+    
+    @Override
 	public float[] toArray() {
 		if (dataInArray == null) {
 			dataInArray = new float[dimension];
@@ -62,8 +87,10 @@ public class ArrayPoint implements Point {
 		}
 		return dataInArray;
 	}
-    
+
+    @Override
     public String toString() {
         return time + ":" + Arrays.toString(data);
     }
+
 }

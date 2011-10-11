@@ -6,7 +6,7 @@ package org.sybila.parasim.model.trajectory;
  * @author <a href="mailto:xdrazan@fi.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Point {
+public interface Point extends Iterable<Float> {
 
     /**
      * @return Number of dimensions of given point.
