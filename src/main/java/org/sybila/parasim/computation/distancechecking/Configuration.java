@@ -9,8 +9,6 @@ public interface Configuration<T extends Trajectory> {
    
     float[] getMaxAbsoluteDistance();
     
-    float[] getMaxRelativeDistance();
-    
     TrajectoryNeighborhood<T> getNeighborhood();
    
 }
