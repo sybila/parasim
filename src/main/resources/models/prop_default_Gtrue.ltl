@@ -1,7 +1,0 @@
-process LTL {
-state q;
-init q;
-accept q;
-trans
-q -> q {};
-}
