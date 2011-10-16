@@ -4,11 +4,12 @@
     <property name="src.main.lib" value="src/main/lib"/>
     <property name="src.test.java" value="src/test/java" />
     <property name="src.test.lib" value="src/test/lib" />
+    <property name="support.application.class.name" value="org.sybila.parasim.support.application.Parasim" />
     <property name="target" value="target" />
     <property name="target.main.build" value="target/main/build" />
     <property name="target.test.build" value="target/test/build" />
     <property name="target.doc" value="target/doc" />
-    <property name="system.os" value="linux64" />
+    <property name="system.os" value="linux32" />
     
     <path id="classpath">
         <dirset dir="${src.main.lib}/${system.os}/native" />
@@ -51,6 +52,15 @@
                 </fileset>
             </batchtest>
         </junit>
+    </target>
+    
+    <target name="support-run" depends="main-build">
+        <java fork="true" classname="${support.application.class.name}">
+            <sysproperty key="java.library.path" value="${src.main.lib}/${system.os}/native"/>
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>            
+        </java>
     </target>
     
     <target name="javadoc" depends="init">
