@@ -1,4 +1,4 @@
-package org.sybila.parasim.computation.distancechecking.cpu;
+package org.sybila.parasim.computation.density.distancecheck.cpu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,9 +7,10 @@ import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.sybila.parasim.computation.ArrayDataBlock;
-import org.sybila.parasim.computation.distancechecking.Configuration;
-import org.sybila.parasim.computation.distancechecking.DataBlock;
-import org.sybila.parasim.computation.distancechecking.TrajectoryNeighborhood;
+import org.sybila.parasim.computation.DataBlock;
+import org.sybila.parasim.computation.density.Configuration;
+import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;
+import org.sybila.parasim.computation.TrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.ListTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
@@ -28,10 +29,10 @@ public class TestOnePairAbsoluteDistanceChecker {
 
     @Test
     public void testCheckSimple() {
-        DataBlock<Trajectory> dataBlock = new OnePairAbsoluteDistanceChecker().check(getConfiguration(), getSimpleDataBlock());
+        DistanceCheckedDataBlock<Trajectory> dataBlock = new OnePairAbsoluteDistanceChecker().check(getConfiguration(), getSimpleDataBlock());
         for (int t = 0; t < DATABLOCK_SIZE; t++) {
             for (int dim = 0; dim < DIMENSION; dim++) {
-                assertTrue(dataBlock.getDistances(t).get(dim) > 0 && dataBlock.getDistances(t).get(dim) < 0.4);
+                assertTrue(dataBlock.getDistances(t).get(dim).getMaxDistance() > 0 && dataBlock.getDistances(t).get(dim).getMaxDistance() < 0.4);
             }
         }
     }
@@ -97,6 +98,11 @@ public class TestOnePairAbsoluteDistanceChecker {
                 @Override
                 public org.sybila.parasim.computation.DataBlock<Trajectory> getNeighbors(Trajectory trajectory) {
                     return neighborhoods.get(trajectory);
+                }
+
+                @Override
+                public void setNeighbors(Trajectory trajectory, DataBlock<Trajectory> neighborhood) {
+                    throw new UnsupportedOperationException("Not supported yet.");
                 }
             };
         }

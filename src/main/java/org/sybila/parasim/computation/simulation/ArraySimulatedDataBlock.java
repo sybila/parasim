@@ -7,12 +7,12 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ArrayDataBlock<T extends Trajectory> implements DataBlock<T> {
+public class ArraySimulatedDataBlock<T extends Trajectory> implements SimulatedDataBlock<T> {
 
     private org.sybila.parasim.computation.DataBlock<T> dataBlock;
     private Status[] statuses;
     
-    public ArrayDataBlock(org.sybila.parasim.computation.DataBlock<T> dataBlock, Status[] statuses) {
+    public ArraySimulatedDataBlock(org.sybila.parasim.computation.DataBlock<T> dataBlock, Status[] statuses) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }

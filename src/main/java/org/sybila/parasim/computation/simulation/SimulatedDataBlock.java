@@ -5,7 +5,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface DataBlock<T extends Trajectory> extends org.sybila.parasim.computation.DataBlock<T> {
+public interface SimulatedDataBlock<T extends Trajectory> extends org.sybila.parasim.computation.DataBlock<T> {
    
     /**
      * Returns trajectory status

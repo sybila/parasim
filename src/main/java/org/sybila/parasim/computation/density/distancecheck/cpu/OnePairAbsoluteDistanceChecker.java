@@ -1,21 +1,22 @@
-package org.sybila.parasim.computation.distancechecking.cpu;
+package org.sybila.parasim.computation.density.distancecheck.cpu;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.sybila.parasim.computation.distancechecking.Configuration;
-import org.sybila.parasim.computation.distancechecking.DataBlock;
-import org.sybila.parasim.computation.distancechecking.DistanceChecker;
-import org.sybila.parasim.computation.distancechecking.ListDataBlock;
+import org.sybila.parasim.computation.density.Configuration;
+import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;
+import org.sybila.parasim.computation.density.Distance;
+import org.sybila.parasim.computation.density.distancecheck.DistanceChecker;
+import org.sybila.parasim.computation.density.distancecheck.ListDistanceCheckedDataBlock;
+import org.sybila.parasim.computation.density.distancecheck.SimpleDistance;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.support.computation.DataBlockPrinter;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configuration, DataBlock> {
+public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configuration, DistanceCheckedDataBlock> {
 
     /**
      * Checks distance of corresponding points of trajectory and trajectories in its neighborhood.
@@ -27,23 +28,23 @@ public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configura
      * @return the biggest ratio between measured and required distance
      */
     @Override
-    public DataBlock check(Configuration congfiguration, org.sybila.parasim.computation.DataBlock<Trajectory> trajectories) {
+    public DistanceCheckedDataBlock check(Configuration congfiguration, org.sybila.parasim.computation.DataBlock<Trajectory> trajectories) {
         if (congfiguration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
         if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
-        List<List<Float>> distances = new ArrayList<List<Float>>(trajectories.size());
+        List<List<Distance>> distances = new ArrayList<List<Distance>>(trajectories.size());
         for(int index=0; index < trajectories.size(); index++) {
-            List<Float> trajectoryDistances = new ArrayList<Float>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
+            List<Distance> trajectoryDistances = new ArrayList<Distance>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             org.sybila.parasim.computation.DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
             for (Trajectory trajectory: neighbors) {
                 trajectoryDistances.add(checkTrajectoriesDistance(congfiguration, trajectories.getTrajectory(index), trajectory));
             }
             distances.add(Collections.unmodifiableList(trajectoryDistances));
         }
-        return new ListDataBlock(trajectories, distances);
+        return new ListDistanceCheckedDataBlock(trajectories, distances);
     }
     
     /**
@@ -54,8 +55,9 @@ public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configura
      * @param second the second trajectory
      * @return the biggest ratio between measured and required distance
      */
-    private float checkTrajectoriesDistance(Configuration configuration, Trajectory first, Trajectory second) {
-        float distance = 0;
+    private Distance checkTrajectoriesDistance(Configuration configuration, Trajectory first, Trajectory second) {
+        float[] distances = new float[first.getDimension()];
+        float maxDistance = 0;
         Iterator<Point> firstIterator = first.iterator();
         Iterator<Point> secondIterator = second.iterator();
         while(firstIterator.hasNext() && secondIterator.hasNext()) {
@@ -92,16 +94,17 @@ public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configura
                 pointDistance = checkPointDistance(firstPointBegin, secondPointBegin);
             }
             for(int dim=0; dim<pointDistance.length; dim++) {
-                float relDistance = pointDistance[dim] / configuration.getMaxAbsoluteDistance()[dim];
-                if (relDistance > distance) {
-                    distance = relDistance;
+                pointDistance[dim] = pointDistance[dim] / configuration.getMaxAbsoluteDistance()[dim];
+                if (pointDistance[dim] > maxDistance) {
+                    maxDistance = pointDistance[dim];
+                    distances = pointDistance;
                 }
             }
-            if (distance > 1) {
+            if (maxDistance > 1) {
                 break;
             }
         }
-        return distance;
+        return new SimpleDistance(distances, maxDistance);
     }
     
     private float[] checkPointDistance(Point first, Point second) {

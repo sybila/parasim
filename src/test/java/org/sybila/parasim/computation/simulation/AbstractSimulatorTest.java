@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class AbstractSimulatorTest<Conf extends Configuration, Out extends DataBlock> {
+public abstract class AbstractSimulatorTest<Conf extends Configuration, Out extends SimulatedDataBlock> {
 
     private Conf configuration;
     private Map<Integer, OdeSystem> odeSystems = new HashMap<Integer, OdeSystem>();
@@ -39,7 +39,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     }
     
     protected void testValidNumberOfTrajectories(int size) {
-        DataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
         assertEquals(size, result.size());
         for(int s = 0; s < size; s++) {
             assertTrue(result.getTrajectory(s).getLength() > 0);

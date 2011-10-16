@@ -8,7 +8,7 @@ public class PointTrajectory extends AbstractTrajectory {
     /** First point of the trajectory. */
     private Point initialPoint;
 
-    PointTrajectory(Point initialPoint) {
+    public PointTrajectory(Point initialPoint) {
         super(initialPoint.getDimension(), 1);
         this.initialPoint = initialPoint;
     }

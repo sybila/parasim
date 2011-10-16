@@ -1,5 +1,6 @@
-package org.sybila.parasim.computation.distancechecking;
+package org.sybila.parasim.computation.density;
 
+import org.sybila.parasim.computation.TrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**

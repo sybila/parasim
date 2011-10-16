@@ -3,7 +3,7 @@ package org.sybila.parasim.computation.simulation.cpu;
 import org.junit.Test;
 import org.sybila.parasim.computation.simulation.AbstractSimulatorTest;
 import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
-import org.sybila.parasim.computation.simulation.DataBlock;
+import org.sybila.parasim.computation.simulation.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.Simulator;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -11,7 +11,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestRkf45Simulator extends AbstractSimulatorTest<AdaptiveStepConfiguration, DataBlock<Trajectory>> {
+public class TestRkf45Simulator extends AbstractSimulatorTest<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> {
 
     @Test
     public void testValidNumberOfTrajectories() {
@@ -112,7 +112,7 @@ public class TestRkf45Simulator extends AbstractSimulatorTest<AdaptiveStepConfig
     }
 
     @Override
-    protected Simulator<AdaptiveStepConfiguration, DataBlock<Trajectory>> createSimulator(AdaptiveStepConfiguration configuaration) {
+    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> createSimulator(AdaptiveStepConfiguration configuaration) {
         return new Rkf45Simulator();
     }
     

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
-import org.sybila.parasim.computation.simulation.ArrayDataBlock;
-import org.sybila.parasim.computation.simulation.DataBlock;
+import org.sybila.parasim.computation.simulation.ArraySimulatedDataBlock;
+import org.sybila.parasim.computation.simulation.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.Simulator;
 import org.sybila.parasim.computation.simulation.Status;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
@@ -16,7 +16,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, DataBlock<Trajectory>> {
+public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> {
 
     /**
      * Maximal number of iterations which are processed when the
@@ -66,7 +66,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Data
      * @return simulated data
      */
     @Override
-    public DataBlock simulate(final AdaptiveStepConfiguration configuration, org.sybila.parasim.computation.DataBlock<Trajectory> data) {
+    public SimulatedDataBlock simulate(final AdaptiveStepConfiguration configuration, org.sybila.parasim.computation.DataBlock<Trajectory> data) {
         Trajectory[] trajectories = new Trajectory[data.size()];
         Status[] statuses = new Status[data.size()];
         for (int i = 0; i < data.size(); i++) {
@@ -74,7 +74,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Data
             trajectories[i] = simulate(computation, data.getTrajectory(i).getLastPoint());
             statuses[i] = computation.status;
         }
-        return new ArrayDataBlock(new org.sybila.parasim.computation.ArrayDataBlock(trajectories), statuses);
+        return new ArraySimulatedDataBlock(new org.sybila.parasim.computation.ArrayDataBlock(trajectories), statuses);
     }
 
     private void prepareCoefficents(Rkf45Computation computation, float[] pointData) {
