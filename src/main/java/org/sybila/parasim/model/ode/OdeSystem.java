@@ -6,6 +6,8 @@ import org.sybila.parasim.model.trajectory.Point;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface OdeSystem {
+ 
+    int dimension();
     
     float value(Point point, int dimension);
     

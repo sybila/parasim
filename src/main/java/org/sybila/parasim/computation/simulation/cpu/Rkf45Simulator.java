@@ -1,7 +1,6 @@
 package org.sybila.parasim.computation.simulation.cpu;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.ArraySimulatedDataBlock;
@@ -17,12 +16,6 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> {
-
-    /**
-     * Maximal number of iterations which are processed when the
-     * {@link Rkf45Simulator#simulate(org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration, org.sybila.parasim.computation.DataBlock)} method is called.
-     */
-    public static final int MAXIMAL_NUMBER_OF_ITERATIONS = 100000;
     /**
      * Minimal time step using during simulation
      */
@@ -130,12 +123,12 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
         float[] auxiliaryData = new float[point.getDimension()];
         float[] absoluteError = new float[point.getDimension()];
         float[] previousData = point.toArray();
-        for (; computation.iteration < MAXIMAL_NUMBER_OF_ITERATIONS; computation.iteration++) {
+        for (; computation.iteration < computation.configuration.getMaxNumberOfIterations(); computation.iteration++) {
             prepareCoefficents(computation, previousData);
             // Absolute error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
                 absoluteError[dim] = Math.abs(R1 * computation.k1[dim] + R3 * computation.k3[dim] + R4 * computation.k4[dim] + R5 * computation.k5[dim] + R6 * computation.k6[dim]);
-                if (absoluteError[dim] > computation.configuration.getMaxAbsoluteError()[dim]) {
+                if (computation.configuration.getMaxAbsoluteError()[dim] != 0 && absoluteError[dim] > computation.configuration.getMaxAbsoluteError()[dim]) {
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;
@@ -150,7 +143,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
             }
             // Relative error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-                if (Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getMaxRelativeError()[dim]) {
+                if (computation.configuration.getMaxRelativeError()[dim] != 0 && Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getMaxRelativeError()[dim]) {
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;
@@ -185,7 +178,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
     private Trajectory simulate(Rkf45Computation computation, Point initial) {
         Point current = initial;
         List<Point> points = new ArrayList<Point>();
-        for (computation.iteration = 0; computation.iteration < MAXIMAL_NUMBER_OF_ITERATIONS; computation.iteration++) {
+        for (computation.iteration = 0; computation.iteration < computation.configuration.getMaxNumberOfIterations(); computation.iteration++) {
             current = successor(computation, current);
             if (current == null) {
                 break;

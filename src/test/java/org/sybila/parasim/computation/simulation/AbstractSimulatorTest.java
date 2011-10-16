@@ -74,6 +74,11 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
                 }
                 return ((float)dimension)/(float)100 ;
             }
+
+            @Override
+            public int dimension() {
+                return dim;
+            }
         };
     }
     
