@@ -1,6 +1,7 @@
 package org.sybila.parasim.computation.simulation;
 
 import java.util.Iterator;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
@@ -9,10 +10,10 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class ArraySimulatedDataBlock<T extends Trajectory> implements SimulatedDataBlock<T> {
 
-    private org.sybila.parasim.computation.DataBlock<T> dataBlock;
+    private DataBlock<T> dataBlock;
     private Status[] statuses;
     
-    public ArraySimulatedDataBlock(org.sybila.parasim.computation.DataBlock<T> dataBlock, Status[] statuses) {
+    public ArraySimulatedDataBlock(DataBlock<T> dataBlock, Status[] statuses) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }

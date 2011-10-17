@@ -1,5 +1,7 @@
 package org.sybila.parasim.computation;
 
+import org.sybila.parasim.model.trajectory.DataBlock;
+
 /**
  * Module are basic units doing a computation. Every module accepts some type
  * of data block and produces another one. 

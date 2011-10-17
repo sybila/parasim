@@ -1,7 +1,7 @@
 package org.sybila.parasim.computation.density.distancecheck;
 
-import org.sybila.parasim.computation.DataBlock;
 import org.sybila.parasim.computation.density.Configuration;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**

@@ -4,7 +4,7 @@
 
     <groupId>org.sybila.parasim</groupId>
     <artifactId>parasim-application</artifactId>
-    <version>${project.parent.version}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>parasim-application</name>
@@ -14,5 +14,9 @@
         <artifactId>parasim</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+
+    <modules>
+        <module>parasim-application-test</module>
+    </modules>
 
 </project>

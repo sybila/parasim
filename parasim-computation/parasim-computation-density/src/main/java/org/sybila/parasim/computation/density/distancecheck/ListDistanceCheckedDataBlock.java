@@ -3,6 +3,7 @@ package org.sybila.parasim.computation.density.distancecheck;
 import org.sybila.parasim.computation.density.Distance;
 import java.util.Iterator;
 import java.util.List;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
@@ -10,10 +11,10 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class ListDistanceCheckedDataBlock<T extends Trajectory> implements DistanceCheckedDataBlock<T> {
     
-    private org.sybila.parasim.computation.DataBlock<T> dataBlock;
+    private DataBlock<T> dataBlock;
     private List<List<Distance>> distances;
     
-    public ListDistanceCheckedDataBlock(org.sybila.parasim.computation.DataBlock<T> dataBlock, List<List<Distance>> distances) {
+    public ListDistanceCheckedDataBlock(DataBlock<T> dataBlock, List<List<Distance>> distances) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }

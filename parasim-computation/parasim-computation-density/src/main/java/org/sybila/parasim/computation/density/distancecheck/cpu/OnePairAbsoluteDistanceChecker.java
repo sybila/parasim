@@ -10,6 +10,7 @@ import org.sybila.parasim.computation.density.Distance;
 import org.sybila.parasim.computation.density.distancecheck.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.ListDistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.SimpleDistance;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
@@ -28,7 +29,7 @@ public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configura
      * @return the biggest ratio between measured and required distance
      */
     @Override
-    public DistanceCheckedDataBlock check(Configuration congfiguration, org.sybila.parasim.computation.DataBlock<Trajectory> trajectories) {
+    public DistanceCheckedDataBlock check(Configuration congfiguration, DataBlock<Trajectory> trajectories) {
         if (congfiguration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
@@ -38,7 +39,7 @@ public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configura
         List<List<Distance>> distances = new ArrayList<List<Distance>>(trajectories.size());
         for(int index=0; index < trajectories.size(); index++) {
             List<Distance> trajectoryDistances = new ArrayList<Distance>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
-            org.sybila.parasim.computation.DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
+            DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
             for (Trajectory trajectory: neighbors) {
                 trajectoryDistances.add(checkTrajectoriesDistance(congfiguration, trajectories.getTrajectory(index), trajectory));
             }

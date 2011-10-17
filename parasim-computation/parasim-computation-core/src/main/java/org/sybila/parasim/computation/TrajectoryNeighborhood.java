@@ -1,6 +1,6 @@
 package org.sybila.parasim.computation;
 
-import org.sybila.parasim.computation.DataBlock;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**

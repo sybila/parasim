@@ -2,12 +2,13 @@ package org.sybila.parasim.computation.simulation;
 
 import org.sybila.parasim.computation.Module;
 import org.sybila.parasim.computation.ModuleComputationException;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SimulationModule<Conf extends Configuration> implements Module<org.sybila.parasim.computation.DataBlock, SimulatedDataBlock<Trajectory>> {
+public class SimulationModule<Conf extends Configuration> implements Module<DataBlock, SimulatedDataBlock<Trajectory>> {
 
     private Conf configuration;
     private Simulator<Conf, SimulatedDataBlock<Trajectory>> simulator;
@@ -31,7 +32,7 @@ public class SimulationModule<Conf extends Configuration> implements Module<org.
      * @throws ModuleComputationException if the simulation fails
      */
     @Override
-    public SimulatedDataBlock<Trajectory> compute(org.sybila.parasim.computation.DataBlock input) throws ModuleComputationException {
+    public SimulatedDataBlock<Trajectory> compute(DataBlock input) throws ModuleComputationException {
           return simulator.simulate(configuration, input);
     }
     

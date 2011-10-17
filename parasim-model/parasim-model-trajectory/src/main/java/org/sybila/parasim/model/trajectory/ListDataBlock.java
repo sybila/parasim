@@ -1,4 +1,4 @@
-package org.sybila.parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
 import java.util.Iterator;
 import java.util.List;

@@ -1,5 +1,6 @@
 package org.sybila.parasim.computation;
 
+import org.sybila.parasim.model.trajectory.DataBlock;
 import java.util.HashMap;
 import java.util.Map;
 import org.sybila.parasim.model.trajectory.Trajectory;

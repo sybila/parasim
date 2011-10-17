@@ -1,4 +1,4 @@
-package org.sybila.parasim.computation;
+package org.sybila.parasim.model.trajectory;
 
 import org.sybila.parasim.model.trajectory.Trajectory;
 

@@ -2,13 +2,13 @@ package org.sybila.parasim.computation.density.spawn.cpu;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.sybila.parasim.computation.DataBlock;
-import org.sybila.parasim.computation.ListDataBlock;
 import org.sybila.parasim.computation.density.Configuration;
 import org.sybila.parasim.computation.density.Distance;
 import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.TrajectorySpawner;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
+import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
