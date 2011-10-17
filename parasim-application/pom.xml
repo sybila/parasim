@@ -5,7 +5,7 @@
     <groupId>org.sybila.parasim</groupId>
     <artifactId>parasim-application</artifactId>
     <version>${project.parent.version}</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>parasim-application</name>
     
