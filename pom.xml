@@ -18,6 +18,28 @@
         <module>parasim-visualization</module>
     </modules>
     
+    <distributionManagement>
+        <repository>
+            <id>zimodej-maven-ssh</id>
+            <name>Maven repository hosted on Zimodej</name>
+            <url>scp://maven.zimodej.cz:/home/domeny/zimodej.cz/web/subdomeny/maven</url>
+        </repository>
+    </distributionManagement>
+    
+    <repositories>
+        <repository>
+            <id>zimodej-maven-http</id>
+            <url>http://maven.zimodej.cz</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>daily</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>        
+        </repository>
+    </repositories>
+    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -26,7 +48,16 @@
         </dependency>
     </dependencies>
     
+    
+    
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>1.0-beta-6</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -41,7 +72,7 @@
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
-            </plugin>
+            </plugin>            
         </plugins>        
     </build>
 

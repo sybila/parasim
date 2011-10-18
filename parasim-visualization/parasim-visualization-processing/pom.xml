@@ -19,12 +19,12 @@
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
-            <version>2.0a1</version>
+            <version>1.5.1</version>
         </dependency>
-<!--        <dependency>
+        <dependency>
             <groupId>org.sybila.parasim</groupId>
             <artifactId>parasim-model-trajectory</artifactId>
             <version>${project.version}</version>            
-        </dependency>-->
+        </dependency>
     </dependencies>    
 </project>
