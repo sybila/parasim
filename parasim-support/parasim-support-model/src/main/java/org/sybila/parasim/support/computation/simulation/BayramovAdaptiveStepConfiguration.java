@@ -8,7 +8,7 @@ import org.sybila.parasim.computation.simulation.ImutableAdaptiveStepConfigurato
 public class BayramovAdaptiveStepConfiguration extends ImutableAdaptiveStepConfiguraton {
     
     public BayramovAdaptiveStepConfiguration() {
-        super(new BayramovConfiguration(), new float[] {0, 0, 0}, new float[] {0, 0, 0});
+        super(new BayramovConfiguration(), new float[] {0, 0, 0}, 0);
     }
     
 }

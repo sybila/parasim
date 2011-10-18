@@ -42,7 +42,10 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     protected void testValidNumberOfTrajectories(int size) {
         SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
         assertEquals(size, result.size());
+        System.out.println(getConfiguration().getOdeSystem().octaveString());
         for(int s = 0; s < size; s++) {
+            for(Point p : result.getTrajectory(s)) {             
+            }
             assertTrue(result.getTrajectory(s).getLength() > 0);
             assertEquals(Status.TIMEOUT, result.getStatus(s));
         }
@@ -73,12 +76,27 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
                 if (dimension < 0 || dimension > dim) {
                     throw new IndexOutOfBoundsException("The specified dimension is out of the range [0," + dim + "].");
                 }
-                return ((float)dimension)/(float)100 ;
+                return ((float)dimension)/(float)100;
             }
 
             @Override
             public int dimension() {
                 return dim;
+            }
+
+            public String octaveName() {
+                return "f";
+            }
+
+            public String octaveString() {
+                StringBuilder result = new StringBuilder();
+                result.append("function xdot = f(x, t) ");
+                result.append("xdot = zeros(").append(dim).append(", 1);");
+                for(int dim=0; dim<dimension(); dim++) {
+                    result.append("xdot(").append(dim+1).append(") = ").append(((float)dim)/(float)100).append(";");
+                }
+                result.append("endfunction");
+                return result.toString();
             }
         };
     }

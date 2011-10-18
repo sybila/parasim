@@ -8,7 +8,7 @@ import org.sybila.parasim.computation.simulation.ImutableAdaptiveStepConfigurato
 public class LotkaVolteraAdaptiveStepConfiguration extends ImutableAdaptiveStepConfiguraton {
     
     public LotkaVolteraAdaptiveStepConfiguration() {
-        super(new LotkaVolteraConfiguration(), new float[] {0, 0}, new float[] {0, 0});
+        super(new LotkaVolteraConfiguration(), new float[] {0, 0}, 0);
     }
     
 }

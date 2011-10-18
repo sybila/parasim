@@ -9,7 +9,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
 
     private float[] points;
     private float[] times;
-
+    
     public ArrayTrajectory(float[] points, float[] times, int dimension) {
         super(dimension, times.length);
         if (points.length % dimension != 0) {
@@ -28,11 +28,6 @@ public class ArrayTrajectory extends AbstractTrajectory {
             throw new IllegalArgumentException("The point index is out of the range [0, " + (getLength() - 1) + "]");
         }
         return new ArrayPoint(points, times[index], index * getDimension(), getDimension());
-    }
-    
-    @Override
-    public Iterator<Point> iterator(int index) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

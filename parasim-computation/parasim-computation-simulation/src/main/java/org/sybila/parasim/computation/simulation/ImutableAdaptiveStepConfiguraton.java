@@ -9,23 +9,17 @@ public class ImutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurati
     
     private Configuration configuration;
     private float[] maxAbsoluteError;
-    private float[] maxRelativeError;
+    private float maxRelativeError;
     
-    public ImutableAdaptiveStepConfiguraton(Configuration configuration, float[] maxAbsoluteError, float[] maxRelativeError) {
+    public ImutableAdaptiveStepConfiguraton(Configuration configuration, float[] maxAbsoluteError, float maxRelativeError) {
         if (configuration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
         if (maxAbsoluteError == null) {
             throw new IllegalArgumentException("The parameter maxAbsoluteError is null.");
         }
-        if (maxRelativeError == null) {
-            throw new IllegalArgumentException("The parameter maxRelativeError is null.");
-        }
         if (configuration.getDimension() != maxAbsoluteError.length) {
             throw new IllegalArgumentException("The number of dimensions doesn't match with size of maxAbsoluteError array.");
-        }
-        if (configuration.getDimension() != maxRelativeError.length) {
-            throw new IllegalArgumentException("The number of dimensions doesn't match with size of maxRelativeError array.");
         }
         this.configuration = configuration;
         this.maxAbsoluteError = maxAbsoluteError;
@@ -38,7 +32,7 @@ public class ImutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurati
     }
 
     @Override
-    public float[] getMaxRelativeError() {
+    public float getMaxRelativeError() {
         return maxRelativeError;
     }
 

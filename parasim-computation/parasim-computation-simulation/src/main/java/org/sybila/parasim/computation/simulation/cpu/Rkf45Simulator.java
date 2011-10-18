@@ -145,7 +145,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
             }
             // Relative error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-                if (computation.configuration.getMaxRelativeError()[dim] != 0 && Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getMaxRelativeError()[dim]) {
+                if (computation.configuration.getMaxRelativeError() != 0 && Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getMaxRelativeError()) {
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;

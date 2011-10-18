@@ -1,7 +1,6 @@
 package org.sybila.parasim.support.model.ode;
 
 import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
@@ -36,6 +35,14 @@ public class LotkaVolteraOdeSystem implements OdeSystem {
             default:
                 throw new IndexOutOfBoundsException("The dimension is out of the range [0,1].");
         }
+    }
+
+    public String octaveName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String octaveString() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

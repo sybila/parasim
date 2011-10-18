@@ -9,6 +9,10 @@ public interface OdeSystem {
  
     int dimension();
     
+    String octaveName();
+    
+    String octaveString();
+    
     float value(Point point, int dimension);
     
     float value(float[] point, int dimension);

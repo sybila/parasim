@@ -41,5 +41,13 @@ public class BayramovOdeSystem implements OdeSystem {
                 throw new IndexOutOfBoundsException("The dimension is out of the range [0,2].");
         }
     }
+
+    public String octaveName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String octaveString() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }
