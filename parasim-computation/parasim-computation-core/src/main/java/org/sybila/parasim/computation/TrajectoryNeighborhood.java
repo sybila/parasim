@@ -16,12 +16,4 @@ public interface TrajectoryNeighborhood<T extends Trajectory> {
      */
     DataBlock<T> getNeighbors(Trajectory trajectory);
     
-    /**
-     * Sets a trajectory neighborhood
-     * 
-     * @param trajectory
-     * @param neighborhood 
-     */
-    void setNeighbors(Trajectory trajectory, DataBlock<T> neighborhood);
-    
 }

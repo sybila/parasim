@@ -7,6 +7,8 @@ import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.sybila.parasim.computation.density.Configuration;
+import org.sybila.parasim.computation.density.Distance;
+import org.sybila.parasim.computation.density.DistanceMetric;
 import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.TrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
@@ -29,10 +31,10 @@ public class TestOnePairAbsoluteDistanceChecker {
 
     @Test
     public void testCheckSimple() {
-        DistanceCheckedDataBlock<Trajectory> dataBlock = new OnePairAbsoluteDistanceChecker().check(getConfiguration(), getSimpleDataBlock());
+        DistanceCheckedDataBlock<Trajectory> dataBlock = new OnePairDistanceChecker().check(getConfiguration(), getSimpleDataBlock());
         for (int t = 0; t < DATABLOCK_SIZE; t++) {
             for (int dim = 0; dim < DIMENSION; dim++) {
-                assertTrue(dataBlock.getDistances(t).get(dim).getMaxDistance() > 0 && dataBlock.getDistances(t).get(dim).getMaxDistance() < 0.4);
+                assertTrue(dataBlock.getDistances(t).get(dim).isValid());
             }
         }
     }
@@ -41,13 +43,13 @@ public class TestOnePairAbsoluteDistanceChecker {
         return new Configuration<Trajectory>() {
 
             private float[] distance;
+            private float MAX_DISTANCE = 1;
             
-            @Override
             public float[] getMaxAbsoluteDistance() {
                 if (distance == null) {
                     distance = new float[DIMENSION];
                     for(int dim = 0; dim < DIMENSION; dim++) {
-                        distance[dim] = 1;
+                        distance[dim] = MAX_DISTANCE;
                     }
                 }
                 return distance;
@@ -56,6 +58,45 @@ public class TestOnePairAbsoluteDistanceChecker {
             @Override
             public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
                 return getSimpleNeighborHood();
+            }
+
+            public DistanceMetric getDistanceMetric() {
+                return new DistanceMetric() {
+                    
+                    public Distance distance(float[] first, float[] second) {
+                        final float[] distance = new float[first.length];
+                        float maxDistance = 0;
+                        for(int dim=0; dim<first.length; dim++) {
+                            distance[dim] = Math.abs(first[dim] - second[dim]) / getMaxAbsoluteDistance()[dim];
+                            if (distance[dim] > maxDistance) {
+                                maxDistance = distance[dim];
+                            }
+                        }
+                        final float maxDistanceFinal = maxDistance;
+                        return new Distance() {
+
+                            public boolean isValid() {
+                                return value() < MAX_DISTANCE;
+                            }
+
+                            public boolean isValid(int dimensionIndex) {
+                                return value(dimensionIndex) < MAX_DISTANCE;
+                            }
+
+                            public float value() {
+                                return maxDistanceFinal;
+                            }
+
+                            public float value(int dimensionIndex) {
+                                return distance[dimensionIndex];
+                            }
+                        };
+                    }
+
+                    public Distance distance(Point first, Point second) {
+                        return distance(first.toArray(), second.toArray());
+                    }
+                };
             }
         };
     }
@@ -99,11 +140,7 @@ public class TestOnePairAbsoluteDistanceChecker {
                 public DataBlock<Trajectory> getNeighbors(Trajectory trajectory) {
                     return neighborhoods.get(trajectory);
                 }
-
-                @Override
-                public void setNeighbors(Trajectory trajectory, DataBlock<Trajectory> neighborhood) {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
+                
             };
         }
         return simpleNeighborHood;

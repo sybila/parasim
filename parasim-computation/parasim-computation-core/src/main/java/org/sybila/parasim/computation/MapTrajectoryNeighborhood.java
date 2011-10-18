@@ -1,7 +1,7 @@
 package org.sybila.parasim.computation;
 
-import org.sybila.parasim.model.trajectory.DataBlock;
 import java.util.HashMap;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import java.util.Map;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
@@ -13,14 +13,24 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class MapTrajectoryNeighborhood<T extends Trajectory> implements TrajectoryNeighborhood<T> {
 
-    Map<Trajectory, DataBlock<T>> neighborhoods = new HashMap<Trajectory, DataBlock<T>>();
+    Map<Trajectory, DataBlock<T>> neighborhoods;
+    
+    public MapTrajectoryNeighborhood() {
+        this(new HashMap<Trajectory, DataBlock<T>>());
+    }
+    
+    public MapTrajectoryNeighborhood(Map<Trajectory, DataBlock<T>> neighborhoods) {
+        if (neighborhoods == null) {
+            throw new IllegalArgumentException("The parameter neighborhoods is null.");
+        }
+        this.neighborhoods = neighborhoods;
+    }
     
     @Override
     public DataBlock<T> getNeighbors(Trajectory trajectory) {
         return neighborhoods.get(trajectory);
     }
 
-    @Override
     public void setNeighbors(Trajectory trajectory, DataBlock<T> neighborhood) {
         if (trajectory == null) {
             throw new IllegalArgumentException("The parameter trajectory is null.");

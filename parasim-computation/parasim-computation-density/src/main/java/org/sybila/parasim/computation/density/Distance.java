@@ -5,8 +5,12 @@ package org.sybila.parasim.computation.density;
  */
 public interface Distance {
     
-    float getMaxDistance();
+    boolean isValid();
     
-    float getDimensionDistance(int dimensionIndex);
+    boolean isValid(int dimensionIndex);
+    
+    float value();
+    
+    float value(int dimensionIndex);
     
 }

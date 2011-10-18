@@ -9,7 +9,6 @@ import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataB
 import org.sybila.parasim.computation.density.Distance;
 import org.sybila.parasim.computation.density.distancecheck.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.ListDistanceCheckedDataBlock;
-import org.sybila.parasim.computation.density.distancecheck.SimpleDistance;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -17,7 +16,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configuration, DistanceCheckedDataBlock> {
+public class OnePairDistanceChecker implements DistanceChecker<Configuration<Trajectory>, DistanceCheckedDataBlock> {
 
     /**
      * Checks distance of corresponding points of trajectory and trajectories in its neighborhood.
@@ -29,7 +28,7 @@ public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configura
      * @return the biggest ratio between measured and required distance
      */
     @Override
-    public DistanceCheckedDataBlock check(Configuration congfiguration, DataBlock<Trajectory> trajectories) {
+    public DistanceCheckedDataBlock check(Configuration<Trajectory> congfiguration, DataBlock<Trajectory> trajectories) {
         if (congfiguration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
@@ -57,72 +56,61 @@ public class OnePairAbsoluteDistanceChecker implements DistanceChecker<Configura
      * @return the biggest ratio between measured and required distance
      */
     private Distance checkTrajectoriesDistance(Configuration configuration, Trajectory first, Trajectory second) {
-        float[] distances = new float[first.getDimension()];
-        float maxDistance = 0;
+        Distance distance = null;
         Iterator<Point> firstIterator = first.iterator();
         Iterator<Point> secondIterator = second.iterator();
+        
         while(firstIterator.hasNext() && secondIterator.hasNext()) {
-            Point firstPointBegin = firstIterator.next();
-            Point secondPointBegin = secondIterator.next();
-            float[] pointDistance; 
-            if (firstPointBegin.getTime() < secondPointBegin.getTime()) {
-                Point firstPointEnd = null;
-                while(firstIterator.hasNext()) {
-                    Point p = firstIterator.next();
-                    if (p.getTime() > secondPointBegin.getTime()) {
-                        firstPointEnd = p;
+            Distance currentDistance = getNextDistance(configuration, firstIterator, secondIterator);
+            if (currentDistance != null) {
+                if (distance != null) {
+                    if (distance.value() > currentDistance.value()) {
+                        distance = currentDistance;
                     }
                 }
-                if (firstPointEnd == null) {
-                    break;
-                }
-                pointDistance = checkPointDistance(firstPointBegin, firstPointEnd, secondPointBegin);
-            }
-            else if (firstPointBegin.getTime() > secondPointBegin.getTime()) {
-                Point secondPointEnd = null;
-                while(secondIterator.hasNext()) {
-                    Point p = secondIterator.next();
-                    if (firstPointBegin.getTime() < p.getTime()) {
-                        secondPointEnd = p;
-                    }
-                }                
-                if (secondPointEnd == null) {
-                    break;
-                }         
-                pointDistance = checkPointDistance(secondPointBegin, secondPointEnd, firstPointBegin);
-            }
-            else {
-                pointDistance = checkPointDistance(firstPointBegin, secondPointBegin);
-            }
-            for(int dim=0; dim<pointDistance.length; dim++) {
-                pointDistance[dim] = pointDistance[dim] / configuration.getMaxAbsoluteDistance()[dim];
-                if (pointDistance[dim] > maxDistance) {
-                    maxDistance = pointDistance[dim];
-                    distances = pointDistance;
+                else {
+                    distance = currentDistance;
                 }
             }
-            if (maxDistance > 1) {
-                break;
-            }
-        }
-        return new SimpleDistance(distances, maxDistance);
-    }
-    
-    private float[] checkPointDistance(Point first, Point second) {
-        float distance[] = new float[first.getDimension()];
-        for(int dim=0; dim<first.getDimension(); dim++) {
-            distance[dim] = Math.abs(first.getValue(dim) - second.getValue(dim));
         }
         return distance;
     }
     
-    private float[] checkPointDistance(Point firstBegin, Point firstEnd, Point second) {
-        float distance[] = new float[firstBegin.getDimension()];
-        float ratio = second.getTime() / (firstBegin.getTime() + firstEnd.getTime());
-        for(int dim=0; dim<firstBegin.getDimension(); dim++) {
-            distance[dim] = Math.abs((firstBegin.getValue(dim) + firstEnd.getValue(dim)) * ratio - second.getValue(dim));
+    private Distance getNextDistance(Configuration configuration, Iterator<Point> firstIterator, Iterator<Point> secondIterator) {
+        Point firstPoint = firstIterator.next();
+        Point secondPoint = secondIterator.next();
+        if (firstPoint.getTime() == secondPoint.getTime()) {
+            return configuration.getDistanceMetric().distance(firstPoint, secondPoint);
         }
-        return distance;
+        if (firstPoint.getTime() > secondPoint.getTime()) {
+            while(secondIterator.hasNext()) {
+                Point currentPoint = secondIterator.next();
+                if (currentPoint.getTime() >= firstPoint.getTime()) {
+                    return checkPointDistance(configuration, secondPoint, currentPoint, firstPoint);
+                }
+            }
+        }
+        else {
+            while(firstIterator.hasNext()) {
+                Point currentPoint = firstIterator.next();
+                if (currentPoint.getTime() >= secondPoint.getTime()) {
+                    return checkPointDistance(configuration, firstPoint, currentPoint, secondPoint);
+                }
+            }
+        }
+        return null;
+    }
+
+    private Distance checkPointDistance(Configuration configuration, Point beginFirstPoint, Point endFirstPoint, Point secondPoint) {
+        if (endFirstPoint.getTime() == secondPoint.getTime()) {
+            return configuration.getDistanceMetric().distance(endFirstPoint, secondPoint);
+        }
+        float[] firstData = new float[beginFirstPoint.getDimension()];
+        for(int dim=0; dim<firstData.length; dim++) {
+            firstData[dim] = (beginFirstPoint.getValue(dim) + endFirstPoint.getValue(dim)) / 2;
+        }
+        return configuration.getDistanceMetric().distance(firstData, secondPoint.toArray());
     }
     
 }
+

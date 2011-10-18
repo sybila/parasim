@@ -8,7 +8,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public interface Configuration<T extends Trajectory> {
    
-    float[] getMaxAbsoluteDistance();
+    DistanceMetric getDistanceMetric();
     
     TrajectoryNeighborhood<T> getNeighborhood();
    
