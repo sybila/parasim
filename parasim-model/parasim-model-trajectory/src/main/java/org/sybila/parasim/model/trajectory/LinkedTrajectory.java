@@ -26,7 +26,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
         if (trajectory == null) {
             throw new IllegalArgumentException("The parameter [trajectory] is NULL.");
         }
-        if (trajectory.getFirstPoint().getTime() < trajectories.get(trajectories.size()).getLastPoint().getTime()) {
+        if (trajectory.getFirstPoint().getTime() < trajectories.get(trajectories.size() - 1).getLastPoint().getTime()) {
             throw new IllegalArgumentException("The time of the first point of the given trajectory is lower than the time of the last point of original trajectory.");
         }
         setLength(getLength() + trajectory.getLength());
