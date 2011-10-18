@@ -1,8 +1,7 @@
 package org.sybila.parasim.application.test;
 
-import org.sybila.parasim.computation.simulation.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.cpu.Rkf45Simulator;
-import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.MutableDataBlock;
 import org.sybila.parasim.support.computation.simulation.LotkaVolteraAdaptiveStepConfiguration;
 import org.sybila.parasim.support.computation.simulation.LotkaVolteraInitialDataBlock;
 import processing.core.PApplet;
@@ -17,6 +16,10 @@ public class Main extends Grid2D {
     private static int ZERO_X = 50;
     private static int ZERO_Y = 600;
     
+    private MutableDataBlock trajectories;
+    private DataBlockVisualizer2D visualizer;
+    private Rkf45Simulator simulator;
+    
     public static void main(String[] args) {
         setupGrid(WINDOW_WIDTH, WINDOW_HEIGHT, ZERO_X, ZERO_Y);
         PApplet.main(new String[] { Main.class.getName() });
@@ -25,8 +28,15 @@ public class Main extends Grid2D {
     @Override
     public void setup() {
         super.setup();
-        SimulatedDataBlock<Trajectory> result = new Rkf45Simulator().simulate(new LotkaVolteraAdaptiveStepConfiguration(), new LotkaVolteraInitialDataBlock());
-        new DataBlockVisualizer2D(this, 0, 1, 20, 13).printDataBlock(result);
+        trajectories = new MutableDataBlock(new LotkaVolteraInitialDataBlock());
+        simulator = new Rkf45Simulator();
+        trajectories.append(simulator.simulate(new LotkaVolteraAdaptiveStepConfiguration(), trajectories));
+        visualizer = new DataBlockVisualizer2D(trajectories, this, 0, 1, 20, 13);
     }
 
+    @Override
+    public void draw() {
+        visualizer.printNext();
+    }
+    
 }

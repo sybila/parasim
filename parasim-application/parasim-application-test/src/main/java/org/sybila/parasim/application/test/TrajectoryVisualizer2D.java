@@ -13,31 +13,33 @@ public class TrajectoryVisualizer2D {
     private Grid2D grid;
     private float normalizeX;
     private float normalizeY;
+    private Trajectory trajectory;
+    private int lastPointIndex = -1;
     
-    
-    public TrajectoryVisualizer2D(Grid2D grid, int dimX, int dimY, float normalizeX, float normalizeY) {
+    public TrajectoryVisualizer2D(Trajectory trajectory, Grid2D grid, int dimX, int dimY, float normalizeX, float normalizeY) {
         this.grid = grid;
         this.dimX = dimX;
         this.dimY = dimY;
         this.normalizeX = normalizeX;
         this.normalizeY = normalizeY;
+        this.trajectory = trajectory;
     }
     
-    public void printTrajectory(Trajectory trajectory) {
-        printFirstPoint(trajectory.getFirstPoint());
-        grid.stroke(255, 0, 0);
-        Point previous = null;
-        for(Point point: trajectory) {
-            if (previous != null) {
-                printLine(previous, point);
-            }
-            previous = point;
+    public void printNextPoint() {
+        if (lastPointIndex >= trajectory.getLength() - 1) {
+            return;
         }
+        if (lastPointIndex != -1) {
+//            printFirstPoint(trajectory.getPoint(lastPointIndex), 255, 255, 255);
+//            printFirstPoint(trajectory.getPoint(lastPointIndex+1), 0, 255, 0);
+            printLine(trajectory.getPoint(lastPointIndex), trajectory.getPoint(lastPointIndex+1));
+        }
+        lastPointIndex++;
     }   
     
-    private void printFirstPoint(Point point) {
-        grid.stroke(0, 255, 0);
-        grid.fill(0, 255, 0);
+    private void printFirstPoint(Point point, float r, float g, float b) {
+        grid.stroke(r, g, b);
+        grid.fill(r, g, b);
         grid.rect(
             grid.normalizeX(normalizeX * point.getValue(dimX)) - 4,
             grid.normalizeY(normalizeY * point.getValue(dimY)) - 4,
@@ -47,6 +49,7 @@ public class TrajectoryVisualizer2D {
     }
     
     private void printLine(Point start, Point end) {
+        grid.stroke(255, 0, 0);
         grid.line(
             grid.normalizeX(normalizeX * start.getValue(dimX)),
             grid.normalizeY(normalizeY * start.getValue(dimY)),
