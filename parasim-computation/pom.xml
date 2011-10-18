@@ -19,6 +19,7 @@
         <module>parasim-computation-core</module>
         <module>parasim-computation-density</module>
         <module>parasim-computation-simulation</module>
+        <module>parasim-computation-verification</module>
     </modules>
 
 </project>
