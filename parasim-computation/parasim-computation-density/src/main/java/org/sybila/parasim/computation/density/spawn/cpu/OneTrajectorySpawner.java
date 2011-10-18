@@ -14,6 +14,7 @@ import org.sybila.parasim.computation.density.spawn.TrajectorySpawner;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -41,10 +42,11 @@ public class OneTrajectorySpawner implements TrajectorySpawner<Configuration<Tra
                             }
                         )
                     );
+                    newTrajectories.add(spawnedTrajectory);
                 }
             }
         }
-        return new SpawnedDataBlockWrapper<Trajectory>(trajectories, new MapTrajectoryNeighborhood<Trajectory>(neighborhood));
+        return new SpawnedDataBlockWrapper<Trajectory>(new ListDataBlock<Trajectory>(newTrajectories), new MapTrajectoryNeighborhood<Trajectory>(neighborhood));
     }
     
     private Trajectory spawnTrajectory(Trajectory trajectory, Trajectory neighbor, Distance distance) {
