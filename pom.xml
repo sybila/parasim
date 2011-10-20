@@ -29,7 +29,7 @@
     <repositories>
         <repository>
             <id>sybila-maven-http</id>
-            <url>http://sybila.fi.muni.cz/maven</url>
+            <url>http://sybila.fi.muni.cz/public/maven</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
