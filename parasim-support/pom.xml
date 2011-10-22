@@ -16,6 +16,7 @@
     </parent>
 
     <modules>
+        <module>parasim-support-gpu</module>
         <module>parasim-support-model</module>
     </modules>
 
