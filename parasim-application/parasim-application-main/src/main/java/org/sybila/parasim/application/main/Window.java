@@ -1,8 +1,6 @@
 package org.sybila.parasim.application.main;
 
 import org.sybila.parasim.visualization.*;
-import javax.swing.*;
-import java.awt.*;
 
 /**
  *
