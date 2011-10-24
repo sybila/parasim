@@ -14,6 +14,7 @@
     </parent>
 
     <modules>
+        <module>parasim-application-main</module>
         <module>parasim-application-test</module>
     </modules>
 
