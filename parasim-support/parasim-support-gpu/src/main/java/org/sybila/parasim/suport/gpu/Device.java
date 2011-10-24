@@ -26,6 +26,10 @@ public class Device {
         this.id = id;
     }
     
+    public GpuContext getContext() {
+        return context;
+    }
+    
     public cudaDeviceProp getDeviceProperties() {
         if (properties == null) {
             properties = new cudaDeviceProp();

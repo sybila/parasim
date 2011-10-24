@@ -3,9 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.sybila.parasim</groupId>
     <artifactId>parasim-support-gpu</artifactId>
-    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>parasim-support-gpu</name>
@@ -26,6 +24,11 @@
             <groupId>org.jcuda</groupId>
             <artifactId>utils</artifactId>
             <version>0.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim</groupId>
+            <artifactId>parasim-model-trajectory</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     
