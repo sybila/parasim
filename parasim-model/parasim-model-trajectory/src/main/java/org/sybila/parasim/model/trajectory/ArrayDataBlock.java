@@ -2,7 +2,6 @@ package org.sybila.parasim.model.trajectory;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
