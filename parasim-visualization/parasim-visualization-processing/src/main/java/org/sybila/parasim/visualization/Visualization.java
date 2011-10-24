@@ -34,7 +34,7 @@ public class Visualization extends PApplet{
         mySimulation = new FakeSimulation(10, 4, 100);
     }
     
-    /*
+    /**
      * Function is called first during the init() of the applet.
      * Creates a window of requested size and sets up properties of animation. 
      */
@@ -50,7 +50,7 @@ public class Visualization extends PApplet{
         getBoundaries(); 
     }
     
-    /*
+    /**
      * For every dimension obtains maximal value and from all the trajectories 
      * and maximal time. 
      */
@@ -74,7 +74,7 @@ public class Visualization extends PApplet{
     }
     
     
-    /*
+    /**
      * Redraws the screen.
      */
     public void draw () { 
