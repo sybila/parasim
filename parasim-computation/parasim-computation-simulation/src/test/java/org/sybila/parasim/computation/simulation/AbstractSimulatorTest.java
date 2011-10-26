@@ -7,7 +7,7 @@ import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -42,7 +42,6 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     protected void testValidNumberOfTrajectories(int size) {
         SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
         assertEquals(size, result.size());
-        System.out.println(getConfiguration().getOdeSystem().octaveString());
         for(int s = 0; s < size; s++) {
             for(Point p : result.getTrajectory(s)) {             
             }

@@ -4,7 +4,7 @@ import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.Simulator;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 
 /**
