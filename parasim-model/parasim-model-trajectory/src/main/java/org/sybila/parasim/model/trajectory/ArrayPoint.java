@@ -34,6 +34,6 @@ public class ArrayPoint extends AbstractPoint {
 		if (index < 0 || index >= getDimension()) {
 			throw new IllegalArgumentException("The index is out of the range [0, " + (getDimension() - 1) + "].");
 		}
-		return data[startIndex + index];
+		return data[startIndex/getDimension() + index*(data.length / getDimension())];
 	}
 }

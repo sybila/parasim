@@ -32,7 +32,7 @@ public class Visualization extends PApplet{
         visWidth = 800;
         visHeight = 600;
         
-        mySimulation = new FakeSimulation(2, 3, 50);
+        mySimulation = new FakeSimulation(5, 3, 50);
     }
     
     /**
@@ -125,9 +125,9 @@ public class Visualization extends PApplet{
             while (pointIt.hasNext()) {
                 point = (Point) pointIt.next();
                 int start_X = (int) (((float)oldPoint.getTime())*timeCorrection + borderWidth);
-                int start_Y = (int) (- ((float)oldPoint.getValue(dimNum))*valCorrection + yBottom);
+                int start_Y = (int) min((- ((float)oldPoint.getValue(dimNum))*valCorrection + yBottom), yBottom);
                 int end_X = (int) (((float)point.getTime())*timeCorrection + borderWidth);
-                int end_Y = (int) (- ((float)point.getValue(dimNum))*valCorrection  + yBottom);
+                int end_Y = (int) min((- ((float)point.getValue(dimNum))*valCorrection  + yBottom),yBottom);
                 line(start_X, start_Y, end_X, end_Y);
                 oldPoint = point;
             }

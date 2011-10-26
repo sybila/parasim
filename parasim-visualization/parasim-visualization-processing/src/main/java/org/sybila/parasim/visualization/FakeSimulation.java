@@ -29,7 +29,7 @@ public class FakeSimulation {
     }
     
     // Constants for simulation - lenght of the time step and 
-    private final float start_distance = 0.1f;
+    private final float start_distance = 1.0f;
     private final float time_step = 0.1f;
     
     // properties of the simulation
@@ -122,8 +122,8 @@ public class FakeSimulation {
                     for (int lower_dim = 0; lower_dim < dim; lower_dim++)
                        positions[lower_dim] = 0.0f;
                 }
-                start_points[trajectory] = createStartPoint (positions, corners, distances_sum);
             }
+            start_points[trajectory] = createStartPoint (positions, corners, distances_sum);
         }
         return start_points;
     }
@@ -137,7 +137,7 @@ public class FakeSimulation {
      * @return 
      */
     final private DirectedPoint createStartPoint (final float [] positions, final DirectedPoint [] corners, final float distances_sum) {
-        DirectedPoint new_point = new DirectedPoint(positions);
+        DirectedPoint new_point = new DirectedPoint(positions.clone());
         float [] distances = new float [corners.length];
        
         // Determine direction and correction from distance from all the corner points
@@ -146,20 +146,15 @@ public class FakeSimulation {
             for (int dim = 0; dim < dimensions; dim++) {
                 distances[corner] += Math.abs(new_point.position[dim] - corners[corner].position[dim]);
             }
-            // If this point is the corner point, just the known values.
-            if (distances[corner] == 0.0f) {
-                new_point.direction = corners[corner].direction.clone();
-                new_point.correction = corners[corner].correction.clone();
-                break;
-            }
-            // Else add the weighted direction.
-            else {
-                for (int dim = 0; dim < dimensions; dim++) {
-                     new_point.direction[dim] += (corners[corner].direction[dim] / distances_sum);
-                     new_point.correction[dim] += (corners[corner].correction[dim] / distances_sum);
-                }                
-            }
-        } 
+
+            // Add the weighted direction and correction.
+            // Weight is (maximum possible distance - current distance)/(sum of distances)
+            // On the cube 3*3*3 it would be (9 - distance)/(36), therefore sum of weights == 1
+            for (int dim = 0; dim < dimensions; dim++) {
+                new_point.direction[dim] += (corners[corner].direction[dim] * ((2*distances_sum)/corners.length - distances[corner]) / distances_sum);
+                new_point.correction[dim] += (corners[corner].correction[dim] * ((2*distances_sum)/corners.length - distances[corner]) / distances_sum);
+            } 
+        }
         return new_point;
     }
     
@@ -213,7 +208,7 @@ public class FakeSimulation {
             // Create directioning properties
             for (int d = 0; d < dimensions; d++) {
                 corners[i].direction[d] = generator.nextFloat();
-                corners[i].correction[d] = generator.nextFloat() / 100.0f;
+                corners[i].correction[d] = (0.5f - generator.nextFloat()) / 5.0f;
             }    
         }
         return corners;
