@@ -32,7 +32,7 @@ public class Visualization extends PApplet{
         visWidth = 800;
         visHeight = 600;
         
-        mySimulation = new FakeSimulation(5, 3, 50);
+        mySimulation = new FakeSimulation(4, 4, 50);
     }
     
     /**

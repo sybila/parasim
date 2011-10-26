@@ -104,7 +104,7 @@ public class FakeSimulation {
         int   [] dim_updates = new int   [dimensions]; // When to start going in new direction
         for (int i = 0; i < dimensions; i++) {
             positions[i]   = 0.0f; // First trajectory starts at (0,0,...)
-            dim_updates[i] = (int)Math.pow((int) 10, (int)i); // When number of trajectory is equal to the number, start number must be updated
+            dim_updates[i] = (int)Math.pow((int) number, (int)i); // When number of trajectory is equal to the number, start number must be updated
         }
         DirectedPoint [] corners = CreateCorners(); // Create directed corners.
         final float distances_sum = start_distance * (number - 1) * 0.5f * corners.length * dimensions; // Sum of distances from corner points is same for each point in the start space. Placed here for better efficiency.
@@ -116,7 +116,7 @@ public class FakeSimulation {
         for (int trajectory = 0; trajectory < trajectory_count; trajectory++) {
             // for each dimension there must be an position update, if needed
             for (int dim = 0; dim < dimensions; dim++) {
-                if ( trajectory!= 0 && dim_updates[dim] % trajectory == 0) {
+                if ( trajectory!= 0 && trajectory % dim_updates[dim] == 0) {
                     positions[dim] += start_distance;
                     // When dimension is iterated, all lower are reset to the starting position
                     for (int lower_dim = 0; lower_dim < dim; lower_dim++)
@@ -203,7 +203,7 @@ public class FakeSimulation {
                     current_position[point_dim] = 0;
                     point_dim++;
                 }
-                current_position[point_dim] = number * start_distance; 
+                current_position[point_dim] = (number - 1) * start_distance; 
             }
             // Create directioning properties
             for (int d = 0; d < dimensions; d++) {
