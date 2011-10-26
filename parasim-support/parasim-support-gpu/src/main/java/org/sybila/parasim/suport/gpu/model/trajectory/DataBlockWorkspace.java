@@ -15,7 +15,7 @@ import org.sybila.parasim.suport.gpu.Utils;
  * 
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class DataBlockWorkspace {
+public class DataBlockWorkspace {
     
     private WorkspaceDataBlockFactory dataBlockFactory;
     private CUdeviceptr deviceLengths;
@@ -113,40 +113,11 @@ public abstract class DataBlockWorkspace {
     }
     
     public void saveDataBlock(DataBlock<Trajectory> trajectories) {
-        if (trajectories == null) {
-            throw new IllegalArgumentException("The parameter trajectories is null.");
-        }
-        int dimension = trajectories.getTrajectory(0).getLength();
-        int length = getMaxDataBlockLength(trajectories);
-        // check whether the allocated memeory is big enough
-        // if not -> reinit
-        if (!isInitialized() || trajectories.size() > hostLengths.length || trajectories.size() * length > hostTimes.length || trajectories.size() * length * dimension > hostPoints.length) {
-            free();
-            initialize(trajectories.size(), length, dimension);
-        }
-        // copy data to host arrays
-        int trajectoryIndex = 0;
-        int pointIndex;
-        for(Trajectory trajectory: trajectories) {
-            if (dimension != trajectory.getDimension()) {
-                throw new IllegalArgumentException("The dimension of trajectories in data block are different!");
-            }
-            hostLengths[trajectoryIndex] = trajectory.getLength();
-            pointIndex = 0;
-            for (Point point: trajectory) {
-                for (int dim=0; dim<point.getDimension(); dim++) {
-                    System.arraycopy(point.toArray(), 0, hostPoints, pointIndex * trajectories.size() * dimension + trajectoryIndex * dimension, point.getDimension());
-                    hostTimes[pointIndex * trajectories.size() + trajectoryIndex] = point.getTime();
-                }
-            }
-            trajectoryIndex++;
-        }  
-        // copy data from host to device
-        Utils.checkErrorCode(JCuda.cudaMemcpy(devicePoints, Pointer.to(hostPoints), trajectories.size() * length * dimension * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyHostToDevice));
-        Utils.checkErrorCode(JCuda.cudaMemcpy(deviceTimes, Pointer.to(hostTimes), trajectories.size() * length * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyHostToDevice));
-        Utils.checkErrorCode(JCuda.cudaMemcpy(deviceLengths, Pointer.to(hostLengths), trajectories.size() * Sizeof.INT, cudaMemcpyKind.cudaMemcpyHostToDevice));
-        // update saved data block
-        savedDataBlock = trajectories;
+        saveDataBlock(trajectories, getMaxDataBlockLength(trajectories), true);
+    }
+    
+    public void saveDataBlock(DataBlock<Trajectory> trajectories, int lengthLimit) {
+        saveDataBlock(trajectories, lengthLimit, false);
     }
     
     private DataBlock<Trajectory> getSavedDataBlock() {
@@ -185,5 +156,47 @@ public abstract class DataBlockWorkspace {
     
     private boolean isInitialized() {
         return initialized;
+    }
+    
+    private void saveDataBlock(DataBlock<Trajectory> trajectories, int lengthLimit, boolean lengthLimitIsNeeded) { 
+        if (trajectories == null) {
+            throw new IllegalArgumentException("The parameter trajectories is null.");
+        }
+        int dimension = trajectories.getTrajectory(0).getLength();
+        int length = lengthLimitIsNeeded ? lengthLimit : Math.min(getMaxDataBlockLength(trajectories), lengthLimit);
+        // check whether the allocated memeory is big enough
+        // if not -> reinit
+        if (!isInitialized() || trajectories.size() > hostLengths.length || trajectories.size() * length > hostTimes.length || trajectories.size() * length * dimension > hostPoints.length) {
+            free();
+            initialize(trajectories.size(), length, dimension);
+        }
+        // copy data to host arrays
+        int trajectoryIndex = 0;
+        int pointIndex;
+        for(Trajectory trajectory: trajectories) {
+            if (dimension != trajectory.getDimension()) {
+                throw new IllegalArgumentException("The dimension of trajectories in data block are different!");
+            }
+            hostLengths[trajectoryIndex] = trajectory.getLength();
+            pointIndex = 0;
+            for (Point point: trajectory) {
+                // length limit has been reached
+                if (pointIndex >= lengthLimit) {
+                    break;
+                }
+                // copy point to host arrays
+                for (int dim=0; dim<point.getDimension(); dim++) {
+                    System.arraycopy(point.toArray(), 0, hostPoints, pointIndex * trajectories.size() * dimension + trajectoryIndex * dimension, point.getDimension());
+                    hostTimes[pointIndex * trajectories.size() + trajectoryIndex] = point.getTime();
+                }
+            }
+            trajectoryIndex++;
+        }  
+        // copy data from host to device
+        Utils.checkErrorCode(JCuda.cudaMemcpy(devicePoints, Pointer.to(hostPoints), trajectories.size() * length * dimension * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyHostToDevice));
+        Utils.checkErrorCode(JCuda.cudaMemcpy(deviceTimes, Pointer.to(hostTimes), trajectories.size() * length * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyHostToDevice));
+        Utils.checkErrorCode(JCuda.cudaMemcpy(deviceLengths, Pointer.to(hostLengths), trajectories.size() * Sizeof.INT, cudaMemcpyKind.cudaMemcpyHostToDevice));
+        // update saved data block
+        savedDataBlock = trajectories;        
     }
 }
