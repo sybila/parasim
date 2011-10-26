@@ -13,7 +13,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class TestOctaveSimulator extends AbstractAdaptiveStepSimulationTest {
 
-    @Test
+    // @Test
     public void testValidNumberOfTrajectories() {
         if (OctaveSimulator.isAvailable()) {
             super.testValidNumberOfTrajectories(10);

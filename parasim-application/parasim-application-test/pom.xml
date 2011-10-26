@@ -23,7 +23,13 @@
         <dependency>
             <groupId>org.sybila.parasim</groupId>
             <artifactId>parasim-computation-simulation</artifactId>
-            <version>${project.version}</version>            
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javaoctave</artifactId>
+                    <groupId>dk.ange</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.sybila.parasim</groupId>
