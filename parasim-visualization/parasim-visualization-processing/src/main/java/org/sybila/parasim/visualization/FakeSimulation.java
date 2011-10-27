@@ -172,7 +172,7 @@ public class FakeSimulation {
         // Add new positions to the simulation in the direction and correct the direction
         for (int point = 0; point < times; point++) {
             for (int dim = 0; dim < dimensions; dim++) {
-                all_points[point + dim*times] = start_point.position[dim];
+                all_points[point*dimensions + dim] = start_point.position[dim];
                 start_point.position[dim] += start_point.direction[dim];
                 start_point.direction[dim] += start_point.correction[dim];
             }
