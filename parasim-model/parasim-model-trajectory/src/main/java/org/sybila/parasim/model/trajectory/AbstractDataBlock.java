@@ -16,7 +16,7 @@ public abstract class AbstractDataBlock<T extends Trajectory> implements DataBlo
         this.size = size;
     }
     
-    public int getSize() {
+    public int size() {
         return size;
     }
     

@@ -9,6 +9,7 @@ import org.sybila.parasim.model.trajectory.ListTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.suport.gpu.AbstractGpuTest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -26,6 +27,11 @@ public class TestDataBlockWorkspace extends AbstractGpuTest {
         workspace = new DataBlockWorkspace();
     }
 
+    @AfterMethod
+    public void destroyWorkspac() {
+        workspace.free();
+    }
+    
     @Test
     public void testSaveAndLoad() {
         if (!getContext().isAvailable()) {

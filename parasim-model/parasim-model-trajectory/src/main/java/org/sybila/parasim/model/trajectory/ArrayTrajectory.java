@@ -12,11 +12,11 @@ public class ArrayTrajectory extends AbstractTrajectory {
     public ArrayTrajectory(float[] points, float[] times, final int dimension) {
         this(points, times, dimension, times.length, new ArrayPointLocator() {
 
-            public int getPointPosition(int trajectoryIndex, int pointIndex) {
+            public int getPointPosition(int pointIndex) {
                 return pointIndex * dimension;
             }
 
-            public int getTimePosition(int trajectoryIndex, int pointIndex) {
+            public int getTimePosition(int pointIndex) {
                 return pointIndex;
             }
         });
@@ -40,7 +40,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
         if (index < 0 || index >= getLength()) {
             throw new IllegalArgumentException("The point index is out of the range [0, " + (getLength() - 1) + "]");
         }
-        return new ArrayPoint(points, times[ pointLocator.getTimePosition(/*ignored*/0, index)], pointLocator.getPointPosition(/*ignored*/0, index), getDimension());
+        return new ArrayPoint(points, times[ pointLocator.getTimePosition(index)], pointLocator.getPointPosition(index), getDimension());
     }
 
 }
