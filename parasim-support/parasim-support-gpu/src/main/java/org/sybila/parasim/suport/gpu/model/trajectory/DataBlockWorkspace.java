@@ -100,17 +100,20 @@ public class DataBlockWorkspace {
         if (!isInitialized()) {
             throw new IllegalStateException("The workspace is not initialized yet.");
         }
-        Utils.checkErrorCode(JCuda.cudaMemcpy(Pointer.to(hostLengths), deviceLengths, getSavedDataBlock().size() * Sizeof.INT, cudaMemcpyKind.cudaMemcpyDeviceToHost));
+        int[] newHostLengths = new int[getSavedDataBlock().size()];
+        Utils.checkErrorCode(JCuda.cudaMemcpy(Pointer.to(newHostLengths), deviceLengths, getSavedDataBlock().size() * Sizeof.INT, cudaMemcpyKind.cudaMemcpyDeviceToHost));
         int maxLength = 0;
         for (int i = 0; i < getSavedDataBlock().size(); i++) {
-            if (hostLengths[i] > maxLength) {
-                maxLength = hostLengths[i];
+            if (newHostLengths[i] > maxLength) {
+                maxLength = newHostLengths[i];
             }
         }
         int dimension = getSavedDataBlock().getTrajectory(0).getDimension();
-        Utils.checkErrorCode(JCuda.cudaMemcpy(Pointer.to(hostPoints), devicePoints, getSavedDataBlock().size() * maxLength * getSavedDataBlock().getTrajectory(0).getDimension() * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyDeviceToHost));
-        Utils.checkErrorCode(JCuda.cudaMemcpy(Pointer.to(hostTimes), deviceTimes, getSavedDataBlock().size() * maxLength * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyDeviceToHost));
-        return dataBlockFactory.createDataBlock(hostPoints, hostTimes, hostLengths, dimension);
+        float[] newHostPoints = new float[dimension * maxLength * getSavedDataBlock().size()];
+        float[] newHostTimes = new float[maxLength * getSavedDataBlock().size()];
+        Utils.checkErrorCode(JCuda.cudaMemcpy(Pointer.to(newHostPoints), devicePoints, getSavedDataBlock().size() * maxLength * getSavedDataBlock().getTrajectory(0).getDimension() * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyDeviceToHost));
+        Utils.checkErrorCode(JCuda.cudaMemcpy(Pointer.to(newHostTimes), deviceTimes, getSavedDataBlock().size() * maxLength * Sizeof.FLOAT, cudaMemcpyKind.cudaMemcpyDeviceToHost));
+        return dataBlockFactory.createDataBlock(newHostPoints, newHostTimes, newHostLengths, dimension);
     }
 
     public void saveDataBlock(DataBlock<Trajectory> trajectories) {
@@ -178,7 +181,7 @@ public class DataBlockWorkspace {
             if (dimension != trajectory.getDimension()) {
                 throw new IllegalArgumentException("The dimension of trajectories in data block are different!");
             }
-            hostLengths[trajectoryIndex] = trajectory.getLength();
+            hostLengths[trajectoryIndex] = Math.min(trajectory.getLength(), length);
             pointIndex = 0;
             for (Point point : trajectory) {
                 // length limit has been reached
@@ -186,7 +189,6 @@ public class DataBlockWorkspace {
                     break;
                 }
                 // copy point to host arrays
-                System.out.println("POINT: " + pointIndex + " | TRAJECTORY: " + trajectoryIndex + " | POSITION: " + (pointIndex * trajectories.size() * dimension + trajectoryIndex * dimension));
                 System.arraycopy(point.toArray(), 0, hostPoints, pointIndex * trajectories.size() * dimension + trajectoryIndex * dimension, dimension);
                 hostTimes[pointIndex * trajectories.size() + trajectoryIndex] = point.getTime();
                 pointIndex++;
@@ -199,7 +201,5 @@ public class DataBlockWorkspace {
         Utils.checkErrorCode(JCuda.cudaMemcpy(deviceLengths, Pointer.to(hostLengths), trajectories.size() * Sizeof.INT, cudaMemcpyKind.cudaMemcpyHostToDevice));
         // update saved data block
         savedDataBlock = trajectories;
-        System.out.println("-----------------------");
-        System.out.println("-----------------------");
     }
 }

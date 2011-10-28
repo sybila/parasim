@@ -50,7 +50,6 @@ public class DefaultWorkspaceDataBlockFactory implements WorkspaceDataBlockFacto
             return new ArrayPointLocator() {
 
                 public int getPointPosition(int pointIndex) {
-                    System.out.println("[R] POINT: " + pointIndex + " | TRAJECTORY: " + trajectoryIndex + " | POSITION: " + (pointIndex * size() * dimension + trajectoryIndex * dimension));
                     return pointIndex * size() * dimension + trajectoryIndex * dimension;
                 }
 
