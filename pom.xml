@@ -22,14 +22,16 @@
         <repository>
             <id>sybila-maven-ssh</id>
             <name>Maven repository hosted on Zimodej</name>
-            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/maven</url>
+            <url>scp://anna.fi.muni.cz:/home/xpapous1/public_html/maven</url>
+<!--           <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/maven</url> -->
         </repository>
     </distributionManagement>
     
     <repositories>
         <repository>
             <id>sybila-maven-http</id>
-            <url>http://sybila.fi.muni.cz/public/maven</url>
+            <url>http://anna.fi.muni.cz/~xpapous1/maven</url>
+<!--            <url>http://sybila.fi.muni.cz/public/maven</url> -->
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -44,7 +46,8 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.1.1</version>
+            <version>6.3</version>
+            <scope>test</scope>
         </dependency>        
     </dependencies>
     
@@ -68,14 +71,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <testFailureIgnore>false</testFailureIgnore>
-                    <includes>
-                        <include>**/Test*.java</include>
-                    </includes>
-                </configuration>
-            </plugin>        
-           
+                <version>2.9</version>
+                <executions>
+                    <execution>
+                        <id>functional-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <testFailureIgnore>true</testFailureIgnore>
+                            <argLine>-Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties</argLine>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>        
     </build>
 
