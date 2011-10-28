@@ -2,6 +2,7 @@ package org.sybila.parasim.model.ode;
 
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -29,7 +30,8 @@ public class TestOctaveOdeSystem {
         assertTrue(octaveString.startsWith("function"));
         assertTrue(octaveString.endsWith("endfunction"));
         assertTrue(octaveString.replace(" ", "").contains("xdot=f(x,t)"));
-        assertTrue(octaveString.replace(" ", "").contains("xdot=zeros(2,1);xdot(0)=10.1*x(0)+(-1.0)*x(0)*x(1);xdot(1)=1.0*x(0)*x(1)+(-5.4)*x(1);"));        
+        System.out.println(octaveString);
+        assertTrue(octaveString.replace(" ", "").contains("xdot=zeros(2,1);xdot(1)=10.1*x(1)+(-1.0)*x(1)*x(2);xdot(2)=1.0*x(1)*x(2)+(-5.4)*x(2);"));        
     }
     
     @Test
@@ -45,7 +47,9 @@ public class TestOctaveOdeSystem {
                 fail("The octave string can not be used with octave engine.");
             }
         }
-        catch(Exception ignored) {}        
+        catch(Exception ignored) {
+            throw new SkipException("The Octave is not available.");
+        }        
         finally {
             if (engine != null) {
                 engine.close();

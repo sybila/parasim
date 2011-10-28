@@ -47,6 +47,11 @@ public class OctaveSimulator implements Simulator<AdaptiveStepConfiguration, Sim
     private Trajectory simulateTrajectory(OctaveEngine octave, OctaveOdeSystem octaveOdeSystem, AdaptiveStepConfiguration configuration, Point initialPoint) {
         octave.eval("i = " + Arrays.toString(initialPoint.toArray()) + ";");
         octave.eval("t = linspace(" + initialPoint.getTime() + ", " + configuration.getTargetTime() + ", " + Math.min(Math.round((configuration.getTargetTime() - initialPoint.getTime()) / configuration.getTimeStep()), configuration.getMaxNumberOfIterations()) + ")");
+        System.out.println("i = " + Arrays.toString(initialPoint.toArray()) + ";");
+        System.out.println(octaveOdeSystem.octaveString());
+        System.out.println("t = linspace(" + initialPoint.getTime() + ", " + configuration.getTargetTime() + ", " + Math.min(Math.round((configuration.getTargetTime() - initialPoint.getTime()) / configuration.getTimeStep()), configuration.getMaxNumberOfIterations()) + ")");
+        System.out.println("y = lsode(\"" + octaveOdeSystem.octaveName() + "\", i, t)");
+        
         octave.eval("y = lsode(\"" + octaveOdeSystem.octaveName() + "\", i, t)");
         OctaveDouble y = octave.get(OctaveDouble.class, "y");
         double[] loadedData = y.getData();

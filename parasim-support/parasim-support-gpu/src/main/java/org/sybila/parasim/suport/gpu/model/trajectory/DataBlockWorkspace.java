@@ -1,6 +1,5 @@
 package org.sybila.parasim.suport.gpu.model.trajectory;
 
-import java.util.Arrays;
 import jcuda.Pointer;
 import jcuda.Sizeof;
 import jcuda.driver.CUdeviceptr;

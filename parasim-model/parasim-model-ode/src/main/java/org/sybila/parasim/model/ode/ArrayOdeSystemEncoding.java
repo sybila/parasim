@@ -30,22 +30,30 @@ public class ArrayOdeSystemEncoding implements OdeSystemEncoding {
     }
     
     public float coefficient(int variableIndex, int coefficientIndex) {
-        if (coefficientIndex < 0 || coefficientIndex >= countCoefficents(variableIndex)) {
-            throw new IllegalArgumentException("The parameter coefficientIndex is out of the range [0," + (countCoefficents(variableIndex) - 1) + "].");
+        if (coefficientIndex < 0 || coefficientIndex >= countCoefficients(variableIndex)) {
+            throw new IllegalArgumentException("The parameter coefficientIndex is out of the range [0," + (countCoefficients(variableIndex) - 1) + "].");
         }
         return coefficients[coefficientIndexes[variableIndex] + coefficientIndex];
     }
 
-    public int countCoefficents(int variableIndex) {
+    public int countCoefficients() {
+        return coefficients.length;
+    }
+    
+    public int countCoefficients(int variableIndex) {
         if (variableIndex < 0 || variableIndex >= countVariables()) {
             throw new IllegalArgumentException("The parameter variableIndex is out of the range [0," + (countVariables() - 1) + "].");
         }
         return coefficientIndexes[variableIndex + 1] - coefficientIndexes[variableIndex];
     }
 
+    public int countFactors() {
+        return factors.length;
+    }
+    
     public int countFactors(int variableIndex, int coefficientIndex) {
-        if (coefficientIndex < 0 || coefficientIndex >= countCoefficents(variableIndex)) {
-            throw new IllegalArgumentException("The parameter coefficientIndex is out of the range [0," + (countCoefficents(variableIndex) - 1) + "].");
+        if (coefficientIndex < 0 || coefficientIndex >= countCoefficients(variableIndex)) {
+            throw new IllegalArgumentException("The parameter coefficientIndex is out of the range [0," + (countCoefficients(variableIndex) - 1) + "].");
         }
         return factorIndexes[coefficientIndexes[variableIndex] + coefficientIndex + 1] - factorIndexes[coefficientIndexes[variableIndex] + coefficientIndex];
     }

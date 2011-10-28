@@ -9,6 +9,7 @@ import org.sybila.parasim.model.trajectory.ListTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.suport.gpu.AbstractGpuTest;
+import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -35,7 +36,7 @@ public class TestDataBlockWorkspace extends AbstractGpuTest {
     @Test
     public void testSaveAndLoad() {
         if (!getContext().isAvailable()) {
-            return;
+            throw new SkipException("The CUDA is not available.");
         }
         DataBlock<Trajectory> expected = getTrajectories();
         workspace.saveDataBlock(expected);

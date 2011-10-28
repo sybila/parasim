@@ -6,6 +6,7 @@ import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.Simulator;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.testng.SkipException;
 
 /**
  *
@@ -16,7 +17,7 @@ public class TestOctaveSimulator extends AbstractAdaptiveStepSimulationTest {
     @Test
     public void testValidNumberOfTrajectories() {
         if (!OctaveSimulator.isAvailable()) {
-            return;
+            throw new SkipException("The Octave is not available.");
         }
         super.testValidNumberOfTrajectories(10);
     }

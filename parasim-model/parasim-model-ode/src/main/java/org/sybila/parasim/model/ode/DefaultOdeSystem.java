@@ -29,7 +29,7 @@ public class DefaultOdeSystem implements OdeSystem {
             throw new IndexOutOfBoundsException("The dimension is out of the range [0, " + (dimension() - 1) + "].");
         }
         float result = 0;
-        for(int c = 0; c < encoding.countCoefficents(dimension); c++) {
+        for(int c = 0; c < encoding.countCoefficients(dimension); c++) {
             float subResult = encoding.coefficient(dimension, c);
             for(int f = 0; f < encoding.countFactors(dimension, c); f++) {
                 subResult *= point.getValue(encoding.factor(dimension, c, f));
@@ -44,7 +44,7 @@ public class DefaultOdeSystem implements OdeSystem {
             throw new IndexOutOfBoundsException("The dimension is out of the range [0, " + (dimension() - 1) + "].");
         }
         float result = 0;
-        for(int c = 0; c < encoding.countCoefficents(dimension); c++) {
+        for(int c = 0; c < encoding.countCoefficients(dimension); c++) {
             float subResult = encoding.coefficient(dimension, c);
             for(int f = 0; f < encoding.countFactors(dimension, c); f++) {
                 subResult *= point[encoding.factor(dimension, c, f)];

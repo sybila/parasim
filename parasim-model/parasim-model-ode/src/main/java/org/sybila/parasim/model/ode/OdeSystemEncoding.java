@@ -7,7 +7,11 @@ public interface OdeSystemEncoding {
 
     float coefficient(int variableIndex, int coefficientIndex);
     
-    int countCoefficents(int variableIndex);
+    int countCoefficients();
+    
+    int countCoefficients(int variableIndex);
+
+    int countFactors();
     
     int countFactors(int variableIndex, int coefficientIndex);
     
