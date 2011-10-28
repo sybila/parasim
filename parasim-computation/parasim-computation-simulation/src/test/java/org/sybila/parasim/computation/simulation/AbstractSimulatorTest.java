@@ -3,6 +3,8 @@ package org.sybila.parasim.computation.simulation;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import java.util.HashMap;
 import java.util.Map;
+import org.sybila.parasim.model.ode.ArrayOdeSystemEncoding;
+import org.sybila.parasim.model.ode.DefaultOdeSystem;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
@@ -63,41 +65,21 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     }
     
     private OdeSystem createOdeSystem(final int dim) {
-        return new OdeSystem() {
-
-            @Override
-            public float value(Point point, int dimension) {
-                return value(point.toArray(), dimension);
-            }
-
-            @Override
-            public float value(float[] point, int dimension) {
-                if (dimension < 0 || dimension > dim) {
-                    throw new IndexOutOfBoundsException("The specified dimension is out of the range [0," + dim + "].");
-                }
-                return ((float)dimension)/(float)100;
-            }
-
-            @Override
-            public int dimension() {
-                return dim;
-            }
-
-            public String octaveName() {
-                return "f";
-            }
-
-            public String octaveString() {
-                StringBuilder result = new StringBuilder();
-                result.append("function xdot = f(x, t) ");
-                result.append("xdot = zeros(").append(dim).append(", 1);");
-                for(int dim=0; dim<dimension(); dim++) {
-                    result.append("xdot(").append(dim+1).append(") = ").append(((float)dim)/(float)100).append(";");
-                }
-                result.append("endfunction");
-                return result.toString();
-            }
-        };
+        int[] coefficientIndexes = new int[dim + 1];
+        float[] coefficients = new float[dim];
+        int[] factorIndexes = new int[dim + 1];
+        int[] factors = new int[dim];
+        for(int d = 0; d < dim; d++) {
+            coefficientIndexes[d] = d;
+            coefficients[d] = (float) dim / (float) 100;
+            factorIndexes[d] = d;
+            factors[d] = d;
+        }
+        coefficientIndexes[dim] = dim;
+        factorIndexes[dim] = dim;
+        return new DefaultOdeSystem(
+            new ArrayOdeSystemEncoding(coefficientIndexes, coefficients, factorIndexes, factors)
+        );
     }
     
     abstract protected Conf createConfiguration();
