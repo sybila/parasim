@@ -9,6 +9,7 @@ import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.suport.gpu.Utils;
+import sun.security.krb5.internal.PAData;
 
 /**
  * WARNING: This class is not thread safe!
@@ -116,11 +117,15 @@ public class DataBlockWorkspace {
     }
 
     public void saveDataBlock(DataBlock<Trajectory> trajectories) {
-        saveDataBlock(trajectories, getMaxDataBlockLength(trajectories), true);
+        saveDataBlock(trajectories, 0);
+    }
+    
+    public void saveDataBlock(DataBlock<Trajectory> trajectories, int padding) {
+        saveDataBlock(trajectories, getMaxDataBlockLength(trajectories), true, padding);
     }
 
-    public void saveDataBlock(DataBlock<Trajectory> trajectories, int lengthLimit) {
-        saveDataBlock(trajectories, lengthLimit, false);
+    public void saveDataBlock(DataBlock<Trajectory> trajectories, int padding, int lengthLimit) {
+        saveDataBlock(trajectories, lengthLimit, false, padding);
     }
 
     private DataBlock<Trajectory> getSavedDataBlock() {
@@ -161,12 +166,15 @@ public class DataBlockWorkspace {
         return initialized;
     }
 
-    private void saveDataBlock(DataBlock<Trajectory> trajectories, int lengthLimit, boolean lengthLimitIsNeeded) {
+    private void saveDataBlock(DataBlock<Trajectory> trajectories, int lengthLimit, boolean lengthLimitIsNeeded, int padding) {
         if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
+        if (padding < 0) {
+            throw new IllegalArgumentException("The parameter padding has to be non negative number.");
+        }
         int dimension = trajectories.getTrajectory(0).getDimension();
-        int length = lengthLimitIsNeeded ? lengthLimit : Math.min(getMaxDataBlockLength(trajectories), lengthLimit);
+        int length = (lengthLimitIsNeeded ? lengthLimit : Math.min(getMaxDataBlockLength(trajectories), lengthLimit)) + padding;
         // check whether the allocated memeory is big enough
         // if not -> reinit
         if (!isInitialized() || trajectories.size() > hostLengths.length || trajectories.size() * length > hostTimes.length || trajectories.size() * length * dimension > hostPoints.length) {

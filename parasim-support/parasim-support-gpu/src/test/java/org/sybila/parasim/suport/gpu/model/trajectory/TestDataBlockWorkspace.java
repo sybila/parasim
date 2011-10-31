@@ -57,9 +57,10 @@ public class TestDataBlockWorkspace extends AbstractGpuTest {
             return;
         }
         DataBlock<Trajectory> expected = getTrajectories();
-        workspace.saveDataBlock(expected, 3);
+        workspace.saveDataBlock(expected, 0, 3);
         DataBlock<Trajectory> loaded = workspace.loadDataBlock();
         for (int t = 0; t < 10; t++) {
+            assertEquals(loaded.getTrajectory(t).getLength(), 3, "The trajectory length doesn't match.");
             for (int p = 0; p < 3; p++) {
                 for (int dim = 0; dim < 2; dim++) {
                     assertEquals(loaded.getTrajectory(t).getPoint(p).getValue(dim), expected.getTrajectory(t).getPoint(p).getValue(dim), "Trajectory number <" + t +"> doesn't match in point <" + p +"> in dimension <" + dim + ">.");
