@@ -40,6 +40,31 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         }
         return simulator;
     }
+
+    protected void testTimeStep(int size) {
+        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        for (int s = 0; s < size; s++) {
+            Point previous = null;
+            for(Point p : result.getTrajectory(s)) {             
+                if (previous == null) {
+                    previous = p;
+                    continue;
+                }
+                assertEquals(p.getTime() - previous.getTime(), getConfiguration().getTimeStep(), getConfiguration().getTimeStep()/1000, "The expected time step doesn't match.");
+                previous = p;
+            }
+            
+        }
+    }    
+    
+    protected void testMinimalNumberOfPoints(int size) {
+        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        for(int s = 0; s < size; s++) {
+            for(Point p : result.getTrajectory(s)) {             
+            }
+            assertTrue(result.getTrajectory(s).getLength() > 10, "The minimal number of point doesn't match.");
+        }
+    }
     
     protected void testValidNumberOfTrajectories(int size) {
         SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
@@ -51,7 +76,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
             assertEquals(Status.TIMEOUT, result.getStatus(s));
         }
     }
-  
+ 
     private ArrayDataBlock<Trajectory> createDataBlock(int dim, int size) {
         Trajectory[] trajectories = new Trajectory[size];
         for(int s = 0; s < size; s++) {

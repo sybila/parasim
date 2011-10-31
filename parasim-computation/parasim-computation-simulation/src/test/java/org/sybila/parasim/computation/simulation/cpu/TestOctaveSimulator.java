@@ -15,6 +15,22 @@ import org.testng.SkipException;
 public class TestOctaveSimulator extends AbstractAdaptiveStepSimulationTest {
 
     @Test
+    public void testTimeStep() {
+        if (!OctaveSimulator.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
+        super.testTimeStep(10);
+    }
+    
+    @Test
+    public void testMinimalNumberOfPoints() {
+        if (!OctaveSimulator.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
+        super.testMinimalNumberOfPoints(10);
+    }
+    
+    @Test
     public void testValidNumberOfTrajectories() {
         if (!OctaveSimulator.isAvailable()) {
             throw new SkipException("The Octave is not available.");
