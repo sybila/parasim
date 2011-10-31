@@ -1,5 +1,6 @@
 package org.sybila.parasim.suport.gpu.model.ode;
 
+import java.util.Arrays;
 import jcuda.Pointer;
 import jcuda.Sizeof;
 import jcuda.driver.CUdeviceptr;
@@ -115,9 +116,9 @@ public class OdeSystemWorkspace {
         hostCoefficientIndexes[0] = 0;
         hostFactorIndexes[0] = 0;
         for(int v = 0; v < encoding.countVariables(); v++) {
-            hostCoefficientIndexes[v+1] = encoding.countCoefficients(v);
+            hostCoefficientIndexes[v+1] = hostCoefficientIndexes[v] + encoding.countCoefficients(v);
             for(int c = 0; c < encoding.countCoefficients(v); c++) {
-                hostFactorIndexes[hostCoefficientIndexes[v] + c + 1] = encoding.countFactors(v, c);
+                hostFactorIndexes[hostCoefficientIndexes[v] + c + 1] = hostFactorIndexes[hostCoefficientIndexes[v] + c] + encoding.countFactors(v, c);
                 hostCoefficients[hostCoefficientIndexes[v] + c] = encoding.coefficient(v, c);
                 for(int f = 0; f < encoding.countFactors(v, c); f++) {
                     hostFactors[hostFactorIndexes[hostCoefficientIndexes[v] + c]] = encoding.factor(v, c, f);
@@ -139,19 +140,6 @@ public class OdeSystemWorkspace {
         hostCoefficients = new float[encoding.countCoefficients()];
         hostFactorIndexes = new int[encoding.countCoefficients() + 1];
         hostFactors = new int[encoding.countFactors()];
-        // copy data into host arrays
-        hostCoefficientIndexes[0] = 0;
-        hostFactorIndexes[0] = 0;
-        for(int v = 0; v < encoding.countVariables(); v++) {
-            hostCoefficientIndexes[v+1] = encoding.countCoefficients(v);
-            for(int c = 0; c < encoding.countCoefficients(v); c++) {
-                hostFactorIndexes[hostCoefficientIndexes[v] + c + 1] = encoding.countFactors(v, c);
-                hostCoefficients[hostCoefficientIndexes[v] + c] = encoding.coefficient(v, c);
-                for(int f = 0; f < encoding.countFactors(v, c); f++) {
-                    hostFactors[hostFactorIndexes[hostCoefficientIndexes[v] + c]] = encoding.factor(v, c, f);
-                }
-            }
-        }        
         // init device pointers
         deviceCoefficentIndexes = new CUdeviceptr();
         deviceCoefficents = new CUdeviceptr();
