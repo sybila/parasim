@@ -8,12 +8,11 @@ import org.sybila.parasim.model.trajectory.Point;
 public interface OdeSystem {
  
     int dimension();
-    
-    String octaveName();
-    
-    String octaveString();
+
+    OdeSystemEncoding encoding();
     
     float value(Point point, int dimension);
     
     float value(float[] point, int dimension);
+
 }

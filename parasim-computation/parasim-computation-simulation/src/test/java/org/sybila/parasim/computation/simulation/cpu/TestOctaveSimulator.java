@@ -1,11 +1,12 @@
 package org.sybila.parasim.computation.simulation.cpu;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.Simulator;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.testng.SkipException;
 
 /**
  *
@@ -13,11 +14,28 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class TestOctaveSimulator extends AbstractAdaptiveStepSimulationTest {
 
-    // @Test
-    public void testValidNumberOfTrajectories() {
-        if (OctaveSimulator.isAvailable()) {
-            super.testValidNumberOfTrajectories(10);
+    @Test
+    public void testTimeStep() {
+        if (!OctaveSimulator.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
         }
+        super.testTimeStep(10);
+    }
+    
+    @Test
+    public void testMinimalNumberOfPoints() {
+        if (!OctaveSimulator.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
+        super.testMinimalNumberOfPoints(10);
+    }
+    
+    @Test
+    public void testValidNumberOfTrajectories() {
+        if (!OctaveSimulator.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
+        super.testValidNumberOfTrajectories(10);
     }
 
     @Override

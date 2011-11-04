@@ -3,11 +3,13 @@ package org.sybila.parasim.computation.simulation;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import java.util.HashMap;
 import java.util.Map;
+import org.sybila.parasim.model.ode.ArrayOdeSystemEncoding;
+import org.sybila.parasim.model.ode.DefaultOdeSystem;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -38,11 +40,35 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         }
         return simulator;
     }
+
+    protected void testTimeStep(int size) {
+        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        for (int s = 0; s < size; s++) {
+            Point previous = null;
+            for(Point p : result.getTrajectory(s)) {             
+                if (previous == null) {
+                    previous = p;
+                    continue;
+                }
+                assertEquals(p.getTime() - previous.getTime(), getConfiguration().getTimeStep(), getConfiguration().getTimeStep()/1000, "The expected time step doesn't match.");
+                previous = p;
+            }
+            
+        }
+    }    
+    
+    protected void testMinimalNumberOfPoints(int size) {
+        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        for(int s = 0; s < size; s++) {
+            for(Point p : result.getTrajectory(s)) {             
+            }
+            assertTrue(result.getTrajectory(s).getLength() > 10, "The minimal number of point doesn't match.");
+        }
+    }
     
     protected void testValidNumberOfTrajectories(int size) {
         SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
         assertEquals(size, result.size());
-        System.out.println(getConfiguration().getOdeSystem().octaveString());
         for(int s = 0; s < size; s++) {
             for(Point p : result.getTrajectory(s)) {             
             }
@@ -50,7 +76,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
             assertEquals(Status.TIMEOUT, result.getStatus(s));
         }
     }
-  
+ 
     private ArrayDataBlock<Trajectory> createDataBlock(int dim, int size) {
         Trajectory[] trajectories = new Trajectory[size];
         for(int s = 0; s < size; s++) {
@@ -64,41 +90,21 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     }
     
     private OdeSystem createOdeSystem(final int dim) {
-        return new OdeSystem() {
-
-            @Override
-            public float value(Point point, int dimension) {
-                return value(point.toArray(), dimension);
-            }
-
-            @Override
-            public float value(float[] point, int dimension) {
-                if (dimension < 0 || dimension > dim) {
-                    throw new IndexOutOfBoundsException("The specified dimension is out of the range [0," + dim + "].");
-                }
-                return ((float)dimension)/(float)100;
-            }
-
-            @Override
-            public int dimension() {
-                return dim;
-            }
-
-            public String octaveName() {
-                return "f";
-            }
-
-            public String octaveString() {
-                StringBuilder result = new StringBuilder();
-                result.append("function xdot = f(x, t) ");
-                result.append("xdot = zeros(").append(dim).append(", 1);");
-                for(int dim=0; dim<dimension(); dim++) {
-                    result.append("xdot(").append(dim+1).append(") = ").append(((float)dim)/(float)100).append(";");
-                }
-                result.append("endfunction");
-                return result.toString();
-            }
-        };
+        int[] coefficientIndexes = new int[dim + 1];
+        float[] coefficients = new float[dim];
+        int[] factorIndexes = new int[dim + 1];
+        int[] factors = new int[dim];
+        for(int d = 0; d < dim; d++) {
+            coefficientIndexes[d] = d;
+            coefficients[d] = (float) dim / (float) 100;
+            factorIndexes[d] = d;
+            factors[d] = d;
+        }
+        coefficientIndexes[dim] = dim;
+        factorIndexes[dim] = dim;
+        return new DefaultOdeSystem(
+            new ArrayOdeSystemEncoding(coefficientIndexes, coefficients, factorIndexes, factors)
+        );
     }
     
     abstract protected Conf createConfiguration();

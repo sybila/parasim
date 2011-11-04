@@ -28,7 +28,7 @@ public class GpuContext {
     public int getNumberOfDevices() {
         if (numberOfDevices == -1) {
             int[] number = new int[1];
-            JCuda.cudaGetDeviceCount(number);
+            Utils.checkErrorCode(JCuda.cudaGetDeviceCount(number));
             numberOfDevices = number[0];
         }
         return numberOfDevices;
@@ -40,7 +40,7 @@ public class GpuContext {
                 getNumberOfDevices();
                 isAvailable = 1;
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 isAvailable = 0;
             }
         }

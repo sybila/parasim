@@ -14,15 +14,14 @@ public class DefaultWorkspaceDataBlockFactory implements WorkspaceDataBlockFacto
     public DataBlock<Trajectory> createDataBlock(float[] points, float[] times, int[] lengths, int dimension) {
         return new WorkspaceDataBlock(points, times, lengths, dimension);
     }
-    
+
     private class WorkspaceDataBlock extends AbstractDataBlock<Trajectory> {
 
         private int dimension;
         private int[] lengths;
-        private ArrayPointLocator pointLocator;
         private float[] points;
         private float[] times;
-        
+
         public WorkspaceDataBlock(float[] points, float[] times, int[] lengths, final int dimension) {
             super(lengths.length);
             if (points == null) {
@@ -38,35 +37,26 @@ public class DefaultWorkspaceDataBlockFactory implements WorkspaceDataBlockFacto
             this.times = times;
             this.lengths = lengths;
             this.dimension = dimension;
-            int maxLength = 0;
-            for(int i=0; i<lengths.length; i++) {
-                if (lengths[i] > maxLength) {
-                    maxLength = lengths[i];
-                }
+        }
+
+        public Trajectory getTrajectory(int index) {
+            if (index < 0 || index >= size()) {
+                throw new IndexOutOfBoundsException("The index is out of the range [" + 0 + ", " + (size() - 1) + "].");
             }
-            pointLocator = new ArrayPointLocator() {
+            return new ArrayTrajectory(points, times, dimension, lengths[index], createPointLocator(index));
+        }
 
-                public int getPointPosition(int trajectoryIndex, int pointIndex) {
-                    return pointIndex * getSize() * dimension;
+        private ArrayPointLocator createPointLocator(final int trajectoryIndex) {
+            return new ArrayPointLocator() {
+
+                public int getPointPosition(int pointIndex) {
+                    return pointIndex * size() * dimension + trajectoryIndex * dimension;
                 }
 
-                public int getTimePosition(int trajectoryIndex, int pointIndex) {
-                    return pointIndex * getSize();
+                public int getTimePosition(int pointIndex) {
+                    return pointIndex * size() + trajectoryIndex;
                 }
             };
         }
-        
-        public Trajectory getTrajectory(int index) {
-            if (index < 0 || index >= getSize()) {
-                throw new IndexOutOfBoundsException("The index is out of the range [" + 0 + ", " + (getSize() - 1) + "].");
-            }
-            return new ArrayTrajectory(points, times, dimension, lengths[index], pointLocator);
-        }
-
-        public int size() {
-            return lengths.length;
-        }
-        
     }
-    
 }

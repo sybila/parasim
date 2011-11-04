@@ -4,7 +4,7 @@ import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.Simulator;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 
 /**
@@ -12,6 +12,16 @@ import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationT
  */
 public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
 
+    @Test
+    public void testTimeStep() {
+        super.testTimeStep(10);
+    }
+
+    @Test
+    public void testMinimalNumberOfPoints() {
+        super.testMinimalNumberOfPoints(10);
+    }    
+    
     @Test
     public void testValidNumberOfTrajectories() {
         super.testValidNumberOfTrajectories(10);

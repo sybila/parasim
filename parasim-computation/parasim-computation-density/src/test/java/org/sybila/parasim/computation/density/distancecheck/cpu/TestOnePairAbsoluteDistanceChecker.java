@@ -1,8 +1,8 @@
 package org.sybila.parasim.computation.density.distancecheck.cpu;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.sybila.parasim.computation.TrajectoryNeighborhood;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 import org.sybila.parasim.computation.density.AbstractDensityTest;
 import org.sybila.parasim.computation.density.Configuration;
 import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;

@@ -10,19 +10,17 @@ public interface ArrayPointLocator {
      * followed by other dimension values.
      *
      * 
-     * @param trajectoryIndex index of trajectory which the point belongs to
      * @param pointIndex point index
      * @return point index 
      */
-    int getPointPosition(int trajectoryIndex, int pointIndex);
+    int getPointPosition(int pointIndex);
     
     /**
      * Returns position of time value in array.
      * 
-     * @param trajectoryIndex index of trajectory which the point belongs to
      * @param pointIndex index
      * @return time index
      */
-    int getTimePosition(int trajectoryIndex, int pointIndex);
+    int getTimePosition(int pointIndex);
     
 }

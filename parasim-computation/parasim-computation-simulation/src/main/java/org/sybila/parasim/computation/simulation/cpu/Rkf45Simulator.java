@@ -180,16 +180,30 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
     private Trajectory simulate(Rkf45Computation computation, Point initial) {
         Point current = initial;
         List<Point> points = new ArrayList<Point>();
+        float timeStep = computation.timeStep;
+        float savedTimeStep = 0;
+        float  timeStepCorrection = 0;
+        float lastTime = initial.getTime();
         for (computation.iteration = 0; computation.iteration < computation.configuration.getMaxNumberOfIterations(); computation.iteration++) {
             current = successor(computation, current);
             if (current == null) {
                 break;
             }
-            if (current.getTime() < computation.configuration.getTargetTime()) {
-                points.add(current);
-            } else {
+            if (current.getTime() > computation.configuration.getTargetTime()) {
                 computation.status = Status.OK;
                 break;
+            }
+            if (current.getTime() < lastTime + timeStep) {
+                timeStepCorrection = lastTime + timeStep - current.getTime();
+                savedTimeStep = computation.timeStep;
+                computation.timeStep = timeStepCorrection;
+            } else {
+                if (savedTimeStep != 0) {
+                    computation.timeStep = (timeStepCorrection == computation.timeStep ? savedTimeStep : computation.timeStep);
+                    savedTimeStep = 0;
+                    lastTime += timeStep;
+                }
+                points.add(current);
             }
         }
         if (computation.status == null) {
