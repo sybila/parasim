@@ -3,7 +3,8 @@ package org.sybila.parasim.application.main;
 import org.sybila.parasim.visualization.*;
 
 /**
- *
+ * Swing window, connected with a Swing frame - buttons use controller provided by the application.
+ * 
  * @author <a href="mailto:xstreck1@fi.muni.cz">Adam Streck</a>
  */
 public class Window extends javax.swing.JFrame {
@@ -16,13 +17,15 @@ public class Window extends javax.swing.JFrame {
         initComponents();
         getContentPane().setBackground(new java.awt.Color(255, 255, 255)); // Doesn't work on the frame itself...
     }
-    
-    public void setVisualization(Visualization visualization) {
-         visualisationCont.add(visualization);       
-    }
-    
+        
+    /**
+     * Sets the visualization that will be displayed and provides a controller for it
+     * 
+     * @param controller VisualizationControl for the current visualiztion 
+     */
     public void setController(VisualizationControl _controller) {
         controller = _controller;
+        visualisationCont.add(controller.getVisualization());
     }
     
 
@@ -43,7 +46,7 @@ public class Window extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
 
-        visualisationCont.setBackground(new java.awt.Color(255, 255, 0));
+        visualisationCont.setBackground(new java.awt.Color(255, 255, 255));
         visualisationCont.setMaximumSize(new java.awt.Dimension(800, 600));
         visualisationCont.setMinimumSize(new java.awt.Dimension(800, 600));
         visualisationCont.setPreferredSize(new java.awt.Dimension(800, 600));

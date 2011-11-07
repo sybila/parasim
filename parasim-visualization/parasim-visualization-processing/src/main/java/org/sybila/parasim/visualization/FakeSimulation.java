@@ -97,7 +97,7 @@ public class FakeSimulation {
      * 
      * @return All the start points with directions.
      */
-    final private DirectedPoint [] creteStartPoints () {
+    private DirectedPoint [] creteStartPoints () {
 
         // Initialize necessary arrays
         float [] positions   = new float [dimensions]; // Starting position for trajectory in each direction
@@ -166,7 +166,7 @@ public class FakeSimulation {
      * @param time_values how many new points the trajectory should have
      * @return new trajectory from the start point
      */
-    final private ArrayTrajectory createTrajectory (DirectedPoint start_point, final float [] time_values) {
+    private ArrayTrajectory createTrajectory (DirectedPoint start_point, final float [] time_values) {
         float [] all_points = new float [time_values.length * dimensions];
         
         // Add new positions to the simulation in the direction and correct the direction

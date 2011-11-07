@@ -7,13 +7,13 @@ package org.sybila.parasim.visualization;
  */
 
 public class VisualizationControl  {
-    private Visualization visualization;
+    private ParallelVisualization visualization;
 
     /**
      * 
      * @param Visulazation that will be controlle using the controller 
      */
-    public VisualizationControl(Visualization controlled) {
+    public VisualizationControl(ParallelVisualization controlled) {
         visualization = controlled;
     }
     
@@ -21,7 +21,7 @@ public class VisualizationControl  {
      * 
      * @return controlled visualization 
      */
-    public Visualization getVisualization() {
+    public ParallelVisualization getVisualization() {
         return visualization;
     }
     

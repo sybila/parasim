@@ -10,7 +10,7 @@ import org.sybila.parasim.visualization.*;
 
 public class Application {
     private Window mainWindow;
-    private Visualization dataVisualization;
+    private ParallelVisualization dataVisualization;
     private VisualizationControl controller;
     
     public static void main (String [] args) {
@@ -19,18 +19,25 @@ public class Application {
         
     }
     
+    /**
+     * Creates an application - mainly the window and sets up the visualization.
+     * Visualization is held in a content pane, whose size as well as size of the visualization are now hard-wired to 800*600.
+     */
     Application () {
-        dataVisualization = new Visualization();
+        dataVisualization = new ParallelVisualization(800,600);
         controller = new VisualizationControl(dataVisualization);      
         mainWindow = new Window();
         
-        mainWindow.setVisualization(dataVisualization);
         mainWindow.setController(controller);
         
         dataVisualization.init();
         mainWindow.setVisible(true);
     }
-            
+    
+    /** 
+     * 
+     * @return VisualizationControl for current visualization.
+     */
     public VisualizationControl getController() {
         return controller;
     }
