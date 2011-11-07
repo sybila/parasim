@@ -32,7 +32,7 @@ public class Visualization extends PApplet{
         visWidth = 800;
         visHeight = 600;
         
-        mySimulation = new FakeSimulation(4, 4, 50);
+        mySimulation = new FakeSimulation(4, 4, 3);
     }
     
     /**
@@ -41,15 +41,15 @@ public class Visualization extends PApplet{
      */
     @Override
     public void setup () { 
-
+        frameRate(3);
+                
         size(visWidth, visHeight);
         dimensions = mySimulation.getDataBlock().getTrajectory(0).getDimension();
         maxValues = new float [dimensions];
         displayHeight = height / dimensions;
         displayWidth = width;
                
-        getBoundaries(); 
-
+        getBoundaries();
     }
     
     /**
@@ -68,8 +68,8 @@ public class Visualization extends PApplet{
             pointIt = trajectory.iterator();
             
             // For each point in trajectory check, if its value is not greater than currnet maximal value
-            while (pointIt.hasNext()) {
-               point = (Point) pointIt.next();
+            for (int p = 0; p < trajectory.getLength(); p++)  {
+               point = (Point) trajectory.getPoint(p);
                for (int i = 0; i < dimensions; i++) {
                    point.getValue(i);
                    if (maxValues[i] < point.getValue(i))
@@ -98,6 +98,9 @@ public class Visualization extends PApplet{
            stroke(trajCol);
            drawDimension(i);
        }
+       
+        mySimulation.AddPoints(1);
+        getBoundaries();
     }    
     
     /*
@@ -118,12 +121,13 @@ public class Visualization extends PApplet{
             trajectory = (AbstractTrajectory) trajectoryIt.next();
             pointIt = trajectory.iterator();
             
-            if (pointIt.hasNext())
-                oldPoint = (Point) pointIt.next();
+            if (trajectory.hasPoint(0))
+                oldPoint = (Point) trajectory.getPoint(0);
             else
                 break;
-            while (pointIt.hasNext()) {
-                point = (Point) pointIt.next();
+            
+            for (int p = 1; p < trajectory.getLength(); p++)  {
+                point = (Point) trajectory.getPoint(p);
                 int start_X = (int) (((float)oldPoint.getTime())*timeCorrection + borderWidth);
                 int start_Y = (int) min((- ((float)oldPoint.getValue(dimNum))*valCorrection + yBottom), yBottom);
                 int end_X = (int) (((float)point.getTime())*timeCorrection + borderWidth);

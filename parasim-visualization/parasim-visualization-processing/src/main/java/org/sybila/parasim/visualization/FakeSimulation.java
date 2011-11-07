@@ -170,7 +170,7 @@ public class FakeSimulation {
         float [] all_points = new float [time_values.length * dimensions];
         
         // Add new positions to the simulation in the direction and correct the direction
-        for (int point = 0; point < times; point++) {
+        for (int point = 0; point < time_values.length; point++) {
             for (int dim = 0; dim < dimensions; dim++) {
                 all_points[point*dimensions + dim] = start_point.position[dim];
                 start_point.position[dim] += start_point.direction[dim];
@@ -225,7 +225,7 @@ public class FakeSimulation {
         // Create new values
         float [] time_values = new float [new_times];
         for (int i = times; i < times + new_times; i++)
-            time_values[i] = i*time_step;
+            time_values[i - times] = i*time_step;
         
         // Append new trajectory to the old one
         for (int trajectory = 0; trajectory < start_points.length; trajectory++)
