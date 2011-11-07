@@ -7,24 +7,24 @@ import org.sybila.parasim.visualization.*;
  * @author <a href="mailto:xstreck1@fi.muni.cz">Adam Streck</a>
  */
 public class Window extends javax.swing.JFrame {
-
-    /** Creates new form Window */
+    private VisualizationControl controller;
+    
+    /** 
+     * Create new window and paint it white
+     */
     public Window() {
         initComponents();
         getContentPane().setBackground(new java.awt.Color(255, 255, 255)); // Doesn't work on the frame itself...
-        initVisualization(); 
     }
     
-    /**
-     * Initializes the applet.
-     */
-    void initVisualization() {
-        Visualization testVisualization = new Visualization();
-
-        testVisualization.init();        
-        
-        visualisationCont.add(testVisualization);
+    public void setVisualization(Visualization visualization) {
+         visualisationCont.add(visualization);       
     }
+    
+    public void setController(VisualizationControl _controller) {
+        controller = _controller;
+    }
+    
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -36,9 +36,9 @@ public class Window extends javax.swing.JFrame {
     private void initComponents() {
 
         visualisationCont = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        newSimulationButton = new javax.swing.JButton();
+        pauseButton = new javax.swing.JButton();
+        continueButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -59,25 +59,25 @@ public class Window extends javax.swing.JFrame {
             .addGap(0, 600, Short.MAX_VALUE)
         );
 
-        jButton1.setText("New Simulation");
-        jButton1.setActionCommand("New simulation");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        newSimulationButton.setText("New Simulation");
+        newSimulationButton.setActionCommand("New simulation");
+        newSimulationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                newSimulationButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Pause");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        pauseButton.setText("Pause");
+        pauseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                pauseButtonActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Continue");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        continueButton.setText("Continue");
+        continueButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                continueButtonActionPerformed(evt);
             }
         });
 
@@ -88,9 +88,9 @@ public class Window extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(newSimulationButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pauseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(continueButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(visualisationCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -98,37 +98,37 @@ public class Window extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addComponent(newSimulationButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(pauseButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3))
+                .addComponent(continueButton))
             .addComponent(visualisationCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void newSimulationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newSimulationButtonActionPerformed
+        controller.startNewSimulation(4, 4, 10);
+    }//GEN-LAST:event_newSimulationButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void pauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseButtonActionPerformed
+        controller.stopDrawing();
+    }//GEN-LAST:event_pauseButtonActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void continueButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continueButtonActionPerformed
+        controller.continueDrawing();
+    }//GEN-LAST:event_continueButtonActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton continueButton;
+    private javax.swing.JButton newSimulationButton;
+    private javax.swing.JButton pauseButton;
     private javax.swing.JPanel visualisationCont;
     // End of variables declaration//GEN-END:variables
 }

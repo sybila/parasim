@@ -12,8 +12,7 @@ public class TestWindow extends javax.swing.JFrame {
     
     TestWindow() {
         Visualization testVisualization = new Visualization();
-        setSize(818, 642);  
-        testVisualization.init();        
+        setSize(818, 642);          
         getContentPane().add(testVisualization);
         
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);

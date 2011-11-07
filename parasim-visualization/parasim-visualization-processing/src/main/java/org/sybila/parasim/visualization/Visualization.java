@@ -18,6 +18,7 @@ public class Visualization extends PApplet{
     private int displayWidth; // Width of output from a single dimension
     private final int borderWidth = 5; // Width of the space between output and display frame
     
+    // Values used for determining the size of each window
     private float maxTime;
     private float [] maxValues;
     
@@ -31,8 +32,7 @@ public class Visualization extends PApplet{
     public Visualization () {
         visWidth = 800;
         visHeight = 600;
-        
-        mySimulation = new FakeSimulation(4, 4, 3);
+        init();
     }
     
     /**
@@ -41,17 +41,25 @@ public class Visualization extends PApplet{
      */
     @Override
     public void setup () { 
-        frameRate(3);
-                
         size(visWidth, visHeight);
+        frameRate(2);           
+    }
+    
+    public void setLayout() {
+        try {
+        if (mySimulation == null)
+            throw new IllegalAccessException ("Trying to layout a not initialized simulation.");
+        }
+        catch (IllegalAccessException error) {
+            System.out.println(error.getMessage());
+            error.printStackTrace();
+        }
+        
         dimensions = mySimulation.getDataBlock().getTrajectory(0).getDimension();
         maxValues = new float [dimensions];
         displayHeight = height / dimensions;
         displayWidth = width;
-               
-        getBoundaries();
     }
-    
     /**
      * For every dimension obtains maximal value and from all the trajectories 
      * and maximal time. 
@@ -87,20 +95,22 @@ public class Visualization extends PApplet{
     
     @Override
     public void draw () { 
-       background(255);
+        if (mySimulation != null) {
+            mySimulation.AddPoints(3);
+            getBoundaries();
+        }
 
-       fill(fillCol);
+        background(255);
+        fill(fillCol);
 
-       for (int i = 0; i < dimensions; i++) {
-           stroke(borderCol);
-           rect (borderWidth, borderWidth + displayHeight*i, 
-                 displayWidth - borderWidth*2, displayHeight - borderWidth*2); 
-           stroke(trajCol);
-           drawDimension(i);
-       }
-       
-        mySimulation.AddPoints(1);
-        getBoundaries();
+        for (int i = 0; i < dimensions; i++) {
+            stroke(borderCol);
+            rect (borderWidth, borderWidth + displayHeight*i, 
+                  displayWidth - borderWidth*2, displayHeight - borderWidth*2); 
+            stroke(trajCol);
+            if (mySimulation != null)
+                drawDimension(i);
+        }
     }    
     
     /*
