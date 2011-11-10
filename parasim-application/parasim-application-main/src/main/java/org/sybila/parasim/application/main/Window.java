@@ -1,6 +1,7 @@
 package org.sybila.parasim.application.main;
 
 import org.sybila.parasim.visualization.*;
+import javax.swing.*;
 
 /**
  * Swing window, connected with a Swing frame - buttons use controller provided by the application.
@@ -14,6 +15,12 @@ public class Window extends javax.swing.JFrame {
      * Create new window and paint it white
      */
     public Window() {
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        }
+        catch(Exception e){
+            System.out.println("WindowsLookAndFeel isn't available");
+        }
         initComponents();
         getContentPane().setBackground(new java.awt.Color(255, 255, 255)); // Doesn't work on the frame itself...
     }
@@ -38,42 +45,30 @@ public class Window extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        visualisationCont = new javax.swing.JPanel();
+        buttonCont = new javax.swing.JPanel();
         newSimulationButton = new javax.swing.JButton();
-        pauseButton = new javax.swing.JButton();
         continueButton = new javax.swing.JButton();
+        pauseButton = new javax.swing.JButton();
+        visualisationCont = new javax.swing.JPanel();
+        choiceCont = new javax.swing.JPanel();
+        Timeline = new javax.swing.JToggleButton();
+        Corellation = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ParasimWindow");
         setBackground(new java.awt.Color(255, 255, 255));
+        setLocationByPlatform(true);
+        setName("Parasim window"); // NOI18N
 
-        visualisationCont.setBackground(new java.awt.Color(255, 255, 255));
-        visualisationCont.setMaximumSize(new java.awt.Dimension(800, 600));
-        visualisationCont.setMinimumSize(new java.awt.Dimension(800, 600));
-        visualisationCont.setPreferredSize(new java.awt.Dimension(800, 600));
-
-        javax.swing.GroupLayout visualisationContLayout = new javax.swing.GroupLayout(visualisationCont);
-        visualisationCont.setLayout(visualisationContLayout);
-        visualisationContLayout.setHorizontalGroup(
-            visualisationContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
-        );
-        visualisationContLayout.setVerticalGroup(
-            visualisationContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
+        buttonCont.setBackground(new java.awt.Color(255, 255, 255));
+        buttonCont.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        buttonCont.setPreferredSize(new java.awt.Dimension(150, 676));
 
         newSimulationButton.setText("New Simulation");
         newSimulationButton.setActionCommand("New simulation");
         newSimulationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newSimulationButtonActionPerformed(evt);
-            }
-        });
-
-        pauseButton.setText("Pause");
-        pauseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pauseButtonActionPerformed(evt);
             }
         });
 
@@ -84,29 +79,118 @@ public class Window extends javax.swing.JFrame {
             }
         });
 
+        pauseButton.setText("Pause");
+        pauseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pauseButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout buttonContLayout = new javax.swing.GroupLayout(buttonCont);
+        buttonCont.setLayout(buttonContLayout);
+        buttonContLayout.setHorizontalGroup(
+            buttonContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(buttonContLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(buttonContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(newSimulationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+                    .addComponent(continueButton, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+                    .addComponent(pauseButton, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        buttonContLayout.setVerticalGroup(
+            buttonContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(buttonContLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(newSimulationButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(continueButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pauseButton)
+                .addContainerGap(506, Short.MAX_VALUE))
+        );
+
+        visualisationCont.setBackground(new java.awt.Color(255, 255, 255));
+        visualisationCont.setAlignmentX(0.0F);
+        visualisationCont.setAlignmentY(0.0F);
+        visualisationCont.setMaximumSize(null);
+        visualisationCont.setMinimumSize(new java.awt.Dimension(200, 150));
+        visualisationCont.setPreferredSize(new java.awt.Dimension(800, 600));
+        visualisationCont.setRequestFocusEnabled(false);
+
+        javax.swing.GroupLayout visualisationContLayout = new javax.swing.GroupLayout(visualisationCont);
+        visualisationCont.setLayout(visualisationContLayout);
+        visualisationContLayout.setHorizontalGroup(
+            visualisationContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 823, Short.MAX_VALUE)
+        );
+        visualisationContLayout.setVerticalGroup(
+            visualisationContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 676, Short.MAX_VALUE)
+        );
+
+        choiceCont.setBackground(new java.awt.Color(255, 255, 255));
+        choiceCont.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        choiceCont.setPreferredSize(new java.awt.Dimension(150, 600));
+        choiceCont.setRequestFocusEnabled(false);
+        choiceCont.setVerifyInputWhenFocusTarget(false);
+
+        Timeline.setText("Timeline");
+        Timeline.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TimelineActionPerformed(evt);
+            }
+        });
+
+        Corellation.setText("Corellation");
+        Corellation.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CorellationActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout choiceContLayout = new javax.swing.GroupLayout(choiceCont);
+        choiceCont.setLayout(choiceContLayout);
+        choiceContLayout.setHorizontalGroup(
+            choiceContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(choiceContLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(choiceContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Timeline, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Corellation, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        choiceContLayout.setVerticalGroup(
+            choiceContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(choiceContLayout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addComponent(Timeline)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Corellation, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(535, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(newSimulationButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pauseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(continueButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(visualisationCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(buttonCont, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(visualisationCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(choiceCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(newSimulationButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pauseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(continueButton))
-            .addComponent(visualisationCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(choiceCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonCont, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(visualisationCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
@@ -124,11 +208,27 @@ public class Window extends javax.swing.JFrame {
         controller.continueDrawing();
     }//GEN-LAST:event_continueButtonActionPerformed
 
+private void CorellationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CorellationActionPerformed
+    if (Timeline.isSelected() && Corellation.isSelected())
+        Timeline.setSelected(false);
+    // TODO: Set Correlation visualization
+}//GEN-LAST:event_CorellationActionPerformed
+
+private void TimelineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TimelineActionPerformed
+    if (Timeline.isSelected() && Corellation.isSelected())
+        Corellation.setSelected(false);
+    // TODO: Set Timeline visualization
+}//GEN-LAST:event_TimelineActionPerformed
+
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton Corellation;
+    private javax.swing.JToggleButton Timeline;
+    private javax.swing.JPanel buttonCont;
+    private javax.swing.JPanel choiceCont;
     private javax.swing.JButton continueButton;
     private javax.swing.JButton newSimulationButton;
     private javax.swing.JButton pauseButton;
