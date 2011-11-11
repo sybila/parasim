@@ -92,37 +92,21 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
 
 
     private OdeSystem createOdeSystem(final int dim) {
-
-        return new OdeSystem() {
-
-            @Override
-            public float value(Point point, int dimension) {
-                return value(point.toArray(), dimension);
-            }
-
-            @Override
-            public float value(float[] point, int dimension) {
-                if (dimension < 0 || dimension > dim) {
-                    throw new IndexOutOfBoundsException("The specified dimension is out of the range [0," + dim + "].");
-                }
-                return ((float)dimension)/(float)100 ;
-            }            
-
-            @Override
-            public String getVariableName(int dimension) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            @Override
-            public int dimension() {
-                return dim;
-            }
-
-            public OdeSystemEncoding encoding() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
-    
+        int[] coefficientIndexes = new int[dim + 1];
+        float[] coefficients = new float[dim];
+        int[] factorIndexes = new int[dim + 1];
+        int[] factors = new int[dim];
+        for(int d = 0; d < dim; d++) {
+            coefficientIndexes[d] = d;
+            coefficients[d] = (float) dim / (float) 100;
+            factorIndexes[d] = d;
+            factors[d] = d;
+        }
+        coefficientIndexes[dim] = dim;
+        factorIndexes[dim] = dim;
+        return new DefaultOdeSystem(
+            new ArrayOdeSystemEncoding(coefficientIndexes, coefficients, factorIndexes, factors)
+        );
     }
     
     abstract protected Conf createConfiguration();

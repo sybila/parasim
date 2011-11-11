@@ -22,16 +22,16 @@
         <repository>
             <id>sybila-maven-ssh</id>
             <name>Maven repository hosted on Zimodej</name>
-            <url>scp://anna.fi.muni.cz:/home/xpapous1/public_html/maven</url>
-<!--           <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/maven</url> -->
+<!--            <url>scp://anna.fi.muni.cz:/home/xpapous1/public_html/maven</url>-->
+            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/maven</url> 
         </repository>
     </distributionManagement>
     
     <repositories>
         <repository>
             <id>sybila-maven-http</id>
-            <url>http://anna.fi.muni.cz/~xpapous1/maven</url>
-<!--            <url>http://sybila.fi.muni.cz/public/maven</url> -->
+<!--            <url>http://anna.fi.muni.cz/~xpapous1/maven</url>-->
+            <url>http://sybila.fi.muni.cz/public/maven</url> 
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -40,6 +40,17 @@
                 <enabled>true</enabled>
             </snapshots>        
         </repository>
+        <repository>
+            <id>javaoctave-maven</id>
+            <url>https://svn.kenai.com/svn/javaoctave~maven-repository/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>daily</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>        
+        </repository>        
     </repositories>
     
     <dependencies>
