@@ -7,11 +7,14 @@ import org.sybila.parasim.model.trajectory.Point;
  */
 public interface OdeSystem {
  
-    int getDimension();
+    int dimension();
 
-    String getVariableName(int dimension);
+    String getVariableName(int dimension);    
+
+    OdeSystemEncoding encoding();
     
     float value(Point point, int dimension);
     
     float value(float[] point, int dimension);
+
 }

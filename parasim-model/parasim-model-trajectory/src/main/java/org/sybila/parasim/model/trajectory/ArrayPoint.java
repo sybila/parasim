@@ -6,24 +6,19 @@ import java.util.Iterator;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ArrayPoint implements Point {
+public class ArrayPoint extends AbstractPoint {
 
 	private float[] data;
-	private int dimension;
 	private int startIndex;
-	private float time;
-	private float[] dataInArray;
 
 	public ArrayPoint(float[] data, float time) {
 		this(data, time, 0, data.length);
 	}
 
 	public ArrayPoint(float[] data, float time, int startIndex, int dimension) {
+        super(dimension, time);
 		if (data == null) {
 			throw new IllegalArgumentException("The parameter [data] is NULL.");
-		}
-		if (dimension <= 0) {
-			throw new IllegalArgumentException("The dimension has to be a positive number.");
 		}
 		if (startIndex < 0 || startIndex >= data.length) {
 			throw new IllegalArgumentException("The start index is out of the range [0, " + (data.length - 1) + "].");
@@ -32,65 +27,13 @@ public class ArrayPoint implements Point {
 			throw new IllegalArgumentException("The length of piece of the array doesn't correspond to the dimension.");
 		}
 		this.data = data;
-		this.dimension = dimension;
 		this.startIndex = startIndex;
-		this.time = time;
 	}
-
-    @Override
-	public int getDimension() {
-		return dimension;
-	}
-
     @Override
 	public float getValue(int index) {
-		if (index < 0 || index >= dimension) {
-			throw new IllegalArgumentException("The index is out of the range [0, " + (dimension - 1) + "].");
+		if (index < 0 || index >= getDimension()) {
+			throw new IllegalArgumentException("The index is out of the range [0, " + (getDimension() - 1) + "].");
 		}
 		return data[startIndex + index];
 	}
-
-    @Override
-	public float getTime() {
-		return time;
-	}
-
-    @Override
-    public Iterator<Float> iterator() {
-        return new Iterator<Float>() {
-
-            private int index = -1;
-            
-            @Override
-            public boolean hasNext() {
-                return index < getDimension();
-            }
-
-            @Override
-            public Float next() {
-                index++;
-                return getValue(index);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
-    }    
-    
-    @Override
-	public float[] toArray() {
-		if (dataInArray == null) {
-			dataInArray = new float[dimension];
-			System.arraycopy(data, startIndex, dataInArray, 0, dimension);
-		}
-		return dataInArray;
-	}
-
-    @Override
-    public String toString() {
-        return time + ":" + Arrays.toString(data);
-    }
-
 }

@@ -1,41 +1,19 @@
 package org.sybila.parasim.support.model.ode;
 
-import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.ode.ArrayOdeSystemEncoding;
+import org.sybila.parasim.model.ode.DefaultOdeSystem;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class LotkaVolteraOdeSystem implements OdeSystem {
+public class LotkaVolteraOdeSystem extends DefaultOdeSystem {
 
-    @Override
-    public int dimension() {
-        return 2;
-    }
-
-    @Override
-    public float value(Point point, int dimension) {
-        switch(dimension) {
-            case 0:
-                return (float) (10.1 * point.getValue(0) - point.getValue(0) * point.getValue(1));
-            case 1:
-                return (float) (point.getValue(0) * point.getValue(1) - 5.4 * point.getValue(1));
-            default:
-                throw new IndexOutOfBoundsException("The dimension is out of the range [0,1].");
-        }
-    }
-
-    @Override
-    public float value(float[] point, int dimension) {
-        switch(dimension) {
-            case 0:
-                return (float) (10.1 * point[0] - point[0] * point[1]);
-            case 1:
-                return (float) (point[0] * point[1] - 5.4 * point[1]);
-            default:
-                throw new IndexOutOfBoundsException("The dimension is out of the range [0,1].");
-        }
-    }
-    
+    public LotkaVolteraOdeSystem() {
+        super(new ArrayOdeSystemEncoding(
+            new int[] {0, 2, 4},
+            new float[] {(float) 10.1, (float) -1, (float) 1, (float) -5.4},
+            new int[] {0, 1, 3, 5, 6},
+            new int[] {0, 0, 1, 0, 1, 1}
+        ));
+    }    
 }

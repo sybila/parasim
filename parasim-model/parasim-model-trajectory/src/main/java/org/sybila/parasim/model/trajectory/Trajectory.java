@@ -6,7 +6,8 @@ package org.sybila.parasim.model.trajectory;
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Trajectory {
+public interface Trajectory extends Iterable<Point>
+{
 
     /**
      * Returns number of dimensions of each point of the trajectory
@@ -50,8 +51,7 @@ public interface Trajectory {
      * @return reference pointed to this trajectory
      */
     TrajectoryReference getReference();
-    
-    
+       
     /**
      * Checks whether the trajectory contains the point on the specified
      * position.

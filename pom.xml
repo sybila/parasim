@@ -20,16 +20,18 @@
     
     <distributionManagement>
         <repository>
-            <id>zimodej-maven-ssh</id>
+            <id>sybila-maven-ssh</id>
             <name>Maven repository hosted on Zimodej</name>
-            <url>scp://maven.zimodej.cz:/home/domeny/zimodej.cz/web/subdomeny/maven</url>
+            <url>scp://anna.fi.muni.cz:/home/xpapous1/public_html/maven</url>
+<!--           <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/maven</url> -->
         </repository>
     </distributionManagement>
     
     <repositories>
         <repository>
-            <id>zimodej-maven-http</id>
-            <url>http://maven.zimodej.cz</url>
+            <id>sybila-maven-http</id>
+            <url>http://anna.fi.muni.cz/~xpapous1/maven</url>
+<!--            <url>http://sybila.fi.muni.cz/public/maven</url> -->
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -42,10 +44,11 @@
     
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-        </dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.3</version>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
     
     

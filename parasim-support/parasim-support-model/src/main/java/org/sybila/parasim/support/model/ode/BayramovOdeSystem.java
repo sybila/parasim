@@ -1,45 +1,20 @@
 package org.sybila.parasim.support.model.ode;
 
-import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.ode.ArrayOdeSystemEncoding;
+import org.sybila.parasim.model.ode.DefaultOdeSystem;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class BayramovOdeSystem implements OdeSystem {
+public class BayramovOdeSystem extends DefaultOdeSystem {
 
-    @Override
-    public int dimension() {
-        return 3;
-    }
-
-    @Override
-    public float value(Point point, int dimension) {
-        switch(dimension) {
-            case 0:
-                return (float) (0.0005 - 250 * point.getValue(0) * point.getValue(1));
-            case 1:
-                return (float) (0.00001 - 0.1 * point.getValue(1) - 250 * point.getValue(0) * point.getValue(1) + 300 * point.getValue(1) * point.getValue(2));
-            case 2:
-                return (float) (250 * point.getValue(0) * point.getValue(1) - 300 * point.getValue(1) * point.getValue(2));
-            default:
-                throw new IndexOutOfBoundsException("The dimension is out of the range [0,2].");
-        }
-    }
-
-    @Override
-    public float value(float[] point, int dimension) {
-        switch(dimension) {
-            case 0:
-                return (float) (0.0005 - 250 * point[0] * point[1]);
-            case 1:
-                return (float) (0.00001 - 0.1 * point[1] - 250 * point[0] * point[1] + 300 * point[1] * point[2]);
-            case 2:
-                return (float) (250 * point[0] * point[1] - 300 * point[1] * point[2]);
-            default:
-                throw new IndexOutOfBoundsException("The dimension is out of the range [0,2].");
-        }
+    public BayramovOdeSystem() {
+        super(new ArrayOdeSystemEncoding(
+            new int[] {0, 2, 6, 8},
+            new float[] {(float) 0.0005, (float) -250, (float) 0.00001, (float) -0.1, (float) -250, (float) 300, (float) 250, (float) -300},
+            new int[] {0, 0, 2, 2, 3, 5, 7, 9, 11},
+            new int[] {0, 1, 1, 0, 1, 1, 2, 0, 1, 1, 2}
+        ));
     }
     
 }

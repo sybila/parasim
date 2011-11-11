@@ -17,7 +17,7 @@ public interface AdaptiveStepConfiguration extends Configuration {
     /**
      * Returns maximal relative error which has to be kept by the simulation
      * 
-     * @return maximal relative error per dimension
+     * @return maximal relative error 
      */
-    float[] getMaxRelativeError();
+    float getMaxRelativeError();
 }

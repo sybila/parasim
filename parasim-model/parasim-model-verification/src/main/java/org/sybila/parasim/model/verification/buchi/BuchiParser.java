@@ -109,7 +109,7 @@ class BuchiParser {
         clear(null);
 
         HashMap varIndexes = new HashMap();
-        for (int i=0; i<ode.getDimension(); i++)
+        for (int i=0; i<ode.dimension(); i++)
         {
             varIndexes.put(ode.getVariableName(i), new Integer(i));
         }
