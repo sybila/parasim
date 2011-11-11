@@ -25,8 +25,8 @@ public class Buchi {
 
   private int stateCount;             /* number of states of automaton */
   private String[] stateNames;        /* names of all states */
-  private Set initialStates;          /* set of initial states of atomaton */
-  private Set acceptingStates;        /* set of accepting states */
+  private Set<Integer> initialStates; /* set of initial states of atomaton */
+  private Set<Integer> acceptingStates; /* set of accepting states */
   private Transition[][] transitions; /* transitions of each state */  
   private boolean hasDerivatives;     /* flag to indicate wheather variable
                                          derivatives are present in atomic
@@ -187,12 +187,12 @@ public class Buchi {
         return false;
     }
 
-  public Set getInitialStates()
+  public Set<Integer> getInitialStates()
   {
     return initialStates;
   }
 
-  public Set getAcceptingStates()
+  public Set<Integer> getAcceptingStates()
   {
     return acceptingStates;
   }

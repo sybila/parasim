@@ -1,9 +1,11 @@
 package org.sybila.parasim.model.trajectory;
 
-import java.util.Iterator;
-
 /**
+ * All methods from AbstractTrajectory have constant complexity thanks to
+ * the inner arrays storing all point data.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
 public class ArrayTrajectory extends AbstractTrajectory {
 
@@ -29,10 +31,17 @@ public class ArrayTrajectory extends AbstractTrajectory {
         }
         return new ArrayPoint(points, times[index], index * getDimension(), getDimension());
     }
-    
+
     @Override
-    public Iterator<Point> iterator(int index) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public TrajectoryIterator iterator()
+    {
+        return new SimpleTrajectoryIterator(this, 0);
     }
+
+    @Override
+    public TrajectoryIterator iterator(int index)
+    {
+        return new SimpleTrajectoryIterator(this, index);
+    }    
 
 }

@@ -1,14 +1,12 @@
 package org.sybila.parasim.model.trajectory;
 
-import java.util.Iterator;
-
 /**
  * Stores points of one trajectory.
  * 
- * @author <a href="mailto:xdrazan@fi.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Trajectory extends Iterable<Point> {
+public interface Trajectory {
 
     /**
      * Returns number of dimensions of each point of the trajectory
@@ -64,6 +62,14 @@ public interface Trajectory extends Iterable<Point> {
     boolean hasPoint(int index);
 
     /**
+     * Iterates over points of the trajectory starting from the first point.
+     * Complexity of next() is constant.
+     *
+     * @return Iterator with next() pointing to the first point of the trajectory.
+     */
+    TrajectoryIterator iterator();
+
+    /**
      * Iterates over points of the trajectory starting from point with given index.
      * Complexity of next() is constant.
      *
@@ -71,5 +77,5 @@ public interface Trajectory extends Iterable<Point> {
      * @return Iterator with next() pointing to the point with specified index
      *         on success.
      */
-    Iterator<Point> iterator(int index);
+    TrajectoryIterator iterator(int index);
 }

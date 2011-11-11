@@ -5,17 +5,20 @@ import org.sybila.parasim.model.ode.OdeSystem;
 import java.util.Iterator;
 
 /**
- *
+ * Enables to retrieve derivatives of the OdeSystem in the given point.
+ * Computations are cached for further use so each dimension is computed at
+ * most once.
+ * 
  * @author Sven Dražan <sven@mail.muni.cz>
  */
-public class ExtendedPoint implements PointDerivative {
+public class PointDerivativeCache implements PointDerivative {
 
     private Point p;
     private OdeSystem ode;
     private float[] derivatives;
     private boolean[] computed;
 
-    public ExtendedPoint(Point p, OdeSystem ode)
+    public PointDerivativeCache(Point p, OdeSystem ode)
     {
         this.p = p;
         this.ode = ode;

@@ -25,7 +25,7 @@ public class ImmutableConfiguration implements Configuration {
             maxBounds,
             minBounds,
             targetTime,
-            getConstantArray(odeSystem.dimension(), DEFAULT_STEP),
+            getConstantArray(odeSystem.getDimension(), DEFAULT_STEP),
             (DEFAULT_TIME_STEP > targetTime ? targetTime : DEFAULT_TIME_STEP),
             DEFAULT_MAX_NUMBER_OF_ITERATIONS
         );
@@ -44,13 +44,13 @@ public class ImmutableConfiguration implements Configuration {
         if (steps == null) {
             throw new IllegalArgumentException("The paremeter steps is null.");
         }
-        if (odeSystem.dimension() != maxBounds.length) {
+        if (odeSystem.getDimension() != maxBounds.length) {
             throw new IllegalArgumentException("The number of dimensions doesn't match with maxBounds size.");
         }
-        if (odeSystem.dimension() != minBounds.length) {
+        if (odeSystem.getDimension() != minBounds.length) {
             throw new IllegalArgumentException("The number of dimensions doesn't match with minBounds size.");
         }        
-        if (odeSystem.dimension() != steps.length) {
+        if (odeSystem.getDimension() != steps.length) {
             throw new IllegalArgumentException("The number of dimensions doesn't match with steps size.");
         }        
         if (timeStep <= 0) {
@@ -78,7 +78,7 @@ public class ImmutableConfiguration implements Configuration {
     
     @Override
     public int getDimension() {
-        return odeSystem.dimension();
+        return odeSystem.getDimension();
     }
 
     @Override

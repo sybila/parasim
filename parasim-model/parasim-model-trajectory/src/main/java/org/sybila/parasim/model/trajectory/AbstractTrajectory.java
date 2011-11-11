@@ -1,8 +1,5 @@
 package org.sybila.parasim.model.trajectory;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -47,7 +44,7 @@ abstract public class AbstractTrajectory implements Trajectory{
     public int getLength() {
         return length;
     }
-    
+   
     @Override
     public TrajectoryReference getReference() {
         if (reference == null) {
@@ -71,53 +68,14 @@ abstract public class AbstractTrajectory implements Trajectory{
     }    
     
     @Override
-    public Iterator<Point> iterator() {
+    public TrajectoryIterator iterator() {
         return iterator(0);
     }
 
     @Override
-    public Iterator<Point> iterator(int index) {
-        return new TrajectoryIterator(this, index);
-    }
-
-    private class TrajectoryIterator implements Iterator<Point> {
-
-        private Trajectory trajectory;
-        private int index;
-
-        public TrajectoryIterator(Trajectory trajectory) {
-            this(trajectory, 0);
-        }
-
-        public TrajectoryIterator(Trajectory trajectory, int index) {
-            if (trajectory == null) {
-                throw new IllegalArgumentException("The parameter [trajectory] is NULL.");
-            }
-            if (index < 0 || index >= trajectory.getLength()) {
-                throw new IndexOutOfBoundsException("The index is out of the range [0, " + trajectory.getLength() + "]");
-            }
-            this.trajectory = trajectory;
-            this.index = index;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return index < trajectory.getLength();
-        }
-
-        @Override
-        public Point next() {
-            if (index == trajectory.getLength()) {
-                throw new NoSuchElementException();
-            }
-            return trajectory.getPoint(index++);
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
+    public TrajectoryIterator iterator(int index) {
+        return new SimpleTrajectoryIterator(this, index);
+    }    
     
     protected final void setLength(int length) {
         if (length <= 0) {

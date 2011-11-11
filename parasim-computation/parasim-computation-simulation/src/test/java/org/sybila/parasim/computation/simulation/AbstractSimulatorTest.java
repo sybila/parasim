@@ -77,8 +77,13 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
             }
 
             @Override
-            public int dimension() {
+            public int getDimension() {
                 return dim;
+            }
+
+            @Override
+            public String getVariableName(int dimension) {
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
     }

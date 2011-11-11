@@ -3,6 +3,7 @@ package org.sybila.parasim.model.trajectory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -64,20 +65,22 @@ public class LinkedTrajectory extends AbstractTrajectory {
     }
 
     @Override
-    public Iterator<Point> iterator() {
+    public TrajectoryIterator iterator() {
         return iterator(0);
     }
 
     @Override
-    public Iterator<Point> iterator(int index) {
+    public TrajectoryIterator iterator(int index) {
         return new LinkedTrajectoryIterator(this, index);
     }
 
-    private class LinkedTrajectoryIterator implements Iterator<Point> {
+    private class LinkedTrajectoryIterator implements TrajectoryIterator {
 
         private LinkedTrajectory trajectory;
         private int trajectoryIndex = 0;
-        private Iterator<Point> iterator;
+        private TrajectoryIterator iterator;
+        /** positionOnTrajectory on the total LinkedTrajectory */
+        private int absolutePointIndex = 0;        
 
         public LinkedTrajectoryIterator(LinkedTrajectory trajectory, int index) {
             if (trajectory == null) {
@@ -90,7 +93,8 @@ public class LinkedTrajectory extends AbstractTrajectory {
             int startIndex = 0;
             for (Trajectory t : trajectories) {
                 if (index >= startIndex && index < startIndex + t.getLength()) {
-                    iterator = t.iterator(startIndex - index);
+                    iterator = t.iterator(index - startIndex);
+                    absolutePointIndex = index;                    
                 }
                 trajectoryIndex++;
                 startIndex += t.getLength();
@@ -103,17 +107,99 @@ public class LinkedTrajectory extends AbstractTrajectory {
         }
 
         @Override
+        public boolean hasNext(int jump)
+        {
+            if (iterator != null)
+            {
+                if (iterator.hasNext(jump))
+                {
+                    return true;
+                }
+                else
+                {
+                    if (trajectoryIndex >= trajectory.trajectories.size()-1)
+                    {
+                        return false;
+                    }
+                    Iterator<Trajectory> it = trajectory.trajectories.listIterator(trajectoryIndex+1);
+                    while (it.hasNext())
+                    {
+                        Trajectory t = it.next();
+                        if (jump < t.getLength())
+                        {
+                            return true;
+                        }
+                        jump -= t.getLength();                        
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
         public Point next() {
+            if (iterator == null)
+            {
+                throw new NoSuchElementException();
+            }
             Point point = iterator.next();
+            absolutePointIndex++;            
             if (!iterator.hasNext()) {
                 trajectoryIndex++;
                 if (trajectoryIndex < trajectory.trajectories.size()) {
-                    iterator = trajectory.trajectories.get(trajectoryIndex).iterator();
+                    iterator = trajectory.trajectories.get(trajectoryIndex).iterator();                    
                 } else {
                     iterator = null;
                 }
             }
             return point;
+        }
+
+        @Override
+        public Point next(int jump) {
+            if (iterator == null)
+            {
+                throw new NoSuchElementException();
+            }
+            if (iterator.hasNext(jump))
+            {
+                absolutePointIndex += jump;                
+                return iterator.next(jump);
+            }
+            else
+            {
+                if (trajectoryIndex >= trajectory.trajectories.size()-1)
+                {
+                    throw new NoSuchElementException();
+                }
+                int newTrajectoryIndex = trajectoryIndex + 1;                
+                int newAbsolutePointIndex = absolutePointIndex += jump;
+                Iterator<Trajectory> it = trajectory.trajectories.listIterator(newTrajectoryIndex);
+                while (it.hasNext()) 
+                {
+                    Trajectory t = it.next();
+                    if (jump < t.getLength())
+                    {                        
+                        absolutePointIndex = newAbsolutePointIndex;
+                        trajectoryIndex = newTrajectoryIndex;
+                        iterator = t.iterator(jump);
+                        return iterator.next();
+                    }
+                    jump -= t.getLength();
+                    newTrajectoryIndex++;
+                }
+                throw new NoSuchElementException();
+            }
+        }
+
+        @Override
+        public int getPositionOnTrajectory()
+        {
+            if (iterator == null)
+            {
+                throw new NoSuchElementException("Iterator doesn't point to any Point so it doesn't have a position.");
+            }
+            return absolutePointIndex;
         }
 
         @Override
