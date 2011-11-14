@@ -39,4 +39,27 @@ public interface Detector<Comparator extends PointComparator, CD extends CycleDe
      * @return Cycle detection data block with results.
      */
     Out detect(Comparator comparator, DataBlock<Trajectory> trajectories, CD[] detectors, int stepLimit);
+
+    /**
+     * Given a comparator to compare two points and a set of trajectories
+     * each trajectory is subjected to cycle detection while a limit on the number
+     * of computation steps to carry out on each trajectory is given.
+     *
+     * If stepLimit = 0 each computation is carried out until a cycle is found or
+     * the end of the trajectory is reached.
+     *
+     * Old trajectories that have already been partialy processed are
+     * combined with new trajectories that will be processed just now.
+     *
+     * @param comparator Comparator to compare points on trajectory.
+     * @param oldTrajectories DataBlock of trajectories that have already been
+     *        partialy processed in previous iteration.
+     * @param oldDetectors Array of cycle detectors used previously to detect cycles
+     *        on oldTrajectories.
+     * @param newTrajectories DataBlock of trajectories that have not yet had any
+     *        cycle detection performed on them.
+     * @param stepLimit Limit on amount of work to do on each trajectory.
+     * @return Cycle detection data block with results.
+     */
+    Out detect(Comparator comparator, DataBlock<Trajectory> oldTrajectories, CD[] oldDetectors, DataBlock<Trajectory> newTrajectories, int stepLimit);
 }

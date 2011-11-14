@@ -2,15 +2,21 @@ package org.sybila.parasim.model.trajectory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
+ * Trajectory consists of an ArrayList of trajectories and implements the
+ * MutableTrajectory interface.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public class LinkedTrajectory extends AbstractTrajectory {
+public class LinkedTrajectory extends AbstractTrajectory implements MutableTrajectory {
 
     private List<Trajectory> trajectories = new ArrayList<Trajectory>();
+    private int truncateCounter = 0;
 
     public LinkedTrajectory(Trajectory trajectory) {
         super(trajectory.getDimension(), trajectory.getLength());
@@ -29,6 +35,10 @@ public class LinkedTrajectory extends AbstractTrajectory {
         }
         if (trajectory.getFirstPoint().getTime() < trajectories.get(trajectories.size() - 1).getLastPoint().getTime()) {
             throw new IllegalArgumentException("The time of the first point of the given trajectory is lower than the time of the last point of original trajectory.");
+        }
+        if (getDimension() != trajectory.getDimension())
+        {
+            throw new IllegalArgumentException("The dimensions of the trajectories differ.");
         }
         setLength(getLength() + trajectory.getLength());
         trajectories.add(trajectory);
@@ -74,13 +84,60 @@ public class LinkedTrajectory extends AbstractTrajectory {
         return new LinkedTrajectoryIterator(this, index);
     }
 
+    @Override
+    public void truncate(int newLength)
+    {
+        if (newLength < 1 || newLength > getLength())
+        {
+            throw new IllegalArgumentException("The parameter [newLength] must be positive and smaller then the current length.");
+        }
+        ListIterator<Trajectory> it = trajectories.listIterator(trajectories.size());
+        Trajectory last = null;
+        while (it.hasPrevious())
+        {
+            last = it.previous();
+            if (this.getLength() - last.getLength() >= newLength)
+            {
+                it.remove();
+                setLength(this.getLength() - last.getLength());
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (getLength() > newLength)
+        {
+            int newLastLength = getLength() - newLength;
+            if (last.getLength() < newLastLength)
+            {
+                throw new RuntimeException("Last trajectory segment has incorrect length.");
+            }
+            int dim = getDimension();
+            float[] points = new float[dim * newLastLength];
+            float[] times = new float[newLastLength];
+            TrajectoryIterator lit = last.iterator();
+            for (int i = 0; i < newLastLength; i++)
+            {
+                Point tmp = lit.next();
+                times[i] = tmp.getTime();
+                System.arraycopy(tmp.toArray(), 0, points, i*dim, dim);
+            }
+            ArrayTrajectory newLast = new ArrayTrajectory(points, times, dim);
+            it.remove();
+            append(newLast);
+        }
+        truncateCounter++;
+    }
+
     private class LinkedTrajectoryIterator implements TrajectoryIterator {
 
         private LinkedTrajectory trajectory;
         private int trajectoryIndex = 0;
         private TrajectoryIterator iterator;
         /** positionOnTrajectory on the total LinkedTrajectory */
-        private int absolutePointIndex = 0;        
+        private int absolutePointIndex = 0;
+        private int truncateCounter;
 
         public LinkedTrajectoryIterator(LinkedTrajectory trajectory, int index) {
             if (trajectory == null) {
@@ -90,6 +147,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
                 throw new IndexOutOfBoundsException("The index is out of the range [0, " + trajectory.getLength() + "]");
             }
             this.trajectory = trajectory;
+            this.truncateCounter = trajectory.truncateCounter;
             int startIndex = 0;
             for (Trajectory t : trajectories) {
                 if (index >= startIndex && index < startIndex + t.getLength()) {
@@ -103,12 +161,14 @@ public class LinkedTrajectory extends AbstractTrajectory {
 
         @Override
         public boolean hasNext() {
+            checkModification();
             return iterator != null && iterator.hasNext();
         }
 
         @Override
         public boolean hasNext(int jump)
         {
+            checkModification();
             if (iterator != null)
             {
                 if (iterator.hasNext(jump))
@@ -138,6 +198,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
 
         @Override
         public Point next() {
+            checkModification();
             if (iterator == null)
             {
                 throw new NoSuchElementException();
@@ -157,6 +218,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
 
         @Override
         public Point next(int jump) {
+            checkModification();
             if (iterator == null)
             {
                 throw new NoSuchElementException();
@@ -195,6 +257,7 @@ public class LinkedTrajectory extends AbstractTrajectory {
         @Override
         public int getPositionOnTrajectory()
         {
+            checkModification();
             if (iterator == null)
             {
                 throw new NoSuchElementException("Iterator doesn't point to any Point so it doesn't have a position.");
@@ -205,6 +268,19 @@ public class LinkedTrajectory extends AbstractTrajectory {
         @Override
         public void remove() {
             throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Checks if the trajectory has not been truncated, this would result
+         * in the increase of trajectory.truncateCounter. If it has been
+         * truncated then an exception is thrown.
+         */
+        private void checkModification()
+        {
+            if (truncateCounter != trajectory.truncateCounter)
+            {
+                throw new RuntimeException("Trajectory has been truncated.");
+            }
         }
     }
 }

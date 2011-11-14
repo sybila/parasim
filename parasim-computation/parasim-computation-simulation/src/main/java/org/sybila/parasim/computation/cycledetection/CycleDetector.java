@@ -45,6 +45,8 @@ public interface CycleDetector<T extends Trajectory> {
      */
     Point getCycleStart();
 
+    int getCycleStartPosition();
+
     /**
      * If a cycle has been detected on a trajectory then two points have been
      * found similar. In this case the second one is returned.
@@ -53,5 +55,7 @@ public interface CycleDetector<T extends Trajectory> {
      * @return Second of the two similar points or null
      */
     Point getCycleEnd();
+
+    int getCycleEndPosition();
 
 }

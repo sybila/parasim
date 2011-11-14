@@ -31,7 +31,7 @@ public class CycleDetectionModule implements Module<DataBlock, CycleDetectDataBl
     @Override
     public CycleDetectDataBlock compute(DataBlock input) throws ModuleComputationException
     {
-        return detector.detect(comparator, input, 0);
+        return compute(input, 0);
     }
 
     public CycleDetectDataBlock compute(DataBlock input, int stepLimit) throws ModuleComputationException
@@ -39,14 +39,27 @@ public class CycleDetectionModule implements Module<DataBlock, CycleDetectDataBl
         return detector.detect(comparator, input, stepLimit);
     }
 
-    public CycleDetectDataBlock compute(CycleDetectDataBlock input) throws ModuleComputationException
-    {
-        return detector.detect(comparator, input, 0);
+    public CycleDetectDataBlock compute(DataBlock input, CycleDetector[] detectors) throws ModuleComputationException
+    {        
+        return compute(input, detectors, 0);
     }
 
-    public CycleDetectDataBlock compute(CycleDetectDataBlock input, int stepLimit) throws ModuleComputationException
+    public CycleDetectDataBlock compute(DataBlock input, CycleDetector[] detectors, int stepLimit) throws ModuleComputationException
     {
-        return detector.detect(comparator, input, stepLimit);
+        if (input.size() != detectors.length)
+        {
+            throw new IllegalArgumentException("Number of trajectories in parameter [input] must match number of [detector]s.");
+        }
+        return detector.detect(comparator, input, detectors, stepLimit);
+    }
+
+    public CycleDetectDataBlock compute(DataBlock oldInput, CycleDetector[] oldDetectors, DataBlock newInput, int stepLimit) throws ModuleComputationException
+    {
+        if (oldInput.size() != oldDetectors.length)
+        {
+            throw new IllegalArgumentException("Number of trajectories in [oldInput] must match number of [oldDetector]s.");
+        }
+        return detector.detect(comparator, oldInput, oldDetectors, newInput, stepLimit);
     }
 
     /**

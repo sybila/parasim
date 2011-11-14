@@ -1,13 +1,11 @@
 package org.sybila.parasim.model.trajectory;
 
-import org.sybila.parasim.model.trajectory.Trajectory;
-
 /**
  * Data block is a set of trajectories which can be extended by other information.
  * 
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  * 
- * @param <T> type of trajectories which are place in data block 
+ * @param <T> type of trajectories which are placed in data block
  */
 public interface DataBlock<T extends Trajectory> extends Iterable<T> {
 

@@ -24,7 +24,9 @@ import org.sybila.parasim.model.trajectory.PointComparator;
 public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<T>
 {
     private Point turtle;
+    private int turtleIndex;
     private Point rabbit;
+    private int rabbitIndex;
     private int stepsTaken;
     private int stepLimit;
     private boolean cycleDetected;
@@ -42,6 +44,8 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
         stepsTaken = 0;
         stepLimit = 2;
         nextPointIndex = -1;
+        turtleIndex = -1;
+        rabbitIndex = -1;
         cycleDetected = false;
     }
 
@@ -69,7 +73,7 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
             {
                 p = iterator.next();
                 stepsUsed++;
-                if (detectCycle(p))
+                if (detectCycle(p, iterator.getPositionOnTrajectory()))
                 {                    
                     return stepsUsed;                    
                 }
@@ -81,7 +85,7 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
             {
                 p = iterator.next();
                 stepsUsed++;         
-                if (detectCycle(p))
+                if (detectCycle(p, iterator.getPositionOnTrajectory()))
                 {                    
                     return stepsUsed;                    
                 }                
@@ -101,16 +105,19 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
      * @param newPoint Point to be tested for similarity with previous points.
      * @return True if similarity is found, false else.
      */    
-    private boolean detectCycle(Point newPoint)
+    private boolean detectCycle(Point newPoint, int index)
     {        
         if (turtle == null) /* First input = initialization */
         {
             turtle = newPoint;
+            turtleIndex = index;
             rabbit = newPoint;
+            rabbitIndex = index;
             return false;
         }
 
         rabbit = newPoint;
+        rabbitIndex = index;
         stepsTaken += 1;
 
         if (comparator.similar(turtle, rabbit))
@@ -124,6 +131,7 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
             stepsTaken = 0;
             stepLimit *= 2;
             turtle = rabbit; /* teleport the turtle */
+            turtleIndex = rabbitIndex;
         }
         return false;
     }
@@ -154,6 +162,11 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
      * both points in which the cycle has been detected closer to the begining
      * of the trajectory. If a cycle has not been detected or the cycle
      * is already minimal nothing changes.
+     *
+     * Since the density of the simulated points along a trajectory may
+     * differ there is no guarantee that the cycle will be minimized since
+     * a cycle closer to the begining of the trajectory may have a different
+     * number of points.
      * 
      * @param trajectory Trajectory on which to perform cycle minimization.
      */
@@ -200,6 +213,14 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
     public boolean cycleDetected()
     {
         return cycleDetected;
+    }
+
+    public int getCycleStartPosition() {
+        return turtleIndex;
+    }
+
+    public int getCycleEndPosition() {
+        return rabbitIndex;
     }
 
 }

@@ -4,6 +4,7 @@ import org.sybila.parasim.computation.cycledetection.Detector;
 import org.sybila.parasim.computation.cycledetection.CycleDetectionStatus;
 import org.sybila.parasim.computation.cycledetection.ArrayCycleDetectionDataBlock;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.ListMutableDataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.PointComparator;
 import java.util.Iterator;
@@ -108,6 +109,49 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
             index++;
         }
         return new ArrayCycleDetectionDataBlock(trajectories, detectors, statuses);
+    }
+
+    /**
+     * Detects cycles on two blocks of trajectories merging the results.
+     * The first set given by oldTrajectories is expected to have already
+     * some cycle detection performed on them and the array oldDetectors belongs
+     * to these. The second set given by newTrajectories is expected to have
+     * no cycle detection yet performed.
+     *
+     * @param comparator Point comparator for similarity tests between points.
+     * @param oldTrajectories Set of partialy processed trajectories.
+     * @param oldDetectors Array of cycle detectors of all oldTrajectories.
+     * @param newTrajectories Set of new trajectories on which to detect cycles.
+     * @param stepLimit Maximum number of points to process from each trajectory.
+     * @return Cycle detection data block with results of the computation for both
+     *         DataBlocks, old first then new ones.
+     */
+    public ArrayCycleDetectionDataBlock detect(PointComparator comparator,
+                                               DataBlock<Trajectory> oldTrajectories,
+                                               BrentsCycleDetector[] oldDetectors,
+                                               DataBlock<Trajectory> newTrajectories,
+                                               int stepLimit)
+    {
+        if (oldTrajectories == null)
+        {
+            throw new IllegalArgumentException("The parameter oldTrajectories is null.");
+        }
+        if (newTrajectories == null || newTrajectories.size() == 0)
+        {
+            return detect(comparator, oldTrajectories, oldDetectors, stepLimit);
+        }
+
+        BrentsCycleDetector[] cycleDetectors = new BrentsCycleDetector[oldDetectors.length + newTrajectories.size()];
+        System.arraycopy(oldDetectors, 0, cycleDetectors, 0, oldDetectors.length);
+        for (int i=oldDetectors.length; i<cycleDetectors.length; i++)
+        {
+            cycleDetectors[i] = new BrentsCycleDetector(comparator);
+        }
+
+        ListMutableDataBlock<Trajectory> allTrajectories = new ListMutableDataBlock(oldTrajectories);
+        allTrajectories.merge(newTrajectories);
+
+        return this.detect(comparator, allTrajectories, cycleDetectors, stepLimit);        
     }
 
 }
