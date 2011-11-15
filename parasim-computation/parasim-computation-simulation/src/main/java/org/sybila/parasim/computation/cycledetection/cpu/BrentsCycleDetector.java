@@ -215,10 +215,13 @@ public class BrentsCycleDetector<T extends Trajectory> implements CycleDetector<
         return cycleDetected;
     }
 
-    public int getCycleStartPosition() {
+    @Override
+    public int getCycleStartPosition()
+    {
         return turtleIndex;
     }
 
+    @Override
     public int getCycleEndPosition() {
         return rabbitIndex;
     }

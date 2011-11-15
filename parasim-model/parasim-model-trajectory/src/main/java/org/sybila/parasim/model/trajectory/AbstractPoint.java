@@ -9,13 +9,13 @@ import java.util.Iterator;
 public abstract class AbstractPoint implements Point {
 
     private float[] dataInArray;
-	private int dimension;
+    private int dimension;
     private float time;
     
     protected AbstractPoint(int dimension, float time) {
-		if (dimension <= 0) {
-			throw new IllegalArgumentException("The dimension has to be a positive number.");
-		}        
+        if (dimension <= 0) {
+            throw new IllegalArgumentException("The dimension has to be a positive number.");
+        }
         this.dimension = dimension;
         this.time = time;
     }
@@ -29,15 +29,15 @@ public abstract class AbstractPoint implements Point {
     }
 
     @Override
-	public float[] toArray() {
-		if (dataInArray == null) {
-			dataInArray = new float[dimension];
-			for(int dim=0; dim<getDimension(); dim++) {
+    public float[] toArray() {
+        if (dataInArray == null) {
+            dataInArray = new float[dimension];
+            for(int dim=0; dim<getDimension(); dim++) {
                 dataInArray[dim] = getValue(dim);
             }
-		}
-		return dataInArray;
 	}
+	return dataInArray;
+    }
 
     @Override
     public Iterator<Float> iterator() {

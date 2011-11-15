@@ -4,7 +4,6 @@ import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointComparator;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryIterator;
-import java.util.Iterator;
 import org.sybila.parasim.computation.cycledetection.CycleDetector;
 
 /**
@@ -46,10 +45,13 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
     /** p1 is the last point, p2 is the one before the last, these points
         are compared to the new one to detect minima and maxima */
     private Point p1, p2;
+    private int p1Index;
     private int nextPointIndex;
     private boolean cycleDetected;
     private Point cycleStart;
     private Point cycleEnd;
+    private int cycleStartPosition;
+    private int cycleEndPosition;
 
     /**
      * Private constructor to control and initialize basic variables.
@@ -77,6 +79,8 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
         maxQueue = new ExtremesQueue[comparator.getDimension()];
         cycleDetected = false;
         nextPointIndex = -1;
+        cycleStartPosition = -1;
+        cycleEndPosition = -1;
     }
 
     /**
@@ -161,7 +165,7 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
             {
                 p = iterator.next();
                 stepsUsed++;
-                if (detectCycle(p))
+                if (detectCycle(p, iterator.getPositionOnTrajectory()))
                 {
                     return stepsUsed;
                 }
@@ -173,7 +177,7 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
             {
                 p = iterator.next();
                 stepsUsed++;
-                if (detectCycle(p))
+                if (detectCycle(p, iterator.getPositionOnTrajectory()))
                 {
                     return stepsUsed;
                 }
@@ -191,7 +195,7 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
      * @param newPoint new point to compare to past extreme points
      * @return last similar point to newPoint on success else null
      */    
-    private boolean detectCycle(Point newPoint)
+    private boolean detectCycle(Point newPoint, int newPointIndex)
     {
         /*
         if (newPoint == null)
@@ -205,12 +209,14 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
         if (p1 == null)
         {
             p1 = newPoint;
+            p1Index = newPointIndex;
             return false;
         }
         if (p2 == null)
         {
-            p2 = p1;
+            p2 = p1;            
             p1 = newPoint;
+            p1Index = newPointIndex;
             return false;
         }
         Point tmp = null;
@@ -223,14 +229,15 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
                 tmp = findSimilar(p1, minQueue[i]);
                 if (tmp != null) 
                 {
-                    cycleStart = tmp;
+                    cycleStart = tmp;                    
                     cycleEnd = newPoint;
+                    cycleEndPosition = newPointIndex;
                     cycleDetected = true;
                     return true;
                 }
                 else
                 {
-                    minQueue[i].add(p1);
+                    minQueue[i].add(p1, p1Index);
                 }
             }
 
@@ -243,28 +250,40 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
                 {
                     cycleStart = tmp;
                     cycleEnd = newPoint;
+                    cycleEndPosition = newPointIndex;
                     cycleDetected = true;
                     return true;
                 }
                 else
                 {
-                    maxQueue[i].add(p1);
+                    maxQueue[i].add(p1, p1Index);
                 }
             }
         }
         p2 = p1;
         p1 = newPoint;
+        p1Index = newPointIndex;
         return false;
     }
 
+    /**
+     * Tries to find a similar point to p inside the queue q.
+     * On success the point in q which p is similar to is returned and
+     * cycleStartPosition is set to that point's index.
+     *
+     * @param p Point with which to find a similar one in q.
+     * @param q Queue of points.
+     * @return Point from q similar to p on success, else null.
+     */
     private Point findSimilar(Point p, ExtremesQueue q)
     {
-        Iterator it = q.iterator();
+        ExtremesQueue.ExtremesQueueIterator it = q.iterator();
         while (it.hasNext())
         {
-            Point tmp =(Point) it.next();
+            Point tmp = (Point)it.next();
             if (comparator.similar(p, tmp))
             {
+                cycleStartPosition = it.getIndex();
                 return tmp;
             }            
         }
@@ -314,6 +333,25 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
     public boolean cycleDetected()
     {
         return cycleDetected;
+    }
+
+    @Override
+    public int getCycleStartPosition()
+    {
+        if (cycleDetected)
+        {
+            return cycleStartPosition;
+        }
+        throw new RuntimeException("Cycle hasn't been detected.");
+    }
+
+    @Override
+    public int getCycleEndPosition() {
+        if (cycleDetected)
+        {
+            return cycleEndPosition;
+        }
+        throw new RuntimeException("Cycle hasn't been detected.");
     }
 
 }

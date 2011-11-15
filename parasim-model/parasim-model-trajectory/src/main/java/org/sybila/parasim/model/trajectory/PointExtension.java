@@ -25,5 +25,5 @@ public interface PointExtension extends Point {
      * @param dest Destination where to copy dimension values.
      * @param destPos Position inside destination where to copy values.
      */
-    //void arrayCopy(float[] dest, int destPos);
+    void arrayCopy(float[] dest, int destPos);
 }

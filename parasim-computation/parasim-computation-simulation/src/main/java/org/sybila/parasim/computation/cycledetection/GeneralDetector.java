@@ -1,21 +1,18 @@
-package org.sybila.parasim.computation.cycledetection.cpu;
+package org.sybila.parasim.computation.cycledetection;
 
-import org.sybila.parasim.computation.cycledetection.Detector;
-import org.sybila.parasim.computation.cycledetection.CycleDetectionStatus;
-import org.sybila.parasim.computation.cycledetection.ArrayCycleDetectionDataBlock;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.ListMutableDataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.trajectory.PointComparator;
 import java.util.Iterator;
 import java.util.Arrays;
 
 /**
- * Detects cycles on data blocks of trajectories using Brent's cycle detector.
+ * Detects cycles on data blocks of trajectories using cycle detectors created
+ * by the given CycleDetectorFactory.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public class BrentsDetector implements Detector<PointComparator, BrentsCycleDetector, ArrayCycleDetectionDataBlock>
+public class GeneralDetector<CD extends CycleDetector, CDF extends CycleDetectorFactory<CD>, T extends Trajectory> implements Detector<CD, CDF, ArrayCycleDetectionDataBlock<T>>
 {
     /**
      * Detects cycles on given trajectories using the comparator with a maximum
@@ -27,7 +24,7 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
      * @return Cycle detection data block with results of the computation.
      */
     @Override
-    public ArrayCycleDetectionDataBlock detect(PointComparator comparator,
+    public ArrayCycleDetectionDataBlock detect(CDF factory,
                    DataBlock<Trajectory> trajectories, int stepLimit)
     {
         if (trajectories == null)
@@ -38,12 +35,12 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
         {
             throw new IllegalArgumentException("Trajectories must contain at least one trajectory.");
         }
-        BrentsCycleDetector[] cycleDetectors = new BrentsCycleDetector[trajectories.size()];
+        CycleDetector[] cycleDetectors = new CycleDetector[trajectories.size()];
         for (int i=0; i<trajectories.size(); i++)
         {
-            cycleDetectors[i] = new BrentsCycleDetector(comparator);
+            cycleDetectors[i] = factory.create();
         }
-        return this.detect(comparator, trajectories, cycleDetectors, stepLimit);
+        return this.detect(trajectories, (CD[])cycleDetectors, stepLimit);
     }
 
     /**
@@ -59,15 +56,11 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
      * @return Cycle detection data block with results of the computation.
      */
     @Override
-    public ArrayCycleDetectionDataBlock detect(PointComparator comparator,
+    public ArrayCycleDetectionDataBlock<T> detect(
                    DataBlock<Trajectory> trajectories,
-                   BrentsCycleDetector[] detectors,
+                   CD[] detectors,
                    int stepLimit)
-    {
-        if (comparator == null)
-        {
-            throw new IllegalArgumentException("The parameter comparator is null.");
-        }
+    {        
         if (trajectories == null)
         {
             throw new IllegalArgumentException("The parameter trajectories is null.");
@@ -87,7 +80,7 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
         if (stepLimit < 0)
         {
             throw new IllegalArgumentException("The parameter stepLimit must be none negative.");
-        }       
+        }
         CycleDetectionStatus[] statuses = new CycleDetectionStatus[trajectories.size()];
         Arrays.fill(statuses, CycleDetectionStatus.COMPUTING);
 
@@ -96,7 +89,7 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
         while (tIterator.hasNext())
         {
             Trajectory t = tIterator.next();
-            BrentsCycleDetector detector = detectors[index];
+            CD detector = detectors[index];
             int stepsUsed = detector.detectCycle(t, stepLimit);
             if (detector.cycleDetected())
             {
@@ -126,9 +119,9 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
      * @return Cycle detection data block with results of the computation for both
      *         DataBlocks, old first then new ones.
      */
-    public ArrayCycleDetectionDataBlock detect(PointComparator comparator,
+    public ArrayCycleDetectionDataBlock detect(CDF factory,
                                                DataBlock<Trajectory> oldTrajectories,
-                                               BrentsCycleDetector[] oldDetectors,
+                                               CD[] oldDetectors,
                                                DataBlock<Trajectory> newTrajectories,
                                                int stepLimit)
     {
@@ -138,20 +131,21 @@ public class BrentsDetector implements Detector<PointComparator, BrentsCycleDete
         }
         if (newTrajectories == null || newTrajectories.size() == 0)
         {
-            return detect(comparator, oldTrajectories, oldDetectors, stepLimit);
+            return detect(oldTrajectories, oldDetectors, stepLimit);
         }
 
-        BrentsCycleDetector[] cycleDetectors = new BrentsCycleDetector[oldDetectors.length + newTrajectories.size()];
+        CycleDetector[] cycleDetectors = new CycleDetector[oldDetectors.length + newTrajectories.size()];
         System.arraycopy(oldDetectors, 0, cycleDetectors, 0, oldDetectors.length);
         for (int i=oldDetectors.length; i<cycleDetectors.length; i++)
         {
-            cycleDetectors[i] = new BrentsCycleDetector(comparator);
+            cycleDetectors[i] = factory.create();
         }
 
         ListMutableDataBlock<Trajectory> allTrajectories = new ListMutableDataBlock(oldTrajectories);
         allTrajectories.merge(newTrajectories);
 
-        return this.detect(comparator, allTrajectories, cycleDetectors, stepLimit);        
+        return this.detect(allTrajectories, (CD[])cycleDetectors, stepLimit);
     }
 
 }
+

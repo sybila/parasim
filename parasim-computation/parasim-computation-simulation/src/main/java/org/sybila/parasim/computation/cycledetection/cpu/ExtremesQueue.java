@@ -13,6 +13,7 @@ import org.sybila.parasim.model.trajectory.Point;
 public class ExtremesQueue implements Iterable {
 
     private Point[] fifo;
+    private int[] indexes;
     private int first;
     private int count;
 
@@ -23,6 +24,7 @@ public class ExtremesQueue implements Iterable {
             throw new IllegalArgumentException("Capacity must be positive");
         }
         fifo = new Point[capacity];
+        indexes = new int[capacity];
         first = 0;
         count = 0;
     }
@@ -32,11 +34,12 @@ public class ExtremesQueue implements Iterable {
         return fifo.length;
     }
 
-    public void add(Point p)
+    public void add(Point p, int index)
     {
        if (count < fifo.length)
        {
            fifo[count] = p;
+           indexes[count] = index;
            count++;
            first++;
        }
@@ -44,16 +47,17 @@ public class ExtremesQueue implements Iterable {
        {
            first = (first + 1) % fifo.length;
            fifo[first] = p;
+           indexes[first] = index;
        }
     }
 
     @Override
-    public Iterator<Point> iterator()
+    public ExtremesQueueIterator iterator()
     {
        return new ExtremesQueueIterator();
     }
 
-    private class ExtremesQueueIterator implements Iterator<Point>
+    public class ExtremesQueueIterator implements Iterator<Point>
     {
         private int index;
 
@@ -65,7 +69,7 @@ public class ExtremesQueue implements Iterable {
         @Override
         public boolean hasNext()
         {
-            if (index < count-1)
+            if (count > 0 && index < count-1)
             {
                 return true;
             }
@@ -81,6 +85,21 @@ public class ExtremesQueue implements Iterable {
             }
             index++;
             return fifo[(first-index+fifo.length) % fifo.length];
+        }
+
+        /**
+         * Returns the index of the point that was last returned by next().
+         * If next() has not been called yet a runtime exception is thrown.
+         *
+         * @return Index of point last returned by next().
+         */
+        public int getIndex()
+        {
+            if (index == -1)
+            {
+                throw new RuntimeException("Next() has not been called yet.");
+            }
+            return indexes[(first-index+fifo.length) % fifo.length];
         }
 
         @Override
