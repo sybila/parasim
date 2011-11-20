@@ -1,6 +1,7 @@
 package org.sybila.parasim.application.test;
 
 import org.sybila.parasim.computation.simulation.cpu.Rkf45Simulator;
+import org.sybila.parasim.model.trajectory.ListMutableDataBlock;
 import org.sybila.parasim.model.trajectory.MutableDataBlock;
 import org.sybila.parasim.support.computation.simulation.LotkaVolteraAdaptiveStepConfiguration;
 import org.sybila.parasim.support.computation.simulation.LotkaVolteraInitialDataBlock;
@@ -28,7 +29,7 @@ public class Main extends Grid2D {
     @Override
     public void setup() {
         super.setup();
-        trajectories = new MutableDataBlock(new LotkaVolteraInitialDataBlock());
+        trajectories = new ListMutableDataBlock(new LotkaVolteraInitialDataBlock());
         simulator = new Rkf45Simulator();
         trajectories.append(simulator.simulate(new LotkaVolteraAdaptiveStepConfiguration(), trajectories));
         visualizer = new DataBlockVisualizer2D(trajectories, this, 0, 1, 20, 13);
