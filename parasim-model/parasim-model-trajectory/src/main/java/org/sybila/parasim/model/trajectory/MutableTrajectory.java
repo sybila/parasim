@@ -4,7 +4,7 @@ package org.sybila.parasim.model.trajectory;
  * Trajectories implementing this interface can be prolonged be using append()
  * and truncated from the end to a specified length using truncate().
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public interface MutableTrajectory extends Trajectory
 {

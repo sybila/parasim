@@ -5,7 +5,7 @@ package org.sybila.parasim.model.trajectory;
  * the inner arrays storing all point data.
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public class ArrayTrajectory extends AbstractTrajectory {
 
