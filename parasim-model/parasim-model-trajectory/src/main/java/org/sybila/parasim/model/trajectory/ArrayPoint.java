@@ -1,8 +1,5 @@
 package org.sybila.parasim.model.trajectory;
 
-import java.util.Arrays;
-import java.util.Iterator;
-
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */

@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  * MutableTrajectory interface.
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public class LinkedTrajectory extends AbstractTrajectory implements MutableTrajectory {
 

@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
  * therefore no guarantees are given.
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public class SimpleTrajectoryIterator implements TrajectoryIterator {
 

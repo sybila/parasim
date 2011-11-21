@@ -9,13 +9,13 @@ import java.util.List;
  * is implemented otherwise it throws an exception.
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class ListMutableDataBlock<T extends Trajectory> implements MutableDataBlock<T>
+public class ListMutableDataBlock implements MutableDataBlock
 {
-    private List<T> trajectories;
+    private List<MutableTrajectory> trajectories;
     
-    public ListMutableDataBlock(List<T> trajectories)
+    public ListMutableDataBlock(List<Trajectory> trajectories)
     {
         if (trajectories == null)
         {
@@ -25,23 +25,28 @@ public class ListMutableDataBlock<T extends Trajectory> implements MutableDataBl
         {
             throw new IllegalArgumentException("The number of trajectories has to be a positive number.");
         }
-        this.trajectories = new ArrayList<T>(trajectories.size());
-        for(T trajectory: trajectories)
+        this.trajectories = new ArrayList<MutableTrajectory>(trajectories.size());
+        for(Trajectory trajectory: trajectories)
         {
-            this.trajectories.add(trajectory);
+            this.trajectories.add(new LinkedTrajectory(trajectory));
         }
     }
     
-    public ListMutableDataBlock(DataBlock<T> trajectories)
+    public ListMutableDataBlock(DataBlock<Trajectory> trajectories)
     {
         if (trajectories == null)
         {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
-        this.trajectories = new ArrayList<T>(trajectories.size());
-        for(T trajectory: trajectories)
+        this.trajectories = new ArrayList<MutableTrajectory>(trajectories.size());
+        for(Trajectory trajectory: trajectories)
         {
-            this.trajectories.add(trajectory);            
+            if (trajectory instanceof MutableTrajectory) {
+                this.trajectories.add((MutableTrajectory) trajectory);
+            }
+            else {
+                this.trajectories.add(new LinkedTrajectory(trajectory));
+            }
         }        
     }
 
@@ -52,38 +57,26 @@ public class ListMutableDataBlock<T extends Trajectory> implements MutableDataBl
         {
             throw new IllegalArgumentException("The number of given trajectories has to match with size of the block.");
         }
-        if (size() == 0) return;
-        Iterator<T> it = this.trajectories.listIterator();
-        int i = 0;
-        while (it.hasNext())
-        {
-            if (!MutableTrajectory.class.isInstance(it.next()))
-            {
-                throw new RuntimeException("Trajectory on index ("+i+") is not Mutable.");
-            }
-            i++;
-        }
-
-        it = this.trajectories.listIterator();
+        Iterator<MutableTrajectory> originIt = this.trajectories.iterator();
         Iterator<Trajectory> appendIt = trajectories.iterator();
-        while (it.hasNext() && appendIt.hasNext())
+        while (originIt.hasNext() && appendIt.hasNext())
         {
-            ((MutableTrajectory)it.next()).append(appendIt.next());
+            originIt.next().append(appendIt.next());
         }      
     }
 
     @Override
-    public T getTrajectory(int index)
+    public Trajectory getTrajectory(int index)
     {
         return trajectories.get(index);
     }
 
     @Override
-    public Iterator<T> iterator()
+    public Iterator<Trajectory> iterator()
     {
-        return new Iterator<T>()
+        return new Iterator<Trajectory>()
         {
-            private Iterator<T> iterator = trajectories.iterator();
+            private Iterator<MutableTrajectory> iterator = trajectories.iterator();
 
             @Override
             public boolean hasNext()
@@ -92,7 +85,7 @@ public class ListMutableDataBlock<T extends Trajectory> implements MutableDataBl
             }
 
             @Override
-            public T next()
+            public Trajectory next()
             {
                 return iterator.next();
             }
@@ -106,11 +99,16 @@ public class ListMutableDataBlock<T extends Trajectory> implements MutableDataBl
     }
 
     @Override
-    public void merge(DataBlock<T> trajectories)
+    public void merge(DataBlock<Trajectory> trajectories)
     {
-        for(T trajectory: trajectories)
-        {            
-            this.trajectories.add(trajectory);
+        for(Trajectory trajectory: trajectories)
+        {
+            if (trajectory instanceof MutableTrajectory) {
+                this.trajectories.add((MutableTrajectory) trajectory);
+            }
+            else {
+                this.trajectories.add(new LinkedTrajectory(trajectory));
+            }
         }
     }
 
