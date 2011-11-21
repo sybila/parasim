@@ -6,7 +6,7 @@ package org.sybila.parasim.model.trajectory;
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public class LinkedCyclicTrajectory extends LinkedTrajectory implements TrajectoryCycle
+public class LinkedCyclicTrajectory extends LinkedTrajectory implements CyclicTrajectory
 {
     private SimpleCycle cycle;
 

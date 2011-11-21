@@ -1,4 +1,4 @@
-package org.sybila.parasim.computation.verification;
+package org.sybila.parasim.computation.monitoring;
 
 import org.sybila.parasim.model.verification.buchi.Buchi;
 import org.sybila.parasim.model.verification.buchi.BuchiStatus;

@@ -10,14 +10,14 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  * 
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public class ArrayCycleDetectionDataBlock<T extends Trajectory> implements CycleDetectDataBlock<T>
+public class ArrayCycleDetectionDataBlock<T extends Trajectory, CD extends CycleDetector> implements CycleDetectDataBlock<T, CD>
 {
     private DataBlock<T> dataBlock;
-    private CycleDetector[] cycleDetectors;
+    private CD[] cycleDetectors;
     private CycleDetectionStatus[] statuses;
 
     public ArrayCycleDetectionDataBlock(DataBlock<T> dataBlock,
-            CycleDetector[] cycleDetectors, CycleDetectionStatus[] statuses)
+            CD[] cycleDetectors, CycleDetectionStatus[] statuses)
     {
         if (dataBlock == null)
         {
@@ -45,7 +45,7 @@ public class ArrayCycleDetectionDataBlock<T extends Trajectory> implements Cycle
     }
 
     @Override
-    public CycleDetector getCycleDetector(int index)
+    public CD getCycleDetector(int index)
     {
         if (index < 0 || index > cycleDetectors.length)
         {
@@ -84,6 +84,16 @@ public class ArrayCycleDetectionDataBlock<T extends Trajectory> implements Cycle
     public int size()
     {
         return dataBlock.size();
+    }
+
+    @Override
+    public void setStatus(int index, CycleDetectionStatus status)
+    {
+        if (index < 0 || index >= statuses.length)
+        {
+            throw new IllegalArgumentException("Index must be in range [0, "+statuses.length+")");
+        }
+        statuses[index] = status;
     }
 
 }

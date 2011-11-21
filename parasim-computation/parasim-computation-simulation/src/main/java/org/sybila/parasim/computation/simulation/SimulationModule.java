@@ -3,12 +3,13 @@ package org.sybila.parasim.computation.simulation;
 import org.sybila.parasim.computation.Module;
 import org.sybila.parasim.computation.ModuleComputationException;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.MixedOutput;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SimulationModule<Conf extends Configuration> implements Module<DataBlock, SimulatedDataBlock<Trajectory>> {
+public class SimulationModule<Conf extends Configuration> implements Module<DataBlock, DataBlock, SimulatedDataBlock<Trajectory>> {
 
     private Conf configuration;
     private Simulator<Conf, SimulatedDataBlock<Trajectory>> simulator;
@@ -55,6 +56,12 @@ public class SimulationModule<Conf extends Configuration> implements Module<Data
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
         this.configuration = configuration;
+    }
+
+    public MixedOutput<SimulatedDataBlock<Trajectory>, DataBlock>
+           compute(DataBlock input, DataBlock inter, int stepLimit) throws ModuleComputationException
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }
