@@ -1,6 +1,7 @@
 package org.sybila.parasim.computation.simulation.cpu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.sybila.parasim.computation.simulation.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.ArraySimulatedDataBlock;
@@ -125,7 +126,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
         float[] auxiliaryData = new float[point.getDimension()];
         float[] absoluteError = new float[point.getDimension()];
         float[] previousData = point.toArray();
-        for (; computation.iteration < computation.configuration.getMaxNumberOfIterations(); computation.iteration++) {
+        simulation: for (; computation.iteration < computation.configuration.getMaxNumberOfIterations(); computation.iteration++) {
             prepareCoefficents(computation, previousData);
             // Absolute error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
@@ -136,7 +137,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
                         computation.status = Status.PRECISION;
                         return null;
                     }
-                    continue;
+                    continue simulation;
                 }
             }
             // Successor data
@@ -151,18 +152,19 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
                         computation.status = Status.PRECISION;
                         return null;
                     }
-                    continue;
+                    continue simulation;
                 }
             }
             // Check the distance
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
                 if (Math.abs(successorData[dim] - previousData[dim]) > computation.configuration.getSteps()[dim]) {
+                    System.out.println("Fixing step distance in dimension <" + dim + ">.\nExpected <" + computation.configuration.getSteps()[dim] + ">.\nFound: <"+Math.abs(successorData[dim] - previousData[dim])+">\nPrevious: " + Arrays.toString(previousData) + "\nCurrent: " + Arrays.toString(successorData));
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;
                         return null;
                     }
-                    continue;
+                    continue simulation;
                 }
             }
             // Check the min and max bounds

@@ -9,7 +9,7 @@ public class ImmutableConfiguration implements Configuration {
 
     public static final int DEFAULT_MAX_NUMBER_OF_ITERATIONS = 100000;
     public static final float DEFAULT_STEP = (float) 0.1;
-    public static final float DEFAULT_TIME_STEP = (float) 0.1;
+    public static final float DEFAULT_TIME_STEP = (float) 0.001;
     
     private float[] maxBounds;
     private int maxNumberOfIterations;

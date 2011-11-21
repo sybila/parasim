@@ -1,5 +1,6 @@
 package org.sybila.parasim.computation.simulation;
 
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.ode.OdeSystemEncoding;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import java.util.HashMap;
@@ -51,10 +52,9 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
                     previous = p;
                     continue;
                 }
-                assertEquals(p.getTime() - previous.getTime(), getConfiguration().getTimeStep(), getConfiguration().getTimeStep()/1000, "The expected time step doesn't match.");
+                assertTrue(Math.abs(p.getTime() - previous.getTime()) <= getConfiguration().getTimeStep() + getConfiguration().getTimeStep() / 1000, "The time step condition doesn't hold, found time step <" + Math.abs(p.getTime() - previous.getTime()) + ">, expected time step <" + getConfiguration().getTimeStep() + ">");
                 previous = p;
             }
-            
         }
     }    
     
@@ -78,7 +78,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         }
     }
  
-    private ArrayDataBlock<Trajectory> createDataBlock(int dim, int size) {
+    protected DataBlock<Trajectory> createDataBlock(int dim, int size) {
         Trajectory[] trajectories = new Trajectory[size];
         for(int s = 0; s < size; s++) {
             float[] data = new float[dim];
@@ -98,7 +98,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         int[] factors = new int[dim];
         for(int d = 0; d < dim; d++) {
             coefficientIndexes[d] = d;
-            coefficients[d] = (float) dim / (float) 100;
+            coefficients[d] = (float) dim / (float) 10;
             factorIndexes[d] = d;
             factors[d] = d;
         }

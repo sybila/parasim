@@ -1,13 +1,34 @@
 package org.sybila.parasim.computation.simulation;
 
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulatorTest<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>>{
-    
+public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulatorTest<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> {
+
+    protected void testAbsoluteStep(int size) {
+        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        for (int s = 0; s < size; s++) {
+            Point previous = null;
+            for (Point p : result.getTrajectory(s)) {
+                if (previous == null) {
+                    previous = p;
+                    continue;
+                }
+                for(int dim=0; dim<p.getDimension(); dim++) {
+                    System.out.println("Previous: " + previous);
+                    System.out.println("Current: " + p);
+                    assertTrue(Math.abs(previous.getValue(dim) - p.getValue(dim)) < getConfiguration().getSteps()[dim], "The absolute step condition in dimension <" + dim + "> doesn't hold. Found absolute step is <" + Math.abs(previous.getValue(dim) - p.getValue(dim)) + ">, expected <" + getConfiguration().getSteps()[dim] + ">");
+                }
+                previous = p;
+            }
+        }
+    }
+
     @Override
     protected AdaptiveStepConfiguration createConfiguration() {
         final OdeSystem odeSystem = getOdeSystem(10);
@@ -17,12 +38,12 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             private float[] maxBounds;
             private float[] minBounds;
             private float[] steps;
-            
+
             @Override
             public float[] getMaxAbsoluteError() {
                 if (maxAbsoluteError == null) {
                     maxAbsoluteError = new float[getDimension()];
-                    for(int dim = 0; dim < getDimension(); dim++) {
+                    for (int dim = 0; dim < getDimension(); dim++) {
                         maxAbsoluteError[dim] = 1;
                     }
                 }
@@ -31,7 +52,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
 
             @Override
             public float getMaxRelativeError() {
-               return (float) 0.1;
+                return (float) 0.1;
             }
 
             @Override
@@ -75,7 +96,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             public float[] getSteps() {
                 if (steps == null) {
                     steps = new float[getDimension()];
-                    for(int dim = 0; dim < getDimension(); dim++) {
+                    for (int dim = 0; dim < getDimension(); dim++) {
                         steps[dim] = 1;
                     }
                 }
@@ -92,6 +113,5 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 return (float) 0.01;
             }
         };
-    }    
-    
+    }
 }

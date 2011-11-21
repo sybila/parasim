@@ -3,6 +3,7 @@ package org.sybila.parasim.application.test;
 import org.sybila.parasim.computation.simulation.cpu.Rkf45Simulator;
 import org.sybila.parasim.model.trajectory.ListMutableDataBlock;
 import org.sybila.parasim.model.trajectory.MutableDataBlock;
+import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.support.computation.simulation.LotkaVolteraAdaptiveStepConfiguration;
 import org.sybila.parasim.support.computation.simulation.LotkaVolteraInitialDataBlock;
 import processing.core.PApplet;

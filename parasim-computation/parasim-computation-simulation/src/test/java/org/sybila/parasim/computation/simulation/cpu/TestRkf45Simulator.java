@@ -13,6 +13,11 @@ import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationT
 public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
 
     @Test
+    public void testAbsoluteStep() {
+        super.testAbsoluteStep(10);
+    }
+    
+    @Test
     public void testTimeStep() {
         super.testTimeStep(10);
     }
