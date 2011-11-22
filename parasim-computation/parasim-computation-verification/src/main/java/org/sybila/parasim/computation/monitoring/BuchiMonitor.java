@@ -17,7 +17,7 @@ import java.util.Iterator;
  * or the end of the simulated trajectory is reached but more points are
  * expected to be simulated in the future.
  *
- * If the property is proved to be true or false over the existing portion
+ * If the property is proven to be true or false over the existing portion
  * of a trajectory the computation is stopped.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>

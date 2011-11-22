@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.sybila.parasim.computation.MapTrajectoryNeighborhood;
 import org.sybila.parasim.computation.density.Configuration;
-import org.sybila.parasim.computation.density.Distance;
+import org.sybila.parasim.model.distance.Distance;
 import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.SpawnedDataBlockWrapper;

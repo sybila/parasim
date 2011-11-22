@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.sybila.parasim.computation.density.Configuration;
 import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;
-import org.sybila.parasim.computation.density.Distance;
+import org.sybila.parasim.model.distance.Distance;
 import org.sybila.parasim.computation.density.distancecheck.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.ListDistanceCheckedDataBlock;
 import org.sybila.parasim.model.trajectory.DataBlock;

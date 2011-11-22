@@ -1,5 +1,6 @@
 package org.sybila.parasim.computation.density;
 
+import org.sybila.parasim.model.distance.Distance;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +37,8 @@ public abstract class AbstractDensityTest {
                 return neighborhood;
             }
 
-            public DistanceMetric getDistanceMetric() {
-                return new DistanceMetric() {
+            public PointDistanceMetric getDistanceMetric() {
+                return new PointDistanceMetric() {
 
                     public Distance distance(float[] first, float[] second) {
                         final float[] distance = new float[first.length];
