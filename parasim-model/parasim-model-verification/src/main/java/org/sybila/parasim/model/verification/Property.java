@@ -5,8 +5,8 @@ package org.sybila.parasim.model.verification;
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public interface Property
+public abstract class Property
 {
     @Override
-    String toString();
+    public abstract String toString();
 }

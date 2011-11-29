@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Property;
 
 /**
  * Represents an LTL property Buchi automaton to express properties of numerical
@@ -21,8 +22,8 @@ import org.sybila.parasim.model.trajectory.Point;
  * @author Sven Dražan <sven@mail.muni.cz>
  */
 
-public class Buchi {    
-
+public class Buchi extends Property
+{
   private int stateCount;             /* number of states of automaton */
   private String[] stateNames;        /* names of all states */
   private Set<Integer> initialStates; /* set of initial states of atomaton */
@@ -58,23 +59,31 @@ public class Buchi {
    */
   public String loadFromFile(String fileName, OdeSystem ode)
   {
-    BuchiParser parser = new BuchiParser();    
-    if (parser.parseFile(fileName, ode))
-    {
-      stateCount = parser.getStateCount();
-      stateNames = parser.getStateNames();
-      initialStates = parser.getInitialStates();
-      acceptingStates = parser.getAcceptingStates();
-      transitions = parser.getTransitions();
-      hasDerivatives = parser.getHasDerivatives();
-      hasTautologyGuards = parser.getHasTautologyGuards();
-    }
-    else
-    {
-      return parser.getError();
-    }
+        if (fileName == null || fileName.isEmpty())
+        {
+            throw new IllegalArgumentException("The parameter fileName is null or empty.");
+        }
+        if (ode == null)
+        {
+            throw new IllegalArgumentException("The parameter ode is null.");
+        }
+        BuchiParser parser = new BuchiParser();
+        if (parser.parseFile(fileName, ode))
+        {
+            stateCount = parser.getStateCount();
+            stateNames = parser.getStateNames();
+            initialStates = parser.getInitialStates();
+            acceptingStates = parser.getAcceptingStates();
+            transitions = parser.getTransitions();
+            hasDerivatives = parser.getHasDerivatives();
+            hasTautologyGuards = parser.getHasTautologyGuards();
+        }
+        else
+        {
+            return parser.getError();
+        }
 
-    return null;
+        return null;
   }
 
     /**
