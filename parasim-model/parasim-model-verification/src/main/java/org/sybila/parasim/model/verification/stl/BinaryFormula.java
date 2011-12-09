@@ -41,4 +41,12 @@ public abstract class BinaryFormula implements Formula
         return subFormulas[index];
     }
 
+    @Override
+    public boolean equals(Formula formula)
+    {
+        if (formula.getType() != this.getType()) return false;
+        return subFormulas[0].equals(formula.getSubformula(0)) &&
+               subFormulas[1].equals(formula.getSubformula(1));
+    }
+
 }

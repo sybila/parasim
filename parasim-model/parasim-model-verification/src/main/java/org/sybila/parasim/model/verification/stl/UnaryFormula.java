@@ -37,4 +37,11 @@ public abstract class UnaryFormula implements Formula
         return subFormula;
     }
 
+    @Override
+    public boolean equals(Formula formula)
+    {
+        if (formula.getType() != this.getType()) return false;
+        return subFormula.equals(formula.getSubformula(0));
+    }
+
 }

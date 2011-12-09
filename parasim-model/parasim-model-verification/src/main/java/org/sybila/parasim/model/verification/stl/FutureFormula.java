@@ -52,5 +52,14 @@ public class FutureFormula extends UnaryFormula implements FormulaInterval
     {
         return FormulaType.FUTURE;
     }
+
+    @Override
+    public boolean equals(Formula formula)
+    {
+        if (!super.equals(formula)) return false;
+        if ( ((FutureFormula)formula).getLowerBound() != this.getLowerBound()) return false;
+        if ( ((FutureFormula)formula).getUpperBound() != this.getUpperBound()) return false;
+        return true;
+    }
     
 }

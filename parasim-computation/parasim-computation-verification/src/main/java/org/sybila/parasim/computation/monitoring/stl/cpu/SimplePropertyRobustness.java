@@ -1,4 +1,4 @@
-package org.sybila.parasim.computation.monitoring.cpu;
+package org.sybila.parasim.computation.monitoring.stl.cpu;
 
 import org.sybila.parasim.computation.monitoring.PropertyRobustness;
 

@@ -1,22 +1,26 @@
-package org.sybila.parasim.computation.monitoring.cpu;
+package org.sybila.parasim.computation.monitoring.stl.cpu;
 
 import java.util.List;
 import java.util.ArrayList;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.trajectory.TrajectoryIterator;
+import org.sybila.parasim.model.trajectory.CyclicTrajectory;
+import java.util.Iterator;
 
 /**
- * Predicate to transform primary signals to secondary.
+ * PredicateMonitors transform primary signals (point values) to secondary
+ * signals (function values) by the use of PredicateEvaluators over the course
+ * of a trajectory.
  * 
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public class Predicate<T extends Trajectory>
+public class PredicateMonitor<T extends Trajectory>
        implements Evaluable<T, SimplePropertyRobustness>
 {
     private PredicateEvaluator<SimplePropertyRobustness> evaluator;
+    private ArrayList<SimplePropertyRobustness> cache;
 
-    public Predicate(PredicateEvaluator<SimplePropertyRobustness> e)
+    public PredicateMonitor(PredicateEvaluator<SimplePropertyRobustness> e)
     {
         if (evaluator == null)
         {
@@ -25,6 +29,17 @@ public class Predicate<T extends Trajectory>
         this.evaluator = e;
     }
 
+    /**
+     * Evaluates a predicate over the course of the trajectory on the interval
+     * [a,b]. If the trajectory is not long enough the last point is extrapolated
+     * into the future. If the trajectory is cyclic evaluation loops through
+     * the cycle so many times as to cover the whole interval.
+     *
+     * @param trajectory Trajectory or CyclicTrajectory over which to evaluate predicate.
+     * @param a Start of time interval.
+     * @param b End of time interval.
+     * @return List of predicate values in points of trajectory covering the given interval.
+     */
     @Override
     public List<SimplePropertyRobustness> evaluate(T trajectory, float a, float b)
     {
@@ -44,7 +59,15 @@ public class Predicate<T extends Trajectory>
         {
             throw new IllegalArgumentException("The trajectory is empty.");
         }
-        TrajectoryIterator it = trajectory.iterator();
+        Iterator<Point> it;
+        if (trajectory.getClass().isInstance(CyclicTrajectory.class))
+        {
+            it = ((CyclicTrajectory)trajectory).cyclicIterator();
+        }
+        else
+        {                
+            it = trajectory.iterator();
+        }
         Point p1 = it.next();
         Point p2 = p1;
         while (it.hasNext() && p1.getTime() < a)
@@ -78,11 +101,15 @@ public class Predicate<T extends Trajectory>
         }
         else if (p1.getTime() < a)
         {
+            /* Trajectory ended before the begining of the interval [a,b] was reached
+               therefore the last point is used to evaluate the predicate and because
+               the evaluation function is expected to be linear we can use it's value
+               to extrapolate any further value after the end of the trajectory. */
             SimplePropertyRobustness tmp = evaluator.value(p1);
             SimplePropertyRobustness result =
                 new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
                                              tmp.getValueDerivative());
-            List<SimplePropertyRobustness> list = new ArrayList<SimplePropertyRobustness>(1);
+            ArrayList<SimplePropertyRobustness> list = new ArrayList<SimplePropertyRobustness>(1);
             list.add(result);
             return list;
         }

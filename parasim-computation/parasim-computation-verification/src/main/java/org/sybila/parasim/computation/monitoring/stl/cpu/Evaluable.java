@@ -1,4 +1,4 @@
-package org.sybila.parasim.computation.monitoring.cpu;
+package org.sybila.parasim.computation.monitoring.stl.cpu;
 
 import org.sybila.parasim.computation.monitoring.PropertyRobustness;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Enables the evaluation of a property's robustness on a given trajectory.
  * For computational purposes the trajectory may be prolonged past it's last
- * point usint the last points value a valueDerivative.
+ * point usint the last points value and valueDerivative.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  * @param <T> Class of trajectories on which property robustness computation

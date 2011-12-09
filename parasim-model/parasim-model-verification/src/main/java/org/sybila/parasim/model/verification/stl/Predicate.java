@@ -15,7 +15,7 @@ public abstract class Predicate implements Formula
      * @param p Point in which to validate this predicate.
      * @return Boolean validity of predicate in given point.
      */
-    abstract boolean getValidity(Point p);
+    public abstract boolean getValidity(Point p);
 
     /**
      * Returns the qualitative value of this predicate in given point.
@@ -23,7 +23,7 @@ public abstract class Predicate implements Formula
      * @param p Point in which to evaluate this predicate.
      * @return Qualitative value of predicate in given point.
      */
-    abstract float getValue(Point p);
+    public abstract float getValue(Point p);
 
     @Override
     public int getArity()
@@ -51,5 +51,8 @@ public abstract class Predicate implements Formula
     {
         return FormulaType.PREDICATE;
     }
+
+    @Override
+    public abstract boolean equals(Formula formula);
 
 }

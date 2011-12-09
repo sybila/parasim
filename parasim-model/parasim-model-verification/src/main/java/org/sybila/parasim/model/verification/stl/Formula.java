@@ -45,4 +45,13 @@ public interface Formula
      * @return Type of formula.
      */
     FormulaType getType();
+
+    /**
+     * Enables the comparison of formulas. Two formulas are equal if they
+     * represent the same predicate or all their subformulas are equal.
+     *
+     * @param object Formula to compare to.
+     * @return True if formula is equal to this object, false otherwise.
+     */
+    boolean equals(Formula formula);
 }
