@@ -13,4 +13,9 @@ public interface Distance {
      */
     float value();
     
+    /**
+     * Checks whether the distance between two given object is valid.
+     */
+    boolean isValid();
+    
 }
