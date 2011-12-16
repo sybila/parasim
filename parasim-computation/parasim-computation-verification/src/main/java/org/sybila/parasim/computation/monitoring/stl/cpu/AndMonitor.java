@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import org.sybila.parasim.computation.monitoring.PropertyRobustness;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import java.util.Iterator;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Monitors the conjunction of two subformulas. The output is the minimum of
  * the two signals.
  * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
  */
 public class AndMonitor<T extends Trajectory>
        implements Evaluable<T, SimplePropertyRobustness>
@@ -41,7 +42,7 @@ public class AndMonitor<T extends Trajectory>
 
         //FIXME
 
-
+        throw new NotImplementedException();
     }
 
 }

@@ -20,8 +20,6 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     continue;
                 }
                 for(int dim=0; dim<p.getDimension(); dim++) {
-                    System.out.println("Previous: " + previous);
-                    System.out.println("Current: " + p);
                     assertTrue(Math.abs(previous.getValue(dim) - p.getValue(dim)) < getConfiguration().getSteps()[dim], "The absolute step condition in dimension <" + dim + "> doesn't hold. Found absolute step is <" + Math.abs(previous.getValue(dim) - p.getValue(dim)) + ">, expected <" + getConfiguration().getSteps()[dim] + ">");
                 }
                 previous = p;

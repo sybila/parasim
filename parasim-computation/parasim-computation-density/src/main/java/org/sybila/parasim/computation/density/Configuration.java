@@ -11,5 +11,7 @@ public interface Configuration<T extends Trajectory> {
     PointDistanceMetric getDistanceMetric();
     
     TrajectoryNeighborhood<T> getNeighborhood();
-   
+
+    int getStartIndex(int index, int neighborIndex);
+    
 }
