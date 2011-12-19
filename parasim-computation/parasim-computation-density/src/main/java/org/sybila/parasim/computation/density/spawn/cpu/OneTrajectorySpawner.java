@@ -30,9 +30,9 @@ public class OneTrajectorySpawner implements TrajectorySpawner<Configuration<Tra
         Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
         for(int i=0; i<trajectories.size(); i++) {
             Trajectory trajectory = trajectories.getTrajectory(i);
-            for(int n=0; n<trajectories.getDistances(i).size(); n++) {
-                if (!trajectories.getDistances(i).get(n).isValid()) {
-                    Trajectory spawnedTrajectory = spawnTrajectory(trajectory, configuration.getNeighborhood().getNeighbors(trajectory).getTrajectory(n), trajectories.getDistances(i).get(n));
+            for(int n=0; n<configuration.getNeighborhood().getNeighbors(trajectory).size(); n++) {
+                if (!trajectories.getDistance(i, n).isValid()) {
+                    Trajectory spawnedTrajectory = spawnTrajectory(trajectory, configuration.getNeighborhood().getNeighbors(trajectory).getTrajectory(n), trajectories.getDistance(i, n));
                     neighborhood.put(
                         spawnedTrajectory,
                         new ArrayDataBlock<Trajectory>(

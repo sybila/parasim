@@ -14,29 +14,55 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
 
+    private static final int DIMENSION = 4;
+    private static final int LENGTH = 4;
+    private static final int SIZE = 4;
+    
     @Test
-    public void testInvalid() {
-        DataBlock<Trajectory> dataBlock = createDataBlock(4, 4, 4, 2, (float) 0.1, (float) 0.01);
+    public void testValidCheckedLengths() {
+        DataBlock<Trajectory> dataBlock = createValidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
-        Configuration<Trajectory> configuration = createConfiguration(1, 4, neighborhood);
+        Configuration<Trajectory> configuration = createConfiguration(1, DIMENSION, neighborhood);
         DistanceCheckedDataBlock<Trajectory> result = new OnePairDistanceChecker().check(configuration, dataBlock);
         for (int t = 0; t < result.size(); t++) {
-            for (int dim = 0; dim < result.getDistances(t).size(); dim++) {
-                assertTrue(!result.getDistances(t).get(dim).isValid());
+            for (int neigh = 0; neigh < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); neigh++) {
+                assertEquals(result.getTrajectoryCheckedPosition(t, neigh), LENGTH - 1);
+                assertEquals(result.getNeighborCheckedPosition(t, neigh), LENGTH - 1);
             }
         }
     }
     
     @Test
-    public void testValid() {
-        DataBlock<Trajectory> dataBlock = createDataBlock(4, 4, 4, (float) 0.1, (float) 0.01, (float) 0.001);
+    public void testInvalidDistance() {
+        DataBlock<Trajectory> dataBlock = createInvalidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
-        Configuration<Trajectory> configuration = createConfiguration(1, 4, neighborhood);
+        Configuration<Trajectory> configuration = createConfiguration(1, DIMENSION, neighborhood);
         DistanceCheckedDataBlock<Trajectory> result = new OnePairDistanceChecker().check(configuration, dataBlock);
         for (int t = 0; t < result.size(); t++) {
-            for (int dim = 0; dim < result.getDistances(t).size(); dim++) {
-                assertTrue(result.getDistances(t).get(dim).isValid());
+            for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
+                assertTrue(!result.getDistance(t, dim).isValid());
             }
         }
+    }
+    
+    @Test
+    public void testValidDistance() {
+        DataBlock<Trajectory> dataBlock = createValidDataBlock();
+        TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        Configuration<Trajectory> configuration = createConfiguration(1, DIMENSION, neighborhood);
+        DistanceCheckedDataBlock<Trajectory> result = new OnePairDistanceChecker().check(configuration, dataBlock);
+        for (int t = 0; t < result.size(); t++) {
+            for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
+                assertTrue(result.getDistance(t, dim).isValid());
+            }
+        }
+    }
+    
+    private DataBlock<Trajectory> createInvalidDataBlock() {
+        return createDataBlock(SIZE, LENGTH, DIMENSION, 2, (float) 0.1, (float) 0.01);
+    }
+    
+    private DataBlock<Trajectory> createValidDataBlock() {
+        return createDataBlock(SIZE, LENGTH, DIMENSION, (float) 0.1, (float) 0.01, (float) 0.001);
     }
 }

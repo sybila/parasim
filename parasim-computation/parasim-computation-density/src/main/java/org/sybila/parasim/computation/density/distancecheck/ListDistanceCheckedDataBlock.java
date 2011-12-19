@@ -1,8 +1,9 @@
 package org.sybila.parasim.computation.density.distancecheck;
 
-import org.sybila.parasim.model.distance.Distance;
 import java.util.Iterator;
 import java.util.List;
+import org.sybila.parasim.computation.density.LimitedDistance;
+import org.sybila.parasim.model.distance.Distance;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
@@ -12,9 +13,11 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 public class ListDistanceCheckedDataBlock<T extends Trajectory> implements DistanceCheckedDataBlock<T> {
     
     private DataBlock<T> dataBlock;
-    private List<List<Distance>> distances;
+    private List<List<LimitedDistance>> distances;
+    private List<List<Integer>> neighborCheckedPositions;
+    private List<List<Integer>> trajectoryCheckedPositions;
     
-    public ListDistanceCheckedDataBlock(DataBlock<T> dataBlock, List<List<Distance>> distances) {
+    public ListDistanceCheckedDataBlock(DataBlock<T> dataBlock, List<List<LimitedDistance>> distances, List<List<Integer>> trajectoryCheckedPositions, List<List<Integer>> neighborCheckedPositions) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }
@@ -24,13 +27,27 @@ public class ListDistanceCheckedDataBlock<T extends Trajectory> implements Dista
         if (distances.size() != dataBlock.size()) {
             throw new IllegalArgumentException("The number of distances doesn't correspond to the number of trajectories.");
         }
+        if (trajectoryCheckedPositions == null) {
+            throw new IllegalArgumentException("The parameter trajectoryCheckedPositions is null.");
+        }
+        if (trajectoryCheckedPositions.size() != dataBlock.size()) {
+            throw new IllegalArgumentException("The number of trajectory checked positions doesn't correspond to the number of trajectories.");
+        }
+        if (neighborCheckedPositions == null) {
+            throw new IllegalArgumentException("The parameter neighborCheckedPositions is null.");
+        }
+        if (neighborCheckedPositions.size() != dataBlock.size()) {
+            throw new IllegalArgumentException("The number of neighbor checked positions doesn't correspond to the number of trajectories.");
+        }
         this.dataBlock = dataBlock;
         this.distances = distances;
+        this.trajectoryCheckedPositions = trajectoryCheckedPositions;
+        this.neighborCheckedPositions = neighborCheckedPositions;
     }
 
     @Override
-    public List<Distance> getDistances(int index) {
-        return distances.get(index);
+    public LimitedDistance getDistance(int index, int neighborIndex) {
+        return distances.get(index).get(neighborIndex);
     }
 
     @Override
@@ -46,6 +63,16 @@ public class ListDistanceCheckedDataBlock<T extends Trajectory> implements Dista
     @Override
     public Iterator<T> iterator() {
         return dataBlock.iterator();
+    }
+
+    @Override
+    public int getTrajectoryCheckedPosition(int index, int neighborIndex) {
+        return trajectoryCheckedPositions.get(index).get(neighborIndex);
+    }
+
+    @Override
+    public int getNeighborCheckedPosition(int index, int neighborIndex) {
+        return neighborCheckedPositions.get(index).get(neighborIndex);
     }
     
 }

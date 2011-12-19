@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * Monitors the conjunction of two subformulas. The output is the minimum of
  * the two signals.
  * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
  */
 public class AndMonitor<T extends Trajectory>
        implements Evaluable<T, SimplePropertyRobustness>
@@ -253,7 +253,7 @@ public class AndMonitor<T extends Trajectory>
         else /* pr1.value() == pr2.value() && pr1.getValueDerivative() == pr2.getValueDerivative() */
         {
             return 0;
-        }
+        }        
     }
 
 }

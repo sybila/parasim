@@ -1,12 +1,12 @@
 package org.sybila.parasim.computation.density;
 
-import org.sybila.parasim.model.distance.Distance;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.sybila.parasim.computation.MapTrajectoryNeighborhood;
 import org.sybila.parasim.computation.TrajectoryNeighborhood;
+import org.sybila.parasim.model.distance.Distance;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
@@ -50,7 +50,7 @@ public abstract class AbstractDensityTest {
                             }
                         }
                         final float maxDistanceFinal = maxDistance;
-                        return new Distance() {
+                        return new LimitedDistance() {
 
                             public boolean isValid() {
                                 return value() < expectedDistance;
@@ -74,6 +74,10 @@ public abstract class AbstractDensityTest {
                         return distance(first.toArray(), second.toArray());
                     }
                 };
+            }
+
+            public int getStartIndex(int index, int neighborIndex) {
+                return 0;
             }
         };        
     }
