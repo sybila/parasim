@@ -38,6 +38,11 @@ public class SimplePropertyRobustness implements PropertyRobustness
         this.derivative = derivative;
     }
 
+    public SimplePropertyRobustness(PropertyRobustness pr)
+    {
+        this(pr.getTime(), pr.value(), pr.getValueDerivative());
+    }
+
     @Override
     public float getTime()
     {
