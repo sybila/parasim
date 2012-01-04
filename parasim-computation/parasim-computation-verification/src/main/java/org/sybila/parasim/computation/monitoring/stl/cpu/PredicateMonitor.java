@@ -3,6 +3,7 @@ package org.sybila.parasim.computation.monitoring.stl.cpu;
 import java.util.List;
 import java.util.ArrayList;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointDerivative;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.CyclicTrajectory;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ public class PredicateMonitor<T extends Trajectory>
 
     public PredicateMonitor(PredicateEvaluator<SimplePropertyRobustness> e)
     {
-        if (evaluator == null)
+        if (e == null)
         {
             throw new IllegalArgumentException("Parameter e is null.");
         }
@@ -34,6 +35,10 @@ public class PredicateMonitor<T extends Trajectory>
      * [a,b]. If the trajectory is not long enough the last point is extrapolated
      * into the future. If the trajectory is cyclic evaluation loops through
      * the cycle so many times as to cover the whole interval.
+     *
+     * The result list will have as many elements as there where points on the
+     * given trajectory in the interval [a,b] with 1 possible extra point in case
+     * that there was no point with the exact time value equal to a.
      *
      * @param trajectory Trajectory or CyclicTrajectory over which to evaluate predicate.
      * @param a Start of time interval.
@@ -68,50 +73,82 @@ public class PredicateMonitor<T extends Trajectory>
         {                
             it = trajectory.iterator();
         }
-        Point p1 = it.next();
+        Point p1 = it.next(); /* A trajectory must always contain at least 1 point */
         Point p2 = p1;
-        while (it.hasNext() && p1.getTime() < a)
+        /* The trajectory is expected to hold points of only one class type */
+        if (p1.getClass().isInstance(PointDerivative.class))
         {
-            p2 = p1;
-            p1 = it.next();
-        }        
-        if (p1.getTime() >= a)
-        {                        
-            ArrayList<SimplePropertyRobustness> list = new ArrayList<SimplePropertyRobustness>();
-
-            if (p1.getTime() == a)
+            while (it.hasNext() && p1.getTime() < a)
             {
-                SimplePropertyRobustness tmp = evaluator.value(p1);
-                list.add(tmp);
-            }
-            else /* p1.getTime() > a */
-            {
-                SimplePropertyRobustness tmp = evaluator.value(p2);
-                tmp = new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
-                                             tmp.getValueDerivative());
-                list.add(tmp);
-            }
-            while (it.hasNext() && p1.getTime() < b)
-            {
-                list.add(evaluator.value(p1));
+                p2 = p1;
                 p1 = it.next();
             }
-            list.trimToSize();
-            return list;
+            if (p1.getTime() >= a)
+            {
+                ArrayList<SimplePropertyRobustness> list = new ArrayList<SimplePropertyRobustness>();
+
+                if (p1.getTime() == a)
+                {
+                    SimplePropertyRobustness tmp = evaluator.value((PointDerivative)p1);
+                    list.add(tmp);
+                }
+                else /* p1.getTime() > a */
+                {
+                    SimplePropertyRobustness tmp = evaluator.value((PointDerivative)p2);
+                    tmp = new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
+                                                 tmp.getValueDerivative());
+                    list.add(tmp);
+                }
+                while (it.hasNext() && p1.getTime() < b)
+                {
+                    list.add(evaluator.value((PointDerivative)p1));
+                    p1 = it.next();
+                }
+                list.trimToSize();
+                return list;
+            }
+            else if (p1.getTime() < a)
+            {
+                /* Trajectory ended before the begining of the interval [a,b] was reached
+                   therefore the last point is used to evaluate the predicate and because
+                   the evaluation function is expected to be linear we can use it's value
+                   to extrapolate any further value after the end of the trajectory. */
+                SimplePropertyRobustness tmp = evaluator.value((PointDerivative)p1);
+                SimplePropertyRobustness result =
+                    new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
+                                                 tmp.getValueDerivative());
+                ArrayList<SimplePropertyRobustness> list = new ArrayList<SimplePropertyRobustness>(1);
+                list.add(result);
+                return list;
+            }
         }
-        else if (p1.getTime() < a)
+        else
         {
-            /* Trajectory ended before the begining of the interval [a,b] was reached
-               therefore the last point is used to evaluate the predicate and because
-               the evaluation function is expected to be linear we can use it's value
-               to extrapolate any further value after the end of the trajectory. */
-            SimplePropertyRobustness tmp = evaluator.value(p1);
-            SimplePropertyRobustness result =
-                new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
-                                             tmp.getValueDerivative());
-            ArrayList<SimplePropertyRobustness> list = new ArrayList<SimplePropertyRobustness>(1);
-            list.add(result);
-            return list;
+            while (it.hasNext() && p1.getTime() <= a)
+            {
+                p2 = p1;
+                p1 = it.next();
+            }
+                        
+            ArrayList<SimplePropertyRobustness> list = new ArrayList<SimplePropertyRobustness>();
+
+            /* The begining of the interval [a,b] is approximated from p2 and p1 even
+             * if the trajectory ended before the begining was reached.
+             */
+
+            SimplePropertyRobustness tmp = evaluator.value(p2,p1);
+            tmp = new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
+                                         tmp.getValueDerivative());
+            list.add(tmp);
+
+            while (it.hasNext() && p1.getTime() < b)
+            {
+                p2 = p1;
+                p1 = it.next();
+                list.add(evaluator.value(p2,p1));
+            }
+            list.trimToSize();
+            return list;            
         }
         return null;
     }

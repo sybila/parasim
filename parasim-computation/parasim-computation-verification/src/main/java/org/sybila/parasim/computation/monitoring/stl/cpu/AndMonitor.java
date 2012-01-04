@@ -37,20 +37,12 @@ public class AndMonitor<T extends Trajectory>
         List<PropertyRobustness> list1 = sub1.evaluate(trajectory, a, b);
         List<PropertyRobustness> list2 = sub2.evaluate(trajectory, a, b);
         ArrayList<SimplePropertyRobustness> result = new ArrayList<SimplePropertyRobustness>();
-        int lastValueOrigin = 0; // 1 - list1, 2 - list 2, 0 - both
+        int lastValueOrigin = 0; /* 1 - list1, 2 - list 2, 0 - both */
+        int valueOrigin;
 
         ListIterator<PropertyRobustness> iterator1 = list1.listIterator();
         ListIterator<PropertyRobustness> iterator2 = list2.listIterator();
-
-        if (!iterator1.hasNext())
-        {
-            throw new RuntimeException("First signal is empty.");
-        }
-        if (!iterator2.hasNext())
-        {
-            throw new RuntimeException("Second signal is empty.");
-        }
-
+        
         /* Initialization */
         
         /* both lists are expected to be non-empty */
@@ -70,74 +62,132 @@ public class AndMonitor<T extends Trajectory>
         result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr2:pr1));
 
         /* Loop through both signals */
-        while (iterator1.hasNext() && iterator2.hasNext()) //FIXME
-        {                        
-            if (lastValueOrigin == 0)
+        while (iterator1.hasNext() && iterator2.hasNext())
+        {
+            next1 = iterator1.next();
+            next2 = iterator2.next();
+            float relInterTime = 0.0f; /* relative intersection time */
+            float absInterTime = 0.0f; /* absolute intersection time */
+
+            if ((pr1.value() < pr2.value() && pr1.getValueDerivative() > pr2.getValueDerivative()) ||
+                (pr1.value() > pr2.value() && pr1.getValueDerivative() < pr2.getValueDerivative()) )
             {
-                pr1 = iterator1.next();
-                pr2 = iterator2.next();
-                lastValueOrigin = min(pr1, pr2);
+                /* compute relative time of signal intersection */
+                relInterTime = Math.abs(pr1.value() - pr2.value()) / Math.abs(pr1.getValueDerivative() - pr2.getValueDerivative());
+                absInterTime = pr1.getTime() + relInterTime; /* pr1.getTime == pr2.getTime */
+            }
+            
+            /* if there is an intersection and it occurs before the next event of any of the signals */
+            if (relInterTime > 0.0f &&
+                absInterTime < next1.getTime() &&
+                absInterTime < next2.getTime() )
+            {
+                iterator1.previous();
+                iterator2.previous();
+                float interValue = pr1.value() + pr1.getValueDerivative() * relInterTime;
+                next1 = new SimplePropertyRobustness(absInterTime, interValue, pr1.getValueDerivative());
+                next2 = new SimplePropertyRobustness(absInterTime, interValue, pr2.getValueDerivative());
+            }
+            else if (next1.getTime() < next2.getTime()) /* no intersection, signal 1 has next event sooner */
+            {
+                iterator2.previous();
+                next2 = new SimplePropertyRobustness(
+                        next1.getTime(),
+                        pr2.value() + pr2.getValueDerivative() * (next1.getTime() - pr2.getTime()),
+                        pr2.getValueDerivative());
+            }
+            else if (next1.getTime() > next2.getTime()) /* no intersection, signal 2 has next event sooner */
+            {
+                iterator1.previous();
+                next1 = new SimplePropertyRobustness(
+                        next2.getTime(),
+                        pr1.value() + pr1.getValueDerivative() * (next2.getTime() - pr1.getTime()),
+                        pr1.getValueDerivative());
+            }
+            /* if next1.getTime() == next2.getTime() then values are ready for comparison */
+            pr1 = next1;
+            pr2 = next2;
+            valueOrigin = min(pr1,pr2);
+            if (valueOrigin != lastValueOrigin)
+            {
+                lastValueOrigin = valueOrigin;
                 result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr2:pr1));
             }
-            else if (lastValueOrigin == 1)
-            {
-                if (pr1.getValueDerivative() == pr2.getValueDerivative())
-                /* No intersection is possible */
-                {
-                    next1 = iterator1.next();
-                    next2 = iterator2.next();
-                    if (next1.getTime() == next2.getTime())
-                    {
-                        pr1 = next1;
-                        pr2 = next2;
-                        lastValueOrigin = min(pr1, pr2);
-                        result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr2:pr1));
-                    }
-                    else if(next1.getTime() < next2.getTime())
-                    {
-                        PropertyRobustness pr2Now =
-                                new SimplePropertyRobustness(
-                                        next1.getTime(),
-                                        pr2.value() + pr2.getValueDerivative() * (next1.getTime() - pr2.getTime()),
-                                        pr2.getValueDerivative());
-                        lastValueOrigin = min(next1, pr2Now);
-                        result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr2Now:next1));
-                        pr1 = next1;
-                        iterator2.previous();
-                    }
-                    else if (next1.getTime() > next2.getTime())
-                    {
-                        //FIXME
-                        pr2 = next2;
-                        iterator1.previous();
-                    }
-                }
-                else if (pr1.getValueDerivative() < pr2.getValueDerivative())
-                {
-                    next1 = iterator1.next();
-                    next2 = iterator2.next();
-                    //FIXME
-                }
-                else /* (pr1.getValueDerivative() > pr2.getValueDerivative()) */
-                {
+        }
 
-                }
-                
-                //pr2 = iterator2.next();
-                //FIXME
+        ListIterator<PropertyRobustness> iterator;
+        PropertyRobustness fixed; /* final robustness of the shorter signal */
+        PropertyRobustness pr;    /* last current robustness of the longer signal */
+        PropertyRobustness next;  /* used to find out the next point of change of longer signal */
+        if (iterator1.hasNext())
+        {
+            iterator = iterator1;
+            pr = pr1;
+            fixed = pr2;
+        }
+        else
+        {
+            iterator = iterator2;
+            pr = pr2;
+            fixed = pr1;
+        }
+
+        /* process rest of longer signal */
+        while (iterator.hasNext())
+        {
+            next = iterator.next();
+            float relInterTime = 0.0f; /* relative intersection time */
+            float absInterTime = 0.0f; /* absolute intersection time */
+
+            if ((fixed.value() < pr.value() && fixed.getValueDerivative() > pr.getValueDerivative()) ||
+                (fixed.value() > pr.value() && fixed.getValueDerivative() < pr.getValueDerivative()) )
+            {
+                /* compute relative time of signal intersection */
+                relInterTime = Math.abs(fixed.value() - pr.value()) / Math.abs(fixed.getValueDerivative() - pr.getValueDerivative());
+                absInterTime = fixed.getTime() + relInterTime; /* fixed.getTime == pr.getTime */
+            }
+
+            /* if there is an intersection and it occurs before the next event of the longer signal */
+            if (relInterTime > 0.0f &&
+                absInterTime < next.getTime() )
+            {
+                iterator.previous();
+                float interValue = fixed.value() + fixed.getValueDerivative() * relInterTime;
+                next = new SimplePropertyRobustness(absInterTime, interValue, pr.getValueDerivative());
+                fixed = new SimplePropertyRobustness(absInterTime, interValue, fixed.getValueDerivative());
+            }
+            else /* no intersection, compute fixed signal value in next.getTime() */
+            {
+                fixed = new SimplePropertyRobustness(
+                        next.getTime(),
+                        fixed.value() + fixed.getValueDerivative() * (next.getTime() - fixed.getTime()),
+                        fixed.getValueDerivative());
+            }
+
+            pr = next;
+            valueOrigin = min(fixed,pr);
+            if (valueOrigin != lastValueOrigin)
+            {
+                lastValueOrigin = valueOrigin;
+                result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr:fixed));
             }
         }
 
-        //FIXME process rest of signal
-        while (iterator1.hasNext())
+        /* find last possible intersection */
+        if ((fixed.value() < pr.value() && fixed.getValueDerivative() > pr.getValueDerivative()) ||
+            (fixed.value() > pr.value() && fixed.getValueDerivative() < pr.getValueDerivative()) )
         {
-
-        }
-        while (iterator2.hasNext())
-        {
-
-        }
+            /* compute relative time of signal intersection */
+            float relInterTime = Math.abs(fixed.value() - pr.value()) / Math.abs(fixed.getValueDerivative() - pr.getValueDerivative());
+            float absInterTime = fixed.getTime() + relInterTime; /* fixed.getTime == pr.getTime */
+            float interValue = fixed.value() + fixed.getValueDerivative() * relInterTime;
+            pr = new SimplePropertyRobustness(absInterTime, interValue, pr.getValueDerivative());
+            fixed = new SimplePropertyRobustness(absInterTime, interValue, fixed.getValueDerivative());            
+            lastValueOrigin = min(fixed,pr);
+            result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr:fixed));
+        }        
         
+        return result;
     }
 
     /* A mutable wrapper for a int for passing values out of methods that return

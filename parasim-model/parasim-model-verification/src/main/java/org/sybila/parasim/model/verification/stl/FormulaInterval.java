@@ -23,4 +23,10 @@ public interface FormulaInterval
      * @return Upper bound of time interval.
      */
     float getUpperBound();
+
+    /**
+     * Returns the type of the interval.
+     * @return Type of interval.
+     */
+    IntervalType getIntervalType();
 }

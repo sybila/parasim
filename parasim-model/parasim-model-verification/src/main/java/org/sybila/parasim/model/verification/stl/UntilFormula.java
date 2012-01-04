@@ -8,8 +8,9 @@ package org.sybila.parasim.model.verification.stl;
 public class UntilFormula extends BinaryFormula implements FormulaInterval
 {
     private float a,b;
+    private IntervalType intervalType;
     
-    public UntilFormula(Formula phi1, Formula phi2, float a, float b)
+    public UntilFormula(Formula phi1, Formula phi2, float a, float b, IntervalType type)
     {
         super(phi1, phi2);
         if (a < 0)
@@ -22,6 +23,7 @@ public class UntilFormula extends BinaryFormula implements FormulaInterval
         }
         this.a = a;
         this.b = b;
+        this.intervalType = type;
     }
 
     @Override
@@ -53,6 +55,11 @@ public class UntilFormula extends BinaryFormula implements FormulaInterval
     public FormulaType getType()
     {
         return FormulaType.UNTIL;
+    }
+
+    public IntervalType getIntervalType()
+    {
+        return intervalType;
     }
 
 }

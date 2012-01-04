@@ -8,8 +8,9 @@ package org.sybila.parasim.model.verification.stl;
 public class FutureFormula extends UnaryFormula implements FormulaInterval
 {
     private float a,b;
+    private IntervalType intervalType;
     
-    public FutureFormula(Formula phi, float a, float b)
+    public FutureFormula(Formula phi, float a, float b, IntervalType type)
     {
         super(phi);
         if (a < 0)
@@ -22,6 +23,7 @@ public class FutureFormula extends UnaryFormula implements FormulaInterval
         }
         this.a = a;
         this.b = b;
+        this.intervalType = type;
     }
 
     @Override
@@ -60,6 +62,11 @@ public class FutureFormula extends UnaryFormula implements FormulaInterval
         if ( ((FutureFormula)formula).getLowerBound() != this.getLowerBound()) return false;
         if ( ((FutureFormula)formula).getUpperBound() != this.getUpperBound()) return false;
         return true;
+    }
+
+    public IntervalType getIntervalType()
+    {
+        return intervalType;
     }
     
 }
