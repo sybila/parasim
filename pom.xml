@@ -22,15 +22,20 @@
         <repository>
             <id>sybila-maven-ssh</id>
             <name>Maven repository hosted on Zimodej</name>
-<!--            <url>scp://anna.fi.muni.cz:/home/xpapous1/public_html/maven</url>-->
             <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/maven</url> 
         </repository>
     </distributionManagement>
+
+    <!-- SCM and distribution management -->
+    <scm>
+        <connection>scm:git:git://github.com/sybila/parasim.git</connection>
+        <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
+        <url>https://github.com/sybila/parasim</url>
+    </scm>    
     
     <repositories>
         <repository>
             <id>sybila-maven-http</id>
-<!--            <url>http://anna.fi.muni.cz/~xpapous1/maven</url>-->
             <url>http://sybila.fi.muni.cz/public/maven</url> 
             <releases>
                 <enabled>true</enabled>
