@@ -1,20 +1,11 @@
 package org.sybila.parasim.computation.density.spawn.cpu;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.sybila.parasim.computation.MapTrajectoryNeighborhood;
-import org.sybila.parasim.computation.density.Configuration;
 import org.sybila.parasim.model.distance.Distance;
-import org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock;
-import org.sybila.parasim.computation.density.spawn.SpawnedDataBlock;
-import org.sybila.parasim.computation.density.spawn.SpawnedDataBlockWrapper;
-import org.sybila.parasim.computation.density.spawn.TrajectorySpawner;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
-import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -22,31 +13,20 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class OneTrajectorySpawner implements TrajectorySpawner<Configuration<Trajectory>, SpawnedDataBlock<Trajectory>> {
-
-    @Override
-    public SpawnedDataBlock<Trajectory> spawn(Configuration<Trajectory> configuration, DistanceCheckedDataBlock<Trajectory> trajectories) {
-        List<Trajectory> newTrajectories = new ArrayList<Trajectory>();
+public class OneTrajectorySpawner extends AbstractTrajectorySpawner {
+    
+    protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {
         Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
-        for(int i=0; i<trajectories.size(); i++) {
-            Trajectory trajectory = trajectories.getTrajectory(i);
-            for(int n=0; n<configuration.getNeighborhood().getNeighbors(trajectory).size(); n++) {
-                if (!trajectories.getDistance(i, n).isValid()) {
-                    Trajectory spawnedTrajectory = spawnTrajectory(trajectory, configuration.getNeighborhood().getNeighbors(trajectory).getTrajectory(n), trajectories.getDistance(i, n));
-                    neighborhood.put(
-                        spawnedTrajectory,
-                        new ArrayDataBlock<Trajectory>(
-                            new Trajectory[] {
-                                trajectory,
-                                configuration.getNeighborhood().getNeighbors(trajectory).getTrajectory(n)
-                            }
-                        )
-                    );
-                    newTrajectories.add(spawnedTrajectory);
+        neighborhood.put(
+            spawnTrajectory(trajectory, neighbor, distance),
+            new ArrayDataBlock<Trajectory>(
+                new Trajectory[] {
+                    trajectory,
+                    neighbor
                 }
-            }
-        }
-        return new SpawnedDataBlockWrapper<Trajectory>(new ListDataBlock<Trajectory>(newTrajectories), new MapTrajectoryNeighborhood<Trajectory>(neighborhood));
+            )
+        );
+        return new SpawnedResult(neighborhood);
     }
     
     private Trajectory spawnTrajectory(Trajectory trajectory, Trajectory neighbor, Distance distance) {
