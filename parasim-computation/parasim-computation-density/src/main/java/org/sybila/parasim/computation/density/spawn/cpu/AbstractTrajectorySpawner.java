@@ -12,8 +12,11 @@ import org.sybila.parasim.computation.density.spawn.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.SpawnedDataBlockWrapper;
 import org.sybila.parasim.computation.density.spawn.TrajectorySpawner;
 import org.sybila.parasim.model.distance.Distance;
+import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
+import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
@@ -52,6 +55,44 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
         spawnTearDown(configuration, trajectories);
         return new SpawnedDataBlockWrapper<Trajectory>(new ListDataBlock<Trajectory>(newTrajectories), new MapTrajectoryNeighborhood<Trajectory>(neighborhood));
     }    
+    
+    @Override
+    public SpawnedDataBlock<Trajectory> spawn(Configuration<Trajectory> configuration, OrthogonalSpace space, int[] numOfSamples) {
+        if (space.getDimension() != numOfSamples.length) {
+            throw new IllegalArgumentException("The number of space dimension and length of [numOfSamples] array doesn't match.");
+        }
+        float[] distance = new float[space.getDimension()];
+        int numOfSeeds = 1;
+        for (int dim=0; dim<space.getDimension(); dim++) {
+            if (numOfSamples[dim] <= 0) {
+                throw new IllegalArgumentException("Number of samples has to be a positive number. It doesn't hold in dimension <"+dim+">");
+            }
+            if (numOfSamples[dim] > 1) {
+                distance[dim] = space.getSize(dim) / (numOfSamples[dim] - 1);
+            }
+            else {
+                distance[dim] = 0;
+            }
+            numOfSeeds *= numOfSamples[dim];
+        }
+        
+        List<Trajectory> seeds = new ArrayList<Trajectory>(numOfSeeds);
+        seeds.add(new PointTrajectory(space.getMinBounds()));
+        for (int dim=0; dim<space.getDimension(); dim++) {
+            int numOfOldSeeds = seeds.size();
+            for(int sample=1; sample<numOfSamples[dim]; sample++) {
+                for (int seed=0; seed<numOfOldSeeds; seed++) {
+                    float[] newPoint = seeds.get(seed).getFirstPoint().toArray();
+                    newPoint[dim] += sample * distance[dim];
+                    seeds.add(new PointTrajectory(new ArrayPoint(newPoint, seeds.get(seed).getFirstPoint().getTime())));
+                }
+            }
+        }
+        return new SpawnedDataBlockWrapper<Trajectory>(
+            new ListDataBlock<Trajectory>(seeds),
+            new MapTrajectoryNeighborhood<Trajectory>() // TODO: construct correct neighborhood
+        );
+    }
     
     /**
      * This method is executed in the beginning of the {@link AbstractTrajectorySpawner#spawn(org.sybila.parasim.computation.density.Configuration, org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock) } method.
