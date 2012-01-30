@@ -33,7 +33,7 @@ public class OctaveSimulator implements Simulator<AdaptiveStepConfiguration, Sim
         Status[] statuses = new Status[data.size()];
         for (int i = 0; i < data.size(); i++) {
             trajectories[i] = simulateTrajectory(octave, octaveOdeSystem, configuration, data.getTrajectory(i).getLastPoint());
-            if (trajectories[i].getLastPoint().getTime() < configuration.getTargetTime()) {
+            if (trajectories[i].getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
                 statuses[i] = Status.TIMEOUT;
             }
             else {
@@ -46,7 +46,7 @@ public class OctaveSimulator implements Simulator<AdaptiveStepConfiguration, Sim
     
     private Trajectory simulateTrajectory(OctaveEngine octave, OctaveOdeSystem octaveOdeSystem, AdaptiveStepConfiguration configuration, Point initialPoint) {
         octave.eval("i = " + Arrays.toString(initialPoint.toArray()) + ";");
-        octave.eval("t = linspace(" + initialPoint.getTime() + ", " + configuration.getTargetTime() + ", " + Math.min(Math.round((configuration.getTargetTime() - initialPoint.getTime()) / configuration.getTimeStep()), configuration.getMaxNumberOfIterations()) + ")");
+        octave.eval("t = linspace(" + initialPoint.getTime() + ", " + configuration.getSpace().getMaxBounds().getTime() + ", " + Math.min(Math.round((configuration.getSpace().getMaxBounds().getTime() - initialPoint.getTime()) / configuration.getTimeStep()), configuration.getMaxNumberOfIterations()) + ")");
        
         octave.eval("y = lsode(\"" + octaveOdeSystem.octaveName() + "\", i, t)");
         OctaveDouble y = octave.get(OctaveDouble.class, "y");

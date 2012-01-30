@@ -5,6 +5,8 @@
 package org.sybila.parasim.support.computation.simulation;
 
 import org.sybila.parasim.computation.simulation.ImmutableConfiguration;
+import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.support.model.ode.LotkaVolteraOdeSystem;
 
 /**
@@ -13,7 +15,13 @@ import org.sybila.parasim.support.model.ode.LotkaVolteraOdeSystem;
 public class LotkaVolteraConfiguration extends ImmutableConfiguration {
     
     public LotkaVolteraConfiguration() {
-        super(new LotkaVolteraOdeSystem(), new float[] {100, 100}, new float[] {0, 0}, 100);
+        super(
+            new LotkaVolteraOdeSystem(),
+            new OrthogonalSpace(
+                new ArrayPoint(new float[] {100, 100}, 0),
+                new ArrayPoint(new float[] {0, 0}, 100)
+            )
+        );
     }
     
 }

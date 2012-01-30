@@ -1,6 +1,7 @@
 package org.sybila.parasim.computation.simulation;
 
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.space.OrthogonalSpace;
 
 /*
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -42,18 +43,8 @@ public class ImutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurati
     }
 
     @Override
-    public float[] getMaxBounds() {
-        return configuration.getMaxBounds();
-    }
-
-    @Override
     public int getMaxNumberOfIterations() {
         return configuration.getMaxNumberOfIterations();
-    }
-
-    @Override
-    public float[] getMinBounds() {
-        return configuration.getMinBounds();
     }
 
     @Override
@@ -67,13 +58,12 @@ public class ImutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurati
     }
 
     @Override
-    public float getTargetTime() {
-        return configuration.getTargetTime();
-    }
-
-    @Override
     public float getTimeStep() {
         return configuration.getTimeStep();
+    }
+
+    public OrthogonalSpace getSpace() {
+        return configuration.getSpace();
     }
     
 }
