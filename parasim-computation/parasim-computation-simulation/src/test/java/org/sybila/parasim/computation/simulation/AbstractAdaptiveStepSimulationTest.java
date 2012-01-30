@@ -1,6 +1,8 @@
 package org.sybila.parasim.computation.simulation;
 
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import static org.testng.Assert.*;
@@ -33,8 +35,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
         return new AdaptiveStepConfiguration() {
 
             private float[] maxAbsoluteError;
-            private float[] maxBounds;
-            private float[] minBounds;
+            private OrthogonalSpace space;
             private float[] steps;
 
             @Override
@@ -59,30 +60,8 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             }
 
             @Override
-            public float[] getMaxBounds() {
-                if (maxBounds == null) {
-                    maxBounds = new float[getDimension()];
-                    for (int dim = 0; dim < getDimension(); dim++) {
-                        maxBounds[dim] = (dim + 1) * 10000;
-                    }
-                }
-                return maxBounds;
-            }
-
-            @Override
             public int getMaxNumberOfIterations() {
                 return 100;
-            }
-
-            @Override
-            public float[] getMinBounds() {
-                if (minBounds == null) {
-                    minBounds = new float[getDimension()];
-                    for (int dim = 0; dim < getDimension(); dim++) {
-                        minBounds[dim] = 0;
-                    }
-                }
-                return minBounds;
             }
 
             @Override
@@ -90,6 +69,21 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 return odeSystem;
             }
 
+            public OrthogonalSpace getSpace() {
+                if (space == null) {
+                    float[] minBounds = new float[getDimension()];
+                    for (int dim = 0; dim < getDimension(); dim++) {
+                        minBounds[dim] = 0;
+                    }
+                    float[] maxBounds = new float[getDimension()];
+                    for (int dim = 0; dim < getDimension(); dim++) {
+                        maxBounds[dim] = (dim + 1) * 10000;
+                    }
+                    space = new OrthogonalSpace(new ArrayPoint(minBounds, 0), new ArrayPoint(maxBounds, (float) 100));
+                }
+                return space;
+            }
+            
             @Override
             public float[] getSteps() {
                 if (steps == null) {
@@ -99,11 +93,6 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     }
                 }
                 return steps;
-            }
-
-            @Override
-            public float getTargetTime() {
-                return (float) 100;
             }
 
             @Override

@@ -168,11 +168,9 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
                 }
             }
             // Check the min and max bounds
-            for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-                if (successorData[dim] > computation.configuration.getMaxBounds()[dim] || successorData[dim] < computation.configuration.getMinBounds()[dim]) {
-                    computation.status = Status.BOUNDS;
-                    return null;
-                }
+            if (!computation.configuration.getSpace().isIn(successorData)) {
+                computation.status = Status.BOUNDS;
+                return null;
             }
             return new ArrayPoint(successorData, point.getTime() + computation.timeStep);
         }
@@ -191,7 +189,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
             if (current == null) {
                 break;
             }
-            if (current.getTime() > computation.configuration.getTargetTime()) {
+            if (current.getTime() > computation.configuration.getSpace().getMaxBounds().getTime()) {
                 computation.status = Status.OK;
                 break;
             }

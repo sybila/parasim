@@ -1,6 +1,7 @@
 package org.sybila.parasim.computation.simulation;
 
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.space.OrthogonalSpace;
 
 /**
  * The simulation descriptor
@@ -18,13 +19,13 @@ public interface Configuration {
     int getDimension();
 
     /**
-     * Returns the upper bounds on all space-time dimensions.
-     * The simulation of a trajectory stops if this value is reached.
+     * Returns space containing upper and lower bounds on all space-time dimensions.
+     * The simulation of trajectory stops if the space border is reached.
      * 
-     * @return upper bounds
+     * @return orthogonal space
      */
-    float[] getMaxBounds();
-
+    OrthogonalSpace getSpace();
+    
     /**
      * Returns the amount of work to do inside the simulate method
      * during the simulation of each trajectory
@@ -32,14 +33,6 @@ public interface Configuration {
      * @return amount of work to do inside the simulate method
      */
     int getMaxNumberOfIterations();
-
-    /**
-     * Returns the lower bounds on all space-time dimensions.
-     * The simulation of a trajectory stops if this value is reached.
-     * 
-     * @return lower bounds on all space-time dimensions
-     */
-    float[] getMinBounds();
 
     /**
      * Returns ODE system which is used for the simulation
@@ -56,14 +49,6 @@ public interface Configuration {
      * @return maximum distance of two consecutive points
      */
     float[] getSteps();
-
-    /**
-     * Returns the maximum time. The simulation of a trajectory stops if this time is
-     * reached.
-     * 
-     * @return maximum time
-     */
-    float getTargetTime();
 
     /**
      * Returns the maximum time distance of two two consecutive points
