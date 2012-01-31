@@ -158,7 +158,6 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
             // Check the distance
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
                 if (Math.abs(successorData[dim] - previousData[dim]) > computation.configuration.getSteps()[dim]) {
-                    System.out.println("Fixing step distance in dimension <" + dim + ">.\nExpected <" + computation.configuration.getSteps()[dim] + ">.\nFound: <"+Math.abs(successorData[dim] - previousData[dim])+">\nPrevious: " + Arrays.toString(previousData) + "\nCurrent: " + Arrays.toString(successorData));
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;
