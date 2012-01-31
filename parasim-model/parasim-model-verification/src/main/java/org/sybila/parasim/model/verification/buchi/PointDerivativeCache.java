@@ -9,7 +9,7 @@ import java.util.Iterator;
  * Computations are cached for further use so each dimension is computed at
  * most once.
  * 
- * @author Sven Dražan <sven@mail.muni.cz>
+ * @author Sven Drazan <sven@mail.muni.cz>
  */
 public class PointDerivativeCache implements PointDerivative {
 
@@ -81,5 +81,9 @@ public class PointDerivativeCache implements PointDerivative {
     @Override
     public Iterator<Float> iterator() {
         return null; /* I think that points should not be iterable, only trajectories! */
+    }
+
+    public float[] toArrayCopy() {
+        return p.toArrayCopy();
     }
 }

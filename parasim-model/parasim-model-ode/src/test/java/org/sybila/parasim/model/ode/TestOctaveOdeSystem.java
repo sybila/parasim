@@ -30,7 +30,6 @@ public class TestOctaveOdeSystem {
         assertTrue(octaveString.startsWith("function"));
         assertTrue(octaveString.endsWith("endfunction"));
         assertTrue(octaveString.replace(" ", "").contains("xdot=f(x,t)"));
-        System.out.println(octaveString);
         assertTrue(octaveString.replace(" ", "").contains("xdot=zeros(2,1);xdot(1)=10.1*x(1)+(-1.0)*x(1)*x(2);xdot(2)=1.0*x(1)*x(2)+(-5.4)*x(2);"));        
     }
     

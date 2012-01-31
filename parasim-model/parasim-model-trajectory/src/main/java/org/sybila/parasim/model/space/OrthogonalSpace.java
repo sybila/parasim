@@ -22,7 +22,7 @@ public class OrthogonalSpace implements Space {
         }
         for (int i=0; i < minBounds.getDimension(); i++) {
             if (minBounds.getValue(i) > maxBounds.getValue(i)) {
-                throw new IllegalArgumentException("The min bound in dimension <" + i + "> is greater than max bound.");
+                throw new IllegalArgumentException("The min bound " + minBounds + " in dimension <" + i + "> is greater than max bound "+maxBounds+".");
             }
         }
         this.minBounds = minBounds;

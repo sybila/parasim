@@ -25,7 +25,16 @@ public interface Point extends Iterable<Float> {
     float getValue(int index);
 
     /**
+     * This method returns always the same instance of array (in opposite to {@link  Point#toArrayCopy()).
+     * 
      * @return Values of all dimensions as an array without time
      */
     float[] toArray();
+    
+    /**
+     * This method always returns a new instance of array (in opposite to {@link Point#toArray()}).
+     * 
+     * @return Values of all dimension as an array without time
+     */
+    float[] toArrayCopy();
 }
