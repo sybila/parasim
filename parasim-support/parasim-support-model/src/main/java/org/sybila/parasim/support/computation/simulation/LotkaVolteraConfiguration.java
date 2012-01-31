@@ -18,8 +18,8 @@ public class LotkaVolteraConfiguration extends ImmutableConfiguration {
         super(
             new LotkaVolteraOdeSystem(),
             new OrthogonalSpace(
-                new ArrayPoint(0, 100, 100),
-                new ArrayPoint(100, 0, 0)
+                new ArrayPoint(0, 0, 0),
+                new ArrayPoint(100, 100, 100)
             )
         );
     }
