@@ -18,6 +18,12 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 public class TestOneTrajectorySpawner extends AbstractTrajectorySpawnerTest {
  
     @Test
+    @Override
+    public void testInitialSpawn() {
+        super.testInitialSpawn();
+    }
+    
+    @Test
     public void testSimple() {
         DataBlock<Trajectory> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);

@@ -1,6 +1,7 @@
 package org.sybila.parasim.computation.density.spawn.cpu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
     }
 
     @Override
-    public SpawnedDataBlock<Trajectory> spawn(Configuration<Trajectory> configuration, OrthogonalSpace space, int[] numOfSamples) {
+    public SpawnedDataBlock<Trajectory> spawn(OrthogonalSpace space, int... numOfSamples) {
         if (space.getDimension() != numOfSamples.length) {
             throw new IllegalArgumentException("The number of space dimension and length of [numOfSamples] array doesn't match.");
         }
@@ -89,7 +90,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
             for (int seed = 0; seed < numOfOldSeeds; seed++) {
                 Trajectory toBeNeighbor = seeds.get(seed);
                 for (int sample = 1; sample < numOfSamples[dim]; sample++) {
-                    float[] newPoint = seeds.get(seed).getFirstPoint().toArray();
+                    float[] newPoint = seeds.get(seed).getFirstPoint().toArrayCopy();
                     newPoint[dim] += sample * distance[dim];
                     // create a new seed
                     Trajectory newTrajectory = new PointTrajectory(new ArrayPoint(seeds.get(seed).getFirstPoint().getTime(), newPoint));

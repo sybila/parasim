@@ -27,6 +27,6 @@ public interface TrajectorySpawner<Conf extends Configuration, Out extends Spawn
      * @param space 
      * @param numOfSamples 
      */
-    Out spawn(Conf configuration, OrthogonalSpace space, int[] numOfSamples);
+    Out spawn(OrthogonalSpace space, int... numOfSamples);
     
 }
