@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 /**
  * Test of PredicateMonitor.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public class PredicateMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, SimplePropertyRobustness>
 {
@@ -32,7 +32,7 @@ public class PredicateMonitorTest extends AbstractEvaluableTest<ArrayTrajectory,
         super.testEnd(getTrajectory(100,3,6), 2.015f, 4.056f);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testCount()
     {
         PredicateEvaluator ie = new InequalityEvaluator(0,4.0f,InequalityType.LESS);
@@ -44,7 +44,7 @@ public class PredicateMonitorTest extends AbstractEvaluableTest<ArrayTrajectory,
         assertEquals(rob.size(),1);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testValues()
     {
         PredicateEvaluator ie = new InequalityEvaluator(0,4.0f,InequalityType.LESS);
