@@ -14,8 +14,8 @@ public class BayramovConfiguration extends ImmutableConfiguration {
         super(
             new BayramovOdeSystem(),
             new OrthogonalSpace(
-                new ArrayPoint(new float[] { 0, 0, 0 }, 0),
-                new ArrayPoint(new float[] { 200, 200, 200 }, 1000)                   
+                new ArrayPoint(0, 0, 0, 0),
+                new ArrayPoint(1000, 200, 200, 200)                   
             ),
             new float[] {1, 1, 1},
             (float) 0.1,

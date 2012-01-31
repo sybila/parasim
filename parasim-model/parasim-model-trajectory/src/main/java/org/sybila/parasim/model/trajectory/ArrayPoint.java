@@ -8,11 +8,15 @@ public class ArrayPoint extends AbstractPoint {
 	private float[] data;
 	private int startIndex;
 
-	public ArrayPoint(float[] data, float time) {
-		this(data, time, 0, data.length);
-	}
+//	public ArrayPoint(float time, float[] data) {
+//		this(time, data, 0, data.length);
+//	}
 
-	public ArrayPoint(float[] data, float time, int startIndex, int dimension) {
+    public ArrayPoint(float time, float... data) {
+        this(time, data, 0, data.length);
+    }
+    
+	public ArrayPoint(float time, float[] data, int startIndex, int dimension) {
         super(dimension, time);
 		if (data == null) {
 			throw new IllegalArgumentException("The parameter [data] is NULL.");

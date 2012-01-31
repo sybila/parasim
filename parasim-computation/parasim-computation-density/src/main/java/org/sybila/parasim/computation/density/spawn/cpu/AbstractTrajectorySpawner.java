@@ -92,7 +92,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
                     float[] newPoint = seeds.get(seed).getFirstPoint().toArray();
                     newPoint[dim] += sample * distance[dim];
                     // create a new seed
-                    Trajectory newTrajectory = new PointTrajectory(new ArrayPoint(newPoint, seeds.get(seed).getFirstPoint().getTime()));
+                    Trajectory newTrajectory = new PointTrajectory(new ArrayPoint(seeds.get(seed).getFirstPoint().getTime(), newPoint));
                     seeds.add(newTrajectory);
                     neighborhoodLists.put(newTrajectory, new ArrayList<Trajectory>());
                     // mark it as a neighbor for the "to be neighbor" trajectory

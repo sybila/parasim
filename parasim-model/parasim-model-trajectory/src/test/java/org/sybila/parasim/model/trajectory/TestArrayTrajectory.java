@@ -21,7 +21,7 @@ public class TestArrayTrajectory extends AbstractTrajectoryTest<ArrayTrajectory>
                 data[p * DIMENSION + dim] = (float) (p + 0.01 * dim);
                 times[p] = p;
             }
-            points[p] = new ArrayPoint(data, p, p * DIMENSION, DIMENSION);
+            points[p] = new ArrayPoint(p, data, p * DIMENSION, DIMENSION);
         }
         trajectory = new ArrayTrajectory(data, times, DIMENSION);
     }

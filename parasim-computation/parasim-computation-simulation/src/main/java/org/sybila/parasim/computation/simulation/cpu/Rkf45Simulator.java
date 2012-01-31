@@ -172,7 +172,7 @@ public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, Simu
                 computation.status = Status.BOUNDS;
                 return null;
             }
-            return new ArrayPoint(successorData, point.getTime() + computation.timeStep);
+            return new ArrayPoint(point.getTime() + computation.timeStep, successorData);
         }
         return null;
     }

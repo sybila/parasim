@@ -80,7 +80,7 @@ public class TestDataBlockWorkspace extends AbstractGpuTest {
                     for (int dim = 0; dim < 2; dim++) {
                         data[dim] = (float) (t + p * 0.1 + 0.01 * dim);
                     }
-                    points.add(new ArrayPoint(data, p));
+                    points.add(new ArrayPoint(p, data));
                 }
                 newTrajectories.add(new ListTrajectory(points));
             }

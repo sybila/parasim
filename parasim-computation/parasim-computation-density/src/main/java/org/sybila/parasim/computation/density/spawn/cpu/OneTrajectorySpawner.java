@@ -58,7 +58,7 @@ public class OneTrajectorySpawner extends AbstractTrajectorySpawner {
         for(int dim=0; dim < trajectory.getDimension(); dim++) {
             data[dim] = (firstPoint.getValue(dim) + secondPoint.getValue(dim))/2;
         }        
-        return new ArrayPoint(data, firstPoint.getTime());
+        return new ArrayPoint(firstPoint.getTime(), data);
     }
     
 }

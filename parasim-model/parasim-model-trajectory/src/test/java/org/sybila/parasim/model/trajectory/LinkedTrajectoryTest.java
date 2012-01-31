@@ -23,7 +23,7 @@ public class LinkedTrajectoryTest extends AbstractTrajectoryTest<LinkedTrajector
                     data[p * DIMENSION + dim] = (float) (length + p * 0.01 + 0.0001 * dim);
                     times[p] = (float) (length + p * 0.01);
                 }
-                points[pointIndex] = new ArrayPoint(data, times[p], p * DIMENSION, DIMENSION);
+                points[pointIndex] = new ArrayPoint(times[p], data, p * DIMENSION, DIMENSION);
                 pointIndex++;
             }
             

@@ -21,7 +21,7 @@ public class LotkaVolteraInitialDataBlock extends ListDataBlock<Trajectory> {
         List<Trajectory> trajectories = new ArrayList<Trajectory>();
         for(float x=1; x<=10; x+=3) {
             for(float y=1; y<=10; y+=3) {
-                trajectories.add(new PointTrajectory(new ArrayPoint(new float[] {x, y}, 0)));
+                trajectories.add(new PointTrajectory(new ArrayPoint(0, x, y)));
             }
         }
         return trajectories;

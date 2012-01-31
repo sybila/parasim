@@ -44,8 +44,8 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         return spawner.spawn(
             createConfiguration((float) 1.0, DIMENSION , new MapTrajectoryNeighborhood<Trajectory>()),
             new OrthogonalSpace(
-                new ArrayPoint(minBounds, 0),
-                new ArrayPoint(maxBounds, 100)
+                new ArrayPoint(0, minBounds),
+                new ArrayPoint(100, maxBounds)
             ),
             toSpawn
         );

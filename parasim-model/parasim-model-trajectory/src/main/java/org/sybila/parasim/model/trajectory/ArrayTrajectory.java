@@ -44,7 +44,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
         if (index < 0 || index >= getLength()) {
             throw new IllegalArgumentException("The point index is out of the range [0, " + (getLength() - 1) + "]");
         }
-        return new ArrayPoint(points, times[ pointLocator.getTimePosition(index)], pointLocator.getPointPosition(index), getDimension());
+        return new ArrayPoint(times[pointLocator.getTimePosition(index)], points, pointLocator.getPointPosition(index), getDimension());
     }
 
     @Override

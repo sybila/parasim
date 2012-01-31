@@ -91,7 +91,7 @@ public abstract class AbstractDensityTest {
                 for (int dim = 0; dim < dimension; dim++) {
                     values[dim] = (float) (x * t + y * p + z * dim);
                 }
-                points.add(new ArrayPoint(values, (float) p));
+                points.add(new ArrayPoint((float) p, values));
             }
             trajectories[t] = new ListTrajectory(points);
         }

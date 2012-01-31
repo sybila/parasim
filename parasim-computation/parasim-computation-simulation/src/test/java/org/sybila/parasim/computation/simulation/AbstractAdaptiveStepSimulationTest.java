@@ -79,7 +79,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     for (int dim = 0; dim < getDimension(); dim++) {
                         maxBounds[dim] = (dim + 1) * 10000;
                     }
-                    space = new OrthogonalSpace(new ArrayPoint(minBounds, 0), new ArrayPoint(maxBounds, (float) 100));
+                    space = new OrthogonalSpace(new ArrayPoint(0, minBounds), new ArrayPoint((float) 100, maxBounds));
                 }
                 return space;
             }

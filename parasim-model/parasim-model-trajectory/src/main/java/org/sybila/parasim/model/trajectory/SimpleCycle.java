@@ -4,7 +4,7 @@ package org.sybila.parasim.model.trajectory;
  * Provides an standalone implementation of a TrajectoryCycle together
  * with a CyclicTrajectoryIterator.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public class SimpleCycle implements TrajectoryCycle
 {
@@ -149,7 +149,7 @@ public class SimpleCycle implements TrajectoryCycle
             int cycleCount = cycleIndex / cycleLength;
             cycleIndex = (cycleIndex % cycleLength) + cycleStartPosition;
             Point tmp = trajectory.getPoint(cycleIndex);
-            ArrayPoint p = new ArrayPoint(tmp.toArray(), tmp.getTime() + cycleCount * period);
+            ArrayPoint p = new ArrayPoint(tmp.getTime() + cycleCount * period, tmp.toArray());
             index++;
             return p;
         }

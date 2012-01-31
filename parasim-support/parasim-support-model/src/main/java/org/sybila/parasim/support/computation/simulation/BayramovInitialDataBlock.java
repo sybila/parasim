@@ -21,7 +21,7 @@ public class BayramovInitialDataBlock extends ListDataBlock<Trajectory> {
         for(float x=(float)0.0015; x<0.0040; x+=0.0005) {
             for(float y=(float)0.00095; y<0.00405; y+=0.0005) {
                 for(float z=(float)0.00038; z<0.00482; z+=0.0005) {
-                    trajectories.add(new PointTrajectory(new ArrayPoint(new float[] {x, y, z}, 0)));
+                    trajectories.add(new PointTrajectory(new ArrayPoint(0, x, y, z)));
                 }
             }
         }
