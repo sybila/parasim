@@ -13,7 +13,7 @@ public class MapCDIFactory extends AbstractCDIFactory {
     private Map<Class<?>, Class<?>> serviceImplementations = new HashMap<Class<?>, Class<?>>();
     
     @Override
-    protected Object getService(Class<?> interfaze) {
+    public Object getService(Class<?> interfaze) {
         if (serviceInstantions.get(interfaze) == null) {
             if (serviceImplementations.get(interfaze) == null) {
                 return null;

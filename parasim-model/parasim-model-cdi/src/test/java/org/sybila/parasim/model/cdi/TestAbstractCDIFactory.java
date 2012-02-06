@@ -15,7 +15,7 @@ public class TestAbstractCDIFactory {
     private CDIFactory cdiFactory = new AbstractCDIFactory() {
 
         @Override
-        protected Object getService(Class<?> interfaze) {
+        public Object getService(Class<?> interfaze) {
             return STRING_TO_INJECT;
         }
 

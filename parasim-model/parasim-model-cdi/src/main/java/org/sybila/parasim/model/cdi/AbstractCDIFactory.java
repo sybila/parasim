@@ -1,6 +1,7 @@
 package org.sybila.parasim.model.cdi;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.sybila.parasim.model.cdi.annotations.Inject;
 
 /**
@@ -8,6 +9,7 @@ import org.sybila.parasim.model.cdi.annotations.Inject;
  */
 public abstract class AbstractCDIFactory implements CDIFactory {
     
+    @Override
     public void injectFields(Object o) {
         for (Field field : o.getClass().getDeclaredFields()) {
             if (field.getAnnotation(Inject.class) != null) {
@@ -25,6 +27,21 @@ public abstract class AbstractCDIFactory implements CDIFactory {
         }
     }
     
-    protected abstract Object getService(Class<?> interfaze);
+    @Override
+    public void executeVoidMethod(Object o, Method method) {
+        Object[] paramValues = new Object[method.getParameterTypes().length];
+        for (int i=0; i<method.getTypeParameters().length; i++) {
+            if (!isServiceAvailable(method.getParameterTypes()[i])) {
+                throw new IllegalStateException("The service " + method.getParameterTypes()[i].getCanonicalName() + " requested in " + o.getClass().getCanonicalName() + " is not available.");
+            }
+            paramValues[i] = getService(method.getParameterTypes()[i]);
+        }
+        try {
+            method.setAccessible(true);
+            method.invoke(o, paramValues);
+        } catch(Exception e) {
+            throw new IllegalStateException("The method can't be executed.", e);
+        }
+    }
     
 }
