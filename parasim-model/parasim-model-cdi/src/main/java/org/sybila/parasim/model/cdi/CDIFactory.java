@@ -8,7 +8,8 @@ public interface CDIFactory {
     void addService(Class<?> interfaze, Class<?> implementation);
 
     void addService(Class<?> interfaze, Object implementation);
-    
+      
     void injectFields(Object o);
-        
+   
+    boolean isServiceAvailable(Class<?> interfaze);
 }

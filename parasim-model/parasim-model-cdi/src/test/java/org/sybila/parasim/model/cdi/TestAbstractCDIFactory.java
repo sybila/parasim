@@ -26,6 +26,10 @@ public class TestAbstractCDIFactory {
         public void addService(Class<?> interfaze, Object implementation) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        public boolean isServiceAvailable(Class<?> interfaze) {
+            return interfaze.equals(String.class);
+        }
     };
     
     private TestedObject testedObject;

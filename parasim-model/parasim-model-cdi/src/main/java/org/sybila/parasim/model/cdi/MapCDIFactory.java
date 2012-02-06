@@ -43,5 +43,9 @@ public class MapCDIFactory extends AbstractCDIFactory {
     public void addService(Class<?> interfaze, Object implementation) {
         serviceInstantions.put(interfaze, implementation);
     }
+
+    public boolean isServiceAvailable(Class<?> interfaze) {
+        return serviceImplementations.containsKey(interfaze) || serviceInstantions.containsKey(interfaze);
+    }
     
 }
