@@ -13,9 +13,9 @@ import static org.testng.Assert.*;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestMapCDIFactory {
+public class TestMapServiceFactory {
     
-    private CDIFactory factory;
+    private ServiceFactory factory;
     
     private TestedObject o1;
     private TestedObject o2;

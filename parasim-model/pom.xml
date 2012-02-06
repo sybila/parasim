@@ -15,7 +15,7 @@
     <name>parasim-model</name>
     
     <modules>
-        <module>parasim-model-cdi</module>
+        <module>parasim-model-configuration</module>
         <module>parasim-model-ode</module>
         <module>parasim-model-trajectory</module>
         <module>parasim-model-verification</module>

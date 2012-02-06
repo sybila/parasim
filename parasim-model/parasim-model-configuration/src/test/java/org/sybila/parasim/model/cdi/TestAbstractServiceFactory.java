@@ -8,13 +8,13 @@ import static org.testng.Assert.*;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestAbstractCDIFactory {
+public class TestAbstractServiceFactory {
     
     private static final String STRING_TO_INJECT = "1234";
     
     private static final String FRESH_STRING_TO_INJECT = "FRESH 1234";
     
-    private CDIFactory cdiFactory = new AbstractCDIFactory() {
+    private ServiceFactory cdiFactory = new AbstractServiceFactory() {
 
         @Override
         public Object getService(Class<?> interfaze, boolean fresh, Object... parameters) {

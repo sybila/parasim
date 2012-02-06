@@ -1,16 +1,16 @@
 package org.sybila.parasim.model.cdi;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import org.sybila.parasim.model.cdi.annotations.Inject;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class AbstractCDIFactory implements CDIFactory {
+public abstract class AbstractServiceFactory implements ServiceFactory {
 
     @Override
     public Object getService(Class<?> interfaze) {
@@ -55,6 +55,46 @@ public abstract class AbstractCDIFactory implements CDIFactory {
         }
     }
 
+    protected Object createInstance(Class<?> clazz, Object... parameters) {
+        findConstructor : for (Constructor construtor : clazz.getConstructors()) {
+            if (construtor.getParameterTypes().length != parameters.length) {
+                continue findConstructor;
+            }
+            for (int i=0; i<parameters.length; i++) {
+                if (!construtor.getParameterTypes()[i].isInstance(parameters[i])) {
+                    if (construtor.getParameterTypes()[i].equals(int.class) && parameters[i] instanceof Integer) {
+                        continue;
+                    }
+                    if (construtor.getParameterTypes()[i].equals(float.class) && parameters[i] instanceof Float) {
+                        continue;
+                    }
+                    if (construtor.getParameterTypes()[i].equals(boolean.class) && parameters[i] instanceof Boolean) {
+                        continue;
+                    }
+                    if (construtor.getParameterTypes()[i].equals(double.class) && parameters[i] instanceof Double) {
+                        continue;
+                    }
+                    if (construtor.getParameterTypes()[i].equals(long.class) && parameters[i] instanceof Long) {
+                        continue;
+                    }
+                    if (construtor.getParameterTypes()[i].equals(char.class) && parameters[i] instanceof Character) {
+                        continue;
+                    }
+                    if (construtor.getParameterTypes()[i].equals(byte.class) && parameters[i] instanceof Byte) {
+                        continue;
+                    }
+                    continue findConstructor;
+                }
+            }
+            try {
+                return construtor.newInstance(parameters);
+            } catch (Exception e) {
+                throw new IllegalStateException("The class " + clazz.getCanonicalName() + " can't be instantiated.", e);
+            }
+        }
+        throw new IllegalStateException("The class " + clazz.getCanonicalName() + " hasn't any constructor with the given parameters");        
+    }    
+    
     private void injectField(Object object, Field field) {
         Object[] params = new Object[field.getAnnotation(Inject.class).parameters().length];
         for (int i = 0; i < field.getAnnotation(Inject.class).parameters().length; i++) {

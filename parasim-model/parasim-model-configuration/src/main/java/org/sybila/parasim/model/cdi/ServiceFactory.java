@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface CDIFactory {
+public interface ServiceFactory {
     
     void addService(Class<?> interfaze, Class<?> implementation);
 
