@@ -13,6 +13,8 @@ public interface CDIFactory {
       
     Object getService(Class<?> interfaze);
     
+    Object getService(Class<?> interfaze, boolean fresh, Object... parameters);
+    
     void injectFields(Object o);
 
     void executeVoidMethod(Object object, Method method);

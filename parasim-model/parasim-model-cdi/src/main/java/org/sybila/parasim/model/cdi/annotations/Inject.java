@@ -12,4 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface  Inject {}
+public @interface  Inject {
+    boolean fresh() default false;
+    String[] parameters() default {};
+}

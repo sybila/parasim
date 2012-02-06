@@ -1,6 +1,7 @@
 package org.sybila.parasim.model.cdi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,27 +21,28 @@ public class TestMapCDIFactory {
     private TestedObject o2;
     
     private class TestedObject {
-        
+
         @Inject
         private List injectedList;
         
         @Inject
         private Set injectedSet;
         
-        public List getInjectedList() {
-            return injectedList;
-        }
+        @Inject(fresh=true)
+        private Object freshInjectedObject;
         
-        public Set getInjectedSet() {
-            return injectedSet;
-        }       
+        @Inject(fresh=true, parameters={"injectedSet"})
+        private List freshInjectedListWithParams;
+        
     }
     
     @BeforeMethod
     public void beforeMethod() {
         factory  = new MapCDIFactory();
         factory.addService(List.class, ArrayList.class);
-        factory.addService(Set.class, new HashSet<Object>());
+        factory.addService(Set.class, new HashSet<Object>(Arrays.asList(new Object[] {new Object()})));
+        factory.addService(Object.class, Object.class);
+        factory.addService(null, null);
         o1 = new TestedObject();
         o2 = new TestedObject();
     }
@@ -49,8 +51,23 @@ public class TestMapCDIFactory {
     public void testInjectFields() {
         factory.injectFields(o1);
         factory.injectFields(o2);
-        assertEquals(o1.getInjectedList(), o2.getInjectedList());
-        assertEquals(o1.getInjectedSet(), o2.getInjectedSet());
+        assertEquals(o1.injectedList, o2.injectedList);
+        assertEquals(o1.injectedSet, o2.injectedSet);
+    }
+    
+    @Test
+    public void testIjectFreshFields() {
+        factory.injectFields(o1);
+        factory.injectFields(o2);
+        assertNotNull(o1.freshInjectedObject);
+        assertNotEquals(o1.freshInjectedObject, o2.freshInjectedObject);
+    }
+    
+    @Test
+    public void testInjectFreshFieldsWithParams() {
+        factory.injectFields(o1);
+        assertNotNull(o1.freshInjectedListWithParams);
+        assertEquals(o1.freshInjectedListWithParams.size(), 1);
     }
     
 }
