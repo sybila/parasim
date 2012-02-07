@@ -4,12 +4,14 @@ import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.stl.IntervalType;
 import java.util.List;
 import java.util.Iterator;
 
 /**
  * Test of PredicateMonitor.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * 
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
 public class PredicateMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, SimplePropertyRobustness>
 {
@@ -17,40 +19,47 @@ public class PredicateMonitorTest extends AbstractEvaluableTest<ArrayTrajectory,
     @Test
     public void testEmptyness()
     {
-        super.testEmptyness(getTrajectory(100,3,6), 2.0f, 4.0f);
+        super.testEmptyness(getTrajectory(100,3,6.0f), new TimeInterval(2.0f, 4.0f, IntervalType.CLOSED));
     }
 
     @Test
     public void testBegining()
     {
-        super.testBegining(getTrajectory(100,3,6), 2.015f, 4.0f);
+        super.testBegining(getTrajectory(100,3,6.0f), new TimeInterval(2.015f, 4.0f, IntervalType.CLOSED));
     }
 
     @Test
     public void testEnd()
     {
-        super.testEnd(getTrajectory(100,3,6), 2.015f, 4.056f);
+        super.testEnd(getTrajectory(100,3,10.0f), new TimeInterval(2.015f, 4.056f, IntervalType.CLOSED));
+        super.testEnd(getTrajectory(100,3,10.0f), new TimeInterval(2.015f, 9.0f, IntervalType.OPEN));
+        super.testEnd(getTrajectory(100,3,10.0f), new TimeInterval(2.015f, 9.0f, IntervalType.CLOSED));
     }
 
-    @Test(enabled=false)
+    @Test
     public void testCount()
     {
         PredicateEvaluator ie = new InequalityEvaluator(0,4.0f,InequalityType.LESS);
         Evaluable predicateMonitor = new PredicateMonitor(ie);
-        ArrayTrajectory trajectory = getTrajectory(100, 2, 5.0f);
-        List<SimplePropertyRobustness> rob = predicateMonitor.evaluate(trajectory, 0.0f, 5.0f);
-        assertEquals(rob.size(),100);
-        rob = predicateMonitor.evaluate(trajectory, 6.0f, 7.0f);
-        assertEquals(rob.size(),1);
+        ArrayTrajectory trajectory = getTrajectory(100, 2, 10.0f);
+        List<SimplePropertyRobustness> rob = predicateMonitor.evaluate(trajectory, new TimeInterval(0.0f, 10.0f, IntervalType.OPEN));
+        assertEquals(rob.size(),99);
+        trajectory = getTrajectory(11, 2, 10.0f);
+        rob = predicateMonitor.evaluate(trajectory, new TimeInterval(0.0f, 10.0f, IntervalType.CLOSED));
+        assertEquals(rob.size(),10);
+        rob = predicateMonitor.evaluate(trajectory, new TimeInterval(0.0f, 5.0f, IntervalType.OPEN));
+        assertEquals(rob.size(),5);
+        rob = predicateMonitor.evaluate(trajectory, new TimeInterval(0.0f, 5.0f, IntervalType.CLOSED));
+        assertEquals(rob.size(),6);
     }
 
-    @Test(enabled=false)
+    @Test
     public void testValues()
     {
         PredicateEvaluator ie = new InequalityEvaluator(0,4.0f,InequalityType.LESS);
         Evaluable predicateMonitor = new PredicateMonitor(ie);
-        ArrayTrajectory trajectory = getTrajectory(100, 2, 5.0f);
-        List<SimplePropertyRobustness> rob = predicateMonitor.evaluate(trajectory, 1.0f, 4.5f);        
+        ArrayTrajectory trajectory = getTrajectory(101, 2, 5.0f);
+        List<SimplePropertyRobustness> rob = predicateMonitor.evaluate(trajectory, new TimeInterval(1.0f, 4.5f, IntervalType.CLOSED));
         Iterator<Point> it = trajectory.iterator();
         Point current = it.next();
         Point previous;
@@ -76,28 +85,8 @@ public class PredicateMonitorTest extends AbstractEvaluableTest<ArrayTrajectory,
 
     @Override
     public ArrayTrajectory getTrajectory(int length, int dim, float time)
-    {
-        if (dim < 1)
-        {
-            throw new IllegalArgumentException("Parameter dim must be >= 1.");
-        }
-        if (length < 2)
-        {
-            throw new IllegalArgumentException("Parameter length must be >= 2.");
-        }
-        float[] points = new float[length * dim];
-        float[] times = new float[length];
-
-        for (int i=0; i<length; i++)
-        {
-            for (int d=0; d<dim; d++)
-            {
-                points[dim * i] = 10.0f * (float)Math.sin((d+2.0f)*(Math.PI/length)*i);
-            }
-            times[i] = i * (time/(length-1));
-        }
-        
-        return new ArrayTrajectory(points, times, dim);
+    {        
+        return getArrayTrajectory(length, dim, time);
     }
 
     @Override

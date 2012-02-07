@@ -1,15 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sybila.parasim.visualization;
-import processing.core.*;
 
 /**
- * In the future, all visualizations should implement this interface
+ * Visualizes multi-dimensional spatio-temporal data and holds all the settings
+ * necessary to do this.
  * 
- * @author Asan
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public interface Visualization {
+public interface Visualization
+{
     
 }

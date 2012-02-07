@@ -25,10 +25,10 @@ public class NotMonitor<T extends Trajectory>
         this.sub = subExpression;
     }
 
-
-    public List<SimplePropertyRobustness> evaluate(T trajectory, float a, float b)
+    @Override
+    public List<SimplePropertyRobustness> evaluate(T trajectory, TimeInterval interval)
     {
-        List<PropertyRobustness> subResult = sub.evaluate(trajectory, a, b);
+        List<PropertyRobustness> subResult = sub.evaluate(trajectory, interval);
         ArrayList<SimplePropertyRobustness> result = new ArrayList<SimplePropertyRobustness>();
         Iterator<PropertyRobustness> it = subResult.iterator();
         while (it.hasNext())

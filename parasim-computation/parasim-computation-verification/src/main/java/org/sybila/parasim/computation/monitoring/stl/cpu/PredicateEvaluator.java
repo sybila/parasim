@@ -15,7 +15,7 @@ import org.sybila.parasim.computation.monitoring.PropertyRobustness;
  * The function is expected to be linear in the coordinates of point p so that
  * it's derivative is a constant.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
 public interface PredicateEvaluator<R extends PropertyRobustness>
 {

@@ -14,23 +14,58 @@ public class TimeInterval implements FormulaInterval
     
     public TimeInterval(float lower, float upper, IntervalType type)
     {
+        if (lower < 0)
+        {
+            throw new IllegalArgumentException("Parameter lower must be >= 0.");
+        }
+        if (lower >= upper)
+        {
+            throw new IllegalArgumentException("Parameter upper must greater or equal to parameter lower.");
+        }
         this.lower = lower;
         this.upper = upper;
         this.type = type;
     }
 
+    @Override
     public float getLowerBound()
     {
         return lower;
     }
 
+    @Override
     public float getUpperBound() {
         return upper;
     }
 
+    @Override
     public IntervalType getIntervalType()
     {
         return type;
+    }
+
+    public IntervalType getLowerType()
+    {
+        if (type == IntervalType.CLOSED || type == IntervalType.RIGHTOPEN)
+        {
+            return IntervalType.CLOSED;
+        }
+        else
+        {
+            return IntervalType.OPEN;
+        }
+    }
+
+    public IntervalType getUpperType()
+    {
+        if (type == IntervalType.CLOSED || type == IntervalType.LEFTOPEN)
+        {
+            return IntervalType.CLOSED;
+        }
+        else
+        {
+            return IntervalType.OPEN;
+        }
     }
 
     /**

@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * Monitors the conjunction of two subformulas. The output is the minimum of
  * the two signals.
  * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
 public class AndMonitor<T extends Trajectory>
        implements Evaluable<T, SimplePropertyRobustness>
@@ -32,10 +32,10 @@ public class AndMonitor<T extends Trajectory>
         this.sub2 = sub2;
     }
 
-    public List<SimplePropertyRobustness> evaluate(T trajectory, float a, float b)
+    public List<SimplePropertyRobustness> evaluate(T trajectory, TimeInterval interval)
     {
-        List<PropertyRobustness> list1 = sub1.evaluate(trajectory, a, b);
-        List<PropertyRobustness> list2 = sub2.evaluate(trajectory, a, b);
+        List<PropertyRobustness> list1 = sub1.evaluate(trajectory, interval);
+        List<PropertyRobustness> list2 = sub2.evaluate(trajectory, interval);
         ArrayList<SimplePropertyRobustness> result = new ArrayList<SimplePropertyRobustness>();
         int lastValueOrigin = 0; /* 1 - list1, 2 - list 2, 0 - both */
         int valueOrigin;
@@ -50,13 +50,13 @@ public class AndMonitor<T extends Trajectory>
         PropertyRobustness pr2 = iterator2.next(); /* pr2 will hold last valid value of signal 2 */
         PropertyRobustness next1; /* these will be used to find out the next point of change of either signal */
         PropertyRobustness next2;
-        if (pr1.getTime() != a)
+        if (pr1.getTime() != interval.getLowerBound())
         {
-            throw new RuntimeException("First signal has bad start (" + pr1.getTime() + " != " + a + ").");
+            throw new RuntimeException("First signal has bad start (" + pr1.getTime() + " != " + interval.getLowerBound() + ").");
         }
-        if (pr2.getTime() != a)
+        if (pr2.getTime() != interval.getLowerBound())
         {
-            throw new RuntimeException("Second signal has bad start (" + pr2.getTime() + " != " + a + ").");
+            throw new RuntimeException("Second signal has bad start (" + pr2.getTime() + " != " + interval.getLowerBound() + ").");
         }
         lastValueOrigin = min(pr1, pr2);
         result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr2:pr1));

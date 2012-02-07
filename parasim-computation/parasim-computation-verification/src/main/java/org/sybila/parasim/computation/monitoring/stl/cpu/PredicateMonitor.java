@@ -6,6 +6,7 @@ import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointDerivative;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.CyclicTrajectory;
+import org.sybila.parasim.model.verification.stl.IntervalType;
 import java.util.Iterator;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Iterator;
  * signals (function values) by the use of PredicateEvaluators over the course
  * of a trajectory.
  * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
  */
 public class PredicateMonitor<T extends Trajectory>
        implements Evaluable<T, SimplePropertyRobustness>
@@ -31,31 +32,26 @@ public class PredicateMonitor<T extends Trajectory>
     }
 
     /**
-     * Evaluates a predicate over the course of the trajectory on the interval
+     * Evaluates a predicate over the course of the trajectory on the
+     * given interval
      * [a,b]. If the trajectory is not long enough the last point is extrapolated
      * into the future. If the trajectory is cyclic evaluation loops through
-     * the cycle so many times as to cover the whole interval.
+     * the cycle as many times as needed to cover the whole interval.
      *
      * The result list will have as many elements as there where points on the
-     * given trajectory in the interval [a,b] with 1 possible extra point in case
-     * that there was no point with the exact time value equal to a.
+     * given trajectory in the given time interval with 1 possible extra point in case
+     * that there was no point with the exact time value equal to 
+     * <code>interval.getLowerBound</code>.
      *
      * @param trajectory Trajectory or CyclicTrajectory over which to evaluate predicate.
-     * @param a Start of time interval.
-     * @param b End of time interval.
+     * @param interval Time interval over which to evaluate predicate.
      * @return List of predicate values in points of trajectory covering the given interval.
      */
     @Override
-    public List<SimplePropertyRobustness> evaluate(T trajectory, float a, float b)
+    public List<SimplePropertyRobustness> evaluate(T trajectory, TimeInterval interval)
     {
-        if (a < 0)
-        {
-            throw new IllegalArgumentException("Parameter a must be >= 0.");
-        }
-        if (b < a)
-        {
-            throw new IllegalArgumentException("Parameter b must be greater or equal to parameter a.");
-        }
+        float a = interval.getLowerBound();
+        float b = interval.getUpperBound();        
         if (trajectory == null)
         {
             throw new IllegalArgumentException("Parameter trajectory is null.");
@@ -64,6 +60,10 @@ public class PredicateMonitor<T extends Trajectory>
         {
             throw new IllegalArgumentException("The trajectory is empty.");
         }
+        if (interval == null)
+        {
+            throw new IllegalArgumentException("Parameter interval is null.");
+        }        
         Iterator<Point> it;
         if (trajectory.getClass().isInstance(CyclicTrajectory.class))
         {
@@ -99,7 +99,9 @@ public class PredicateMonitor<T extends Trajectory>
                                                  tmp.getValueDerivative());
                     list.add(tmp);
                 }
-                while (it.hasNext() && p1.getTime() < b)
+                while (it.hasNext() && 
+                        (p1.getTime() < b || 
+                        (p1.getTime() == b && interval.getUpperType() == IntervalType.CLOSED) ) )
                 {
                     list.add(evaluator.value((PointDerivative)p1));
                     p1 = it.next();
@@ -134,18 +136,27 @@ public class PredicateMonitor<T extends Trajectory>
 
             /* The begining of the interval [a,b] is approximated from p2 and p1 even
              * if the trajectory ended before the begining was reached.
+             * If the trajectory has not ended then (p2 <= a) and (p1 > a).
              */
 
             SimplePropertyRobustness tmp = evaluator.value(p2,p1);
             tmp = new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
                                          tmp.getValueDerivative());
+            //System.out.println("Start");
             list.add(tmp);
+            //System.out.print(tmp.getTime());
+            //System.out.print(' ');
 
-            while (it.hasNext() && p1.getTime() < b)
+            while (it.hasNext() &&
+                    (p1.getTime() < b ||
+                    (p1.getTime() == b && interval.getUpperType() == IntervalType.CLOSED) ) )
             {
                 p2 = p1;
                 p1 = it.next();
-                list.add(evaluator.value(p2,p1));
+                tmp = evaluator.value(p2,p1);
+                list.add(tmp);
+                //System.out.print(tmp.getTime());
+                //System.out.print(' ');
             }
             list.trimToSize();
             return list;            

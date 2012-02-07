@@ -122,11 +122,11 @@ public class Window extends javax.swing.JFrame {
         visualisationCont.setLayout(visualisationContLayout);
         visualisationContLayout.setHorizontalGroup(
             visualisationContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 823, Short.MAX_VALUE)
+            .addGap(0, 800, Short.MAX_VALUE)
         );
         visualisationContLayout.setVerticalGroup(
             visualisationContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 676, Short.MAX_VALUE)
+            .addGap(0, 600, Short.MAX_VALUE)
         );
 
         choiceCont.setBackground(new java.awt.Color(255, 255, 255));
