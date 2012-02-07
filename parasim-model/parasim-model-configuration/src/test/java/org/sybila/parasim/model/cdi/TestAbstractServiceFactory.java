@@ -8,15 +8,22 @@ import static org.testng.Assert.*;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestAbstractCDIFactory {
+public class TestAbstractServiceFactory {
     
-    private static final String STRING_TO_INJECT = "HELLO";
+    private static final String STRING_TO_INJECT = "1234";
     
-    private CDIFactory cdiFactory = new AbstractCDIFactory() {
+    private static final String FRESH_STRING_TO_INJECT = "FRESH 1234";
+    
+    private ServiceFactory cdiFactory = new AbstractServiceFactory() {
 
         @Override
-        protected Object getService(Class<?> interfaze) {
-            return STRING_TO_INJECT;
+        public Object getService(Class<?> interfaze, boolean fresh, Object... parameters) {
+            if (fresh) {
+                return FRESH_STRING_TO_INJECT;
+            } else {
+                return STRING_TO_INJECT;
+            }
+            
         }
 
         public void addService(Class<?> interfaze, Class<?> implementation) {
@@ -25,6 +32,10 @@ public class TestAbstractCDIFactory {
 
         public void addService(Class<?> interfaze, Object implementation) {
             throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public boolean isServiceAvailable(Class<?> interfaze) {
+            return interfaze.equals(String.class);
         }
     };
     
@@ -35,9 +46,17 @@ public class TestAbstractCDIFactory {
         @Inject
         private String name;
         
+        @Inject(fresh=true)
+        private String freshName;
+       
         public String getName() {
             return name;
         }
+        
+        public String getFreshName() {
+            return freshName;
+        }
+
     }
     
     @BeforeMethod
@@ -49,6 +68,13 @@ public class TestAbstractCDIFactory {
     public void testInjectFields() {
         cdiFactory.injectFields(testedObject);
         assertEquals(testedObject.getName(), STRING_TO_INJECT);
+    }
+    
+    @Test
+    public void testInjectFreshFields() {
+        cdiFactory.injectFields(testedObject);
+        assertNotNull(testedObject.getFreshName());
+        assertEquals(testedObject.getFreshName(), FRESH_STRING_TO_INJECT);
     }
     
 }

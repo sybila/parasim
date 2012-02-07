@@ -3,15 +3,24 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-     <artifactId>parasim-model-cdi</artifactId>
+     <artifactId>parasim-model-configuration</artifactId>
      <packaging>jar</packaging>
 
-    <name>parasim-model-cdi</name>
+    <name>parasim-model-configuration</name>
     
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-model</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.sbml</groupId>
+            <artifactId>jsbml</artifactId>
+            <classifier>with-dependencies</classifier>
+            <version>0.8-rc1</version>
+        </dependency>
+    </dependencies>
     
 </project>
