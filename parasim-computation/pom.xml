@@ -4,41 +4,21 @@
 
     <parent>
         <groupId>org.sybila.parasim</groupId>
-        <artifactId>parasim</artifactId>
+        <artifactId>parasim-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>parasim-computation</artifactId>
+    <artifactId>parasim-computation-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>parasim-computation</name>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <name>parasim-computation-parent</name>
+
     <modules>
         <module>parasim-computation-core</module>
         <module>parasim-computation-density</module>
         <module>parasim-computation-simulation</module>
         <module>parasim-computation-verification</module>
     </modules>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+
 </project>

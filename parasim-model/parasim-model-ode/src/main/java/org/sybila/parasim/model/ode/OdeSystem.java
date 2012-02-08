@@ -9,7 +9,7 @@ public interface OdeSystem {
  
     int dimension();
 
-    String getVariableName(int dimension);    
+    Variable getVariable(int dimension);    
 
     OdeSystemEncoding encoding();
     

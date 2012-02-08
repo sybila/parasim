@@ -5,41 +5,21 @@
 
     <parent>
         <groupId>org.sybila.parasim</groupId>
-        <artifactId>parasim</artifactId>
+        <artifactId>parasim-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>parasim-model</artifactId>
+    <artifactId>parasim-model-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>parasim-model</name>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <name>parasim-model-parent</name>
+
     <modules>
         <module>parasim-model-configuration</module>
         <module>parasim-model-ode</module>
         <module>parasim-model-trajectory</module>
         <module>parasim-model-verification</module>
     </modules>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    
 </project>

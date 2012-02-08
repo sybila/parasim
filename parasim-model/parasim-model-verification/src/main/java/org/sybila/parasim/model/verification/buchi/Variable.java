@@ -5,7 +5,7 @@ import org.sybila.parasim.model.ode.OdeSystem;
 
 /**
  * Operand is a variable of the given OdeSystem.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
  */
 public class Variable<P extends Point> implements AtomicPropOperand<P>
 {
@@ -26,6 +26,6 @@ public class Variable<P extends Point> implements AtomicPropOperand<P>
     @Override
     public String toString()
     {
-        return ode.getVariableName(varIndex);
+        return ode.getVariable(varIndex).getName();
     }
 }

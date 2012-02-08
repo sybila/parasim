@@ -54,7 +54,7 @@ public class DefaultOdeSystem implements OdeSystem {
         return result;
     }
 
-    public String getVariableName(int dimension) {
+    public Variable getVariable(int dimension) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

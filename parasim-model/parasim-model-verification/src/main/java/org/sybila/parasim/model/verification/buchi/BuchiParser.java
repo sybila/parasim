@@ -12,7 +12,7 @@ import org.sybila.parasim.model.ode.OdeSystem;
  * inequalities over variables of an OdeSystem. After an successful parsing
  * of a file all the componens can be obtained by the appropriate getter methods.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
 
  Buchi file format
  =================
@@ -111,7 +111,7 @@ class BuchiParser {
         HashMap varIndexes = new HashMap();
         for (int i=0; i<ode.dimension(); i++)
         {
-            varIndexes.put(ode.getVariableName(i), new Integer(i));
+            varIndexes.put(ode.getVariable(i).getName(), new Integer(i));
         }
 
         ArrayList<String> lines;
