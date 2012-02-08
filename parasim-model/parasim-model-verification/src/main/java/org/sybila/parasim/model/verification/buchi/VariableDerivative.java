@@ -4,7 +4,7 @@ import org.sybila.parasim.model.ode.OdeSystem;
 
 /**
  * Operand is a given OdeSystem's variable's derivative.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
  */
 public class VariableDerivative<P extends PointDerivative> implements AtomicPropOperand<P>
 {
@@ -25,6 +25,6 @@ public class VariableDerivative<P extends PointDerivative> implements AtomicProp
     @Override
     public String toString()
     {
-        return "d" + ode.getVariableName(varIndex);
+        return "d" + ode.getVariable(varIndex).getName();
     }
 }
