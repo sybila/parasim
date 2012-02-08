@@ -18,6 +18,10 @@
         <module>parasim-visualization</module>
     </modules>
     
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    
     <distributionManagement>
         <repository>
             <id>sybila-maven-ssh</id>
@@ -157,7 +161,4 @@
             </build>
         </profile>
     </profiles>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 </project>

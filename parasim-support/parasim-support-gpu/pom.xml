@@ -12,6 +12,7 @@
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-support</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     
     <dependencies>
