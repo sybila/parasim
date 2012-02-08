@@ -39,6 +39,7 @@ public class AndMonitor<T extends Trajectory>
         ArrayList<SimplePropertyRobustness> result = new ArrayList<SimplePropertyRobustness>();
         int lastValueOrigin = 0; /* 1 - list1, 2 - list 2, 0 - both */
         int valueOrigin;
+        int newValuesPresent; /* 1 - list1, 2 - list 2, 0 - both */
 
         ListIterator<PropertyRobustness> iterator1 = list1.listIterator();
         ListIterator<PropertyRobustness> iterator2 = list2.listIterator();
@@ -68,6 +69,7 @@ public class AndMonitor<T extends Trajectory>
             next2 = iterator2.next();
             float relInterTime = 0.0f; /* relative intersection time */
             float absInterTime = 0.0f; /* absolute intersection time */
+            newValuesPresent = 0; /* both signals present new values */
 
             if ((pr1.value() < pr2.value() && pr1.getValueDerivative() > pr2.getValueDerivative()) ||
                 (pr1.value() > pr2.value() && pr1.getValueDerivative() < pr2.getValueDerivative()) )
@@ -95,6 +97,7 @@ public class AndMonitor<T extends Trajectory>
                         next1.getTime(),
                         pr2.value() + pr2.getValueDerivative() * (next1.getTime() - pr2.getTime()),
                         pr2.getValueDerivative());
+                newValuesPresent = 1; /* signal 2 is rewinded, only signal 1 presents a new value */
             }
             else if (next1.getTime() > next2.getTime()) /* no intersection, signal 2 has next event sooner */
             {
@@ -103,12 +106,15 @@ public class AndMonitor<T extends Trajectory>
                         next2.getTime(),
                         pr1.value() + pr1.getValueDerivative() * (next2.getTime() - pr1.getTime()),
                         pr1.getValueDerivative());
+                newValuesPresent = 2; /* signal 1 is rewinded, only signal 2 presents a new value */
             }
-            /* if next1.getTime() == next2.getTime() then values are ready for comparison */
+            /* if next1.getTime() == next2.getTime(), values are ready for comparison */
             pr1 = next1;
             pr2 = next2;
             valueOrigin = min(pr1,pr2);
-            if (valueOrigin != lastValueOrigin)
+            //if (valueOrigin != lastValueOrigin || newValuesPresent == 0)
+            /* If both signals presented new values or the minimum is a new value then add it */
+            if (newValuesPresent == 0 || valueOrigin == newValuesPresent)
             {
                 lastValueOrigin = valueOrigin;
                 result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr2:pr1));
@@ -166,7 +172,8 @@ public class AndMonitor<T extends Trajectory>
 
             pr = next;
             valueOrigin = min(fixed,pr);
-            if (valueOrigin != lastValueOrigin)
+            /* If the signal source has changed or it comes from the longer signal add it */
+            if (valueOrigin != lastValueOrigin || valueOrigin == 2)
             {
                 lastValueOrigin = valueOrigin;
                 result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr:fixed));
@@ -180,11 +187,14 @@ public class AndMonitor<T extends Trajectory>
             /* compute relative time of signal intersection */
             float relInterTime = Math.abs(fixed.value() - pr.value()) / Math.abs(fixed.getValueDerivative() - pr.getValueDerivative());
             float absInterTime = fixed.getTime() + relInterTime; /* fixed.getTime == pr.getTime */
-            float interValue = fixed.value() + fixed.getValueDerivative() * relInterTime;
-            pr = new SimplePropertyRobustness(absInterTime, interValue, pr.getValueDerivative());
-            fixed = new SimplePropertyRobustness(absInterTime, interValue, fixed.getValueDerivative());            
-            lastValueOrigin = min(fixed,pr);
-            result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr:fixed));
+            if (interval.smallerThenUpper(absInterTime))
+            {
+                float interValue = fixed.value() + fixed.getValueDerivative() * relInterTime;
+                pr = new SimplePropertyRobustness(absInterTime, interValue, pr.getValueDerivative());
+                fixed = new SimplePropertyRobustness(absInterTime, interValue, fixed.getValueDerivative());
+                lastValueOrigin = min(fixed,pr);
+                result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr:fixed));
+            }
         }        
         
         return result;
@@ -304,6 +314,12 @@ public class AndMonitor<T extends Trajectory>
         {
             return 0;
         }        
+    }
+
+    @Override
+    public String toString()
+    {
+        return sub1.toString() + " && " + sub2.toString();
     }
 
 }

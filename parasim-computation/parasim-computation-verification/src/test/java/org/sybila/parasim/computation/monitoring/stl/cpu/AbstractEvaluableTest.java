@@ -31,13 +31,17 @@ public abstract class AbstractEvaluableTest<T extends Trajectory, R extends Prop
         List<R> result = getMonitor().evaluate(trajectory, interval);
         if (interval.getUpperType() == IntervalType.CLOSED)
         {
-            assertTrue(result.get(result.size()-1).getTime() < interval.getUpperBound(),
-                    "The result's last point was >= the upperBound of a CLOSED interval.");
+            assertTrue(result.get(result.size()-1).getTime() <= interval.getUpperBound(),
+                    "The result's last point was > then the upperBound of a CLOSED interval.");
+            assertTrue(interval.smallerThenUpper(result.get(result.size()-1).getTime()),
+                    "The result's last point was > then the upperBound of a CLOSED interval.");
         }
         else
         {
-            assertTrue(result.get(result.size()-1).getTime() <= interval.getUpperBound(),
-                    "The result's last point was > then the upperBound of a OPENED interval.");
+            assertTrue(result.get(result.size()-1).getTime() < interval.getUpperBound(),
+                    "The result's last point was >= then the upperBound of a OPENED interval.");
+            assertTrue(interval.smallerThenUpper(result.get(result.size()-1).getTime()),
+                    "The result's last point was >= then the upperBound of an OPENED interval.");
         }
     }
 
@@ -105,7 +109,7 @@ public abstract class AbstractEvaluableTest<T extends Trajectory, R extends Prop
         {
             for (int d=0; d<dim; d++)
             {
-                points[dim * i] = 10.0f * (float)Math.sin((d+2.0f)*(Math.PI/length)*i);
+                points[dim * i + d] = 10.0f * (float)Math.sin((d+2.0f)*(Math.PI/length)*i);
             }
             times[i] = i * (time/(length-1));
         }

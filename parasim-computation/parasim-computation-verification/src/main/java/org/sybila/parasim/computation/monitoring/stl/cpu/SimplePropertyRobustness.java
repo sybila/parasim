@@ -5,7 +5,7 @@ import org.sybila.parasim.computation.monitoring.PropertyRobustness;
 /**
  * A simple property robustness object.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
  */
 public class SimplePropertyRobustness implements PropertyRobustness
 {
@@ -59,6 +59,12 @@ public class SimplePropertyRobustness implements PropertyRobustness
     public float value()
     {
         return value;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "[" + getTime() + ", " + value() + ", " + getValueDerivative() + "]";
     }
 
 }

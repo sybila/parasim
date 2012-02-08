@@ -5,7 +5,8 @@ import org.sybila.parasim.model.trajectory.PointDerivative;
 
 /**
  * Evaluates simple inequality predicates in given points.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ *
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
 public class InequalityEvaluator implements PredicateEvaluator<SimplePropertyRobustness>
 {

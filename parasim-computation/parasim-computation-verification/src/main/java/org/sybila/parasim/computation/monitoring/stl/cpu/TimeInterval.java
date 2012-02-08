@@ -5,7 +5,7 @@ import org.sybila.parasim.model.verification.stl.IntervalType;
 
 /**
  * Represents an time interval and enables basic operations with it's bounds.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
 public class TimeInterval implements FormulaInterval
 {
@@ -69,38 +69,40 @@ public class TimeInterval implements FormulaInterval
     }
 
     /**
-     * Returns the value of the comparison <b>a</b> OP <code>getLowerBound</code>
+     * Returns the value of the comparison <code>getLowerBound</code> OP <b>a</b>
      * where OP is either "&lt;=" if the left bound is tight and "&lt;" if it is open.
+     *
      * @param a Value to compare with lower bound
-     * @return Result of comparison <b>a</b> OP <code>getLowerBound</code>.
+     * @return Result of comparison <code>getLowerBound</code> OP <b>a</b>.
      */
-    public boolean compareToLower(float a)
+    public boolean largerThenLower(float a)
     {
         if (type == IntervalType.CLOSED || type == IntervalType.RIGHTOPEN)
         {
-            return a <= lower;
+            return lower <= a;
         }
         else
         {
-            return a < lower;
+            return lower < a;
         }
     }
 
     /**
-     * Returns the value of the comparison <code>getLowerBound</code> OP <b>a</b>
+     * Returns the value of the comparison <b>a</b> OP <code>getUpperBound</code>
      * where OP is either "&lt;=" if the right bound is tight and "&lt;" if it is open.
+     * 
      * @param a Value to compare with upper bound
-     * @return Result of comparison <code>getUpperBound</code> OP <b>a</b>.
+     * @return Result of comparison <b>a</b> OP <code>getUpperBound</code>.
      */
-    public boolean compareToUpper(float a)
+    public boolean smallerThenUpper(float a)
     {
         if (type == IntervalType.CLOSED || type == IntervalType.LEFTOPEN)
         {
-            return upper <= a;
+            return a <= upper;
         }
         else
         {
-            return upper < a;
+            return a < upper;
         }
     }
 

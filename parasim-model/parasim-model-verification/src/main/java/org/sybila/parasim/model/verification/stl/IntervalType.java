@@ -2,7 +2,7 @@ package org.sybila.parasim.model.verification.stl;
 
 /**
  * Specifies four possible types of an interval.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
 public enum IntervalType {
     CLOSED, OPEN, LEFTOPEN, RIGHTOPEN
