@@ -9,7 +9,7 @@
     
     <parent>
         <groupId>org.sybila.parasim</groupId>
-        <artifactId>parasim-computation</artifactId>
+        <artifactId>parasim-computation-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

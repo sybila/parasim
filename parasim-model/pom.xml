@@ -5,15 +5,15 @@
 
     <parent>
         <groupId>org.sybila.parasim</groupId>
-        <artifactId>parasim</artifactId>
+        <artifactId>parasim-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>parasim-model</artifactId>
+    <artifactId>parasim-model-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>parasim-model</name>
+    <name>parasim-model-parent</name>
 
     <modules>
         <module>parasim-model-configuration</module>

@@ -4,15 +4,15 @@
 
     <parent>
         <groupId>org.sybila.parasim</groupId>
-        <artifactId>parasim</artifactId>
+        <artifactId>parasim-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>parasim-computation</artifactId>
+    <artifactId>parasim-computation-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>parasim-computation</name>
+    <name>parasim-computation-parent</name>
 
     <modules>
         <module>parasim-computation-core</module>
