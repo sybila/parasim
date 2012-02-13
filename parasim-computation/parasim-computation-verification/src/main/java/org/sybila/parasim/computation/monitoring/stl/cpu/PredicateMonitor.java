@@ -141,11 +141,8 @@ public class PredicateMonitor<T extends Trajectory>
 
             SimplePropertyRobustness tmp = evaluator.value(p2,p1);
             tmp = new SimplePropertyRobustness(a, tmp.value() + tmp.getValueDerivative() * (a - tmp.getTime()),
-                                         tmp.getValueDerivative());
-            //System.out.println("Start");
-            list.add(tmp);
-            //System.out.print(tmp.getTime());
-            //System.out.print(' ');
+                                         tmp.getValueDerivative());            
+            list.add(tmp);            
 
             while (it.hasNext() &&
                     (p1.getTime() < b ||
@@ -154,9 +151,7 @@ public class PredicateMonitor<T extends Trajectory>
                 p2 = p1;
                 p1 = it.next();
                 tmp = evaluator.value(p2,p1);
-                list.add(tmp);
-                //System.out.print(tmp.getTime());
-                //System.out.print(' ');
+                list.add(tmp);                
             }
             list.trimToSize();
             return list;            

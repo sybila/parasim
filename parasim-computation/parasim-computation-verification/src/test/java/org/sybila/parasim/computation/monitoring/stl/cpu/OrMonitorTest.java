@@ -9,14 +9,14 @@ import java.util.TreeSet;
 import java.util.Iterator;
 
 /**
- * Test for AndMonitor.
+ * Test for OrMonitor.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public class AndMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, SimplePropertyRobustness>
+public class OrMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, SimplePropertyRobustness>
 {
     /**
-     * Since computation of intersection values in AndMonitor.evaluate()
+     * Since computation of intersection values in OrMonitor.evaluate()
      * is different from the computation of values in a given time in
      * AbstractEvaluableTest.getRobustnessValue() the equality test is
      * sensible only for sufficiently large errorTolerances.
@@ -46,19 +46,19 @@ public class AndMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simpl
     @Test
     public void testSynchronousSubexpressionValuesResult()
     {
-        ArrayTrajectory trajectory = getTrajectory(11, 2, 10.0f);        
+        ArrayTrajectory trajectory = getTrajectory(11, 2, 10.0f);
 
         InequalityEvaluator ie1 = new InequalityEvaluator(0, 0.0f, InequalityType.LESS);
         InequalityEvaluator ie2 = new InequalityEvaluator(1, 0.0f, InequalityType.LESS);
         PredicateMonitor pred1 = new PredicateMonitor(ie1);
         PredicateMonitor pred2 = new PredicateMonitor(ie2);
 
-        AndMonitor monitor = new AndMonitor(pred1,pred2);
+        OrMonitor monitor = new OrMonitor(pred1,pred2);
         TimeInterval interval = new TimeInterval(0.0f, 10.0f, IntervalType.CLOSED);
 
         List<SimplePropertyRobustness> rob1 = pred1.evaluate(trajectory, interval);
         List<SimplePropertyRobustness> rob2 = pred2.evaluate(trajectory, interval);
-        List<SimplePropertyRobustness> rob = monitor.evaluate(trajectory, interval);               
+        List<SimplePropertyRobustness> rob = monitor.evaluate(trajectory, interval);
 
         /* Collect all time points in which values should be checked. */
         TreeSet<Float> controlTimes = new TreeSet();
@@ -86,19 +86,19 @@ public class AndMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simpl
             SimplePropertyRobustness pr1 = super.getRobustnessValue(rob1, time);
             SimplePropertyRobustness pr2 = super.getRobustnessValue(rob2, time);
 
-            assertTrue(pr.getTime() == pr1.getTime() && pr.getTime() == pr2.getTime(),"IT0: Points differ in time.");            
-            assertEquals(pr.value(), Math.min(pr1.value(), pr2.value()), errorTolerance,
-                    "IT0: The result differs for time " + pr.getTime() + 
+            assertTrue(pr.getTime() == pr1.getTime() && pr.getTime() == pr2.getTime(),"IT0: Points differ in time.");
+            assertEquals(pr.value(), Math.max(pr1.value(), pr2.value()), errorTolerance,
+                    "IT0: The result differs for time " + pr.getTime() +
                     " (pr1 = " + pr1.value() + ", pr2 = " + pr2.value() +
                     ", pr = " + pr.value() + ")");
             if (pr1.value() == pr2.value())
             {
-                assertEquals(pr.getValueDerivative(), Math.min(pr1.getValueDerivative(), pr2.getValueDerivative()), errorTolerance,
-                    "IT0: The result derivatives differ for time " + pr.getTime() + 
+                assertEquals(pr.getValueDerivative(), Math.max(pr1.getValueDerivative(), pr2.getValueDerivative()), errorTolerance,
+                    "IT0: The result derivatives differ for time " + pr.getTime() +
                     " (Dpr1 = " + pr1.getValueDerivative() + ", Dpr2 = " + pr2.getValueDerivative() +
                     ", Dpr = " + pr.getValueDerivative() + ")");
             }
-        }        
+        }
     }
 
     @Test
@@ -112,12 +112,12 @@ public class AndMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simpl
         PredicateMonitor pred1 = new PredicateMonitor(ie1);
         PredicateMonitor pred2 = new PredicateMonitor(ie2);
 
-        AndMonitor monitor = new AndMonitor(pred1,pred2);
+        OrMonitor monitor = new OrMonitor(pred1,pred2);
         TimeInterval interval = new TimeInterval(0.0f, 10.0f, IntervalType.CLOSED);
 
         List<SimplePropertyRobustness> rob1 = pred1.evaluate(trajectory1, interval);
-        List<SimplePropertyRobustness> rob2 = pred2.evaluate(trajectory2, interval);        
-        List<SimplePropertyRobustness> rob = monitor.evaluate(rob1, rob2, interval);        
+        List<SimplePropertyRobustness> rob2 = pred2.evaluate(trajectory2, interval);
+        List<SimplePropertyRobustness> rob = monitor.evaluate(rob1, rob2, interval);
 
         /* Collect all time points in which values should be checked. */
         TreeSet<Float> controlTimes = new TreeSet();
@@ -145,19 +145,19 @@ public class AndMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simpl
             SimplePropertyRobustness pr1 = super.getRobustnessValue(rob1, time);
             SimplePropertyRobustness pr2 = super.getRobustnessValue(rob2, time);
 
-            assertTrue(pr.getTime() == pr1.getTime() && pr.getTime() == pr2.getTime(),"IT0: Points differ in time.");            
-            assertEquals(pr.value(), Math.min(pr1.value(), pr2.value()), errorTolerance,
-                    "IT0: The result differs for time " + pr.getTime() + 
+            assertTrue(pr.getTime() == pr1.getTime() && pr.getTime() == pr2.getTime(),"IT0: Points differ in time.");
+            assertEquals(pr.value(), Math.max(pr1.value(), pr2.value()), errorTolerance,
+                    "IT0: The result differs for time " + pr.getTime() +
                     " (pr1 = " + pr1.value() + ", pr2 = " + pr2.value() +
                     ", pr = " + pr.value() + ")");
             if (pr1.value() == pr2.value())
             {
-                assertEquals(pr.getValueDerivative(), Math.min(pr1.getValueDerivative(), pr2.getValueDerivative()), errorTolerance,
-                    "IT0: The result derivatives differ for time " + pr.getTime() + 
+                assertEquals(pr.getValueDerivative(), Math.max(pr1.getValueDerivative(), pr2.getValueDerivative()), errorTolerance,
+                    "IT0: The result derivatives differ for time " + pr.getTime() +
                     " (Dpr1 = " + pr1.getValueDerivative() + ", Dpr2 = " + pr2.getValueDerivative() +
                     ", Dpr = " + pr.getValueDerivative() + ")");
             }
-        }       
+        }
     }
 
     @Override
@@ -168,10 +168,10 @@ public class AndMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simpl
         PredicateMonitor pred1 = new PredicateMonitor(ie1);
         PredicateMonitor pred2 = new PredicateMonitor(ie2);
 
-        AndMonitor monitor = new AndMonitor(pred1,pred2);
+        OrMonitor monitor = new OrMonitor(pred1,pred2);
         return monitor;
     }
-    
+
     @Override
     public ArrayTrajectory getTrajectory(int length, int dim, float time)
     {

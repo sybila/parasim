@@ -67,6 +67,7 @@ public abstract class AbstractEvaluableTest<T extends Trajectory, R extends Prop
             last = current;
             current = it.next();
         }
+        if (current.getTime() <= time) last = current;        
         return createRobustness(time, last.value() + last.getValueDerivative() * (time - last.getTime()), last.getValueDerivative());
     }
 
@@ -118,4 +119,5 @@ public abstract class AbstractEvaluableTest<T extends Trajectory, R extends Prop
     }
 
     public abstract R createRobustness(float time, float value, float derivative);
+ 
 }

@@ -7,19 +7,19 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 import java.util.ListIterator;
 
 /**
- * Monitors the conjunction of two subformulas. The output is the minimum of
+ * Monitors the disjunction of two subformulas. The output is the minimum of
  * the two signals.
- * 
+ *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  * @param <T> Type of trajectory over which to monitor expression robustness.
  */
-public class AndMonitor<T extends Trajectory>
+public class OrMonitor<T extends Trajectory>
        implements Evaluable<T, SimplePropertyRobustness>
 {
     private Evaluable<T, PropertyRobustness> sub1;
     private Evaluable<T, PropertyRobustness> sub2;
 
-    public AndMonitor(Evaluable<T, PropertyRobustness> sub1, Evaluable<T, PropertyRobustness> sub2)
+    public OrMonitor(Evaluable<T, PropertyRobustness> sub1, Evaluable<T, PropertyRobustness> sub2)
     {
         if (sub1 == null)
         {
@@ -34,13 +34,13 @@ public class AndMonitor<T extends Trajectory>
     }
 
     /**
-     * Evaluates the <b>and</b> function (min) of two given signals over the given interval.
+     * Evaluates the <b>or</b> function (max) of two given signals over the given interval.
      * Both signals are expected to start at the begining of the interval.
      *
      * @param signal1 First signal
      * @param signal2 Second signal
      * @param interval Time interval over which to evaluate
-     * @return The <b>and</b> of the two signals (the minimum).
+     * @return The <b>or</b> of the two signals (the maximum).
      */
     protected List<SimplePropertyRobustness> evaluate(List<PropertyRobustness> signal1,
                                                       List<PropertyRobustness> signal2,
@@ -69,13 +69,13 @@ public class AndMonitor<T extends Trajectory>
 
         ListIterator<PropertyRobustness> iterator1 = signal1.listIterator();
         ListIterator<PropertyRobustness> iterator2 = signal2.listIterator();
-        
+
         /* Initialization */
-        
+
         /* both lists are expected to be non-empty */
         PropertyRobustness pr1 = iterator1.next(); /* pr1 will hold last valid value of signal 1 */
         PropertyRobustness pr2 = iterator2.next(); /* pr2 will hold last valid value of signal 2 */
-        
+
         if (pr1.getTime() != interval.getLowerBound())
         {
             throw new IllegalArgumentException("First signal has bad start (" + pr1.getTime() + " != " + interval.getLowerBound() + ").");
@@ -94,7 +94,7 @@ public class AndMonitor<T extends Trajectory>
         int valueOrigin;
         int newValuesPresent; /* 1 - signal1, 2 - list 2, 0 - both */
 
-        lastValueOrigin = min(pr1, pr2);
+        lastValueOrigin = max(pr1, pr2);
         result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr2:pr1));
 
         /* Loop through both signals */
@@ -146,7 +146,7 @@ public class AndMonitor<T extends Trajectory>
             /* if next1.getTime() == next2.getTime(), values are ready for comparison */
             pr1 = next1;
             pr2 = next2;
-            valueOrigin = min(pr1,pr2);
+            valueOrigin = max(pr1,pr2);
             //if (valueOrigin != lastValueOrigin || newValuesPresent == 0)
             /* If both signals presented new values or the minimum is a new value then add it */
             if (newValuesPresent == 0 || valueOrigin == newValuesPresent)
@@ -206,7 +206,7 @@ public class AndMonitor<T extends Trajectory>
             }
 
             pr = next;
-            valueOrigin = min(fixed,pr);
+            valueOrigin = max(fixed,pr);
             /* If the signal source has changed or it comes from the longer signal add it */
             if (valueOrigin != lastValueOrigin || valueOrigin == 2)
             {
@@ -227,7 +227,7 @@ public class AndMonitor<T extends Trajectory>
                 float interValue = fixed.value() + fixed.getValueDerivative() * relInterTime;
                 pr = new SimplePropertyRobustness(absInterTime, interValue, pr.getValueDerivative());
                 fixed = new SimplePropertyRobustness(absInterTime, interValue, fixed.getValueDerivative());
-                lastValueOrigin = min(fixed,pr);
+                lastValueOrigin = max(fixed,pr);
                 result.add(new SimplePropertyRobustness(lastValueOrigin == 2?pr:fixed));
             }
         }
@@ -242,20 +242,20 @@ public class AndMonitor<T extends Trajectory>
         List<PropertyRobustness> signal2 = sub2.evaluate(trajectory, interval);
 
         return evaluate(signal1, signal2, interval);
-    }    
+    }
 
     /**
-     * Compares too values of property robustness and returns the minimum,
-     * comparing first time (younger is first), value (smaller is first) and
-     * value's derivative (smaller is first).
+     * Compares too values of property robustness and returns the maximum,
+     * comparing first time (younger is first), value (bigger is first) and
+     * value's derivative (bigger is first).
      *
      * @param pr1 First property robustness point.
      * @param pr2 Second property robustness point.
      *
-     * @return Will return 1 if pr1 is "smaller" then pr2, 2 if vice versa and
+     * @return Will return 1 if pr1 is "bigger" then pr2, 2 if vice versa and
      *         0 if pr1 == pr2.
      */
-    private int min(PropertyRobustness pr1, PropertyRobustness pr2)
+    private int max(PropertyRobustness pr1, PropertyRobustness pr2)
     {
         if (pr1.getTime() < pr2.getTime())
         {
@@ -267,24 +267,24 @@ public class AndMonitor<T extends Trajectory>
         }
         else if (pr1.value() < pr2.value())
         {
-            return 1;
+            return 2;
         }
         else if (pr1.value() > pr2.value())
         {
-            return 2;
+            return 1;
         }
         else if (pr1.getValueDerivative() < pr2.getValueDerivative()) /* pr1.value() == pr2.value() */
         {
-            return 1;
+            return 2;
         }
         else if (pr1.getValueDerivative() > pr2.getValueDerivative())
         {
-            return 2;
+            return 1;
         }
         else /* pr1.value() == pr2.value() && pr1.getValueDerivative() == pr2.getValueDerivative() */
         {
             return 0;
-        }        
+        }
     }
 
     @Override
