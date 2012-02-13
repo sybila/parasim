@@ -1,5 +1,6 @@
 package org.sybila.parasim.model.cdi;
 
+import java.lang.reflect.Method;
 import org.sybila.parasim.model.cdi.annotations.Inject;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -49,6 +50,8 @@ public class TestAbstractServiceFactory {
         @Inject(fresh=true)
         private String freshName;
        
+        private String injectedFromParam;
+        
         public String getName() {
             return name;
         }
@@ -56,12 +59,23 @@ public class TestAbstractServiceFactory {
         public String getFreshName() {
             return freshName;
         }
+        
+        public void injectFromParam(String name) {
+            injectedFromParam = name;
+        }
 
     }
     
     @BeforeMethod
     public void beforeMethod() {
         testedObject = new TestedObject();
+    }
+
+    @Test
+    public void testExecuteVoidMethod() throws NoSuchMethodException {
+        Method method = testedObject.getClass().getMethod("injectFromParam", String.class);
+        cdiFactory.executeVoidMethod(testedObject, method);
+        assertEquals(testedObject.injectedFromParam, STRING_TO_INJECT);
     }
     
     @Test

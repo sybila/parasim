@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class MapCDIFactory extends AbstractServiceFactory {
+public class MapServiceFactory extends AbstractServiceFactory {
 
     private Map<Class<?>, Object> serviceInstantions = new HashMap<Class<?>, Object>();
     private Map<Class<?>, Class<?>> serviceImplementations = new HashMap<Class<?>, Class<?>>();

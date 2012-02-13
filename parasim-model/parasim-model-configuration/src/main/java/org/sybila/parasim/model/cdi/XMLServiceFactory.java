@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class XMLServiceFactory extends MapCDIFactory {
+public class XMLServiceFactory extends MapServiceFactory {
 
     private static DocumentBuilder builder;
 

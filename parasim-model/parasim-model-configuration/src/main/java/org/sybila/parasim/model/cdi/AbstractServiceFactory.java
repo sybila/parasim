@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.sybila.parasim.model.cdi.annotations.Inject;
 
@@ -41,7 +42,7 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
     @Override
     public void executeVoidMethod(Object o, Method method) {
         Object[] paramValues = new Object[method.getParameterTypes().length];
-        for (int i = 0; i < method.getTypeParameters().length; i++) {
+        for (int i = 0; i < method.getParameterTypes().length; i++) {
             if (!isServiceAvailable(method.getParameterTypes()[i])) {
                 throw new IllegalStateException("The service " + method.getParameterTypes()[i].getCanonicalName() + " requested in " + o.getClass().getCanonicalName() + " is not available.");
             }

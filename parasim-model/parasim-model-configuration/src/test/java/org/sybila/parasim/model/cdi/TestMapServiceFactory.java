@@ -38,7 +38,7 @@ public class TestMapServiceFactory {
     
     @BeforeMethod
     public void beforeMethod() {
-        factory  = new MapCDIFactory();
+        factory  = new MapServiceFactory();
         factory.addService(List.class, ArrayList.class);
         factory.addService(Set.class, new HashSet<Object>(Arrays.asList(new Object[] {new Object()})));
         factory.addService(Object.class, Object.class);
