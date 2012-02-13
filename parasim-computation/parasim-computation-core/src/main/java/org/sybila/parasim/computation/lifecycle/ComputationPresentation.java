@@ -1,13 +1,12 @@
-package org.sybila.parasim.computation;
+package org.sybila.parasim.computation.lifecycle;
 
 /**
  * Provides data from a computation for visualization purposes.
  * Data is meant either the result or other internal information about the
  * process.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface ComputationPresentation
-{
+public interface ComputationPresentation {
 
 }
