@@ -1,9 +1,11 @@
 package org.sybila.parasim.computation.lifecycle;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.sybila.parasim.computation.lifecycle.annotations.Before;
 import org.sybila.parasim.computation.lifecycle.annotations.Start;
+import org.sybila.parasim.computation.lifecycle.annotations.ThreadId;
 import org.sybila.parasim.model.cdi.MapServiceFactory;
 import org.sybila.parasim.model.cdi.ServiceFactory;
 import org.sybila.parasim.model.cdi.annotations.Inject;
@@ -90,7 +92,7 @@ public class TestDefaultComputationContainer extends AbstractComputationTest {
     }
  
     @Test
-    public void testStartInOwnThread() throws Exception {
+    public void testStartInOwnThreadDefaultNumberOfThreads() throws Exception {
         computation.controller = new AbstractComputationController() {
             
             @Start(ownThread=true)
@@ -109,4 +111,46 @@ public class TestDefaultComputationContainer extends AbstractComputationTest {
         assertFalse(computation.getController().getStatus().isRunning());
     }
     
+    @Test
+    public void testStartInOwnThreadAutoNumberOfThreads() {
+        final AtomicInteger numberOfThreads = new AtomicInteger(0);
+        computation.controller = new AbstractComputationController() {
+            @Start(ownThread=true, numberOfThreads=0)
+            public void startInNewThread() {
+                numberOfThreads.incrementAndGet();
+            }
+        };
+        container.start(computation);
+        while (computation.getController().getStatus().isRunning()) {}
+        assertEquals(numberOfThreads.get(), Runtime.getRuntime().availableProcessors());
+    }
+    
+    @Test
+    public void testStartInOwnThreadSpecifiedNumberOfThreads() {
+        final AtomicInteger numberOfThreads = new AtomicInteger(0);
+        computation.controller = new AbstractComputationController() {
+            @Start(ownThread=true, numberOfThreads=10)
+            public void startInNewThread() {
+                numberOfThreads.incrementAndGet();
+            }
+        };
+        container.start(computation);
+        while (computation.getController().getStatus().isRunning()) {}
+        assertEquals(numberOfThreads.get(), 10);
+    }
+    
+    @Test
+    public void testStartInOwnThreadAndInjectThreadId() {
+        final AtomicInteger sumOfIds = new AtomicInteger(0);
+        computation.controller = new AbstractComputationController() {
+            @Start(ownThread=true, numberOfThreads=4)
+            public void startInNewThreadWithThreadId(@ThreadId int threadId, @ThreadId int threadId2) {
+                sumOfIds.addAndGet(threadId);
+                sumOfIds.addAndGet(threadId2);
+            }
+        };
+        container.start(computation);
+        while (computation.getController().getStatus().isRunning()) {}
+        assertEquals(sumOfIds.get(), 12);
+    }
 }

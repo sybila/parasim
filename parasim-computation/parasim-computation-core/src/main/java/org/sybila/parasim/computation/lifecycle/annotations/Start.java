@@ -17,14 +17,26 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface  Start {
-    /**
-     * If it's set to false, the container executes the method in its own thread.
-     */
-    boolean ownThread() default false;
+
+    public static final int NUMBER_OF_THREADS_AUTO = 0;
     
     /**
      * If it's set to false, the container changes status when the method calling starts
      * and finishes.
      */
     boolean controlsLifeCycle() default false;
+    
+    /**
+     * Defines number of threads used to execute the annotated method. It's used
+     * only when {@link Start#ownThread()} is set to true.
+     * 
+     * If it is set to 0, the number of threads is determined according
+     * to {@link Runtime#availableProcessors() }
+     */
+    int numberOfThreads() default 1;
+    
+    /**
+     * If it's set to false, the container executes the method in its own thread.
+     */
+    boolean ownThread() default false;
 }

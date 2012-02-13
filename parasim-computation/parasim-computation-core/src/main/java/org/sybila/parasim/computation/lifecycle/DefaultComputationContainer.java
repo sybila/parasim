@@ -2,13 +2,17 @@ package org.sybila.parasim.computation.lifecycle;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.sybila.parasim.computation.lifecycle.annotations.After;
 import org.sybila.parasim.computation.lifecycle.annotations.Before;
 import org.sybila.parasim.computation.lifecycle.annotations.Start;
 import org.sybila.parasim.computation.lifecycle.annotations.Stop;
+import org.sybila.parasim.computation.lifecycle.annotations.ThreadId;
 import org.sybila.parasim.model.cdi.ServiceFactory;
 
 /**
@@ -65,34 +69,77 @@ public class DefaultComputationContainer implements ComputationContainer {
             }
         }
         for (final Method method : methods) {
-            ComputationStatus statusToControlLifeCycle = null;
-            if (annotation == Start.class && !method.getAnnotation(Start.class).controlsLifeCycle()) {
-                statusToControlLifeCycle = o.getStatus();
+            // non Start annotation
+            if (annotation != Start.class) {
+                getServiceFactory().executeVoidMethod(o, method);
+                continue;
             }
-            final ComputationStatus finalStatusToControlLifeCycle = statusToControlLifeCycle;
-            if (annotation == Start.class && method.getAnnotation(Start.class).ownThread()) {
-                Runnable ownRunnable = new Runnable() {
-
-                    public void run() {
-                        if (finalStatusToControlLifeCycle != null) {
-                            finalStatusToControlLifeCycle.startRunning();
-                            getServiceFactory().executeVoidMethod(o, method);
-                            finalStatusToControlLifeCycle.stopRunning();
-                        } else {
-                            getServiceFactory().executeVoidMethod(o, method);
-                        }
-                    }
-                };
-                new Thread(ownRunnable).start();
-            } else {
-                if (finalStatusToControlLifeCycle != null) {
-                    finalStatusToControlLifeCycle.startRunning();
+            // without own thread
+            if (!method.getAnnotation(Start.class).ownThread()) {
+                if (method.getAnnotation(Start.class).controlsLifeCycle()) {
+                    o.getStatus().startRunning();
                     getServiceFactory().executeVoidMethod(o, method);
-                    finalStatusToControlLifeCycle.stopRunning();
+                    o.getStatus().stopRunning();
                 } else {
                     getServiceFactory().executeVoidMethod(o, method);
                 }
+                continue;
             }
+            // own thread
+            int numberOfThreads = method.getAnnotation(Start.class).numberOfThreads() == 0 ? Runtime.getRuntime().availableProcessors() : method.getAnnotation(Start.class).numberOfThreads();
+            final ComputationStatus status = o.getStatus();
+            final boolean controlsLifeCycle = method.getAnnotation(Start.class).controlsLifeCycle();
+            // start running if it doesn't control life cycle
+            if (!controlsLifeCycle) {
+                for (int id=0; id<numberOfThreads; id++) {
+                    o.getStatus().startRunning();
+                }
+            }
+            // construct params
+            List<Integer> paramsToInjectThreadId = new ArrayList<Integer>();
+            Object[] params = new Object[method.getParameterTypes().length];
+            allParams: for (int i = 0; i < method.getParameterTypes().length; i++) {
+                for (int a = 0; a < method.getParameterAnnotations()[i].length; a++) {
+                    if (method.getParameterAnnotations()[i][a] instanceof ThreadId) {
+                        paramsToInjectThreadId.add(i);
+                        continue allParams;
+                    }
+                }
+                params[i] = getServiceFactory().getService(method.getParameterTypes()[i]);
+            }
+            // start new threads
+            for (int id = 0; id < numberOfThreads; id++) {
+                final Object[] threadParams;
+                if (params.length != 0) {
+                    threadParams = Arrays.copyOf(params, params.length);
+                    // inject thread ID
+                    for (Integer paramToInjectThreadId : paramsToInjectThreadId) {
+                        threadParams[paramToInjectThreadId] = id;
+                    }
+
+                } else {
+                   threadParams = params;
+                }
+                new Thread(new Runnable() {
+                    public void run() {
+                        if (controlsLifeCycle) {
+                            executeMethod(o, method, threadParams);
+                        } else {
+                            executeMethod(o, method, threadParams);
+                            status.stopRunning();   
+                        }
+                    }
+                }).start();
+            }
+        }
+    }
+
+    private void executeMethod(final Object o, Method method, Object... params) {
+        try {
+            method.setAccessible(true);
+            method.invoke(o, params);
+        } catch (Exception e) {
+            throw new IllegalStateException("The method can't be executed.", e);
         }
     }
 }
