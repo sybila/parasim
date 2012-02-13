@@ -46,7 +46,6 @@ public class TestDefaultComputationContainer extends AbstractComputationTest {
             @Before
             public void init() {
                 monkey = toInject;
-                status.setInitialized();
             }
         };
         container.init(computation);
@@ -60,7 +59,6 @@ public class TestDefaultComputationContainer extends AbstractComputationTest {
             @Before
             public void init(String toInject) {
                 monkey = toInject;
-                status.setInitialized();
             }
         };
         container.init(computation);
@@ -97,13 +95,11 @@ public class TestDefaultComputationContainer extends AbstractComputationTest {
             
             @Start(ownThread=true)
             public void startInNewThread() {
-                status.startRunning();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(TestDefaultComputationContainer.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                status.stopRunning();
             }
         };
         container.start(computation);

@@ -12,7 +12,7 @@ import org.sybila.parasim.model.trajectory.MixedOutput;
  * steps the state of computation can be preserverd in an intermediate
  * type of data block.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  *
  * @param <Input> input type of data block

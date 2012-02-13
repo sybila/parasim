@@ -34,15 +34,12 @@ public class TestAbstractComputationController extends AbstractComputationTest {
             @After
             public void destroy() {
                 status.setFinished();
-                status.setFinalized();
             }
             
             @Before
-            public void init() {
-                status.setInitialized();
-            }
+            public void init() {}
             
-            @Start
+            @Start(controlsLifeCycle=true)
             public void start() {
                 status.startRunning();
             }

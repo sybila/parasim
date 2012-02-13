@@ -19,4 +19,13 @@ public interface ComputationStatus {
     
     long getTotalConsumedTime();
     
+    void setFinalized();
+
+    void setFinished();
+    
+    void setInitialized();
+    
+    void startRunning();
+    
+    void stopRunning();
 }

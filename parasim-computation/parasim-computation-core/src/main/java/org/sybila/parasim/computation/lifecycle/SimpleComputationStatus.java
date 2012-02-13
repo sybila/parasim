@@ -16,26 +16,32 @@ public class SimpleComputationStatus implements ComputationStatus {
         
         private int numberOfRunning;
         
+        @Override
         public boolean isFinalized() {
             return finalized;
         }
         
+        @Override
         public boolean isFinished() {
             return finished;
         }
         
+        @Override
         public boolean isInitialized() {
             return initialized;
         }
 
+        @Override
         public boolean isStarted() {
             return started;
         }
 
+        @Override
         public boolean isRunning() {
             return numberOfRunning > 0;
         }
 
+        @Override
         public long getLastConsumedTime() {
             if (isRunning()) {
                 throw new IllegalStateException("The computation is running.");
@@ -43,22 +49,27 @@ public class SimpleComputationStatus implements ComputationStatus {
             return lastConsumedTime;
         }
 
+        @Override
         public long getTotalConsumedTime() {
             return totalConsumedTime;
         }    
         
+        @Override
         public void setFinalized() {
             finalized = true;
         }
         
+        @Override
         public void setFinished() {
             finished = true;
         }
         
+        @Override
         public void setInitialized() {
             initialized = true;
         }
         
+        @Override
         public void startRunning() {
             numberOfRunning++;
             started = true;
@@ -69,6 +80,7 @@ public class SimpleComputationStatus implements ComputationStatus {
             }
         }
         
+        @Override
         public void stopRunning() {
             synchronized(this) {
                 numberOfRunning--;
