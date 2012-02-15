@@ -1,5 +1,6 @@
 package org.sybila.parasim.computation.monitoring.stl.cpu;
 
+import org.sybila.parasim.model.verification.stl.TimeInterval;
 import org.sybila.parasim.computation.monitoring.PropertyRobustness;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * For computational purposes the trajectory may be looked at as prolonged past
  * it's last point using the last point's value and valueDerivative.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Draï¿½an</a>
  * @param <T> Class of trajectories on which property robustness computation
  *            is enabled.
  * @param <R> Class of property robustness that will be computed.

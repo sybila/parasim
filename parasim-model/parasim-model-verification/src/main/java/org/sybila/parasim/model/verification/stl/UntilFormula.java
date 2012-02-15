@@ -3,52 +3,39 @@ package org.sybila.parasim.model.verification.stl;
 /**
  * Until operator. 
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
-public class UntilFormula extends BinaryFormula implements FormulaInterval
+public class UntilFormula extends BinaryFormula implements TemporalFormula
 {
-    private float a,b;
-    private IntervalType intervalType;
+    private FormulaInterval interval;
     
-    public UntilFormula(Formula phi1, Formula phi2, float a, float b, IntervalType type)
+    public UntilFormula(Formula phi1, Formula phi2, FormulaInterval interval)
     {
         super(phi1, phi2);
-        if (a < 0)
+        if (interval == null)
         {
-            throw new IllegalArgumentException("Parameter a must be non negative.");
+            throw new IllegalArgumentException("Parameter interval is null.");
         }
-        if (b < a)
-        {
-            throw new IllegalArgumentException("Parameter b must be larger than a.");
-        }
-        this.a = a;
-        this.b = b;
-        this.intervalType = type;
+        this.interval = interval;
     }
 
     @Override
     public float getTimeNeeded()
     {
         return java.lang.Math.max(getSubformula(0).getTimeNeeded(),
-                                  getSubformula(1).getTimeNeeded()) + b;
+                                  getSubformula(1).getTimeNeeded()) + interval.getUpperBound();
     }
 
     @Override
-    public float getLowerBound()
+    public FormulaInterval getInterval()
     {
-        return a;
-    }
-
-    @Override
-    public float getUpperBound()
-    {
-        return b;
+        return interval;
     }
 
     @Override
     public String toString()
     {
-        return "( "+getSubformula(0).toString()+" ) U ( "+getSubformula(1).toString()+" )";
+        return "( "+getSubformula(0).toString()+" ) U_"+interval.toString()+" ( "+getSubformula(1).toString()+" )";
     }
 
     @Override
@@ -57,9 +44,11 @@ public class UntilFormula extends BinaryFormula implements FormulaInterval
         return FormulaType.UNTIL;
     }
 
-    public IntervalType getIntervalType()
+    @Override
+    public boolean equals(Formula formula)
     {
-        return intervalType;
+        if (!super.equals(formula)) return false;
+        return interval.equals(((TemporalFormula)formula).getInterval());
     }
 
 }

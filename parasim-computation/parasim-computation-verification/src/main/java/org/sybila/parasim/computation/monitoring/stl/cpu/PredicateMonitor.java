@@ -1,12 +1,13 @@
 package org.sybila.parasim.computation.monitoring.stl.cpu;
 
+import org.sybila.parasim.model.verification.stl.TimeInterval;
 import java.util.List;
 import java.util.ArrayList;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointDerivative;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.CyclicTrajectory;
-import org.sybila.parasim.model.verification.stl.IntervalType;
+import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
 import java.util.Iterator;
 
 /**
@@ -101,7 +102,7 @@ public class PredicateMonitor<T extends Trajectory>
                 }
                 while (it.hasNext() && 
                         (p1.getTime() < b || 
-                        (p1.getTime() == b && interval.getUpperType() == IntervalType.CLOSED) ) )
+                        (p1.getTime() == b && interval.getUpperBoundaryType() == IntervalBoundaryType.CLOSED) ) )
                 {
                     list.add(evaluator.value((PointDerivative)p1));
                     p1 = it.next();
@@ -146,7 +147,7 @@ public class PredicateMonitor<T extends Trajectory>
 
             while (it.hasNext() &&
                     (p1.getTime() < b ||
-                    (p1.getTime() == b && interval.getUpperType() == IntervalType.CLOSED) ) )
+                    (p1.getTime() == b && interval.getUpperBoundaryType() == IntervalBoundaryType.CLOSED) ) )
             {
                 p2 = p1;
                 p1 = it.next();

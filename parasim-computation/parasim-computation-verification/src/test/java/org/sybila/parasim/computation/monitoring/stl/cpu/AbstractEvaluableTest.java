@@ -1,10 +1,11 @@
 package org.sybila.parasim.computation.monitoring.stl.cpu;
 
+import org.sybila.parasim.model.verification.stl.TimeInterval;
 import static org.testng.Assert.*;
 import org.sybila.parasim.computation.monitoring.PropertyRobustness;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
-import org.sybila.parasim.model.verification.stl.IntervalType;
+import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
 import java.util.List;
 import java.util.Iterator;
 
@@ -29,7 +30,7 @@ public abstract class AbstractEvaluableTest<T extends Trajectory, R extends Prop
     protected void testEnd(T trajectory, TimeInterval interval)
     {
         List<R> result = getMonitor().evaluate(trajectory, interval);
-        if (interval.getUpperType() == IntervalType.CLOSED)
+        if (interval.getUpperBoundaryType() == IntervalBoundaryType.CLOSED)
         {
             assertTrue(result.get(result.size()-1).getTime() <= interval.getUpperBound(),
                     "The result's last point was > then the upperBound of a CLOSED interval.");

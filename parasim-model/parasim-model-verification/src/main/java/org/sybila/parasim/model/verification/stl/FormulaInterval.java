@@ -3,7 +3,7 @@ package org.sybila.parasim.model.verification.stl;
 /**
  * Time interval used in Until, Future and Globaly operators of STL.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
 public interface FormulaInterval
 {
@@ -28,5 +28,13 @@ public interface FormulaInterval
      * Returns the type of the interval.
      * @return Type of interval.
      */
-    IntervalType getIntervalType();
+    IntervalBoundaryType getLowerBoundaryType();
+
+    /**
+     * Returns the type of the interval.
+     * @return Type of interval.
+     */
+    IntervalBoundaryType getUpperBoundaryType();
+
+    boolean equals(FormulaInterval interval);
 }

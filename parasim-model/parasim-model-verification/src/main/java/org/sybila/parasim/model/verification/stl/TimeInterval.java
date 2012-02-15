@@ -1,18 +1,16 @@
-package org.sybila.parasim.computation.monitoring.stl.cpu;
-
-import org.sybila.parasim.model.verification.stl.FormulaInterval;
-import org.sybila.parasim.model.verification.stl.IntervalType;
+package org.sybila.parasim.model.verification.stl;
 
 /**
  * Represents an time interval and enables basic operations with it's bounds.
+ * 
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
 public class TimeInterval implements FormulaInterval
 {
     private float lower,upper;
-    private IntervalType type;
+    private IntervalBoundaryType lowerType, upperType;
     
-    public TimeInterval(float lower, float upper, IntervalType type)
+    public TimeInterval(float lower, float upper, IntervalBoundaryType lowerType, IntervalBoundaryType upperType)
     {
         if (lower < 0)
         {
@@ -22,9 +20,23 @@ public class TimeInterval implements FormulaInterval
         {
             throw new IllegalArgumentException("Parameter upper must greater or equal to parameter lower.");
         }
+        if (lowerType == null)
+        {
+            throw new IllegalArgumentException("Parameter lowerType is null.");
+        }
+        if (upperType == null)
+        {
+            throw new IllegalArgumentException("Parameter upperType is null.");
+        }
         this.lower = lower;
         this.upper = upper;
-        this.type = type;
+        this.lowerType = lowerType;
+        this.upperType = upperType;
+    }
+
+    public TimeInterval(float lower, float upper, IntervalBoundaryType type)
+    {
+        this(lower, upper, type, type);
     }
 
     @Override
@@ -36,36 +48,18 @@ public class TimeInterval implements FormulaInterval
     @Override
     public float getUpperBound() {
         return upper;
+    }    
+
+    @Override
+    public IntervalBoundaryType getLowerBoundaryType()
+    {
+        return lowerType;
     }
 
     @Override
-    public IntervalType getIntervalType()
+    public IntervalBoundaryType getUpperBoundaryType()
     {
-        return type;
-    }
-
-    public IntervalType getLowerType()
-    {
-        if (type == IntervalType.CLOSED || type == IntervalType.RIGHTOPEN)
-        {
-            return IntervalType.CLOSED;
-        }
-        else
-        {
-            return IntervalType.OPEN;
-        }
-    }
-
-    public IntervalType getUpperType()
-    {
-        if (type == IntervalType.CLOSED || type == IntervalType.LEFTOPEN)
-        {
-            return IntervalType.CLOSED;
-        }
-        else
-        {
-            return IntervalType.OPEN;
-        }
+        return upperType;
     }
 
     /**
@@ -77,7 +71,7 @@ public class TimeInterval implements FormulaInterval
      */
     public boolean largerThenLower(float a)
     {
-        if (type == IntervalType.CLOSED || type == IntervalType.RIGHTOPEN)
+        if (lowerType == IntervalBoundaryType.CLOSED)
         {
             return lower <= a;
         }
@@ -96,7 +90,7 @@ public class TimeInterval implements FormulaInterval
      */
     public boolean smallerThenUpper(float a)
     {
-        if (type == IntervalType.CLOSED || type == IntervalType.LEFTOPEN)
+        if (upperType == IntervalBoundaryType.CLOSED)
         {
             return a <= upper;
         }
@@ -104,6 +98,23 @@ public class TimeInterval implements FormulaInterval
         {
             return a < upper;
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return (lowerType == IntervalBoundaryType.CLOSED ? "[" : "(") + lower + 
+                "," + upper + (upperType == IntervalBoundaryType.CLOSED ? "]" : ")");
+    }
+
+    @Override
+    public boolean equals(FormulaInterval other)
+    {
+        return (this.lowerType == other.getLowerBoundaryType()) &&
+               (this.upperType == other.getUpperBoundaryType()) &&
+               (this.lower == other.getLowerBound()) &&
+               (this.upper == other.getUpperBound());
+
     }
 
 }

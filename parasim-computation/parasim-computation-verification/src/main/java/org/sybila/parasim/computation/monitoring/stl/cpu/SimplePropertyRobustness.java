@@ -67,4 +67,19 @@ public class SimplePropertyRobustness implements PropertyRobustness
         return "[" + getTime() + ", " + value() + ", " + getValueDerivative() + "]";
     }
 
+    /**
+     * Compares the two given property robustnesses.
+     *
+     * @param pr1 First property robustness
+     * @param pr2 Second property robustness
+     * @return -1 if pr1 < pr2, 0 if pr1 == pr2 and 1 if pr1 > pr2
+     */
+    int compare(PropertyRobustness pr1, PropertyRobustness pr2)
+    {
+        if (pr1.value() < pr2.value()) return -1;
+        if (pr1.value() > pr2.value()) return 1;
+        if (pr1.getValueDerivative() < pr2.getValueDerivative() ) return -1;
+        if (pr1.getValueDerivative() > pr2.getValueDerivative() ) return 1;
+        return 0;
+    }
 }

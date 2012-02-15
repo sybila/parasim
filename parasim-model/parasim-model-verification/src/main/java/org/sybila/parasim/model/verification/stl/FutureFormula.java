@@ -3,51 +3,39 @@ package org.sybila.parasim.model.verification.stl;
 /**
  * Future or Finally F operator.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
-public class FutureFormula extends UnaryFormula implements FormulaInterval
+public class FutureFormula extends UnaryFormula implements TemporalFormula
 {
-    private float a,b;
-    private IntervalType intervalType;
+    private FormulaInterval interval;
     
-    public FutureFormula(Formula phi, float a, float b, IntervalType type)
+    public FutureFormula(Formula phi, FormulaInterval interval)
     {
         super(phi);
-        if (a < 0)
+        if (interval == null)
         {
-            throw new IllegalArgumentException("Parameter a must be non negative.");
+            throw new IllegalArgumentException("Parameter interval is null.");
         }
-        if (b < a)
-        {
-            throw new IllegalArgumentException("Parameter b must be larger than a.");
-        }
-        this.a = a;
-        this.b = b;
-        this.intervalType = type;
+        this.interval = interval;
     }
 
     @Override
     public float getTimeNeeded()
     {
-        return getSubformula(0).getTimeNeeded() + b;
+        return getSubformula(0).getTimeNeeded() + interval.getUpperBound();
     }
 
-    @Override
-    public float getLowerBound()
-    {
-        return a;
-    }
 
     @Override
-    public float getUpperBound()
+    public FormulaInterval getInterval()
     {
-        return b;
-    }
+        return interval;
+    }    
 
     @Override
     public String toString()
     {
-        return "F( "+getSubformula(0).toString()+" )";
+        return "F_"+interval.toString()+"( "+getSubformula(0).toString()+" )";
     }
 
     public FormulaType getType()
@@ -59,14 +47,7 @@ public class FutureFormula extends UnaryFormula implements FormulaInterval
     public boolean equals(Formula formula)
     {
         if (!super.equals(formula)) return false;
-        if ( ((FutureFormula)formula).getLowerBound() != this.getLowerBound()) return false;
-        if ( ((FutureFormula)formula).getUpperBound() != this.getUpperBound()) return false;
-        return true;
-    }
-
-    public IntervalType getIntervalType()
-    {
-        return intervalType;
-    }
+        return interval.equals(((TemporalFormula)formula).getInterval());
+    }    
     
 }

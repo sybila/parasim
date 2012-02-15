@@ -1,5 +1,6 @@
 package org.sybila.parasim.computation.monitoring.stl.cpu;
 
+import org.sybila.parasim.model.verification.stl.TimeInterval;
 import java.util.List;
 import java.util.ArrayList;
 import org.sybila.parasim.computation.monitoring.PropertyRobustness;

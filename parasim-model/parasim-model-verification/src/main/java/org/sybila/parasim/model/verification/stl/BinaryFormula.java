@@ -3,7 +3,7 @@ package org.sybila.parasim.model.verification.stl;
 /**
  * A simple abstract class representing a general binary operator.
  * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
 public abstract class BinaryFormula implements Formula
 {

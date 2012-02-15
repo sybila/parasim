@@ -1,9 +1,10 @@
 package org.sybila.parasim.computation.monitoring.stl.cpu;
 
+import org.sybila.parasim.model.verification.stl.TimeInterval;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
-import org.sybila.parasim.model.verification.stl.IntervalType;
+import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Iterator;
@@ -26,21 +27,21 @@ public class OrMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simple
     @Test
     public void testEmptyness()
     {
-        super.testEmptyness(getTrajectory(100,2,6.0f), new TimeInterval(2.0f, 4.0f, IntervalType.CLOSED));
+        super.testEmptyness(getTrajectory(100,2,6.0f), new TimeInterval(2.0f, 4.0f, IntervalBoundaryType.CLOSED));
     }
 
     @Test
     public void testBegining()
     {
-        super.testBegining(getTrajectory(100,2,6.0f), new TimeInterval(2.015f, 4.0f, IntervalType.CLOSED));
+        super.testBegining(getTrajectory(100,2,6.0f), new TimeInterval(2.015f, 4.0f, IntervalBoundaryType.CLOSED));
     }
 
     @Test
     public void testEnd()
     {
-        super.testEnd(getTrajectory(100,2,10.0f), new TimeInterval(2.015f, 4.056f, IntervalType.CLOSED));
-        super.testEnd(getTrajectory(100,2,10.0f), new TimeInterval(2.015f, 9.0f, IntervalType.OPEN));
-        super.testEnd(getTrajectory(100,2,10.0f), new TimeInterval(2.015f, 9.0f, IntervalType.CLOSED));
+        super.testEnd(getTrajectory(100,2,10.0f), new TimeInterval(2.015f, 4.056f, IntervalBoundaryType.CLOSED));
+        super.testEnd(getTrajectory(100,2,10.0f), new TimeInterval(2.015f, 9.0f, IntervalBoundaryType.OPEN));
+        super.testEnd(getTrajectory(100,2,10.0f), new TimeInterval(2.015f, 9.0f, IntervalBoundaryType.CLOSED));
     }
 
     @Test
@@ -54,7 +55,7 @@ public class OrMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simple
         PredicateMonitor pred2 = new PredicateMonitor(ie2);
 
         OrMonitor monitor = new OrMonitor(pred1,pred2);
-        TimeInterval interval = new TimeInterval(0.0f, 10.0f, IntervalType.CLOSED);
+        TimeInterval interval = new TimeInterval(0.0f, 10.0f, IntervalBoundaryType.CLOSED);
 
         List<SimplePropertyRobustness> rob1 = pred1.evaluate(trajectory, interval);
         List<SimplePropertyRobustness> rob2 = pred2.evaluate(trajectory, interval);
@@ -113,7 +114,7 @@ public class OrMonitorTest extends AbstractEvaluableTest<ArrayTrajectory, Simple
         PredicateMonitor pred2 = new PredicateMonitor(ie2);
 
         OrMonitor monitor = new OrMonitor(pred1,pred2);
-        TimeInterval interval = new TimeInterval(0.0f, 10.0f, IntervalType.CLOSED);
+        TimeInterval interval = new TimeInterval(0.0f, 10.0f, IntervalBoundaryType.CLOSED);
 
         List<SimplePropertyRobustness> rob1 = pred1.evaluate(trajectory1, interval);
         List<SimplePropertyRobustness> rob2 = pred2.evaluate(trajectory2, interval);

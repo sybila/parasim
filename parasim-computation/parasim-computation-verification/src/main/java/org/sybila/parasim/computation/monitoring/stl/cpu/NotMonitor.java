@@ -1,5 +1,6 @@
 package org.sybila.parasim.computation.monitoring.stl.cpu;
 
+import org.sybila.parasim.model.verification.stl.TimeInterval;
 import java.util.List;
 import java.util.ArrayList;
 import org.sybila.parasim.computation.monitoring.PropertyRobustness;
@@ -9,7 +10,7 @@ import java.util.Iterator;
 /**
  * Monitors the negation of a subformula. The output is a negation of the signal.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Draûan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra≈æan</a>
  */
 public class NotMonitor<T extends Trajectory>
        implements Evaluable<T, SimplePropertyRobustness>
