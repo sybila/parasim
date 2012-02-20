@@ -35,6 +35,4 @@ public interface FormulaInterval
      * @return Type of interval.
      */
     IntervalBoundaryType getUpperBoundaryType();
-
-    boolean equals(FormulaInterval interval);
 }

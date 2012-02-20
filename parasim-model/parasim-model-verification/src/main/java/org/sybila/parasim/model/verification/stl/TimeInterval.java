@@ -4,6 +4,7 @@ package org.sybila.parasim.model.verification.stl;
  * Represents an time interval and enables basic operations with it's bounds.
  * 
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class TimeInterval implements FormulaInterval
 {
@@ -108,13 +109,25 @@ public class TimeInterval implements FormulaInterval
     }
 
     @Override
-    public boolean equals(FormulaInterval other)
-    {
-        return (this.lowerType == other.getLowerBoundaryType()) &&
-               (this.upperType == other.getUpperBoundaryType()) &&
-               (this.lower == other.getLowerBound()) &&
-               (this.upper == other.getUpperBound());
-
+    public boolean equals(Object obj) {
+    	if (obj == this) return true; //same instance (convenience)
+    	if (!(obj instanceof FormulaInterval)) return false; //must implement FormulaInterval
+    	
+    	FormulaInterval target = (FormulaInterval)obj;
+    	if (!getLowerBoundaryType().equals(target.getLowerBoundaryType())) return false;
+    	if (!getUpperBoundaryType().equals(target.getUpperBoundaryType())) return false;
+    	if (Float.floatToIntBits(getLowerBound()) != Float.floatToIntBits(target.getLowerBound())) return false;
+    	if (Float.floatToIntBits(getUpperBound()) != Float.floatToIntBits(target.getUpperBound())) return false;
+    	return true; //ruled out
     }
 
+    @Override
+    public int hashCode() {
+    	final int prime = 29;
+    	int result = getLowerBoundaryType().ordinal();
+    	result = result*prime+getUpperBoundaryType().ordinal();
+    	result = result*prime + Float.floatToIntBits(getUpperBound());
+    	result = result*prime+Float.floatToIntBits(getLowerBound());
+    	return result;
+    }
 }
