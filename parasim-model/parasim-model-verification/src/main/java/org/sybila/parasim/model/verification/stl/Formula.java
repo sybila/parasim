@@ -3,7 +3,8 @@ package org.sybila.parasim.model.verification.stl;
 /**
  * Represents an STL (Signal Temporal Logic) formula.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public interface Formula
 {
@@ -36,22 +37,10 @@ public interface Formula
      */
     float getTimeNeeded();
 
-    @Override
-    String toString();
-
     /**
      * Returns the type of the formula.
      * 
      * @return Type of formula.
      */
     FormulaType getType();
-
-    /**
-     * Enables the comparison of formulas. Two formulas are equal if they
-     * represent the same predicate or all their subformulas are equal.
-     *
-     * @param object Formula to compare to.
-     * @return True if formula is equal to this object, false otherwise.
-     */
-    boolean equals(Formula formula);
 }

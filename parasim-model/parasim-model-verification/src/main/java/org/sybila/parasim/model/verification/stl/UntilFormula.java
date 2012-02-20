@@ -4,6 +4,7 @@ package org.sybila.parasim.model.verification.stl;
  * Until operator. 
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class UntilFormula extends BinaryFormula implements TemporalFormula
 {
@@ -45,10 +46,19 @@ public class UntilFormula extends BinaryFormula implements TemporalFormula
     }
 
     @Override
-    public boolean equals(Formula formula)
+    public boolean equals(Object obj)
     {
-        if (!super.equals(formula)) return false;
-        return interval.equals(((TemporalFormula)formula).getInterval());
+        if (!super.equals(obj)) return false;
+        if (!(obj instanceof TemporalFormula)) return false;
+        return interval.equals(((TemporalFormula)obj).getInterval());
+    }
+    
+    @Override
+    public int hashCode() {
+    	final int prime = 41;
+    	int result = super.hashCode();
+    	result = result*prime+getInterval().hashCode();
+    	return result;
     }
 
 }

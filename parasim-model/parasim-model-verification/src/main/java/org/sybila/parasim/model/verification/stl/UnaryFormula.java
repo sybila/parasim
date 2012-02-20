@@ -4,8 +4,9 @@ package org.sybila.parasim.model.verification.stl;
  * A simple abstract class representing a general unary operator.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class UnaryFormula implements Formula
+public abstract class UnaryFormula extends AbstractFormula
 {
     private Formula subFormula;
 
@@ -25,9 +26,6 @@ public abstract class UnaryFormula implements Formula
     }
 
     @Override
-    public abstract String toString();
-
-    @Override
     public Formula getSubformula(int index)
     {
         if (index != 0)
@@ -35,13 +33,6 @@ public abstract class UnaryFormula implements Formula
             throw new IllegalArgumentException("Index must be 0.");
         }
         return subFormula;
-    }
-
-    @Override
-    public boolean equals(Formula formula)
-    {
-        if (formula.getType() != this.getType()) return false;
-        return subFormula.equals(formula.getSubformula(0));
     }
 
 }

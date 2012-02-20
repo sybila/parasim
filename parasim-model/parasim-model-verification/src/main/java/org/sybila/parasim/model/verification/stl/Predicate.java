@@ -5,9 +5,10 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * A general predicate evaluable in a Point of a Trajectory.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class Predicate implements Formula
+public abstract class Predicate extends AbstractFormula
 {
     /**
      * Returns the boolean validity of this predicate in given point.
@@ -51,8 +52,4 @@ public abstract class Predicate implements Formula
     {
         return FormulaType.PREDICATE;
     }
-
-    @Override
-    public abstract boolean equals(Formula formula);
-
 }

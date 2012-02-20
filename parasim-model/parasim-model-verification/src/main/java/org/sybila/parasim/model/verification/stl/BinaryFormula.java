@@ -4,8 +4,9 @@ package org.sybila.parasim.model.verification.stl;
  * A simple abstract class representing a general binary operator.
  * 
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class BinaryFormula implements Formula
+public abstract class BinaryFormula extends AbstractFormula
 {
     private Formula[] subFormulas;
 
@@ -29,9 +30,6 @@ public abstract class BinaryFormula implements Formula
     }
 
     @Override
-    public abstract String toString();
-
-    @Override
     public Formula getSubformula(int index)
     {
         if (index < 0 || index > 1)
@@ -40,13 +38,4 @@ public abstract class BinaryFormula implements Formula
         }
         return subFormulas[index];
     }
-
-    @Override
-    public boolean equals(Formula formula)
-    {
-        if (formula.getType() != this.getType()) return false;
-        return subFormulas[0].equals(formula.getSubformula(0)) &&
-               subFormulas[1].equals(formula.getSubformula(1));
-    }
-
 }
