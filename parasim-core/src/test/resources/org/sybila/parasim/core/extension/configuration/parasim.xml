@@ -1,0 +1,5 @@
+<parasim>
+    <extension qualifier="test">
+        <property name="test-property">test-value</property>
+    </extension>
+</parasim>

@@ -19,6 +19,7 @@
     <modules>
         <module>parasim-application</module>
         <module>parasim-computation</module>
+        <module>parasim-core</module>
         <module>parasim-model</module>
         <module>parasim-support</module>
         <module>parasim-visualization</module>
