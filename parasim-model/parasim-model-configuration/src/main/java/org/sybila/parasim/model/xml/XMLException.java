@@ -9,13 +9,12 @@ package org.sybila.parasim.model.xml;
  *
  */
 public class XMLException extends Exception {
-	
-	public XMLException(String message) {
-		super(message);
-	}
-	
-	public XMLException(String message, Throwable cause) {
-		super(message, cause);
-	}
-	
+
+    public XMLException(String message) {
+        super(message);
+    }
+
+    public XMLException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

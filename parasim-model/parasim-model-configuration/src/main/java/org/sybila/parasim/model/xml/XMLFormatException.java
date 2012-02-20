@@ -5,15 +5,15 @@ package org.sybila.parasim.model.xml;
  * 
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
- *	@see XMLRepresentableFactory
+ * @see XMLRepresentableFactory
  */
 public class XMLFormatException extends XMLException {
 
-	public XMLFormatException(String message) {
-		super(message);
-	}
-	
-	public XMLFormatException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public XMLFormatException(String message) {
+        super(message);
+    }
+
+    public XMLFormatException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

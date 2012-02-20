@@ -11,11 +11,11 @@ import org.w3c.dom.Element;
  *
  */
 public interface XMLRepresentable {
-	
-	/**
-	 * Transforms this instance into XML.
-	 * @param doc Root document of the new XML element.
-	 * @return XML element representing this instance.
-	 */
-	public Element toXML(Document doc);
+
+    /**
+     * Transforms this instance into XML.
+     * @param doc Root document of the new XML element.
+     * @return XML element representing this instance.
+     */
+    public Element toXML(Document doc);
 }

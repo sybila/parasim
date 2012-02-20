@@ -6,27 +6,22 @@ package org.sybila.parasim.model.verification.stl;
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class TimeInterval implements FormulaInterval
-{
-    private float lower,upper;
+public class TimeInterval implements FormulaInterval {
+
+    private float lower, upper;
     private IntervalBoundaryType lowerType, upperType;
-    
-    public TimeInterval(float lower, float upper, IntervalBoundaryType lowerType, IntervalBoundaryType upperType)
-    {
-        if (lower < 0)
-        {
+
+    public TimeInterval(float lower, float upper, IntervalBoundaryType lowerType, IntervalBoundaryType upperType) {
+        if (lower < 0) {
             throw new IllegalArgumentException("Parameter lower must be >= 0.");
         }
-        if (lower >= upper)
-        {
+        if (lower >= upper) {
             throw new IllegalArgumentException("Parameter upper must greater or equal to parameter lower.");
         }
-        if (lowerType == null)
-        {
+        if (lowerType == null) {
             throw new IllegalArgumentException("Parameter lowerType is null.");
         }
-        if (upperType == null)
-        {
+        if (upperType == null) {
             throw new IllegalArgumentException("Parameter upperType is null.");
         }
         this.lower = lower;
@@ -35,31 +30,27 @@ public class TimeInterval implements FormulaInterval
         this.upperType = upperType;
     }
 
-    public TimeInterval(float lower, float upper, IntervalBoundaryType type)
-    {
+    public TimeInterval(float lower, float upper, IntervalBoundaryType type) {
         this(lower, upper, type, type);
     }
 
     @Override
-    public float getLowerBound()
-    {
+    public float getLowerBound() {
         return lower;
     }
 
     @Override
     public float getUpperBound() {
         return upper;
-    }    
+    }
 
     @Override
-    public IntervalBoundaryType getLowerBoundaryType()
-    {
+    public IntervalBoundaryType getLowerBoundaryType() {
         return lowerType;
     }
 
     @Override
-    public IntervalBoundaryType getUpperBoundaryType()
-    {
+    public IntervalBoundaryType getUpperBoundaryType() {
         return upperType;
     }
 
@@ -70,14 +61,10 @@ public class TimeInterval implements FormulaInterval
      * @param a Value to compare with lower bound
      * @return Result of comparison <code>getLowerBound</code> OP <b>a</b>.
      */
-    public boolean largerThenLower(float a)
-    {
-        if (lowerType == IntervalBoundaryType.CLOSED)
-        {
+    public boolean largerThenLower(float a) {
+        if (lowerType == IntervalBoundaryType.CLOSED) {
             return lower <= a;
-        }
-        else
-        {
+        } else {
             return lower < a;
         }
     }
@@ -89,45 +76,51 @@ public class TimeInterval implements FormulaInterval
      * @param a Value to compare with upper bound
      * @return Result of comparison <b>a</b> OP <code>getUpperBound</code>.
      */
-    public boolean smallerThenUpper(float a)
-    {
-        if (upperType == IntervalBoundaryType.CLOSED)
-        {
+    public boolean smallerThenUpper(float a) {
+        if (upperType == IntervalBoundaryType.CLOSED) {
             return a <= upper;
-        }
-        else
-        {
+        } else {
             return a < upper;
         }
     }
 
     @Override
-    public String toString()
-    {
-        return (lowerType == IntervalBoundaryType.CLOSED ? "[" : "(") + lower + 
-                "," + upper + (upperType == IntervalBoundaryType.CLOSED ? "]" : ")");
+    public String toString() {
+        return (lowerType == IntervalBoundaryType.CLOSED ? "[" : "(") + lower
+                + "," + upper + (upperType == IntervalBoundaryType.CLOSED ? "]" : ")");
     }
 
     @Override
     public boolean equals(Object obj) {
-    	if (obj == this) return true; //same instance (convenience)
-    	if (!(obj instanceof FormulaInterval)) return false; //must implement FormulaInterval
-    	
-    	FormulaInterval target = (FormulaInterval)obj;
-    	if (!getLowerBoundaryType().equals(target.getLowerBoundaryType())) return false;
-    	if (!getUpperBoundaryType().equals(target.getUpperBoundaryType())) return false;
-    	if (Float.floatToIntBits(getLowerBound()) != Float.floatToIntBits(target.getLowerBound())) return false;
-    	if (Float.floatToIntBits(getUpperBound()) != Float.floatToIntBits(target.getUpperBound())) return false;
-    	return true; //ruled out
+        if (obj == this) {
+            return true; //same instance (convenience)
+        }
+        if (!(obj instanceof FormulaInterval)) {
+            return false; //must implement FormulaInterval
+        }
+        FormulaInterval target = (FormulaInterval) obj;
+        if (!getLowerBoundaryType().equals(target.getLowerBoundaryType())) {
+            return false;
+        }
+        if (!getUpperBoundaryType().equals(target.getUpperBoundaryType())) {
+            return false;
+        }
+        if (Float.floatToIntBits(getLowerBound()) != Float.floatToIntBits(target.getLowerBound())) {
+            return false;
+        }
+        if (Float.floatToIntBits(getUpperBound()) != Float.floatToIntBits(target.getUpperBound())) {
+            return false;
+        }
+        return true; //ruled out
     }
 
     @Override
     public int hashCode() {
-    	final int prime = 29;
-    	int result = getLowerBoundaryType().ordinal();
-    	result = result*prime+getUpperBoundaryType().ordinal();
-    	result = result*prime + Float.floatToIntBits(getUpperBound());
-    	result = result*prime+Float.floatToIntBits(getLowerBound());
-    	return result;
+        final int prime = 29;
+        int result = getLowerBoundaryType().ordinal();
+        result = result * prime + getUpperBoundaryType().ordinal();
+        result = result * prime + Float.floatToIntBits(getUpperBound());
+        result = result * prime + Float.floatToIntBits(getLowerBound());
+        return result;
     }
 }
