@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.sybila.parasim.model.verification.stl.AbstractFormula;
 import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.FormulaType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Tests equals() and hashCode() of {@link AbstractFormula}.
@@ -106,6 +108,11 @@ public class TestAbstractFormula {
         public int hashCode() {
             return num;
         }
+        
+        @Override
+        public Element toXML(Document doc) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private class SimpleUnaryFormula implements Formula {
@@ -133,6 +140,11 @@ public class TestAbstractFormula {
         @Override
         public FormulaType getType() {
             return TYPE;
+        }
+        
+        @Override
+        public Element toXML(Document doc) {
+            throw new UnsupportedOperationException();
         }
     }
 
