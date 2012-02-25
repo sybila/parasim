@@ -1,6 +1,7 @@
 package org.sybila.parasim.model.xml;
 
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 
 /**
  * Transforms XML elements into objects.
@@ -17,5 +18,5 @@ public interface XMLRepresentableFactory<T extends XMLRepresentable> {
      * @return New object created from <code>source</code>.
      * @throws XMLFormatException when input could not be parsed correctly.
      */
-    public T getObject(Element source) throws XMLFormatException;
+    public T getObject(Node source) throws XMLFormatException;
 }

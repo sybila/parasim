@@ -6,6 +6,7 @@ import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Used to store/load Formula from/to a file.
@@ -16,7 +17,7 @@ import org.w3c.dom.Element;
 public class FormulaResource extends FileXMLResource<Formula> {
     private class FormulaContainerFactory implements XMLRepresentableFactory<Formula> {
         @Override
-        public Formula getObject(Element source) throws XMLFormatException {
+        public Formula getObject(Node source) throws XMLFormatException {
             return new FormulaFactory().getObject((Element)source.getFirstChild());
         }
     }

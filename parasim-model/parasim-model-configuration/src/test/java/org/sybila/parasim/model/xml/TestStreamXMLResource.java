@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.testng.annotations.BeforeTest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class TestStreamXMLResource extends StreamXMLResource<Target> {
     private static final String RESULT = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
@@ -172,7 +173,7 @@ class Target implements XMLRepresentable {
 
 class TargetFactory implements XMLRepresentableFactory<Target> {
     @Override
-    public Target getObject(Element source) throws XMLFormatException {
+    public Target getObject(Node source) throws XMLFormatException {
         String text = source.getFirstChild().getNodeValue();
         return new Target(text);
     }

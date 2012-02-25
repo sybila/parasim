@@ -84,7 +84,7 @@ public class FormulaIntervalFactory implements XMLRepresentableFactory<FormulaIn
     }
     
     @Override
-    public FormulaInterval getObject(Element source)
+    public FormulaInterval getObject(Node source)
             throws XMLFormatException {
         NodeList bounds = source.getChildNodes();
         float upper = 0;
