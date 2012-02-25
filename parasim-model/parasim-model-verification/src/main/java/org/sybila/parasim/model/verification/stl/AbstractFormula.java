@@ -1,5 +1,8 @@
 package org.sybila.parasim.model.verification.stl;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 /**
  * 
  * Implements <code>equals</code> and <code>hashCode</code>.
@@ -11,6 +14,15 @@ package org.sybila.parasim.model.verification.stl;
  */
 public abstract class AbstractFormula implements Formula {
 
+    @Override
+    public Element toXML(Document doc) {
+        Element formula = getType().toXML(doc);
+        for (int index = 0; index < getArity(); index++) {
+            formula.appendChild(getSubformula(index).toXML(doc));
+        }
+        return formula;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

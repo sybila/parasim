@@ -1,5 +1,8 @@
 package org.sybila.parasim.model.verification.stl;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 /**
  * Until operator. 
  *
@@ -37,6 +40,13 @@ public class UntilFormula extends BinaryFormula implements TemporalFormula {
     @Override
     public FormulaType getType() {
         return FormulaType.UNTIL;
+    }
+    
+    @Override
+    public Element toXML(Document doc) {
+        Element target = super.toXML(doc);
+        target.insertBefore(getInterval().toXML(doc), target.getFirstChild());
+        return target;
     }
 
     @Override

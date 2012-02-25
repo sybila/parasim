@@ -1,5 +1,8 @@
 package org.sybila.parasim.model.verification.stl;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 /**
  * Globaly G operator.
  * 
@@ -35,7 +38,14 @@ public class GlobalyFormula extends UnaryFormula implements TemporalFormula {
 
     @Override
     public FormulaType getType() {
-        return FormulaType.GLOBALY;
+        return FormulaType.GLOBALLY;
+    }
+    
+    @Override
+    public Element toXML(Document doc) {
+        Element target = super.toXML(doc);
+        target.insertBefore(getInterval().toXML(doc), target.getFirstChild());
+        return target;
     }
 
     @Override

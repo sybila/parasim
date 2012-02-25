@@ -1,5 +1,8 @@
 package org.sybila.parasim.model.verification.stl;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 /**
  * Future or Finally F operator.
  *
@@ -35,6 +38,13 @@ public class FutureFormula extends UnaryFormula implements TemporalFormula {
 
     public FormulaType getType() {
         return FormulaType.FUTURE;
+    }
+    
+    @Override
+    public Element toXML(Document doc) {
+        Element target = super.toXML(doc);
+        target.insertBefore(getInterval().toXML(doc), target.getFirstChild());
+        return target;
     }
 
     @Override

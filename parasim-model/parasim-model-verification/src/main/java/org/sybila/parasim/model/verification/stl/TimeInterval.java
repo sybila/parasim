@@ -1,5 +1,8 @@
 package org.sybila.parasim.model.verification.stl;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 /**
  * Represents an time interval and enables basic operations with it's bounds.
  * 
@@ -7,7 +10,6 @@ package org.sybila.parasim.model.verification.stl;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class TimeInterval implements FormulaInterval {
-
     private float lower, upper;
     private IntervalBoundaryType lowerType, upperType;
 
@@ -84,6 +86,14 @@ public class TimeInterval implements FormulaInterval {
         }
     }
 
+    @Override
+    public Element toXML(Document doc) {
+        Element target = doc.createElement(FormulaIntervalFactory.INTERVAL_NAME);
+        target.appendChild(FormulaIntervalFactory.getLowerBound(doc, getLowerBound(), getLowerBoundaryType()));
+        target.appendChild(FormulaIntervalFactory.getUpperBound(doc, getUpperBound(), getUpperBoundaryType()));
+        return target;
+    }
+    
     @Override
     public String toString() {
         return (lowerType == IntervalBoundaryType.CLOSED ? "[" : "(") + lower

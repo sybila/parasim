@@ -1,12 +1,14 @@
 package org.sybila.parasim.model.verification.stl;
 
+import org.sybila.parasim.model.xml.XMLRepresentable;
+
 /**
  * Represents an STL (Signal Temporal Logic) formula.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public interface Formula
+public interface Formula extends XMLRepresentable
 {
     /**
      * Returns the arity of this formula, that is how many subformulas it consists of.

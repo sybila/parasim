@@ -1,11 +1,13 @@
 package org.sybila.parasim.model.verification.stl;
 
+import org.sybila.parasim.model.xml.XMLRepresentable;
+
 /**
  * Time interval used in Until, Future and Globaly operators of STL.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
  */
-public interface FormulaInterval
+public interface FormulaInterval extends XMLRepresentable
 {
 
     /**
