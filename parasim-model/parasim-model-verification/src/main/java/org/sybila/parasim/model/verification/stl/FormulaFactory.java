@@ -18,36 +18,79 @@ public class FormulaFactory implements XMLRepresentableFactory<Formula> {
 
     @Override
     public Formula getObject(Node source) throws XMLFormatException {
-        FormulaType type = FormulaType.valueOf(source.getNodeName()
-                .toUpperCase(Locale.ENGLISH));
+        FormulaType type;
+        try {
+            type = FormulaType.valueOf(source.getNodeName().toUpperCase(
+                    Locale.ENGLISH));
+        } catch (IllegalArgumentException iae) {
+            throw new XMLFormatException(
+                    "Invalid document: unknown name of element: "
+                            + source.getNodeName());
+        }
         NodeList children = source.getChildNodes();
-        if (type.equals(FormulaType.PREDICATE)) { // predicate
+
+        /* PREDICATE */
+        if (type.equals(FormulaType.PREDICATE)) {
             // FIXME
             return null;
+
+            /* NOT, OR, AND */
         } else if (type.equals(FormulaType.NOT) || type.equals(FormulaType.AND)
-                || type.equals(FormulaType.OR)) { // NOT, OR, AND
+                || type.equals(FormulaType.OR)) {
+            if (children.getLength() < 1) {
+                throw new XMLFormatException(
+                        "Too few subformulae: 0 (expected at least 1).");
+            }
             Formula phi = getObject(children.item(0));
-            if (type.equals(FormulaType.NOT)) { // NOT
+
+            /* NOT */
+            if (type.equals(FormulaType.NOT)) {
                 return new NotFormula(phi);
-            } else { // OR, AND
+
+                /* OR, AND */
+            } else {
+                if (children.getLength() < 2) {
+                    throw new XMLFormatException(
+                            "Too few subformulae: 1 (expected 2).");
+                }
                 Formula psi = getObject(children.item(1));
-                if (type.equals(FormulaType.AND)) { // AND
+
+                /* AND */
+                if (type.equals(FormulaType.AND)) {
                     return new AndFormula(phi, psi);
-                } else { // OR
+                    /* OR */
+                } else {
                     return new OrFormula(phi, psi);
                 }
             }
+
+            /* TEMPORAL FORMULAE */
         } else if (type.equals(FormulaType.FUTURE)
                 || type.equals(FormulaType.GLOBALLY)
-                || type.equals(FormulaType.UNTIL)) { // TEMPORAL FORMULAE
+                || type.equals(FormulaType.UNTIL)) {
+
+            if (children.getLength() < 2) {
+                throw new XMLFormatException("Too few children: "
+                        + children.getLength() + " (expected at least 2).");
+            }
+
             FormulaInterval interval = new FormulaIntervalFactory()
                     .getObject(children.item(0));
             Formula phi = getObject(children.item(1));
+
+            /* FUTURE */
             if (type.equals(FormulaType.FUTURE)) {
                 return new FutureFormula(phi, interval);
+
+                /* GLOBALLY */
             } else if (type.equals(FormulaType.GLOBALLY)) {
                 return new GlobalyFormula(phi, interval);
-            } else { // UNTIL
+
+                /* UNTIL */
+            } else {
+                if (children.getLength() < 3) {
+                    throw new XMLFormatException("Too few children: 2 (expected 3).");
+                }
                 Formula psi = getObject(children.item(2));
                 return new UntilFormula(phi, psi, interval);
             }
