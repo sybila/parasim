@@ -1,4 +1,4 @@
-package org.sybila.parasim.model.verification.xml;
+package org.sybila.parasim.model.verification.stl;
 
 import static org.junit.Assert.*;
 
