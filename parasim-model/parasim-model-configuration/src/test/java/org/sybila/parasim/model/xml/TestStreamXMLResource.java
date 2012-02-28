@@ -5,8 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 
+import java.net.URL;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -57,7 +57,7 @@ public class TestStreamXMLResource extends StreamXMLResource<Target> {
 
     @Override
     protected URL getXMLSchema() {
-        return getClass().getResource("testSchema.xsd");
+        return getClass().getClassLoader().getResource("org/sybila/parasim/model/xml/testSchema.xsd");
     }
 
     @Override

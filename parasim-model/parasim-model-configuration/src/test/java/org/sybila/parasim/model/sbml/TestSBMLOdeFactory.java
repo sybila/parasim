@@ -1,5 +1,6 @@
 package org.sybila.parasim.model.sbml;
 
+import java.net.URISyntaxException;
 import org.sybila.parasim.model.trajectory.Point;
 import java.util.Set;
 import java.io.File;
@@ -20,8 +21,8 @@ public class TestSBMLOdeFactory {
     private OdeSystem system;
     
     @BeforeMethod
-    public void setUp() throws IOException {
-        system = SBMLOdeSystemFactory.fromFile(new File("src/test/xml/biomodel.xml"));
+    public void setUp() throws IOException, URISyntaxException {
+        system = SBMLOdeSystemFactory.fromFile(new File(getClass().getClassLoader().getResource("org/sybila/parasim/model/sbml/biomodel.xml").toURI()));
     }
     
     @Test
