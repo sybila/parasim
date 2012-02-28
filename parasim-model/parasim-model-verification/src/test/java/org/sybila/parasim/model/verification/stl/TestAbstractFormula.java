@@ -1,13 +1,13 @@
 package org.sybila.parasim.model.verification.stl;
 
-import static org.junit.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.sybila.parasim.model.verification.stl.AbstractFormula;
-import org.sybila.parasim.model.verification.stl.Formula;
-import org.sybila.parasim.model.verification.stl.FormulaType;
+import org.testng.annotations.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -108,7 +108,7 @@ public class TestAbstractFormula {
         public int hashCode() {
             return num;
         }
-        
+
         @Override
         public Element toXML(Document doc) {
             throw new UnsupportedOperationException();
@@ -141,7 +141,7 @@ public class TestAbstractFormula {
         public FormulaType getType() {
             return TYPE;
         }
-        
+
         @Override
         public Element toXML(Document doc) {
             throw new UnsupportedOperationException();
@@ -163,8 +163,8 @@ public class TestAbstractFormula {
             for (FormulaType type : FormulaType.values()) {
                 Formula phi = new NaryFormula(null, type);
                 Formula psi = new NaryFormula(null, type);
-                assertEquals("0-ary formula of the same type should be equal",
-                        phi, psi);
+                assertEquals(phi, psi,
+                        "0-ary formula of the same type should be equal");
             }
         } catch (IllegalUseException iue) {
             fail(iue.getMessage() + " used to discern equality.");
@@ -176,9 +176,8 @@ public class TestAbstractFormula {
             for (FormulaType type : FormulaType.values()) {
                 Formula phi = new NaryFormula(formList, type);
                 Formula psi = new NaryFormula(formList, type);
-                assertEquals(
-                        "N-ary formulae of the same type and subformulae should be equal.",
-                        phi, psi);
+                assertEquals(phi, psi,
+                        "N-ary formulae of the same type and subformulae should be equal.");
             }
         } catch (IllegalUseException iue) {
             fail("Method of subformula other than equals used during execution.");
@@ -192,9 +191,10 @@ public class TestAbstractFormula {
             for (FormulaType type2 : FormulaType.values()) {
                 if (!type1.equals(type2)) {
                     assertFalse(
-                            "Formulae of different type should not be equal.",
-                            new NaryFormula(null, type1)
-                                    .equals(new NaryFormula(null, type2)));
+
+                    new NaryFormula(null, type1).equals(new NaryFormula(null,
+                            type2)),
+                            "Formulae of different type should not be equal.");
                 }
             }
         }
@@ -206,8 +206,9 @@ public class TestAbstractFormula {
         for (int i = 0; i < n; i++) {
             list[i] = new SimpleFormula((i ^ 5) % n + n);
             assertFalse(
-                    "Formulae with different subformulae should not be equal.",
-                    phi.equals(new NaryFormula(list, TYPE)));
+
+            phi.equals(new NaryFormula(list, TYPE)),
+                    "Formulae with different subformulae should not be equal.");
             list[i] = new SimpleFormula(i);
         }
     }
@@ -215,17 +216,17 @@ public class TestAbstractFormula {
     @Test
     public void testExtremeValues() {
         Formula target = new NaryFormula(null, TYPE);
-        assertFalse("equals(null) should return false", target.equals(null));
-        assertFalse("equals() invoked on a non-Formula should return false",
-                target.equals(new Object()));
+        assertFalse(target.equals(null), "equals(null) should return false");
+        assertFalse(target.equals(new Object()),
+                "equals() invoked on a non-Formula should return false");
 
         /* agains a non-Abstract Formula, but equal formula */
         Formula phi = new SimpleFormula(1);
         target = new NaryFormula(phi);
         Formula obj = new SimpleUnaryFormula(phi);
         assertTrue(
-                "AbstractFormula should be equal to general Formula with the same type and subformulae.",
-                target.equals(obj));
+                target.equals(obj),
+                "AbstractFormula should be equal to general Formula with the same type and subformulae.");
     }
 
     @Test
@@ -236,8 +237,9 @@ public class TestAbstractFormula {
                 Formula phi = new NaryFormula(null, type);
                 Formula psi = new NaryFormula(null, type);
                 assertEquals(
-                        "0-ary formulae of the same type should have the same hash code.",
-                        phi.hashCode(), psi.hashCode());
+
+                phi.hashCode(), psi.hashCode(),
+                        "0-ary formulae of the same type should have the same hash code.");
             }
 
             /* n-ary formulae */
@@ -247,8 +249,9 @@ public class TestAbstractFormula {
                 Formula phi = new NaryFormula(formList, type);
                 Formula psi = new NaryFormula(formList, type);
                 assertEquals(
-                        "n-ary formulae of the same type with the same subformulae should have the same hash code.",
-                        phi.hashCode(), psi.hashCode());
+                        phi.hashCode(),
+                        psi.hashCode(),
+                        "n-ary formulae of the same type with the same subformulae should have the same hash code.");
             }
         } catch (IllegalUseException iue) {
             fail(iue.getMessage() + " used to compute hash code.");

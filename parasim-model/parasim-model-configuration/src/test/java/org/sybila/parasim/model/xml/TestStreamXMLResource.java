@@ -123,7 +123,7 @@ public class TestStreamXMLResource extends StreamXMLResource<Target> {
         } catch (XMLException xmle) {
             xmle.printStackTrace();
         }
-        Assert.assertTrue(out.isClosed(),"Output stream was not closed");
+        Assert.assertTrue(out.isClosed(), "Output stream was not closed");
         Assert.assertEquals(RESULT, out.toString(), "XML was not stored correctly");
     }
     
@@ -137,7 +137,7 @@ public class TestStreamXMLResource extends StreamXMLResource<Target> {
         } catch (XMLException xmle) {
             xmle.printStackTrace();
         }
-        Assert.assertTrue(in.isClosed(),"Input stream was not closed.");
+        Assert.assertTrue(in.isClosed(), "Input stream was not closed.");
         Assert.assertEquals(new Target(), getRoot(), "XML was not loaded correctly");
     }
 
