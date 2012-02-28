@@ -1,5 +1,6 @@
 package org.sybila.parasim.model.verification.stl;
 
+import java.io.IOException;
 import java.net.URL;
 
 import org.sybila.parasim.model.xml.FileXMLResource;
@@ -29,6 +30,12 @@ public class FormulaResource extends FileXMLResource<Formula> {
 
     @Override
     protected URL getXMLSchema() {
+        try {
+            System.out.println(getClass().getClassLoader().getResources(""));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return getClass().getResource("stl_formula.xsd");
     }
 
