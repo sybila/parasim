@@ -7,9 +7,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,7 +91,7 @@ public class TestStreamXMLResource extends StreamXMLResource<Target> {
     public void testRootGetterReturnsTheSame() {
         Target testTarget = new Target();
         setRoot(testTarget);
-        Assert.assertSame("getRoot() does not return the object set by setRoot().", testTarget, getRoot());
+        Assert.assertSame(testTarget, getRoot(), "getRoot() does not return the object set by setRoot().");
     }
     
     /**
@@ -108,7 +108,7 @@ public class TestStreamXMLResource extends StreamXMLResource<Target> {
         } catch (XMLException xmle) {
             xmle.printStackTrace();
         } finally {
-            Assert.assertSame("getRoot() does not return the object set by setRoot() (aftre store() was invoked)", testTarget, getRoot());
+            Assert.assertSame(testTarget, getRoot(), "getRoot() does not return the object set by setRoot() (aftre store() was invoked)");
         }
     }
     
@@ -123,8 +123,8 @@ public class TestStreamXMLResource extends StreamXMLResource<Target> {
         } catch (XMLException xmle) {
             xmle.printStackTrace();
         }
-        Assert.assertTrue("Output stream was not closed", out.isClosed());
-        Assert.assertEquals("XML was not stored correctly", RESULT, out.toString());
+        Assert.assertTrue(out.isClosed(),"Output stream was not closed");
+        Assert.assertEquals(RESULT, out.toString(), "XML was not stored correctly");
     }
     
     /**
@@ -137,8 +137,8 @@ public class TestStreamXMLResource extends StreamXMLResource<Target> {
         } catch (XMLException xmle) {
             xmle.printStackTrace();
         }
-        Assert.assertTrue("Input stream was not closed.", in.isClosed());
-        Assert.assertEquals("XML was not loaded correctly", new Target(), getRoot());
+        Assert.assertTrue(in.isClosed(),"Input stream was not closed.");
+        Assert.assertEquals(new Target(), getRoot(), "XML was not loaded correctly");
     }
 
 }
