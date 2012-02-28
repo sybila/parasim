@@ -7,5 +7,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 public interface SpawnedDataBlock<T extends Trajectory> extends DataBlock<T> {
     
     TrajectoryNeighborhood<T> getNeighborhood();
+ 
+    DataBlock<Trajectory> getSecondaryTrajectories();
     
 }

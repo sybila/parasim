@@ -40,6 +40,7 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         // memory for spawned trajectories
         List<Trajectory> neighborTrajectories = new ArrayList<Trajectory>();
         List<Trajectory> spawnedTrajectories = new ArrayList<Trajectory>();
+        List<Trajectory> spawnedSecondaryTrajectories = new ArrayList<Trajectory>();
         // create neighbor trajectories which can have collision
         for (int dim=0; dim<trajectory.getDimension(); dim++) {
             if (dim == diffDimension) {
@@ -53,7 +54,7 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
                     newTrajectory = alreadySpawnedCollisionTrajectories.get(newTrajectory.getFirstPoint());
                 } else {
                     alreadySpawnedCollisionTrajectories.put(newTrajectory.getFirstPoint(), newTrajectory);
-                    spawnedTrajectories.add(newTrajectory);
+                    spawnedSecondaryTrajectories.add(newTrajectory);
                 }
                 neighborTrajectories.add(newTrajectory);
             }
@@ -64,9 +65,6 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         for(Trajectory t : spawnedTrajectories) {
             neighborhood.put(t, EmptyDataBlock.EMPTY_DATA_BLOCK);
         }
-        return new SpawnedResult(neighborhood);
+        return new SpawnedResult(neighborhood, spawnedSecondaryTrajectories);
     }
-
-    
-    
 }

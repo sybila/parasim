@@ -39,14 +39,14 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
     }    
 
     protected void testNumberOfTrajectoriesAfterInitialSpawn() {
-        DataBlock<Trajectory> spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
-        assertEquals(spawned.size(), (int) Math.pow(TO_SPAWN, DIMENSION));
+        SpawnedDataBlock<Trajectory> spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
+        assertEquals(spawned.size() + spawned.getSecondaryTrajectories().size(), (int) Math.pow(TO_SPAWN, DIMENSION));
     }
     
     protected void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn() {
         SpawnedDataBlock<Trajectory> spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
         for (Trajectory trajectory : spawned) {
-            assertTrue(spawned.getNeighborhood().getNeighbors(trajectory).size() <= 4, "The number of trajectories in neigborhood has to be lower or equal to dimension <" + DIMENSION +">, but it is <" + spawned.getNeighborhood().getNeighbors(trajectory).size() +">.");
+            assertTrue(spawned.getNeighborhood().getNeighbors(trajectory).size() <= 2 * DIMENSION, "The number of trajectories in neigborhood has to be lower or equal to 2 * dimension <" + DIMENSION +">, but it is <" + spawned.getNeighborhood().getNeighbors(trajectory).size() +">.");
         }
     }
     

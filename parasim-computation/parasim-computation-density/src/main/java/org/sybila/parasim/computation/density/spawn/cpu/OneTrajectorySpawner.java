@@ -26,7 +26,7 @@ public class OneTrajectorySpawner extends AbstractTrajectorySpawner {
                 }
             )
         );
-        return new SpawnedResult(neighborhood);
+        return new SpawnedResult(neighborhood, null);
     }
     
     /**
