@@ -1,6 +1,7 @@
 package org.sybila.parasim.core.extension.cdi.impl;
 
 import java.lang.reflect.Field;
+import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 
 /**
@@ -11,7 +12,9 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
     @Override
     public void injectFields(Object o) {
         for (Field field : o.getClass().getDeclaredFields()) {
-            injectField(o, field);
+            if (field.getAnnotation(Inject.class) != null) {
+               injectField(o, field);
+            }
         }
     }
 
