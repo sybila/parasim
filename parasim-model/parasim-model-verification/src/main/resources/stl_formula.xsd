@@ -12,7 +12,15 @@
 			<xs:element name="future" type="unary_temporal_formula"/>
 			<xs:element name="globally" type="unary_formula"/>
 			<xs:element name="until" type="binary_temporal_formula"/>
-			<xs:element name="predicate"/>
+			<xs:element name="predicate" type="predicate"/>
+		</xs:choice>
+	</xs:group>
+	
+	<xs:group name="operators">
+		<xs:choice>
+			<xs:element name="equals"/>
+			<xs:element name="greater"/>
+			<xs:element name="lesser"/>
 		</xs:choice>
 	</xs:group>
 	
@@ -62,6 +70,22 @@
 				<xs:attribute name="type" type="interval_boundary_type" use="required"/>
 			</xs:extension>
 		</xs:simpleContent>
+	</xs:complexType>
+	
+		<xs:complexType name="predicate_variable">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="multiplier" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="predicate">
+		<xs:sequence>
+			<xs:element name="variable" type="predicate_variable" minOccurs="1" maxOccurs="unbounded"/>
+			<xs:group ref="operators" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="value" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
 	</xs:complexType>
 	
 	<xs:element name="formula" type="unary_formula"/>
