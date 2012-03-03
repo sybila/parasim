@@ -75,7 +75,7 @@
 		<xs:complexType name="predicate_variable">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute name="multiplier" type="xs:string"/>
+				<xs:attribute name="multiplier" type="xs:decimal"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
