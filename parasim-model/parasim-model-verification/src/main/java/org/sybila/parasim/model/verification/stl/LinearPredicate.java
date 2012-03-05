@@ -110,6 +110,7 @@ public class LinearPredicate extends Predicate {
         terms = multipliers;
         this.constant = constant;
         mapping = variables;
+        this.type = type;
     }
 
     private boolean isValid(float leftSide, float rightSide) {
