@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+<and>
+<or>
+<future>
+<interval>
+<lower type="closed">7.8</lower>
+<upper type="open">10</upper>
+</interval>
+<predicate>
+<variable multiplier="3.87">x</variable>
+<variable multiplier="-2.54">y</variable>
+<equals />
+<value>15.28</value>
+</predicate>
+</future>
+<globally>
+<interval>
+<lower type="open">0.001</lower>
+<upper type="open">1.002</upper>
+</interval>
+<predicate>
+<variable multiplier="-2.159">y</variable>
+<variable multiplier="0.157">z</variable>
+<greater />
+<value>0.29</value>
+</predicate>
+</globally>
+</or>
+<not>
+<until>
+<interval>
+<lower type="closed">129.34</lower>
+<upper type="closed">301.22</upper>
+</interval>
+<predicate>
+<variable multiplier="-1.004">x</variable>
+<variable multiplier="0.081">z</variable>
+<lesser />
+<value>0.23</value>
+</predicate>
+<predicate>
+<variable multiplier="185.123">z</variable>
+<equals />
+<value>191.25</value>
+</predicate>
+</until>
+</not>
+</and>
+</formula>
