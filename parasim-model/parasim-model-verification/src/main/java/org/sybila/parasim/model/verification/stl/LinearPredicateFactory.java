@@ -10,6 +10,14 @@ import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Factory creating {@link LinearPredicate} objects from XML.
+ * 
+ * Needs mapping between variable names and indices.
+ * 
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ *
+ */
 public class LinearPredicateFactory implements
         XMLRepresentableFactory<LinearPredicate> {
     public static final String PREDICATE_NAME = "predicate";
@@ -19,6 +27,10 @@ public class LinearPredicateFactory implements
 
     private PointVariableMapping mapping;
 
+    /**
+     * Creates a new factory with designated variable name-to-index mapping.
+     * @param mapping Mapping between variable names and indices.
+     */
     public LinearPredicateFactory(PointVariableMapping mapping) {
         if (mapping == null) {
             throw new IllegalArgumentException(
