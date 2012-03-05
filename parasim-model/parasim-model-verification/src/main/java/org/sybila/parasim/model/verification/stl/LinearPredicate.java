@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  * 
  */
-public abstract class LinearPredicate extends Predicate {
+public class LinearPredicate extends Predicate {
     /** Type of relational operator in the predicate */
     public static enum Type implements XMLRepresentable {
         /** Left side is equal to the right side */
