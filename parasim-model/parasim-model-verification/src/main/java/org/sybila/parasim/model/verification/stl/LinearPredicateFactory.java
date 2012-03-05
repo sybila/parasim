@@ -41,26 +41,30 @@ public class LinearPredicateFactory implements
         for (int index = 0; index < children.getLength(); index++) {
             Node child = children.item(index);
             String name = child.getNodeName();
-            
+
             /* variable and multiplier */
             if (name.equals(VARIABLE_NAME)) {
                 String varName = child.getFirstChild().getNodeValue();
                 Float multiplier;
                 try {
-                    multiplier = new Float(child.getAttributes().getNamedItem(MULTIPLIER_ATTRIBUTE).getNodeValue());
+                    multiplier = new Float(child.getAttributes()
+                            .getNamedItem(MULTIPLIER_ATTRIBUTE).getNodeValue());
                 } catch (NumberFormatException nfe) {
                     throw new XMLFormatException("Illegible number.", nfe);
                 }
-                
+
                 Integer var = mapping.getKey(varName);
                 if (var == null) {
-                    throw new XMLFormatException("Variable `" + varName + "' is not a part of the model.");
+                    throw new XMLFormatException("Variable `" + varName
+                            + "' is not a part of the model.");
                 }
                 if (multipliers.get(var) != null) {
-                    throw new XMLFormatException("Two occurences of a variable of the same name (" + varName + ").");
+                    throw new XMLFormatException(
+                            "Two occurences of a variable of the same name ("
+                                    + varName + ").");
                 }
                 multipliers.put(var, multiplier);
-                
+
                 /* value */
             } else if (name.equals(VALUE_NAME)) {
                 if (value == null) {
@@ -71,36 +75,43 @@ public class LinearPredicateFactory implements
                         throw new XMLFormatException("Illegible number.", nfe);
                     }
                 } else {
-                    throw new XMLFormatException("Mulitple value nodes encountered. Expected only one.");
+                    throw new XMLFormatException(
+                            "Mulitple value nodes encountered. Expected only one.");
                 }
             } else {
-                
+
                 /* type */
-                String typeString = child.getNodeName().toUpperCase(Locale.ENGLISH);
+                String typeString = child.getNodeName().toUpperCase(
+                        Locale.ENGLISH);
                 try {
-                    LinearPredicate.Type childType = LinearPredicate.Type.valueOf(typeString);
+                    LinearPredicate.Type childType = LinearPredicate.Type
+                            .valueOf(typeString);
                     if (type != null) {
-                        throw new XMLFormatException("Two occurences of predicate type.");
+                        throw new XMLFormatException(
+                                "Two occurences of predicate type.");
                     }
                     type = childType;
                 } catch (IllegalArgumentException iae) {
-                    throw new XMLFormatException("Unknown element: " + child.getNodeName());
+                    throw new XMLFormatException("Unknown element: "
+                            + child.getNodeName());
                 }
             }
         }
-        
+
         /* got everything? */
         if (value == null) {
-            throw new XMLFormatException("Predicate has to contain a right-side value.");
+            throw new XMLFormatException(
+                    "Predicate has to contain a right-side value.");
         }
         if (multipliers.isEmpty()) {
-            throw new XMLFormatException("Predicate has to contain at least one variable.");
+            throw new XMLFormatException(
+                    "Predicate has to contain at least one variable.");
         }
         if (type == null) {
-            throw new XMLFormatException("Predicate has to be of a defined type.");
+            throw new XMLFormatException(
+                    "Predicate has to be of a defined type.");
         }
-        
-        return new LinearPredicate((Float[])multipliers.values().toArray(), value,
-                type, mapping);
+
+        return new LinearPredicate(multipliers, value, type, mapping);
     }
 }

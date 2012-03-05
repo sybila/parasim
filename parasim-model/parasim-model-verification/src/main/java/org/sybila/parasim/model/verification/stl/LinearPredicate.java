@@ -1,7 +1,7 @@
 package org.sybila.parasim.model.verification.stl;
 
-import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.variables.PointVariableMapping;
@@ -76,26 +76,30 @@ public class LinearPredicate extends Predicate {
         }
     }
 
-    private float[] terms;
+    private Map<Integer, Float> terms;
     private float constant;
     private PointVariableMapping mapping;
     private Type type;
 
     private float getLeftSideValue(Point p) {
-        if (p.getDimension() < terms.length) {
-            throw new IllegalArgumentException(
-                    "Point has too few values for the term to be evaluated.");
-        }
         float value = 0;
-        for (int index = 0; index < p.getDimension(); index++) {
-            value += terms[index] * p.getValue(index);
+        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
+            if (term.getKey() >= p.getDimension()) {
+                throw new IllegalArgumentException(
+                        "The point has too few dimensions to be evaluated.");
+            }
+            value += p.getValue(term.getKey()) * term.getValue();
         }
         return value;
     }
 
-    public LinearPredicate(Float[] floats, float constant, Type type,
-            PointVariableMapping variables) {
-        floats = Arrays.copyOf(floats, floats.length);
+    public LinearPredicate(Map<Integer, Float> multipliers, float constant,
+            Type type, PointVariableMapping variables) {
+        if (multipliers.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "There has to be at least one variable in the predicate.");
+        }
+        terms = multipliers;
         this.constant = constant;
         mapping = variables;
     }
@@ -125,47 +129,40 @@ public class LinearPredicate extends Predicate {
 
     @Override
     public Element toXML(Document doc) {
-        Element predicate = doc.createElement(LinearPredicateFactory.PREDICATE_NAME);
+        Element predicate = doc
+                .createElement(LinearPredicateFactory.PREDICATE_NAME);
         /* Linear combination */
-        for (int index = 0; index < terms.length; index++) {
-            Element var = doc.createElement(LinearPredicateFactory.VARIABLE_NAME);
-            var.appendChild(doc.createTextNode(mapping.getName(new Integer(index))));
-            var.setAttribute(LinearPredicateFactory.MULTIPLIER_ATTRIBUTE, Float.toString(terms[index]));
+        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
+            Element var = doc
+                    .createElement(LinearPredicateFactory.VARIABLE_NAME);
+            var.appendChild(doc.createTextNode(mapping.getName(term.getKey())));
+            var.setAttribute(LinearPredicateFactory.MULTIPLIER_ATTRIBUTE, term
+                    .getValue().toString());
             predicate.appendChild(var);
         }
-        
+
         predicate.appendChild(type.toXML(doc));
-        
+
         Element val = doc.createElement(LinearPredicateFactory.VALUE_NAME);
         val.appendChild(doc.createTextNode(Float.toString(constant)));
         predicate.appendChild(val);
-        
+
         return predicate;
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        int index = 0;
-        while ((index < terms.length) && (terms[index] != 0)) {
-            index++;
-        }
-        if (index == terms.length) {
-            result.append("0");
-        } else {
-            result.append(terms[index]);
-            result.append("*");
-            result.append(mapping.getName(new Integer(index)));
-            while (index < terms.length) {
-                if (terms[index] != 0) {
-                    if (terms[index] > 0) {
-                        result.append("+");
-                    }
-                    result.append(terms[index]);
-                    result.append("*");
-                    result.append(mapping.getName(new Integer(index)));
-                }
+        boolean first = true;
+        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
+            if (first) {
+                first = false;
+            } else if (term.getValue() > 0) {
+                result.append("+");
             }
+            result.append(term.getValue());
+            result.append("*");
+            result.append(mapping.getName(term.getKey()));
         }
         result.append(type.toString());
         result.append(constant);
@@ -181,7 +178,7 @@ public class LinearPredicate extends Predicate {
         LinearPredicate target = (LinearPredicate) obj;
         if (constant != target.constant)
             return false;
-        if (!Arrays.equals(terms, target.terms))
+        if (terms.equals(target.terms))
             return false;
         if (!mapping.equals(target.mapping))
             return false;
@@ -195,9 +192,7 @@ public class LinearPredicate extends Predicate {
         final int prime = 29;
         int result = mapping.hashCode();
         result = prime * result + Float.floatToIntBits(constant);
-        for (int index = 0; index < terms.length; index++) {
-            result = prime * result + Float.floatToIntBits(terms[index]);
-        }
+        result = prime * result + terms.hashCode();
         result = prime * result + type.hashCode();
         return result;
     }
