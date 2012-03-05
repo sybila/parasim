@@ -2,6 +2,7 @@ package org.sybila.parasim.model.verification.stl;
 
 import java.util.Locale;
 
+import org.sybila.parasim.model.variables.PointVariableMapping;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.Element;
@@ -11,11 +12,22 @@ import org.w3c.dom.NodeList;
 /**
  * Factory creating {@link Formula} objects from XML.
  * 
+ * In order to load predicates, it contains mapping between variable names and indices.
+ * 
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  * 
  */
 public class FormulaFactory implements XMLRepresentableFactory<Formula> {
+    private PointVariableMapping mapping;
 
+    /**
+     * Sets contained variable name-to-index mapping.
+     * @param mapping Mapping between model variable names and indices. 
+     */
+    public FormulaFactory(PointVariableMapping mapping) {
+        this.mapping = mapping;
+    }
+    
     @Override
     public Formula getObject(Node source) throws XMLFormatException {
         FormulaType type;
@@ -31,8 +43,7 @@ public class FormulaFactory implements XMLRepresentableFactory<Formula> {
 
         /* PREDICATE */
         if (type.equals(FormulaType.PREDICATE)) {
-            // FIXME
-            return null;
+            return new LinearPredicateFactory(mapping).getObject(children.item(0));
 
             /* NOT, OR, AND */
         } else if (type.equals(FormulaType.NOT) || type.equals(FormulaType.AND)
