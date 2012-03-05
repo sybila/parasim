@@ -71,8 +71,7 @@ public class LinearPredicate extends Predicate {
 
         @Override
         public Element toXML(Document doc) {
-            return doc.createElement(this.toString()
-                    .toLowerCase(Locale.ENGLISH));
+            return doc.createElement(name().toLowerCase(Locale.ENGLISH));
         }
     }
 
@@ -96,10 +95,15 @@ public class LinearPredicate extends Predicate {
     /**
      * Creates a new linear predicate.
      * 
-     * @param multipliers List of left-side multipliers, each with associated variable index.
-     * @param constant Right-side value.
-     * @param type Type of relational operator.
-     * @param variables Mapping between variable and indices.
+     * @param multipliers
+     *            List of left-side multipliers, each with associated variable
+     *            index.
+     * @param constant
+     *            Right-side value.
+     * @param type
+     *            Type of relational operator.
+     * @param variables
+     *            Mapping between variable and indices.
      */
     public LinearPredicate(Map<Integer, Float> multipliers, float constant,
             Type type, PointVariableMapping variables) {
