@@ -1,6 +1,5 @@
 package org.sybila.parasim.computation.density;
 
-import org.sybila.parasim.model.distance.Distance;
 import org.sybila.parasim.model.distance.DistanceMetric;
 import org.sybila.parasim.model.trajectory.Point;
 
@@ -10,8 +9,8 @@ import org.sybila.parasim.model.trajectory.Point;
  * 
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface PointDistanceMetric extends DistanceMetric<Point, Distance>{
-    
+public interface PointDistanceMetric extends DistanceMetric<Point, LimitedDistance> {
+
     /**
      * Returns distance between two given points. The method should hold
      * that distance(A, B) == distance(B, A) and distance(A, A) = 0.
@@ -20,8 +19,8 @@ public interface PointDistanceMetric extends DistanceMetric<Point, Distance>{
      * @param second
      * @return distance between two given points
      */
-    Distance distance(float[] first, float[] second);
-    
+    LimitedDistance distance(float[] first, float[] second);
+
     /**
      * Returns distance between two given points. The method should hold
      * that distance(A, B) == distance(B, A) and distance(A, A) = 0.
@@ -31,6 +30,5 @@ public interface PointDistanceMetric extends DistanceMetric<Point, Distance>{
      * @return distance between two given points
      */
     @Override
-    Distance distance(Point first, Point second);
-    
+    LimitedDistance distance(Point first, Point second);
 }
