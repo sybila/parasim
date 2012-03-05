@@ -10,7 +10,7 @@
 <predicate>
 <variable multiplier="3.87">x</variable>
 <variable multiplier="-2.54">y</variable>
-<equals />
+<equals/>
 <value>15.28</value>
 </predicate>
 </future>
@@ -22,7 +22,7 @@
 <predicate>
 <variable multiplier="-2.159">y</variable>
 <variable multiplier="0.157">z</variable>
-<greater />
+<greater/>
 <value>0.29</value>
 </predicate>
 </globally>
@@ -36,12 +36,12 @@
 <predicate>
 <variable multiplier="-1.004">x</variable>
 <variable multiplier="0.081">z</variable>
-<lesser />
+<lesser/>
 <value>0.23</value>
 </predicate>
 <predicate>
 <variable multiplier="185.123">z</variable>
-<equals />
+<equals/>
 <value>191.25</value>
 </predicate>
 </until>
