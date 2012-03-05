@@ -84,7 +84,7 @@
 		<xs:sequence>
 			<xs:element name="variable" type="predicate_variable" minOccurs="1" maxOccurs="unbounded"/>
 			<xs:group ref="operators" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="value" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="value" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	

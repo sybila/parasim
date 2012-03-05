@@ -93,9 +93,9 @@ public class LinearPredicate extends Predicate {
         return value;
     }
 
-    public LinearPredicate(float[] terms, float constant, Type type,
+    public LinearPredicate(Float[] floats, float constant, Type type,
             PointVariableMapping variables) {
-        terms = Arrays.copyOf(terms, terms.length);
+        floats = Arrays.copyOf(floats, floats.length);
         this.constant = constant;
         mapping = variables;
     }
