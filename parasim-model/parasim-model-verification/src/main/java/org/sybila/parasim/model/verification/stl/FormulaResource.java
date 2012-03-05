@@ -7,7 +7,6 @@ import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -22,7 +21,7 @@ public class FormulaResource extends FileXMLResource<Formula> {
     private class FormulaContainerFactory implements XMLRepresentableFactory<Formula> {
         @Override
         public Formula getObject(Node source) throws XMLFormatException {
-            return new FormulaFactory(mapping).getObject((Element)source.getFirstChild());
+            return new FormulaFactory(mapping).getObject(source.getFirstChild());
         }
     }
     
