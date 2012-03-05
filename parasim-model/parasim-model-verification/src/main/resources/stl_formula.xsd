@@ -10,7 +10,7 @@
 			<xs:element name="or" type="binary_formula"/>
 			<xs:element name="and" type="binary_formula"/>
 			<xs:element name="future" type="unary_temporal_formula"/>
-			<xs:element name="globally" type="unary_formula"/>
+			<xs:element name="globally" type="unary_temporal_formula"/>
 			<xs:element name="until" type="binary_temporal_formula"/>
 			<xs:element name="predicate" type="predicate"/>
 		</xs:choice>
