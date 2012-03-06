@@ -2,6 +2,7 @@ package org.sybila.parasim.core;
 
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.context.ApplicationContext;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -24,7 +25,7 @@ public class TestExtensionImpl {
     
     @BeforeMethod
     public void prepareExtension() {
-        extension = new ExtensionImpl(new TestedExtension());
+        extension = new ExtensionImpl(new TestedExtension(), new ApplicationContext());
     }
     
     @Test

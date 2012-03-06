@@ -8,24 +8,32 @@ import java.util.Collection;
 import java.util.Collections;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.context.Context;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ExtensionImpl implements Extension {
     
+    private Context context;
+    private Collection<ContextEventPoint> contextEventPoints;
     private Collection<EventPoint> eventPoints;
     private Object target;
     private Collection<InjectionPoint> injectionPoints;
     private Collection<ObserverMethod> observers;
     
-    public ExtensionImpl(Object target) {
+    public ExtensionImpl(Object target, Context context) {
         if (target == null) {
             throw new IllegalArgumentException("The parameter [target] is null.");
         }
+        if (context == null) {
+            throw new IllegalArgumentException("The parameter [context] is null.");
+        }
         
         this.target = target;
+        this.context = context;
         
+        this.contextEventPoints = new ArrayList<ContextEventPoint>();
         this.injectionPoints = new ArrayList<InjectionPoint>();
         this.eventPoints = new ArrayList<EventPoint>();
         this.observers = new ArrayList<ObserverMethod>();
@@ -37,6 +45,8 @@ public class ExtensionImpl implements Extension {
                     injectionPoints.add(new InjectionPointImpl(target, field));
                 } else if (field.getType() == Event.class) {
                     eventPoints.add(new EventPointImpl(target, field));
+                } else if (field.getType() == ContextEvent.class) {
+                    contextEventPoints.add(new ContextEventPointImpl(target, field));
                 }
             }
         }
@@ -46,11 +56,19 @@ public class ExtensionImpl implements Extension {
                 continue;
             }
             if (isAnnotationPresent(Observes.class, method.getParameterAnnotations()[0])) {
-                observers.add(new ObserverMethodImpl(target, method));
+                observers.add(new ObserverMethodImpl(target, context, method));
             }
         }
     }
 
+    public Context getContext() {
+        return context;
+    }
+    
+    public Collection<ContextEventPoint> getContextEventPoints() {
+        return Collections.unmodifiableCollection(contextEventPoints);
+    }
+    
     public Collection<EventPoint> getEventPoints() {
         return Collections.unmodifiableCollection(eventPoints);
     }

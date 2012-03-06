@@ -1,11 +1,5 @@
 package org.sybila.parasim.core.extension.loader;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.context.ApplicationContext;
-import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.AbstractExtensionTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -35,4 +29,3 @@ public class TestExtensionLoaderExtension extends AbstractExtensionTest {
     }
     
 }
-
