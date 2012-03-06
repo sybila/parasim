@@ -43,7 +43,7 @@ public class LinearPredicateFactory implements
     public LinearPredicate getObject(Node source) throws XMLFormatException {
         if (!source.getNodeName().equals(PREDICATE_NAME)) {
             throw new XMLFormatException(
-                    "Predicate should have <predicate> node as a root.");
+                    "Predicate should have <predicate> node as a root (found `" + source.getNodeName() + "').");
         }
         Float value = null;
         Map<Integer, Float> multipliers = new HashMap<Integer, Float>();

@@ -43,7 +43,7 @@ public class FormulaFactory implements XMLRepresentableFactory<Formula> {
 
         /* PREDICATE */
         if (type.equals(FormulaType.PREDICATE)) {
-            return new LinearPredicateFactory(mapping).getObject(children.item(0));
+            return new LinearPredicateFactory(mapping).getObject(source);
 
             /* NOT, OR, AND */
         } else if (type.equals(FormulaType.NOT) || type.equals(FormulaType.AND)
