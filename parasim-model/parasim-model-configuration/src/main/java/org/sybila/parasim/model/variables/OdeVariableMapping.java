@@ -42,5 +42,20 @@ public class OdeVariableMapping implements PointVariableMapping {
     public Integer getKey(String variableName) {
         return mapping.getKey(variableName);
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof OdeVariableMapping)) return false;
+        OdeVariableMapping target = (OdeVariableMapping) obj;
+        if (dimension != target.dimension) return false;
+        return mapping.equals(target.mapping);
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 53;
+        return prime*mapping.hashCode()+dimension;
+    }
 
 }
