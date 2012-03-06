@@ -2,6 +2,7 @@ package org.sybila.parasim.model.variables;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Simple implementation of {@link VariableMapping} using two maps. Implements
@@ -88,6 +89,10 @@ public class DoubleMap<K> implements VariableMapping<K> {
     public void clear() {
         keyMap.clear();
         nameMap.clear();
+    }
+    
+    public Set<Map.Entry<K, String>> entrySet() {
+        return keyMap.entrySet();
     }
 
     @Override
