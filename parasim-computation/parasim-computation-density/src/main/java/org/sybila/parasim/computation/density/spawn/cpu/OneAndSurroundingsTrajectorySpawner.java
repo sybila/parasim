@@ -17,7 +17,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawner {
 
-    private Map<Point, Trajectory> alreadySpawnedCollisionTrajectories;
+    private Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<Point, Trajectory>();
     
     @Override
     protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {

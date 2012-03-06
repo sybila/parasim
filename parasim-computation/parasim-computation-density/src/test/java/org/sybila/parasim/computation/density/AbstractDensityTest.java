@@ -40,7 +40,7 @@ public abstract class AbstractDensityTest {
             public PointDistanceMetric getDistanceMetric() {
                 return new PointDistanceMetric() {
 
-                    public Distance distance(float[] first, float[] second) {
+                    public LimitedDistance distance(float[] first, float[] second) {
                         final float[] distance = new float[first.length];
                         float maxDistance = 0;
                         for (int dim = 0; dim < first.length; dim++) {
@@ -70,7 +70,7 @@ public abstract class AbstractDensityTest {
                         };
                     }
 
-                    public Distance distance(Point first, Point second) {
+                    public LimitedDistance distance(Point first, Point second) {
                         return distance(first.toArray(), second.toArray());
                     }
                 };

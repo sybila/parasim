@@ -43,6 +43,24 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         assertEquals(spawned.size() + spawned.getSecondaryTrajectories().size(), (int) Math.pow(TO_SPAWN, DIMENSION));
     }
     
+    protected void testDistanceOfTrajectoriesAfterInitialSpawn()     {
+        SpawnedDataBlock<Trajectory> spawned = initialSpawn(createOrthogonalSpace((TO_SPAWN - 1) * 4.0f, DIMENSION), TO_SPAWN);
+        for (Trajectory trajectory: spawned) {
+            for (Trajectory neighbor: spawned.getNeighborhood().getNeighbors(trajectory)) {
+                boolean distanceMatches = false;
+                for(int dim=0; dim<trajectory.getDimension(); dim++) {
+                    if ((float) Math.abs(trajectory.getFirstPoint().getValue(dim) - neighbor.getFirstPoint().getValue(dim)) == (dim + 1) * 4.0f) {
+                        distanceMatches = true;
+                    }
+                }
+                assertTrue(
+                    distanceMatches,
+                    "Distance of seed " + trajectory.getFirstPoint() + " and its neighbor " + neighbor.getFirstPoint() + " doesn't match."
+                );
+            }
+        }
+    }
+    
     protected void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn() {
         SpawnedDataBlock<Trajectory> spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
         for (Trajectory trajectory : spawned) {
@@ -50,7 +68,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         }
     }
     
-    private OrthogonalSpace createOrthogonalSpace(float base, int dimension) {
+    protected OrthogonalSpace createOrthogonalSpace(float base, int dimension) {
         float[] minBounds = new float[dimension];
         float[] maxBounds = new float[dimension];
         for (int dim=0; dim<dimension; dim++) {
@@ -63,7 +81,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         );
     }
     
-    private SpawnedDataBlock<Trajectory> initialSpawn(OrthogonalSpace space, int numSpawn) {
+    protected SpawnedDataBlock<Trajectory> initialSpawn(OrthogonalSpace space, int numSpawn) {
         TrajectorySpawner spawner = createTrajectorySpawner();
         int[] toSpawn = new int[space.getDimension()];
         for (int dim=0; dim<space.getDimension(); dim++) {

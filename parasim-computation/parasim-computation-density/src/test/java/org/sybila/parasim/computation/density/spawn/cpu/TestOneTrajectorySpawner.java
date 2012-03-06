@@ -36,6 +36,12 @@ public class TestOneTrajectorySpawner extends AbstractTrajectorySpawnerTest {
     
     @Test
     @Override
+    public void testDistanceOfTrajectoriesAfterInitialSpawn() {
+        super.testDistanceOfTrajectoriesAfterInitialSpawn();
+    }
+    
+    @Test
+    @Override
     public void testNumberOfTrajectoriesAfterInitialSpawn() {
         super.testNumberOfTrajectoriesAfterInitialSpawn();
     }
