@@ -19,9 +19,15 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -122,6 +128,22 @@ public abstract class StreamXMLResource<T extends XMLRepresentable> implements X
         }
         Document input = (Document) result.getNode();
         input.normalize();
+        
+        /* remove empty text nodes 
+         * http://stackoverflow.com/questions/978810/how-to-strip-whitespace-only-text-nodes-from-a-dom-before-serialization */
+        
+        try {
+            XPathFactory xPathFact = XPathFactory.newInstance();
+            XPathExpression xPathExpr = xPathFact.newXPath().compile("//text()[normalize-space(.) = '']");
+            NodeList emptyNodes = (NodeList)xPathExpr.evaluate(input, XPathConstants.NODESET);
+            for (int index = 0; index < emptyNodes.getLength(); index++) {
+                Node empty = emptyNodes.item(index);
+                empty.getParentNode().removeChild(empty);
+            }
+        } catch (XPathExpressionException xpee) {
+            throw new XMLException("Could not remove empty nodes.", xpee);
+        }
+        
 
         /* get target */
         setRoot(getFactory().getObject(input.getDocumentElement()));
