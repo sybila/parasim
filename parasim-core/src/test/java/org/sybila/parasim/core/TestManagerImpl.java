@@ -4,8 +4,6 @@ import org.sybila.parasim.core.annotations.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.context.ApplicationContext;
-import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.event.ManagerStopping;
@@ -30,12 +28,10 @@ public class TestManagerImpl {
     }
     
     @Test
-    public void testLifeCycle() {
-        Collection<Class<? extends Context>> contexts = new ArrayList<Class<? extends Context>>();
-        contexts.add(ApplicationContext.class);
+    public void testLifeCycle() throws Exception {
         Collection<Class<?>> extensions = new ArrayList<Class<?>>();
         extensions.add(TestedObservingExtension.class);
-        Manager manager = new ManagerImpl(contexts, extensions);
+        Manager manager = ManagerImpl.create(extensions);
         manager.start();
         manager.shutdown();
         assertNotEquals((long) 0, managerProcessing, "The manager processing time is <" + managerProcessing + ">.");

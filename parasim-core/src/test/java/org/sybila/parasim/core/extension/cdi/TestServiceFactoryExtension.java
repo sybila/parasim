@@ -20,7 +20,7 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
     public void testServiceFactory() {
         getManager().start();
         assertNotNull(serviceFactory);
-        serviceFactory.injectFields(this);
+        serviceFactory.injectFields(this, getManager().getRootContext());
         assertEquals(toInject, "HELLO");
     }
     

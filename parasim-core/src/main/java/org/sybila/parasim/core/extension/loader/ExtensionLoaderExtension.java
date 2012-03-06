@@ -51,10 +51,6 @@ public class ExtensionLoaderExtension {
     private ExtensionBuilder createExtensionBuilder(final ManagerProcessing event) {
         return new ExtensionBuilder() {
 
-            public void context(Class<? extends Context> context) {
-                event.context(context);
-            }
-
             public void extension(Class<?> extension) {
                 event.extension(extension);
             }

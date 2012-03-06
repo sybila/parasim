@@ -10,9 +10,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.sybila.parasim.core.annotations.ApplicationScope;
+import org.sybila.parasim.core.context.ApplicationContext;
 import org.sybila.parasim.core.context.Context;
+import org.sybila.parasim.core.event.After;
+import org.sybila.parasim.core.event.Before;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.event.ManagerStopping;
@@ -22,117 +26,162 @@ import org.sybila.parasim.core.event.ManagerStopping;
  */
 public final class ManagerImpl implements Manager {
 
-    private Map<Class<? extends Annotation>, Context> contexts;
-    private Collection<Extension> extensions;
     private static final Logger LOGGER = Logger.getLogger(ManagerImpl.class);
+    private ApplicationContext applicationContext;
+    private Map<Class<? extends Annotation>, Collection<Class<?>>> extensionsByScope;
+    private Map<Context, Collection<Extension>> extensionsByContext = new HashMap<Context, Collection<Extension>>();
     
-    public ManagerImpl(Collection<Class<? extends Context>> contextClasses, final Collection<Class<?>> extensionClasses) {
+    private ManagerImpl(final Collection<Class<?>> extensionClasses) {
         if (extensionClasses == null) {
-            throw new IllegalArgumentException("The paramater [extensionClasses] is null.");
+            throw new IllegalArgumentException("The parameter [extensionClasses] is null.");
         }
-        if (contextClasses == null) {
-            throw new IllegalArgumentException("The paramater [contextClasses] is null.");
-        }
-        try {
-            extensions = createExtensions(extensionClasses);
-            contexts = createContexts(contextClasses);
-            if (!contexts.containsKey(ApplicationScope.class)) {
-                throw new IllegalStateException("There is no context for application scope.");
-            }
-            fireProcessing();
-            contexts.get(ApplicationScope.class).activate();
-            for (Context context: contexts.values()) {
-                contexts.get(ApplicationScope.class).getStorage().add(
-                    (Class<Context>) context.getClass(),
-                    context
-                );
-            }
-            for(Extension extension: extensions) {
-                inject(extension);
-            }
-        } catch (Exception ex) {
-            throw new IllegalStateException("The manager can't be created.", ex);
-        }
-        bind(Manager.class, ApplicationScope.class, this);
+        extensionsByScope = getScopedExtensions(extensionClasses);
     }
     
-    public void fire(Object event) {
+    public static Manager create(final Collection<Class<?>> extensionClasses) throws Exception {
+        // create manager
+        ManagerImpl manager = new ManagerImpl(extensionClasses);
+        // create application context and prepare its extensions
+        manager.applicationContext = new ApplicationContext();
+        manager.applicationContext.activate();
+        manager.extensionsByContext.put(
+            manager.applicationContext,
+            manager.createExtensions(manager.extensionsByScope.get(manager.applicationContext.getScope()), manager.applicationContext)
+        );
+        // fire manager processing
+        manager.fireProcessing(manager.applicationContext);
+        // fire application context created
+        manager.fire(Before.of(manager.applicationContext), manager.applicationContext);
+        // add manager as a service
+        manager.bind(Manager.class, manager.applicationContext, manager);
+        return manager;
+    }
+
+    public <T> void bind(final Class<T> type, Context context, T value) {
+        context.getStorage().add(type, value);
+        fire(value, context);
+    }    
+    
+    public Context getRootContext() {
+        return applicationContext;
+    }
+    
+    public void finalizeContext(Context context) {
+        if (!(context instanceof ApplicationContext)) {
+            fire(After.of(context), applicationContext);
+        }
+        fire(After.of(context), context);
+        context.destroy();
+        extensionsByContext.get(context).clear();
+        extensionsByContext.remove(context);
+    }
+
+    public void fire(Object event, Context context) {
         if (event == null) {
             throw new IllegalArgumentException("The parameter [event] is null.");
         }
-        for (Extension extension: extensions) {
+        if (context == null) {
+            throw new IllegalArgumentException("The parameter [context] is null.");
+        }
+        if (!context.isActive()) {
+            throw new IllegalArgumentException("The context is not active, so event can't be fired.");
+        }
+        for (Extension extension: extensionsByContext.get(context)) {
             for (ObserverMethod method: extension.getObservers()) {
                 if (getType(method.getType()).isAssignableFrom(event.getClass())) {
                     try {
                         method.invoke(this, event);
                     } catch(Exception e) {
                         LOGGER.warn("There is an error during firing event.", e);
-                    }
+                    }                    
                 }
             }
         }
     }
 
-    public void inject(Object o) {
-        inject(new ExtensionImpl(o));
+    public void initializeContext(Context context) {
+        try {
+            if (!extensionsByContext.containsKey(context)) {
+                extensionsByContext.put(context, new ArrayList<Extension>());
+            }
+            extensionsByContext.get(context).addAll(createExtensions(extensionsByScope.get(context.getScope()), context));
+            if (!(context instanceof ApplicationContext)) {
+                fire(Before.of(context), applicationContext);
+            }
+            fire(Before.of(context), context);
+        } catch(Exception e) {
+            throw new IllegalStateException("The extension for the given context can't be created.", e);
+        }
+        
     }
 
-    public <T> T resolve(final Class<T> type) {
-        for (Context context: contexts.values()) {
-            if (!context.isActive()) {
-                continue;
-            }
+    public void inject(Extension extension) {
+        // inject fields
+        for(InjectionPoint point: extension.getInjectionPoints()) {
+            point.set(InstanceImpl.of(getType(point.getType()), extension.getContext(), this));
+        }
+        // inject events
+        for(EventPoint point: extension.getEventPoints()) {
+            point.set(EventImpl.of(getType(point.getType()), extension.getContext(), this));
+        }
+        // inject context events
+        for(ContextEventPoint point: extension.getContextEventPoints()) {
+            point.set(ContextEventImpl.of((Class<Context>) getType(point.getType()), this));
+        }
+    }
+
+    public <T> T resolve(Class<T> type, Context context) {
+        // the given context has priority
+        if (context.isActive()) {
             T value = context.getStorage().get(type);
             if (value != null) {
                 return value;
             }
         }
+        // try application context
+        if (applicationContext.isActive()) {
+            T value = applicationContext.getStorage().get(type);
+            if (value != null) {
+                return value;
+            }
+        }
+        // nothing found
         return null;
     }
-    
-    public <T> void bind(final Class<T> type, Class<? extends Annotation> scope, T value) {
-        contexts.get(scope).getStorage().add(type, value);
-        fire(value);
-    }
-    
+
     public void shutdown() {
         try {
-            fire(new ManagerStopping());
+            fire(new ManagerStopping(), applicationContext);
         } finally {
-            for (Context context: contexts.values()) {
-                try {
-                    context.destroy();
-                } catch(Exception e) {
-                    LOGGER.error("The context can't be destroyed.", e);
+            // destroy contexts (except of application context)
+            for (Context context: extensionsByContext.keySet()) {
+                if (context instanceof ApplicationContext) {
+                    continue;
                 }
-                contexts.clear();
+                finalizeContext(context);
             }
-            extensions.clear();
+            // destroy application context
+            finalizeContext(applicationContext);
+            // destroy manager
+            extensionsByContext.clear();
+            extensionsByScope.clear();
         }
-        
     }
 
     public void start() {
-        fire(new ManagerStarted());
+        fire(new ManagerStarted(), applicationContext);
     }
-    
-    private Collection<Extension> createExtensions(final Collection<Class<?>> extensionClasses) throws Exception {
+
+    private Collection<Extension> createExtensions(final Collection<Class<?>> extensionClasses, Context context) throws Exception {
         List<Extension> created = new ArrayList<Extension>();
         for (Class<?> type: extensionClasses) {
-            created.add(new ExtensionImpl(createInstance(type)));
+            Extension extension = new ExtensionImpl(createInstance(type), context);
+            created.add(extension);
+            inject(extension);
         }
         return created;
-    }
-    
-    private Map<Class<? extends Annotation>, Context> createContexts(final Collection<Class<? extends Context>> contextClasses) throws Exception {
-        Map<Class<? extends Annotation>, Context> created = new HashMap<Class<? extends Annotation>, Context>();
-        for (Class<? extends Context> type: contextClasses) {
-            Context context = createInstance(type);
-            created.put(context.getScope(), context);
-        }
-        return created;
-    }
-    
+    }    
+
     private <T> T createInstance(Class<T> type) throws Exception {
         for (Constructor<?> constructor: type.getDeclaredConstructors()) {
             if (constructor.getParameterTypes().length == 0) {
@@ -143,17 +192,55 @@ public final class ManagerImpl implements Manager {
             }
         }
         throw new InvocationException("There is no empty constructor in class " + type.getName());
+    }    
+    
+    private void fireProcessing(ApplicationContext applicationContext) throws Exception {
+        final Collection<Class<?>> newExtensions = new ArrayList<Class<?>>();
+        final Collection<Class<? extends Context>> newContexts = new ArrayList<Class<? extends Context>>();
+        fire(new ManagerProcessing() {
+            public void extension(Class<?> extension) {
+                if (extension == null) {
+                    throw new IllegalArgumentException("The parameter [extension] is null.");
+                }
+                newExtensions.add(extension);
+            }
+
+            public Manager getManager() {
+                return ManagerImpl.this;
+            }
+        }, applicationContext);
+        // load extensions
+        Map<Class<? extends Annotation>, Collection<Class<?>>> newExtensionsByScope = getScopedExtensions(newExtensions);
+        for(Entry<Class<? extends Annotation>, Collection<Class<?>>> entry: newExtensionsByScope.entrySet()) {
+            if (!extensionsByScope.containsKey(entry.getKey())) {
+                extensionsByScope.put(entry.getKey(), new ArrayList<Class<?>>());
+            }
+            extensionsByScope.get(entry.getKey()).addAll(entry.getValue());
+        }
+        // load extensions to application context
+        extensionsByContext.get(applicationContext).addAll(createExtensions(newExtensions, applicationContext));
+    }
+
+    private Map<Class<? extends Annotation>, Collection<Class<?>>> getScopedExtensions(final Collection<Class<?>> extensionClasses) {
+        Map<Class<? extends Annotation>, Collection<Class<?>>> scopedExtensions = new HashMap<Class<? extends Annotation>, Collection<Class<?>>>();
+        for (Class<?> extension: extensionClasses) {
+            Class<? extends Annotation> scope = getScope(extension);
+            if (!scopedExtensions.containsKey(scope)) {
+                scopedExtensions.put(scope, new ArrayList<Class<?>>());
+            }
+            scopedExtensions.get(scope).add(extension);
+        }
+        return scopedExtensions;
     }
     
-    private void inject(Extension extension) {
-        // inject fields
-        for(InjectionPoint point: extension.getInjectionPoints()) {
-            point.set(InstanceImpl.of(getType(point.getType()), point.getScope(), this));
+    private Class<? extends Annotation> getScope(Class<?> target) {
+        for (Annotation annotation: target.getDeclaredAnnotations()) {
+            if (annotation.annotationType().getName().endsWith("Scope")) {
+                continue;
+            }
+            return annotation.annotationType();
         }
-        // inject events
-        for(EventPoint point: extension.getEventPoints()) {
-            point.set(EventImpl.of(getType(point.getType()), this));
-        }        
+        return ApplicationScope.class;
     }
     
     private static Class<?> getType(Type type) {
@@ -182,37 +269,6 @@ public final class ManagerImpl implements Manager {
         }
         // not success
         return null;
-    }
-
-    private void fireProcessing() throws Exception {
-        final Collection<Class<?>> newExtensions = new ArrayList<Class<?>>();
-        final Collection<Class<? extends Context>> newContexts = new ArrayList<Class<? extends Context>>();
-        fire(new ManagerProcessing() {
-            public void context(Class<? extends Context> context) {
-                if (context == null) {
-                    throw new IllegalArgumentException("The parameter [context] is null.");
-                }
-                newContexts.add(context);
-            }
-
-            public void extension(Class<?> extension) {
-                if (extension == null) {
-                    throw new IllegalArgumentException("The parameter [extension] is null.");
-                }
-                newExtensions.add(extension);
-            }
-
-            public Manager getManager() {
-                return ManagerImpl.this;
-            }
-        });
-        extensions.addAll(createExtensions(newExtensions));
-        for (Context context: createContexts(newContexts).values()) {
-            if (contexts.containsKey(context.getScope())) {
-                throw new IllegalStateException("The context for the scope [" + context.getScope().getName() + " already exists.");
-            }
-            contexts.put(context.getScope(), context);
-        }
-    }
+    }    
 
 }

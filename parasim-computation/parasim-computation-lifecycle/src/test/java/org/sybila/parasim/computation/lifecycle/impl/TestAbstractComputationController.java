@@ -1,5 +1,7 @@
 package org.sybila.parasim.computation.lifecycle.impl;
 
+import java.lang.annotation.Annotation;
+import org.sybila.parasim.core.InstanceStorage;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.ComputationStatus;
@@ -7,6 +9,7 @@ import org.sybila.parasim.computation.lifecycle.api.annotations.After;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Before;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Start;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Stop;
+import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.cdi.impl.AbstractServiceFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -25,7 +28,7 @@ public class TestAbstractComputationController extends AbstractComputationTest {
     public void setUp() {
         ServiceFactory serviceFactory = new AbstractServiceFactory() {
 
-            public <T> T getService(Class<T> type) {
+            public <T> T getService(Class<T> type, Context context) {
                 if (type.equals(String.class)) {
                     return type.cast(TO_INJECT);
                 } else {
@@ -33,7 +36,7 @@ public class TestAbstractComputationController extends AbstractComputationTest {
                 }
             }
 
-            public boolean isServiceAvailable(Class<?> type) {
+            public boolean isServiceAvailable(Class<?> type, Context context) {
                 if (type.equals(String.class)) {
                     return true;
                 } else {
@@ -41,7 +44,33 @@ public class TestAbstractComputationController extends AbstractComputationTest {
                 }
             }
         };
-        container = new DefaultComputationContainer(serviceFactory);
+        Context context = new Context() {
+
+            public void activate() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public void deactivate() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public void destroy() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public Class<? extends Annotation> getScope() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public InstanceStorage getStorage() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public boolean isActive() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+        container = new DefaultComputationContainer(serviceFactory, context);
         computation = new ComputationMock();
     }
     

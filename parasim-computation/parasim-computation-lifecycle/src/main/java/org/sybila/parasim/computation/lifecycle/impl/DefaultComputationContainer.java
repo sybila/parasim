@@ -17,6 +17,7 @@ import org.sybila.parasim.computation.lifecycle.api.annotations.ThreadId;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.ComputationController;
+import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 
 /**
@@ -25,12 +26,17 @@ import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 public class DefaultComputationContainer implements ComputationContainer {
 
     private ServiceFactory serviceFactory;
-
-    public DefaultComputationContainer(ServiceFactory serviceFactory) {
+    private Context context;
+    
+    public DefaultComputationContainer(ServiceFactory serviceFactory, Context context) {
         if (serviceFactory == null) {
             throw new IllegalArgumentException("The parameter [serviceFactory] is null.");
         }
+        if (context == null) {
+            throw new IllegalArgumentException("The parameter [context] is null.");
+        }
         this.serviceFactory = serviceFactory;
+        this.context = context;
     }
 
     @Override
@@ -45,7 +51,7 @@ public class DefaultComputationContainer implements ComputationContainer {
 
     @Override
     public void init(Computation computation) {
-        getServiceFactory().injectFields(computation.getController());
+        getServiceFactory().injectFields(computation.getController(), context);
         executeMethods(Before.class, computation.getController());
         computation.getController().getStatus().setInitialized();
     }
@@ -110,7 +116,7 @@ public class DefaultComputationContainer implements ComputationContainer {
                         continue allParams;
                     }
                 }
-                params[i] = getServiceFactory().getService(method.getParameterTypes()[i]);
+                params[i] = getServiceFactory().getService(method.getParameterTypes()[i], context);
             }
             // start new threads
             for (int id = 0; id < numberOfThreads; id++) {
@@ -143,7 +149,7 @@ public class DefaultComputationContainer implements ComputationContainer {
     private void executeMethod(final Object o, Method method) {
         Object[] params = new Object[method.getParameterTypes().length];
         for (int i = 0; i < params.length; i++) {
-            params[i] = getServiceFactory().getService(method.getParameterTypes()[i]);
+            params[i] = getServiceFactory().getService(method.getParameterTypes()[i], context);
         }
         executeMethod(o, method, params);
     }

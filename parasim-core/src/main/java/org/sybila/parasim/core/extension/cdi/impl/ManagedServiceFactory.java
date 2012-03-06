@@ -1,6 +1,7 @@
 package org.sybila.parasim.core.extension.cdi.impl;
 
 import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.context.Context;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -16,12 +17,12 @@ public class ManagedServiceFactory extends AbstractServiceFactory {
         this.manager = manager;
     }
     
-    public <T> T getService(Class<T> type) {
-        return manager.resolve(type);
+    public <T> T getService(Class<T> type, Context context) {
+        return manager.resolve(type, context);
     }
 
-    public boolean isServiceAvailable(Class<?> type) {
-        return manager.resolve(type) != null;
+    public boolean isServiceAvailable(Class<?> type, Context context) {
+        return manager.resolve(type, context) != null;
     }
     
 }
