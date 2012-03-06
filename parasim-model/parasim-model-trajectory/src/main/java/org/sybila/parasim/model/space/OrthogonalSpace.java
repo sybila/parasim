@@ -1,9 +1,12 @@
 package org.sybila.parasim.model.space;
 
 import org.sybila.parasim.model.trajectory.Point;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class OrthogonalSpace implements Space {
 
@@ -77,5 +80,17 @@ public class OrthogonalSpace implements Space {
             }
         }
         return true;
+    }
+    
+    @Override
+    public Element toXML(Document doc) {
+        Element space = doc.createElement(OrthogonalSpaceFactory.SPACE_NAME);
+        for (int dim = 0; dim < getDimension(); dim++) {
+            Element dimension = doc.createElement(OrthogonalSpaceFactory.DIMENSION_NAME);
+            dimension.setAttribute(OrthogonalSpaceFactory.ATTRIBUTE_MIN, Float.toString(minBounds.getValue(dim)));
+            dimension.setAttribute(OrthogonalSpaceFactory.ATTRIBUTE_MAX, Float.toString(maxBounds.getValue(dim)));
+            space.appendChild(dimension);
+        }
+        return space;
     }
 }

@@ -14,5 +14,13 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+    
+    <dependencies>
+    	<dependency>
+    		<groupId>org.sybila.parasim</groupId>
+    		<artifactId>parasim-model-configuration</artifactId>
+    		<version>${project.version}</version>
+    	</dependency>
+    </dependencies>
 
 </project>
