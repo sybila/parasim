@@ -14,10 +14,15 @@ public interface Context {
     
     void destroy();
     
+    Context getParent();
+    
     Class<? extends Annotation> getScope();
     
     InstanceStorage getStorage();
     
-    boolean isActive();
+    boolean hasParent();
     
+    boolean isActive();
+
+    void setParent(Context context);
 }

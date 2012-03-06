@@ -67,8 +67,8 @@ public final class ManagerImpl implements Manager {
     }
     
     public void finalizeContext(Context context) {
-        if (!(context instanceof ApplicationContext)) {
-            fire(After.of(context), applicationContext);
+        if (context.hasParent()) {
+            fire(After.of(context), context.getParent());
         }
         fire(After.of(context), context);
         context.destroy();
@@ -126,7 +126,7 @@ public final class ManagerImpl implements Manager {
         }
         // inject context events
         for(ContextEventPoint point: extension.getContextEventPoints()) {
-            point.set(ContextEventImpl.of((Class<Context>) getType(point.getType()), this));
+            point.set(ContextEventImpl.of((Class<Context>) getType(point.getType()), this, extension.getContext()));
         }
     }
 
@@ -138,12 +138,8 @@ public final class ManagerImpl implements Manager {
                 return value;
             }
         }
-        // try application context
-        if (applicationContext.isActive()) {
-            T value = applicationContext.getStorage().get(type);
-            if (value != null) {
-                return value;
-            }
+        if (context.hasParent()) {
+            return resolve(type, context.getParent());
         }
         // nothing found
         return null;

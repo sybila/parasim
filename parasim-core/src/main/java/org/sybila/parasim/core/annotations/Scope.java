@@ -6,5 +6,5 @@ import java.lang.annotation.Target;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.ANNOTATION_TYPE)
 public @interface Scope {}

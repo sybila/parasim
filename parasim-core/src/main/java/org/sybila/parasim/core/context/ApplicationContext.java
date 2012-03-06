@@ -13,8 +13,7 @@ import org.sybila.parasim.core.annotations.ApplicationScope;
  */
 public class ApplicationContext extends AbstractContext {
 
-    private boolean activity = false;
-    
+   
     public ApplicationContext(InstanceStorage instanceStorage) {
         super(instanceStorage);
     }
@@ -26,17 +25,4 @@ public class ApplicationContext extends AbstractContext {
     public Class<? extends Annotation> getScope() {
         return ApplicationScope.class;
     }
-
-    public void activate() {
-        activity = true;
-    }
-
-    public void deactivate() {
-        activity = false;
-    }
-
-    public boolean isActive() {
-        return activity;
-    }
-
 }

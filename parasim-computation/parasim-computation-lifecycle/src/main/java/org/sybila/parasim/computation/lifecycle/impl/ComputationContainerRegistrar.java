@@ -2,6 +2,7 @@ package org.sybila.parasim.computation.lifecycle.impl;
 
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.event.ComputationContainerRegistered;
+import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.Event;
 import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.Manager;
@@ -23,9 +24,11 @@ public class ComputationContainerRegistrar {
     private Instance<Manager> manager;
     @Inject
     private Event<ComputationContainerRegistered> event;
+    @Inject
+    private ContextEvent<ComputationContext> contextEvent;
     
     public void register(@Observes ServiceFactoryRegistered event) {
-        container.set(new DefaultComputationContainer(serviceFactory.get(), manager.get().getRootContext()));
+        container.set(new DefaultComputationContainer(serviceFactory.get(), contextEvent));
         this.event.fire(new ComputationContainerRegistered());
     }
     

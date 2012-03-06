@@ -9,6 +9,7 @@ import org.sybila.parasim.computation.lifecycle.api.annotations.After;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Before;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Start;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Stop;
+import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.cdi.impl.AbstractServiceFactory;
 import org.testng.annotations.BeforeMethod;
@@ -44,33 +45,12 @@ public class TestAbstractComputationController extends AbstractComputationTest {
                 }
             }
         };
-        Context context = new Context() {
+        ContextEvent<ComputationContext> contextEvent = new ContextEvent<ComputationContext>() {
+            public void initialize(ComputationContext context) {}
 
-            public void activate() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public void deactivate() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public void destroy() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public Class<? extends Annotation> getScope() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public InstanceStorage getStorage() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public boolean isActive() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
+            public void finalize(ComputationContext context) {}
         };
-        container = new DefaultComputationContainer(serviceFactory, context);
+        container = new DefaultComputationContainer(serviceFactory, contextEvent);
         computation = new ComputationMock();
     }
     

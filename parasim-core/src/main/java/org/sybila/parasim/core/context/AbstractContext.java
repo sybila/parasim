@@ -8,7 +8,9 @@ import org.sybila.parasim.core.MapInstanceStorage;
  */
 public abstract class AbstractContext implements Context {
 
+    private boolean activity = false;
     private InstanceStorage instanceStorage;
+    private Context parent;
     
     public AbstractContext(InstanceStorage instanceStorage) {
         if (instanceStorage == null) {
@@ -20,14 +22,38 @@ public abstract class AbstractContext implements Context {
     public AbstractContext() {
         this(new MapInstanceStorage());
     }
+ 
+    public void activate() {
+        activity = true;
+    }
+
+    public void deactivate() {
+        activity = false;
+    }    
     
     public void destroy() {
         instanceStorage.clear();
         instanceStorage = null;
     }
 
+    public Context getParent() {
+        return parent;
+    }
+    
     public InstanceStorage getStorage() {
         return instanceStorage;
     }
    
+    public boolean hasParent() {
+        return parent != null;
+    }
+
+    public boolean isActive() {
+        return activity;
+    }    
+    
+    public void setParent(Context context) {
+        parent = context;
+    }
+    
 }
