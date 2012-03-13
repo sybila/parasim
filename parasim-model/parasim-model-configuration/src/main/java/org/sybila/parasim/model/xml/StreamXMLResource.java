@@ -34,12 +34,14 @@ import org.xml.sax.SAXException;
  * Stores and loads objects from streams (i.e. InputStream and OutputStream).
  * 
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
- *
- * @param <T> Type of object being stored/loaded.
+ * 
+ * @param <T>
+ *            Type of object being stored/loaded.
  */
-public abstract class StreamXMLResource<T extends XMLRepresentable> implements XMLResource<T> {
-
+public abstract class StreamXMLResource<T extends XMLRepresentable> implements
+        XMLResource<T> {
     private static final String SCHEMA_XMLNS = "http://www.w3.org/2001/XMLSchema";
+    private static final String XPATH_EXPR_EMPTY = "//text()[normalize-space(.) = '']";
     private T root = null;
 
     @Override
@@ -54,32 +56,39 @@ public abstract class StreamXMLResource<T extends XMLRepresentable> implements X
 
     /**
      * Specifies way of obtaining input stream.
+     * 
      * @return a new open input stream.
-     * @throws XMLException when stream could not be opened.
+     * @throws XMLException
+     *             when stream could not be opened.
      */
     protected abstract InputStream openInputStream() throws XMLException;
 
     /**
      * Specifies way of obtaining output stream.
+     * 
      * @return a new open output stream.
-     * @throws XMLException when stream could not be opened.
+     * @throws XMLException
+     *             when stream could not be opened.
      */
     protected abstract OutputStream openOutputStream() throws XMLException;
 
     /**
      * Specifies way of obtaining factory for contained objects.
+     * 
      * @return Factory used to transform XML into contained objects.
      */
     protected abstract XMLRepresentableFactory<T> getFactory();
 
     /**
      * Specifies way of obtaining XLM schema for validation.
+     * 
      * @return URL of XML schema used to validate input.
      */
     protected abstract URL getXMLSchema();
 
     /**
      * Specifies way of obtaining name of XML namespace
+     * 
      * @return XML namespace of contained objects.
      */
     protected abstract String getNamespace();
@@ -106,100 +115,119 @@ public abstract class StreamXMLResource<T extends XMLRepresentable> implements X
             throw new XMLException("Parser could not be configured.", pce);
         }
 
-        /* parsing */
-        Document doc;
-        InputStream is = openInputStream();
+        InputStream is = null;
         try {
-            doc = docBuild.parse(is);
-        } catch (SAXException saxe) {
-            throw new XMLException("Parse error during document parsing.", saxe);
-        } catch (IOException ioe) {
-            throw new XMLException("IO error during document parsing.", ioe);
-        }
-
-        /* validation; also enhances result (default attribute values, ...) */
-        DOMResult result = new DOMResult();
-        try {
-            valid.validate(new DOMSource(doc), result);
-        } catch (SAXException saxe) {
-            throw new XMLException("Parse error during document validation.", saxe);
-        } catch (IOException ioe) {
-            throw new XMLException("IO error during document validation.", ioe);
-        }
-        Document input = (Document) result.getNode();
-        input.normalize();
-        
-        /* remove empty text nodes 
-         * http://stackoverflow.com/questions/978810/how-to-strip-whitespace-only-text-nodes-from-a-dom-before-serialization */
-        
-        try {
-            XPathFactory xPathFact = XPathFactory.newInstance();
-            XPathExpression xPathExpr = xPathFact.newXPath().compile("//text()[normalize-space(.) = '']");
-            NodeList emptyNodes = (NodeList)xPathExpr.evaluate(input, XPathConstants.NODESET);
-            for (int index = 0; index < emptyNodes.getLength(); index++) {
-                Node empty = emptyNodes.item(index);
-                empty.getParentNode().removeChild(empty);
+            /* parsing */
+            Document doc;
+            is = openInputStream();
+            try {
+                doc = docBuild.parse(is);
+            } catch (SAXException saxe) {
+                throw new XMLException("Parse error during document parsing.",
+                        saxe);
+            } catch (IOException ioe) {
+                throw new XMLException("IO error during document parsing.", ioe);
             }
-        } catch (XPathExpressionException xpee) {
-            throw new XMLException("Could not remove empty nodes.", xpee);
-        }
-        
 
-        /* get target */
-        setRoot(getFactory().getObject(input.getDocumentElement()));
+            /* validation; also enhances result (default attribute values, ...) */
+            DOMResult result = new DOMResult();
+            try {
+                valid.validate(new DOMSource(doc), result);
+            } catch (SAXException saxe) {
+                throw new XMLException(
+                        "Parse error during document validation.", saxe);
+            } catch (IOException ioe) {
+                throw new XMLException("IO error during document validation.",
+                        ioe);
+            }
+            Document input = (Document) result.getNode();
+            input.normalize();
 
-        /* close stream */
-        try {
-            is.close();
-        } catch (IOException ioe) {
-            throw new XMLException("Input could not be closed", ioe);
+            /*
+             * remove empty text nodes
+             * http://stackoverflow.com/questions/978810/
+             * how-to-strip-whitespace-
+             * only-text-nodes-from-a-dom-before-serialization
+             */
+
+            try {
+                XPathFactory xPathFact = XPathFactory.newInstance();
+                XPathExpression xPathExpr = xPathFact.newXPath().compile(
+                        XPATH_EXPR_EMPTY);
+                NodeList emptyNodes = (NodeList) xPathExpr.evaluate(input,
+                        XPathConstants.NODESET);
+                for (int index = 0; index < emptyNodes.getLength(); index++) {
+                    Node empty = emptyNodes.item(index);
+                    empty.getParentNode().removeChild(empty);
+                }
+            } catch (XPathExpressionException xpee) {
+                throw new XMLException("Could not remove empty nodes.", xpee);
+            }
+
+            /* get target */
+            setRoot(getFactory().getObject(input.getDocumentElement()));
+        } finally {
+
+            /* close stream */
+            try {
+                is.close();
+            } catch (IOException ioe) {
+                throw new XMLException("Input could not be closed", ioe);
+            }
         }
     }
 
     @Override
     public void store() throws XMLException {
         if (root == null) {
-            throw new IllegalStateException("Nothing to store."); //TODO
+            throw new IllegalStateException("Nothing to store."); // TODO
         }
-        OutputStream os = openOutputStream();
-
-        /* get empty [!] document */
-        DocumentBuilderFactory docFact = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuild;
+        OutputStream os = null;
         try {
-            docBuild = docFact.newDocumentBuilder();
-        } catch (ParserConfigurationException pce) {
-            throw new XMLException("Transfer could not be configured.", pce);
-        }
-        Document doc = docBuild.newDocument();
+            os = openOutputStream();
 
-        /* transform to xml */
-        Element target = root.toXML(doc);
-        setNamespace(target);
-        doc.appendChild(target);
+            /* get empty [!] document */
+            DocumentBuilderFactory docFact = DocumentBuilderFactory
+                    .newInstance();
+            DocumentBuilder docBuild;
+            try {
+                docBuild = docFact.newDocumentBuilder();
+            } catch (ParserConfigurationException pce) {
+                throw new XMLException("Transfer could not be configured.", pce);
+            }
+            Document doc = docBuild.newDocument();
 
-        /* get transformer (output parser) */
-        TransformerFactory transFact = TransformerFactory.newInstance();
-        Transformer trans;
-        try {
-            trans = transFact.newTransformer();
-        } catch (TransformerConfigurationException tce) {
-            throw new XMLException("Output parser could not be configured.");
-        }
-        trans.setOutputProperty(OutputKeys.INDENT, "yes"); //spreads output over multiple lines
+            /* transform to xml */
+            Element target = root.toXML(doc);
+            setNamespace(target);
+            doc.appendChild(target);
 
-        /* print XML */
-        try {
-            trans.transform(new DOMSource(doc), new StreamResult(os));
-        } catch (TransformerException te) {
-            throw new XMLException("Error during XML output.", te);
-        }
+            /* get transformer (output parser) */
+            TransformerFactory transFact = TransformerFactory.newInstance();
+            Transformer trans;
+            try {
+                trans = transFact.newTransformer();
+            } catch (TransformerConfigurationException tce) {
+                throw new XMLException("Output parser could not be configured.");
+            }
+            trans.setOutputProperty(OutputKeys.INDENT, "yes"); // spreads output
+                                                               // over multiple
+                                                               // lines
 
-        /* close stream */
-        try {
-            os.close();
-        } catch (IOException ioe) {
-            throw new XMLException("Output could not be closed properly.", ioe);
+            /* print XML */
+            try {
+                trans.transform(new DOMSource(doc), new StreamResult(os));
+            } catch (TransformerException te) {
+                throw new XMLException("Error during XML output.", te);
+            }
+        } finally {
+            /* close stream */
+            try {
+                os.close();
+            } catch (IOException ioe) {
+                throw new XMLException("Output could not be closed properly.",
+                        ioe);
+            }
         }
     }
 
