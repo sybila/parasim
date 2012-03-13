@@ -3,12 +3,12 @@ package org.sybila.parasim.core.extension.configuration.api;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Property {
+public class Property<V> {
    
     private String name;
-    private String value;
+    private V value;
     
-    public Property(String name, String value) {
+    private Property(String name, V value) {
         if (name == null) {
             throw new IllegalArgumentException("The parameter [name] is null.");
         }
@@ -19,11 +19,15 @@ public class Property {
         this.value = value;
     }
 
+    public static <T> Property<T> of(String name, T value) {
+        return new Property<T>(name, value);
+    }
+    
     public String getName() {
         return name;
     }
 
-    public String getValue() {
+    public V getValue() {
         return value;
     }
     

@@ -17,6 +17,7 @@ public class TestExtensionDescriptotMapperImpl {
         private int intNumber;
         private float floatNumber;
         private boolean bool;
+        private Integer[] intNumbers;
     }
     
     @BeforeMethod
@@ -25,6 +26,7 @@ public class TestExtensionDescriptotMapperImpl {
         descriptor.setProperty("intNumber", "20");
         descriptor.setProperty("floatNumber", "20.5");
         descriptor.setProperty("bool", "true");
+        descriptor.setProperty("intNumbers", new String[] {"1", "2", "3"});
         configBean = new ConfigBean();
     }
     
@@ -34,6 +36,7 @@ public class TestExtensionDescriptotMapperImpl {
         assertEquals(configBean.bool, true);
         assertEquals(configBean.intNumber, 20);
         assertEquals(configBean.floatNumber, (float) 20.5);
+        assertEquals(configBean.intNumbers, new int[] {1, 2, 3});
     }
     
 }

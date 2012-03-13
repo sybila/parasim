@@ -35,14 +35,39 @@ public class ExtensionDescriptorImpl implements ExtensionDescriptor {
 
     public String getProperty(String name, String defaultValue) {
         Property prop = properties.get(name);
-        return prop == null ? defaultValue : prop.getValue();
+        if (!(prop.getValue() instanceof String)) {
+            throw new IllegalStateException("The value of the property is not String.");
+        }
+        return prop == null ? defaultValue : (String) prop.getValue();
+    }
+
+    public String[] getPropertyAsArray(String name) {
+        return getPropertyAsArray(name, null);
     }
     
+    public String[] getPropertyAsArray(String name, String[] defaultValue) {
+        Property prop = properties.get(name);
+        if (prop.getValue().getClass() != String[].class) {
+            throw new IllegalStateException("The value of the property is not String array.");
+        }
+        return prop == null ? defaultValue : (String[]) prop.getValue();
+    }    
+
+    public boolean isPropertyArray(String name) {
+        Property prop = properties.get(name);
+        return prop != null && prop.getValue().getClass().isArray();
+    }
+
     public ExtensionDescriptor setProperty(String name, String value) {
-        properties.put(name, new Property(name, value));
+        properties.put(name, Property.of(name, value));
         return this;
     }
 
+    public ExtensionDescriptor setProperty(String name, String[] value) {
+        properties.put(name, Property.of(name, value));
+        return this;
+    }
+    
     public Iterator<Property> iterator() {
         return properties.values().iterator();
     }

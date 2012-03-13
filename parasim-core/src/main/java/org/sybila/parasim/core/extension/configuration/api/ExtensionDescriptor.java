@@ -13,6 +13,13 @@ public interface ExtensionDescriptor extends Iterable<Property> {
     
     String getProperty(String name, String defaultValue);
     
+    String[] getPropertyAsArray(String name);
+    
+    String[] getPropertyAsArray(String name, String[] defaultValue);
+    
+    boolean isPropertyArray(String name);
+    
     ExtensionDescriptor setProperty(String name, String value);
     
+    ExtensionDescriptor setProperty(String name, String[] value);
 }

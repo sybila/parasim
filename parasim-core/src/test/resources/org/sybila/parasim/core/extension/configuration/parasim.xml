@@ -1,5 +1,10 @@
 <parasim>
     <extension qualifier="test">
         <property name="test-property">test-value</property>
+        <property name="test-array-property">
+            <value>1</value>
+            <value>2</value>
+            <value>3</value>
+        </property>
     </extension>
 </parasim>

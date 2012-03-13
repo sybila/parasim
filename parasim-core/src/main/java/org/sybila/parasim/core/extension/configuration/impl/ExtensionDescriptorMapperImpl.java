@@ -1,5 +1,6 @@
 package org.sybila.parasim.core.extension.configuration.impl;
 
+import java.lang.reflect.Array;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,7 +11,7 @@ import java.net.URL;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ExtensionDescriptorMapperImpl {
-    
+
     public void map(ExtensionDescriptor descriptor, Object configBean) throws IllegalAccessException {
         if (descriptor == null) {
             throw new IllegalArgumentException("The parameter [descriptor] is null.");
@@ -18,7 +19,7 @@ public class ExtensionDescriptorMapperImpl {
         if (configBean == null) {
             throw new IllegalArgumentException("The parameter [configBean] is null.");
         }
-        for (Field field: configBean.getClass().getDeclaredFields()) {
+        for (Field field : configBean.getClass().getDeclaredFields()) {
             if (Modifier.isFinal(field.getModifiers())) {
                 continue;
             }
@@ -28,10 +29,10 @@ public class ExtensionDescriptorMapperImpl {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-            field.set(configBean, convert(getType(field), descriptor.getProperty(field.getName())));
+            set(configBean, field, descriptor);
         }
     }
-    
+
     private <T> T convert(Class<T> type, String value) {
         if (String.class.equals(type)) {
             return type.cast(value);
@@ -51,21 +52,21 @@ public class ExtensionDescriptorMapperImpl {
             try {
                 if (URL.class.equals(type)) {
                     return type.cast(new URL(value));
-                } else if(URI.class.equals(type)) {
+                } else if (URI.class.equals(type)) {
                     return type.cast(new URI(value));
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new IllegalArgumentException("Unable to convert value [" + value + "] to URL/URI.");
             }
             throw new IllegalArgumentException("Unable to convert value [" + value + "] to " + type.getName() + ".");
         }
     }
-    
-    private Class<?> getType(Field field) {
-        if (!field.getType().isPrimitive()) {
-            return field.getType();
+
+    private Class<?> getType(Class<?> type) {
+        if (!type.isPrimitive()) {
+            return type;
         }
-        Class<?> primitive = field.getType();
+        Class<?> primitive = type;
         if (int.class.equals(primitive)) {
             return Integer.class;
         } else if (long.class.equals(primitive)) {
@@ -86,4 +87,23 @@ public class ExtensionDescriptorMapperImpl {
         throw new IllegalArgumentException();
     }
     
+    private void set(Object target, Field field, ExtensionDescriptor descriptor) throws IllegalAccessException {
+        if (!field.isAccessible()) {
+            field.setAccessible(true);
+        }
+        if (field.getType().isArray()) {
+            if (!descriptor.isPropertyArray(field.getName())) {
+                throw new IllegalStateException("Expected array, found scalar for property [" + field.getName() + "].");
+            }
+            Class fieldType = getType(field.getType());
+            String[] valuesFromDescriptor = descriptor.getPropertyAsArray(field.getName());
+            field.set(target, Array.newInstance(fieldType.getComponentType(), valuesFromDescriptor.length));
+            Object[] values = (Object[]) field.get(target);
+            for (int i=0; i<descriptor.getPropertyAsArray(field.getName()).length; i++) {
+                values[i] = convert(getType(fieldType.getComponentType()), valuesFromDescriptor[i]);
+            }
+        } else {
+            field.set(target, convert(getType(field.getType()), descriptor.getProperty(field.getName())));
+        }
+    }
 }

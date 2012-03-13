@@ -27,6 +27,10 @@ public class TestExtensionDescriptorImpl {
        assertEquals(extensions.size(), 1);
        ExtensionDescriptor extDescriptor = descriptor.getExtensionDescriptor("test");
        assertEquals(extDescriptor.getProperty("test-property"), "test-value");
+       assertFalse(extDescriptor.isPropertyArray("test-property"));
+       assertTrue(extDescriptor.isPropertyArray("test-array-property"));
+       String[] arrayValue = new String[] {"1", "2", "3"};
+       assertEquals(extDescriptor.getPropertyAsArray("test-array-property"), arrayValue);
     }
     
 }

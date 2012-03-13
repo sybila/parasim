@@ -3,9 +3,11 @@ package org.sybila.parasim.core.extension.configuration.impl;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,11 +54,27 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
                     continue;
                 }
                 String name = property.getAttributes().getNamedItem("name").getTextContent();
-                String value = property.getTextContent();
                 if (name == null) {
                     throw new IOException("There is a property without name in the configuration of [" + qualifier + "] extension.");
+                }                
+                if (isArray(property)) {
+                    // property is array
+                    List<String> values = new ArrayList<String>();
+                    for (int k=0; k<property.getChildNodes().getLength(); k++) {
+                        Node value = property.getChildNodes().item(k);
+                        if (!value.getNodeName().equals("value")) {
+                            continue;
+                        }
+                        values.add(value.getTextContent());
+                    }
+                    String[] valuesInArray = new String[values.size()];
+                    values.toArray(valuesInArray);
+                    extensionDescriptor.setProperty(name, valuesInArray);
+                } else {
+                    // property isn't array
+                    String value = property.getTextContent();
+                    extensionDescriptor.setProperty(name, value);
                 }
-                extensionDescriptor.setProperty(name, value);
             }
             descriptor.extensions.put(qualifier, extensionDescriptor);
         }
@@ -73,6 +91,15 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
             }
         }
         return builder;
+    }
+    
+    private static boolean isArray(Node node) {
+        for (int i=0; i<node.getChildNodes().getLength(); i++) {
+            if (node.getChildNodes().item(i).getNodeName().equals("value")) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private static File loadFileDescriptor(String propertyName, String defaultPath) {
