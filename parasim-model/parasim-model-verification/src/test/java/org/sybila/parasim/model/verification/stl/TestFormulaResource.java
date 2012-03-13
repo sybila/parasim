@@ -23,7 +23,7 @@ public class TestFormulaResource {
 
     @BeforeMethod
     public void createResource() {
-        resource = new FormulaResource();
+        resource = new FormulaResource(null);
     }
 
     /**

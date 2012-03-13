@@ -2,16 +2,15 @@ package org.sybila.parasim.model.verification.stl;
 
 import static org.sybila.parasim.model.verification.stl.IntervalBoundaryType.CLOSED;
 import static org.sybila.parasim.model.verification.stl.IntervalBoundaryType.OPEN;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -122,15 +121,15 @@ public class TestFormulaStorage {
 
     @BeforeMethod
     public void prepareFormulaResource() {
-        resource = new FormulaResource();
-        resource.setVariableMapping(new SimpleMapping());
+        
     }
 
     @Test
     public void tryLoad() {
         // Tady jsme se dostali do zásadních problémů -- XML parser z nějakého
         // důvodu dohazuje prázdné textové elementy!
-        resource.setTargetFile(getTestFormulaFile());
+        resource = new FormulaResource(getTestFormulaFile());
+        resource.setVariableMapping(new SimpleMapping()); 
         try {
             resource.load();
         } catch (XMLException xmle) {
@@ -152,7 +151,8 @@ public class TestFormulaStorage {
         }
         temp.deleteOnExit();
 
-        resource.setTargetFile(temp);
+        resource = new FormulaResource(temp);
+        resource.setVariableMapping(new SimpleMapping());
         resource.setRoot(getTestFormula());
         try {
             resource.store();

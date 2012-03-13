@@ -18,7 +18,7 @@
     <dependencies>
     	<dependency>
     		<groupId>org.sybila.parasim</groupId>
-    		<artifactId>parasim-model-configuration</artifactId>
+    		<artifactId>parasim-model-core</artifactId>
     		<version>${project.version}</version>
     	</dependency>
     </dependencies>
