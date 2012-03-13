@@ -1,11 +1,16 @@
 package org.sybila.parasim.model.space;
 
+import java.io.File;
 import java.net.URL;
 
 import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 
 public class OrthogonalSpaceResource extends FileXMLResource<OrthogonalSpace> {
+    
+    public OrthogonalSpaceResource(File file) {
+        super(file);
+    }
 
     @Override
     protected XMLRepresentableFactory<OrthogonalSpace> getFactory() {

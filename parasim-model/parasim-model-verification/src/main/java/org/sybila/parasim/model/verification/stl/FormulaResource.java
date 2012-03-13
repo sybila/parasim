@@ -1,5 +1,6 @@
 package org.sybila.parasim.model.verification.stl;
 
+import java.io.File;
 import java.net.URL;
 
 import org.sybila.parasim.model.variables.PointVariableMapping;
@@ -18,17 +19,6 @@ import org.w3c.dom.Node;
  * 
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
- */
-/*TODO Je potřeba zařídit, aby i výstup byl "encapsulovaný"
- * 
- * Možnosti jsou asi dvě:
- * * zařídit vnitřní třídu, která bude mít jako výstup formuli a bude mít jako root danou formuli
- *      * musí se přepsat všechny už hotové metody této třídy
- *      * vyžaduje správné vnitřní uspořádání a vypořádání se s dědičností
- * * přepsat nějakým způsobem root této třídy
- *      * musí se rozšířit celá formule (unimplemented)
- *      * je to trochu hack
- *      * přepisuje se pouze getRoot a setRoot
  */
 public class FormulaResource extends FileXMLResource<Formula> {
     private static final String FORMULA_NAME = "formula";
@@ -72,7 +62,11 @@ public class FormulaResource extends FileXMLResource<Formula> {
     private PointVariableMapping mapping;
     private FormulaContainer container;
     
-    public FormulaResource() {
+    /**
+     * Initiates file to store/load element (see {@link FileXMLResource#FileXMLResource(File)}).
+     */
+    public FormulaResource(File file) {
+        super(file);
         container = new FormulaContainer();
         super.setRoot(container);
     }

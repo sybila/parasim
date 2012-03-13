@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Uses files to store/load objects
+ * Uses files to store/load objects. Is associated with file. 
  * 
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
@@ -18,10 +18,10 @@ public abstract class FileXMLResource<T extends XMLRepresentable> extends Stream
     private File target;
     
     /**
-     * Set file used to store/load objects.
-     * @param file Target file.
+     * Sets file used to store/load objects.
+     * @param file File used to store/load objects.
      */
-    public void setTargetFile(File file) {
+    public FileXMLResource(File file) {
         target = file;
     }
     
