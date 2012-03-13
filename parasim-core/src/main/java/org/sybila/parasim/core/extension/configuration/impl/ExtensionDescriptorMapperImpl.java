@@ -6,11 +6,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
+import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ExtensionDescriptorMapperImpl {
+public class ExtensionDescriptorMapperImpl implements ExtensionDescriptorMapper {
 
     public void map(ExtensionDescriptor descriptor, Object configBean) throws IllegalAccessException {
         if (descriptor == null) {
