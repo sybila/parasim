@@ -5,12 +5,8 @@
 	elementFormDefault="qualified">
 	
 	<xs:complexType name="dimension_bounds">
-		<xs:complexContent>
-			<xs:restriction base="xs:integer">
-				<xs:attribute name="min" type="xs:decimal" use="required"/>
-				<xs:attribute name="max" type="xs:decimal" use="required"/>
-			</xs:restriction>
-		</xs:complexContent>
+		<xs:attribute name="min" type="xs:decimal" use="required"/>
+		<xs:attribute name="max" type="xs:decimal" use="required"/>
 	</xs:complexType>
 	
 	<xs:complexType name="orthogonal_space">
