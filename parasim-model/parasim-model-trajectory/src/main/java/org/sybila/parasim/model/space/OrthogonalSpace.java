@@ -93,4 +93,18 @@ public class OrthogonalSpace implements Space {
         }
         return space;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof OrthogonalSpace)) return false;
+        OrthogonalSpace target = (OrthogonalSpace) obj;
+        return (maxBounds.equals(target.maxBounds) && minBounds.equals(target.minBounds));
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 41;
+        return maxBounds.hashCode()*prime+minBounds.hashCode();
+    }
 }
