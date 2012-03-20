@@ -6,6 +6,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.sybila.parasim.core.event.Before;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.event.ManagerStopping;
+import org.sybila.parasim.core.extension.loader.ExtensionLoaderExtension;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -36,6 +38,14 @@ public final class ManagerImpl implements Manager {
             throw new IllegalArgumentException("The parameter [extensionClasses] is null.");
         }
         extensionsByScope = getScopedExtensions(extensionClasses);
+    }
+    
+    public static Manager create() throws Exception {
+        return create(ExtensionLoaderExtension.class);
+    }
+    
+    public static Manager create(Class<?>... extensionClasses) throws Exception {
+        return create(Arrays.asList(extensionClasses));
     }
     
     public static Manager create(final Collection<Class<?>> extensionClasses) throws Exception {

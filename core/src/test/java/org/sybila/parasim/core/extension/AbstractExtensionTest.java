@@ -2,7 +2,6 @@ package org.sybila.parasim.core.extension;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.extension.loader.ExtensionLoaderExtension;
 import org.testng.annotations.BeforeMethod;

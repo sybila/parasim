@@ -4,7 +4,6 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 import org.sybila.parasim.core.extension.loader.api.ExtensionLoader;
@@ -52,6 +51,7 @@ public class ExtensionLoaderExtension {
         return new ExtensionBuilder() {
 
             public void extension(Class<?> extension) {
+                LOGGER.info("[" + extension.getName() + "] registered");
                 event.extension(extension);
             }
 

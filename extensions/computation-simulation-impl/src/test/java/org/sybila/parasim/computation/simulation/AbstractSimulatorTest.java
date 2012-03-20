@@ -5,7 +5,6 @@ import org.sybila.parasim.computation.simulation.api.Configuration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.Simulator;
 import org.sybila.parasim.model.trajectory.DataBlock;
-import org.sybila.parasim.model.ode.OdeSystemEncoding;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +47,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     }
 
     protected void testTimeStep(int size) {
-        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
         for (int s = 0; s < size; s++) {
             Point previous = null;
             for(Point p : result.getTrajectory(s)) {             
@@ -63,7 +62,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     }    
     
     protected void testMinimalNumberOfPoints(int size) {
-        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
         for(int s = 0; s < size; s++) {
             for(Point p : result.getTrajectory(s)) {             
             }
@@ -72,7 +71,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
     }
     
     protected void testValidNumberOfTrajectories(int size) {
-        SimulatedDataBlock<Trajectory> result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
         assertEquals(size, result.size());
         for(int s = 0; s < size; s++) {
             for(Point p : result.getTrajectory(s)) {             

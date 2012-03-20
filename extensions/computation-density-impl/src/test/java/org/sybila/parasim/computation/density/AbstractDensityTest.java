@@ -19,8 +19,8 @@ import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 public abstract class AbstractDensityTest {
 
-    protected Configuration<Trajectory> createConfiguration(final float expectedDistance, final int dimension, final TrajectoryNeighborhood<Trajectory> neighborhood) {
-        return new Configuration<Trajectory>() {
+    protected Configuration createConfiguration(final float expectedDistance, final int dimension, final TrajectoryNeighborhood<Trajectory> neighborhood) {
+        return new Configuration() {
 
             private float[] distance;
 

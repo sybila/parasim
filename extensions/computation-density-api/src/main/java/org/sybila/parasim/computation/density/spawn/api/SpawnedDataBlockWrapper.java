@@ -6,13 +6,13 @@ import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
-public class SpawnedDataBlockWrapper<T extends Trajectory> implements SpawnedDataBlock<T> {
+public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
 
-    private TrajectoryNeighborhood<T> neighborhood;
+    private TrajectoryNeighborhood<Trajectory> neighborhood;
     private DataBlock<Trajectory> secondaryTrajectories;
-    private DataBlock<T> trajectories;
+    private DataBlock<Trajectory> trajectories;
     
-    public SpawnedDataBlockWrapper(DataBlock<T> trajectories, TrajectoryNeighborhood<T> neighborhood, DataBlock<Trajectory> secondaryTrajectories) {
+    public SpawnedDataBlockWrapper(DataBlock<Trajectory> trajectories, TrajectoryNeighborhood<Trajectory> neighborhood, DataBlock<Trajectory> secondaryTrajectories) {
         if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
@@ -28,12 +28,12 @@ public class SpawnedDataBlockWrapper<T extends Trajectory> implements SpawnedDat
     }
     
     @Override
-    public TrajectoryNeighborhood<T> getNeighborhood() {
+    public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
         return neighborhood;
     }
 
     @Override
-    public T getTrajectory(int index) {
+    public Trajectory getTrajectory(int index) {
         return trajectories.getTrajectory(index);
     }
 
@@ -48,7 +48,7 @@ public class SpawnedDataBlockWrapper<T extends Trajectory> implements SpawnedDat
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public Iterator<Trajectory> iterator() {
         return trajectories.iterator();
     }
     

@@ -19,7 +19,7 @@ public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest
     @Test
     public void testNumberOfTrajectoriesAfterSpawn() {
         // initial sampling
-        SpawnedDataBlock<Trajectory> initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), 2), 4);
+        SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), 2), 4);
         // load configuration
         Configuration configuration = createConfiguration(1.5f, DIMENSION, initSpawned.getNeighborhood());
         // distance checking
@@ -35,7 +35,7 @@ public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest
         // create spawner
         TrajectorySpawner spawner = createTrajectorySpawner();
         // continue in sampling
-        SpawnedDataBlock<Trajectory> nextSpawned = spawner.spawn(configuration, distanceChecked);
+        SpawnedDataBlock nextSpawned = spawner.spawn(configuration, distanceChecked);
         // assertion
         int expectedSpawned = 0;
         for (Trajectory trajectory: initSpawned) {

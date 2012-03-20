@@ -4,19 +4,20 @@ import java.util.Iterator;
 import java.util.List;
 import org.sybila.parasim.computation.density.api.LimitedDistance;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ListDistanceCheckedDataBlock<T extends Trajectory> implements DistanceCheckedDataBlock<T> {
+public class ListDistanceCheckedDataBlock implements DistanceCheckedDataBlock {
     
-    private DataBlock<T> dataBlock;
+    private DataBlock<Trajectory> dataBlock;
     private List<List<LimitedDistance>> distances;
     private List<List<Integer>> neighborCheckedPositions;
     private List<List<Integer>> trajectoryCheckedPositions;
     
-    public ListDistanceCheckedDataBlock(DataBlock<T> dataBlock, List<List<LimitedDistance>> distances, List<List<Integer>> trajectoryCheckedPositions, List<List<Integer>> neighborCheckedPositions) {
+    public ListDistanceCheckedDataBlock(DataBlock<Trajectory> dataBlock, List<List<LimitedDistance>> distances, List<List<Integer>> trajectoryCheckedPositions, List<List<Integer>> neighborCheckedPositions) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }
@@ -50,7 +51,7 @@ public class ListDistanceCheckedDataBlock<T extends Trajectory> implements Dista
     }
 
     @Override
-    public T getTrajectory(int index) {
+    public Trajectory getTrajectory(int index) {
         return dataBlock.getTrajectory(index);
     }
 
@@ -60,7 +61,7 @@ public class ListDistanceCheckedDataBlock<T extends Trajectory> implements Dista
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public Iterator<Trajectory> iterator() {
         return dataBlock.iterator();
     }
 

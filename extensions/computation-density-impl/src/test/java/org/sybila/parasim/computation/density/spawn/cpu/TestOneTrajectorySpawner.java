@@ -27,9 +27,9 @@ public class TestOneTrajectorySpawner extends AbstractTrajectorySpawnerTest {
     public void testSimple() {
         DataBlock<Trajectory> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
-        Configuration<Trajectory> configuration = createConfiguration(1, 4, neighborhood);
-        DistanceCheckedDataBlock<Trajectory> distanceChecked = new OnePairDistanceChecker().check(configuration, dataBlock);
-        SpawnedDataBlock<Trajectory> spawned = new OneTrajectorySpawner().spawn(configuration, distanceChecked);
+        Configuration configuration = createConfiguration(1, 4, neighborhood);
+        DistanceCheckedDataBlock distanceChecked = new OnePairDistanceChecker().check(configuration, dataBlock);
+        SpawnedDataBlock spawned = new OneTrajectorySpawner().spawn(configuration, distanceChecked);
         assertEquals(1, spawned.size());
         assertEquals(2, spawned.getNeighborhood().getNeighbors(spawned.getTrajectory(0)).size());
     }

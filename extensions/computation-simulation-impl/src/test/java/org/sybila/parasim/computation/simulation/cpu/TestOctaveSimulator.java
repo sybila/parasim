@@ -1,12 +1,10 @@
 package org.sybila.parasim.computation.simulation.cpu;
 
-import org.sybila.parasim.computation.simulation.cpu.OctaveSimulator;
 import org.testng.annotations.Test;
 import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.Simulator;
-import org.sybila.parasim.model.trajectory.Trajectory;
 import org.testng.SkipException;
 
 /**
@@ -40,7 +38,7 @@ public class TestOctaveSimulator extends AbstractAdaptiveStepSimulationTest {
     }
 
     @Override
-    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> createSimulator(AdaptiveStepConfiguration configuaration) {
+    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator(AdaptiveStepConfiguration configuaration) {
         return new OctaveSimulator();
     }
     

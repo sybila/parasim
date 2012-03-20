@@ -28,10 +28,10 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  * 
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Configuration<Trajectory>, SpawnedDataBlock<Trajectory>> {
+public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
 
     @Override
-    public SpawnedDataBlock<Trajectory> spawn(Configuration<Trajectory> configuration, DistanceCheckedDataBlock<Trajectory> trajectories) {
+    public SpawnedDataBlock spawn(Configuration configuration, DistanceCheckedDataBlock trajectories) {
         spawnSetup(configuration, trajectories);
         // note spawned trajectories
         List<Trajectory> newTrajectories = new ArrayList<Trajectory>();
@@ -59,7 +59,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
             }
         }
         spawnTearDown(configuration, trajectories);
-        return new SpawnedDataBlockWrapper<Trajectory>(
+        return new SpawnedDataBlockWrapper(
             new ListDataBlock<Trajectory>(newTrajectories),
             new MapTrajectoryNeighborhood<Trajectory>(neighborhood),
             new ListDataBlock<Trajectory>(newSecondaryTrajectories)
@@ -67,7 +67,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
     }
 
     @Override
-    public SpawnedDataBlock<Trajectory> spawn(OrthogonalSpace space, int... numOfSamples) {
+    public SpawnedDataBlock spawn(OrthogonalSpace space, int... numOfSamples) {
         if (space.getDimension() != numOfSamples.length) {
             throw new IllegalArgumentException("The number of space dimension and length of [numOfSamples] array doesn't match.");
         }
@@ -135,7 +135,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
             neighborhoodDataBlocks.put(key, new ListDataBlock<Trajectory>(neighborhoodLists.get(key)));
         }
         // return the result
-        return new SpawnedDataBlockWrapper<Trajectory>(
+        return new SpawnedDataBlockWrapper(
             new ListDataBlock<Trajectory>(seeds),
             new MapTrajectoryNeighborhood<Trajectory>(neighborhoodDataBlocks),
             new ListDataBlock<Trajectory>(secondarySeeds)
@@ -149,7 +149,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
      * @param configuration
      * @param trajectories 
      */
-    protected void spawnSetup(Configuration<Trajectory> configuration, DistanceCheckedDataBlock<Trajectory> trajectories) {
+    protected void spawnSetup(Configuration configuration, DistanceCheckedDataBlock trajectories) {
     }
 
     /**
@@ -157,7 +157,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner<Con
      * @param configuration
      * @param trajectories 
      */
-    protected void spawnTearDown(Configuration<Trajectory> configuration, DistanceCheckedDataBlock<Trajectory> trajectories) {
+    protected void spawnTearDown(Configuration configuration, DistanceCheckedDataBlock trajectories) {
     }
 
     /**

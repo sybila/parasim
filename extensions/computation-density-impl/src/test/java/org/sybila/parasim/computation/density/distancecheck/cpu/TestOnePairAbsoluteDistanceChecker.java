@@ -23,8 +23,8 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     public void testValidCheckedLengths() {
         DataBlock<Trajectory> dataBlock = createValidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
-        Configuration<Trajectory> configuration = createConfiguration(1, DIMENSION, neighborhood);
-        DistanceCheckedDataBlock<Trajectory> result = new OnePairDistanceChecker().check(configuration, dataBlock);
+        Configuration configuration = createConfiguration(1, DIMENSION, neighborhood);
+        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(configuration, dataBlock);
         for (int t = 0; t < result.size(); t++) {
             for (int neigh = 0; neigh < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); neigh++) {
                 assertEquals(result.getTrajectoryCheckedPosition(t, neigh), LENGTH - 1);
@@ -37,8 +37,8 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     public void testInvalidDistance() {
         DataBlock<Trajectory> dataBlock = createInvalidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
-        Configuration<Trajectory> configuration = createConfiguration(1, DIMENSION, neighborhood);
-        DistanceCheckedDataBlock<Trajectory> result = new OnePairDistanceChecker().check(configuration, dataBlock);
+        Configuration configuration = createConfiguration(1, DIMENSION, neighborhood);
+        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(configuration, dataBlock);
         for (int t = 0; t < result.size(); t++) {
             for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
                 assertTrue(!result.getDistance(t, dim).isValid());
@@ -50,8 +50,8 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     public void testValidDistance() {
         DataBlock<Trajectory> dataBlock = createValidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
-        Configuration<Trajectory> configuration = createConfiguration(1, DIMENSION, neighborhood);
-        DistanceCheckedDataBlock<Trajectory> result = new OnePairDistanceChecker().check(configuration, dataBlock);
+        Configuration configuration = createConfiguration(1, DIMENSION, neighborhood);
+        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(configuration, dataBlock);
         for (int t = 0; t < result.size(); t++) {
             for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
                 assertTrue(result.getDistance(t, dim).isValid());

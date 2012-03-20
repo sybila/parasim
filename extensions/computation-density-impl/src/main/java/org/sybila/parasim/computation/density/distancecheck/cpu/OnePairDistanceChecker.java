@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.LimitedDistance;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.api.ListDistanceCheckedDataBlock;
-import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -15,7 +15,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class OnePairDistanceChecker implements DistanceChecker<Configuration<Trajectory>, DistanceCheckedDataBlock> {
+public class OnePairDistanceChecker implements DistanceChecker {
 
     /**
      * Checks distance of corresponding points of trajectory and trajectories in its neighborhood.
@@ -27,18 +27,18 @@ public class OnePairDistanceChecker implements DistanceChecker<Configuration<Tra
      * @return the biggest ratio between measured and required distance
      */
     @Override
-    public DistanceCheckedDataBlock check(Configuration<Trajectory> congfiguration, DataBlock<Trajectory> trajectories) {
+    public DistanceCheckedDataBlock check(Configuration congfiguration, DataBlock<Trajectory> trajectories) {
         if (congfiguration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
         if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
-        List<List<Distance>> distances = new ArrayList<List<Distance>>(trajectories.size());
+        List<List<LimitedDistance>> distances = new ArrayList<List<LimitedDistance>>(trajectories.size());
         List<List<Integer>> trajectoryPosition = new ArrayList<List<Integer>>(trajectories.size());
         List<List<Integer>> neighborPosition = new ArrayList<List<Integer>>(trajectories.size());
         for(int index=0; index < trajectories.size(); index++) {
-            List<Distance> currentDistances = new ArrayList<Distance>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
+            List<LimitedDistance> currentDistances = new ArrayList<LimitedDistance>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             List<Integer> currentTajectoryPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             List<Integer> currentNeighborPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
@@ -116,7 +116,7 @@ public class OnePairDistanceChecker implements DistanceChecker<Configuration<Tra
         return null;
     }
 
-    private Distance checkPointDistance(Configuration configuration, Point beginFirstPoint, Point endFirstPoint, Point secondPoint) {
+    private LimitedDistance checkPointDistance(Configuration configuration, Point beginFirstPoint, Point endFirstPoint, Point secondPoint) {
         if (endFirstPoint.getTime() == secondPoint.getTime()) {
             return configuration.getDistanceMetric().distance(endFirstPoint, secondPoint);
         }
@@ -128,10 +128,10 @@ public class OnePairDistanceChecker implements DistanceChecker<Configuration<Tra
     }
  
     private class DistanceAndPosition {
-        public Distance distance;
+        public LimitedDistance distance;
         public int trajectoryPosition;
         public int neighborPosition;
-        public DistanceAndPosition(Distance distance, int trajectoryPosition, int neighborPosition) {
+        public DistanceAndPosition(LimitedDistance distance, int trajectoryPosition, int neighborPosition) {
             this.distance = distance;
             this.trajectoryPosition = trajectoryPosition;
             this.neighborPosition = neighborPosition;

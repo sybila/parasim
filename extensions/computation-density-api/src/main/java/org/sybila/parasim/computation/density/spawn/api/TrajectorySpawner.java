@@ -3,12 +3,11 @@ package org.sybila.parasim.computation.density.spawn.api;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.model.space.OrthogonalSpace;
-import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface TrajectorySpawner<Conf extends Configuration, Out extends SpawnedDataBlock> {
+public interface TrajectorySpawner {
     
     /**
      * Creates new trajectories.
@@ -17,7 +16,7 @@ public interface TrajectorySpawner<Conf extends Configuration, Out extends Spawn
      * @param trajectories
      * @return data block with new trajectories
      */
-    Out spawn(Conf configuration, DistanceCheckedDataBlock<Trajectory> trajectories);
+    SpawnedDataBlock spawn(Configuration configuration, DistanceCheckedDataBlock trajectories);
 
     /**
      * Creates new trajectories in the given space. Number of trajectories is defined
@@ -27,6 +26,6 @@ public interface TrajectorySpawner<Conf extends Configuration, Out extends Spawn
      * @param space 
      * @param numOfSamples 
      */
-    Out spawn(OrthogonalSpace space, int... numOfSamples);
+    SpawnedDataBlock spawn(OrthogonalSpace space, int... numOfSamples);
     
 }

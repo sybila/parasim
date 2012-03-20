@@ -7,7 +7,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface DistanceChecker<Conf extends Configuration, Out extends DistanceCheckedDataBlock> {
+public interface DistanceChecker {
     
     /**
      * Checks distances between trajectories in datablock and their neighborhood
@@ -17,6 +17,6 @@ public interface DistanceChecker<Conf extends Configuration, Out extends Distanc
      * @param trajectories
      * @return 
      */
-    Out check(Conf congfiguration, DataBlock<Trajectory> trajectories);
+    DistanceCheckedDataBlock check(Configuration congfiguration, DataBlock<Trajectory> trajectories);
     
 }

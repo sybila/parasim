@@ -1,12 +1,11 @@
 package org.sybila.parasim.computation.simulation.cpu;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
+import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.ArraySimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
-import org.sybila.parasim.computation.simulation.api.Simulator;
 import org.sybila.parasim.computation.simulation.api.Status;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
@@ -18,7 +17,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Rkf45Simulator implements Simulator<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> {
+public class Rkf45Simulator implements AdaptiveStepSimulator {
     /**
      * Minimal time step using during simulation
      */

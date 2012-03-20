@@ -5,9 +5,9 @@ import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.Arrays;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
+import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.ArraySimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
-import org.sybila.parasim.computation.simulation.api.Simulator;
 import org.sybila.parasim.computation.simulation.api.Status;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
@@ -19,9 +19,9 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class OctaveSimulator implements Simulator<AdaptiveStepConfiguration, SimulatedDataBlock<Trajectory>> {
+public class OctaveSimulator implements AdaptiveStepSimulator {
    
-    public SimulatedDataBlock<Trajectory> simulate(AdaptiveStepConfiguration configuration, DataBlock<Trajectory> data) {
+    public SimulatedDataBlock simulate(AdaptiveStepConfiguration configuration, DataBlock<Trajectory> data) {
         OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
         OctaveOdeSystem octaveOdeSystem = new OctaveOdeSystem(configuration.getOdeSystem().encoding());
         octave.eval(octaveOdeSystem.octaveString());
