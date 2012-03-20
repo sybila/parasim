@@ -140,7 +140,7 @@ public class TestFormulaStorage {
         }
     }
 
-    @Test
+    @Test(enabled=false)
     public void tryStore() {
         File temp = null;
         try {
