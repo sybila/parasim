@@ -1,0 +1,83 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sybila</groupId>
+        <artifactId>sybila-parent</artifactId>
+        <version>2-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.sybila.parasim</groupId>
+    <artifactId>parasim-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>parasim-parent</name>
+
+    <!-- SCM and distribution management -->
+    <scm>
+        <connection>scm:git:git://github.com/sybila/parasim.git</connection>
+        <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
+        <url>https://github.com/sybila/parasim</url>
+    </scm>    
+    <distributionManagement>
+        <site>
+            <id>sybila-site-ssh</id>
+            <name>Site hosted on http://sybila.fi.muni.cz</name>
+            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/parasim</url>
+        </site>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>sybila-maven-http</id>
+            <url>http://sybila.fi.muni.cz/public/maven</url> 
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>daily</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>        
+        </repository>
+        <repository>
+            <id>javaoctave-maven</id>
+            <url>https://svn.kenai.com/svn/javaoctave~maven-repository/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <updatePolicy>daily</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>        
+        </repository>        
+    </repositories>
+
+    <profiles>
+        <profile>
+            <id>clover</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-clover2-plugin</artifactId>
+                        <version>3.1.3</version>
+                        <executions>
+                            <execution>
+                                <id>clover-site</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>instrument</goal>
+                                    <goal>aggregate</goal>
+                                    <goal>clover</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

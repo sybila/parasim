@@ -1,93 +1,52 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.sybila</groupId>
-        <artifactId>sybila-parent</artifactId>
-        <version>2-SNAPSHOT</version>
+        <groupId>org.sybila.parasim</groupId>
+        <artifactId>parasim-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>parent/pom.xml</relativePath>
     </parent>
 
-    <groupId>org.sybila.parasim</groupId>
-    <artifactId>parasim-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>parasim-module</artifactId>
     <packaging>pom</packaging>
 
-    <name>parasim-parent</name>
-    
-    <modules>
-        <module>parasim-application</module>
-        <module>parasim-computation</module>
-        <module>parasim-core</module>
-        <module>parasim-model</module>
-        <module>parasim-support</module>
-        <module>parasim-visualization</module>
-    </modules>
-    
-    <distributionManagement>
-        <site>
-            <id>sybila-site-ssh</id>
-            <name>Site hosted on http://sybila.fi.muni.cz</name>
-            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/parasim</url>
-        </site>
-    </distributionManagement>
-
-    <!-- SCM and distribution management -->
-    <scm>
-        <connection>scm:git:git://github.com/sybila/parasim.git</connection>
-        <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
-        <url>https://github.com/sybila/parasim</url>
-    </scm>    
-    
-    <repositories>
-        <repository>
-            <id>sybila-maven-http</id>
-            <url>http://sybila.fi.muni.cz/public/maven</url> 
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <updatePolicy>daily</updatePolicy>
-                <enabled>true</enabled>
-            </snapshots>        
-        </repository>
-        <repository>
-            <id>javaoctave-maven</id>
-            <url>https://svn.kenai.com/svn/javaoctave~maven-repository/maven2/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <updatePolicy>daily</updatePolicy>
-                <enabled>true</enabled>
-            </snapshots>        
-        </repository>        
-    </repositories>
+    <name>parasim-module</name>
 
     <profiles>
         <profile>
-            <id>clover</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.atlassian.maven.plugins</groupId>
-                        <artifactId>maven-clover2-plugin</artifactId>
-                        <version>3.1.3</version>
-                        <executions>
-                            <execution>
-                                <id>clover-site</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>instrument</goal>
-                                    <goal>aggregate</goal>
-                                    <goal>clover</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+            <id>extensions</id>
+            <modules>
+                <module>extensions/computation-cycledetection-api</module>
+                <module>extensions/computation-cycledetection-impl</module>
+                <module>extensions/computation-density-api</module>
+                <module>extensions/computation-density-impl</module>
+                <module>extensions/computation-lifecycle-api</module>
+                <module>extensions/computation-lifecycle-impl</module>
+                <module>extensions/computation-simulation-api</module>
+                <module>extensions/computation-simulation-impl</module>
+                <module>extensions/computation-verification-api</module>
+                <module>extensions/computation-verification-impl</module>
+            </modules>    
+        </profile>
+        <profile>
+            <id>model</id>
+            <modules>
+                <module>model/core</module>
+                <module>model/ode</module>
+                <module>model/space</module>
+                <module>model/trajectory</module>
+                <module>model/verification</module>
+            </modules>    
+        </profile>
+        <profile>
+            <id>core</id>
+            <modules>
+                <module>core</module>
+            </modules>    
         </profile>
     </profiles>
+    
+    
 </project>

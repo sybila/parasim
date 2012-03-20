@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.sybila.org/parasim/space"
+	xmlns="http://www.sybila.org/parasim/space"
+	elementFormDefault="qualified">
+	
+	<xs:complexType name="dimension_bounds">
+		<xs:attribute name="min" type="xs:decimal" use="required"/>
+		<xs:attribute name="max" type="xs:decimal" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="orthogonal_space">
+		<xs:sequence>
+			<xs:element name="dimension" type="dimension_bounds" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="space" type="orthogonal_space"/>
+</xs:schema>
