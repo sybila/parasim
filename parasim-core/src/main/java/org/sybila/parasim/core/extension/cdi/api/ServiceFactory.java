@@ -13,4 +13,5 @@ public interface ServiceFactory {
     
     boolean isServiceAvailable(Class<?> type, Context context);
     
+    void provideFields(Object target, Context context);
 }

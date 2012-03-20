@@ -2,6 +2,7 @@ package org.sybila.parasim.core.extension.cdi.impl;
 
 import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.event.ManagerStarted;
@@ -18,6 +19,9 @@ public class ServiceFactoryRegistrar {
     private Instance<Manager> manager;
         
     public void register(@Observes ManagerStarted event) {
-        serviceFactory.set(new ManagedServiceFactory(manager.get()));        
+        if (!(manager.get() instanceof ManagerImpl)) {
+            throw new IllegalStateException("The service factory can be created only with [" + ManagerImpl.class.getName() + "].");
+        }
+        serviceFactory.set(new ManagedServiceFactory((ManagerImpl) (manager.get())));
     }    
 }

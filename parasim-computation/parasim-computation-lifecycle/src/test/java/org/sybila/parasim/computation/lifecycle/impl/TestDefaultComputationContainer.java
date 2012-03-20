@@ -47,6 +47,11 @@ public class TestDefaultComputationContainer extends AbstractComputationTest {
                     return false;
                 }
             }
+
+            @Override
+            protected <T> void bind(Class<T> clazz, Context context, Object value) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
         };
         ContextEvent<ComputationContext> contextEvent = new ContextEvent<ComputationContext>() {
             public void initialize(ComputationContext context) {}

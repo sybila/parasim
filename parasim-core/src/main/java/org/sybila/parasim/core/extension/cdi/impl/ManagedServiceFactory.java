@@ -1,6 +1,6 @@
 package org.sybila.parasim.core.extension.cdi.impl;
 
-import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.context.Context;
 
 /**
@@ -8,9 +8,9 @@ import org.sybila.parasim.core.context.Context;
  */
 public class ManagedServiceFactory extends AbstractServiceFactory {
 
-    private Manager manager;
+    private ManagerImpl manager;
     
-    public ManagedServiceFactory(Manager manager) {
+    public ManagedServiceFactory(ManagerImpl manager) {
         if (manager == null) {
             throw new IllegalArgumentException("The parameter [manager] is null.");
         }
@@ -24,5 +24,9 @@ public class ManagedServiceFactory extends AbstractServiceFactory {
     public boolean isServiceAvailable(Class<?> type, Context context) {
         return manager.resolve(type, context) != null;
     }
-    
+
+    @Override
+    protected <T> void bind(Class<T> clazz, Context context, Object value) {
+        manager.bind(clazz, context, (T) value);
+    }
 }

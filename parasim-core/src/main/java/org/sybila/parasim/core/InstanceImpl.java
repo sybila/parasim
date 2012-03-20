@@ -1,7 +1,6 @@
 package org.sybila.parasim.core;
 
 import org.sybila.parasim.core.context.Context;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>

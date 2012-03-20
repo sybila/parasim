@@ -19,7 +19,7 @@
         <module>parasim-model-ode</module>
         <module>parasim-model-trajectory</module>
         <module>parasim-model-verification</module>
-    <module>parasim-model-core</module>
+        <module>parasim-model-core</module>
   </modules>
     
 </project>

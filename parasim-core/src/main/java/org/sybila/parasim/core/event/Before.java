@@ -1,27 +1,25 @@
 package org.sybila.parasim.core.event;
 
-import org.sybila.parasim.core.context.Context;
-
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Before<C extends Context> {
+public class Before<L> {
     
-    private C context;
+    private L load;
     
-    private Before(C context) {
-        if (context == null) {
-            throw new IllegalArgumentException("The parameter context is null.");
+    private Before(L load) {
+        if (load == null) {
+            throw new IllegalArgumentException("The parameter [load] is null.");
         }
-        this.context = context;
+        this.load = load;
     }
     
-    public static <T extends Context> Before<T> of(T context) {
-        return new Before<T>(context);
+    public static <L> Before<L> of(L context) {
+        return new Before<L>(context);
     }
     
-    public C getContext() {
-        return context;
+    public L getLoad() {
+        return load;
     }
     
 }
