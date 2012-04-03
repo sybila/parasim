@@ -38,6 +38,34 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         
         return target;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        //if (obj == this) return true;
+        if (!(obj instanceof VerificationResult)) return false;
+        VerificationResult target = (VerificationResult) obj;
+        if (size() != target.size()) return false;
+        for (int i = 0; i < size(); i++) {
+            if (!getPoint(i).equals(target.getPoint(i))) return false;
+            if (Float.floatToIntBits(getRobustness(i)) != Float.floatToIntBits(target.getRobustness(i))) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 41;
+        int result = size();
+        for (int i = 0; i < size(); i++) {
+            result *= prime;
+            result += getPoint(i).hashCode();
+            result *= prime;
+            result += Float.floatToIntBits(getRobustness(i));
+        }
+        return result;
+    }
+    
+    
     
     
 }
