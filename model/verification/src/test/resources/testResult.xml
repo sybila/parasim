@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<result xmlns="http://www.sybila.org/parasim/verification-result">
+<point>
+<dim>-0.15</dim>
+<dim>12.3</dim>
+<dim>53.1</dim>
+<robustness>0.125</robustness>
+</point>
+<point>
+<dim>89.005</dim>
+<dim>-74.102</dim>
+<dim>376.4</dim>
+<robustness>-0.145</robustness>
+</point>
+<point>
+<dim>538.01</dim>
+<dim>-35.002</dim>
+<dim>55.12</dim>
+<robustness>-54</robustness>
+</point>
+<point>
+<dim>124.1</dim>
+<dim>25.35</dim>
+<dim>-0.005</dim>
+<robustness>12.8</robustness>
+</point>
+</result>
