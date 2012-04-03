@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.sybila.org/parasim/verification-result"
+           xmlns="http://www.sybila.org/parasim/verification-result"
+           elementFormDefault="qualified">
+
+    <xs:complexType name="point">
+        <xs:sequence>
+            <xs:element name="dim" type="xs:decimal" maxOccurs="unbounded"/>
+            <xs:element name="robustness" type="xs:decimal" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="result">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="point" type="point" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
