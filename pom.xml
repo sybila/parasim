@@ -28,6 +28,8 @@
                 <module>extensions/computation-simulation-impl</module>
                 <module>extensions/computation-verification-api</module>
                 <module>extensions/computation-verification-impl</module>
+                <module>extensions/visualisation-plot-api</module>
+                <module>extensions/visualisation-plot-impl</module>
             </modules>    
         </profile>
         <profile>
