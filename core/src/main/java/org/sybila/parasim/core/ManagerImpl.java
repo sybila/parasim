@@ -8,6 +8,7 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,15 +85,9 @@ public final class ManagerImpl implements Manager {
     }
     
     public void finalizeContext(Context context) {
-        if (context.hasParent()) {
-            fire(After.of(context), context.getParent());
-        }
-        fire(After.of(context), context);
-        context.destroy();
-        extensionsByContext.get(context).clear();
-        extensionsByContext.remove(context);
+        finalizeContext(context, true);
     }
-
+    
     public void fire(Object event, Context context) {
         if (event == null) {
             throw new IllegalArgumentException("The parameter [event] is null.");
@@ -166,7 +161,7 @@ public final class ManagerImpl implements Manager {
                 if (context instanceof ApplicationContext) {
                     continue;
                 }
-                finalizeContext(context);
+                finalizeContext(context, false);
             }
             // destroy application context
             finalizeContext(applicationContext);
@@ -180,6 +175,18 @@ public final class ManagerImpl implements Manager {
         fire(new ManagerStarted(), applicationContext);
     }
 
+    private void finalizeContext(Context context, boolean remove) {
+        if (context.hasParent()) {
+            fire(After.of(context), context.getParent());
+        }
+        fire(After.of(context), context);
+        context.destroy();
+        extensionsByContext.get(context).clear();
+        if (remove) {
+            extensionsByContext.remove(context);
+        }
+    }
+    
     private static Class<?> getType(Type type) {
         // type is not parametrized
         if (type instanceof  Class<?>) {
