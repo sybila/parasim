@@ -13,6 +13,8 @@ import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.extension.cdi.TestServiceFactoryExtension;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.extension.configuration.impl.TestExtensionDescriptorMapperImpl;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 
 /**
@@ -30,6 +32,10 @@ public class TestedLoadableExtension implements LoadableExtension {
     
     public void observesServiceFactory(@Observes ServiceFactory serviceFactory) {
         TestServiceFactoryExtension.serviceFactory = serviceFactory;
+    }
+    
+    public void observesExtensionDescriptorMapper(@Observes ExtensionDescriptorMapper mapper) {
+        TestExtensionDescriptorMapperImpl.mapper = mapper;
     }
     
     public void register(ExtensionBuilder builder) {

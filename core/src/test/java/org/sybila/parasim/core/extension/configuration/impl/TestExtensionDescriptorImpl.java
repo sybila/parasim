@@ -15,12 +15,12 @@ import static org.testng.Assert.*;
 public class TestExtensionDescriptorImpl {
 
     private ParasimDescriptor descriptor;
-    
+
     @BeforeMethod
     public void prepareDescriptor() throws IOException, SAXException {
         descriptor = ParasimDescriptorImpl.fromXMLFile("something", "src/test/resources/org/sybila/parasim/core/extension/configuration/parasim.xml");
     }
-    
+
     @Test
     public void testExtensions() {
        Collection<ExtensionDescriptor> extensions = descriptor.getExtensionDescriptors();
@@ -32,5 +32,5 @@ public class TestExtensionDescriptorImpl {
        String[] arrayValue = new String[] {"1", "2", "3"};
        assertEquals(extDescriptor.getPropertyAsArray("test-array-property"), arrayValue);
     }
-    
+
 }

@@ -1,5 +1,7 @@
 package org.sybila.parasim.core.extension.configuration.impl;
 
+import org.sybila.parasim.core.extension.AbstractExtensionTest;
+import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -8,10 +10,11 @@ import static org.testng.Assert.*;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestExtensionDescriptotMapperImpl {
+public class TestExtensionDescriptorMapperImpl extends AbstractExtensionTest {
     
     private ConfigBean configBean;
     private ExtensionDescriptor descriptor;
+    public static ExtensionDescriptorMapper mapper;
     
     private class ConfigBean {
         private int intNumber;
@@ -39,4 +42,9 @@ public class TestExtensionDescriptotMapperImpl {
         assertEquals(configBean.intNumbers, new int[] {1, 2, 3});
     }
     
+    @Test
+    public void testLoaded() {
+        getManager().start();
+        assertNotNull(mapper);
+    }    
 }
