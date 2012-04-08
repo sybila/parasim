@@ -6,13 +6,13 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 /*
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ImutableAdaptiveStepConfiguraton implements AdaptiveStepConfiguration {
+public class ImmutableAdaptiveStepConfiguraton implements AdaptiveStepConfiguration {
     
     private Configuration configuration;
     private float[] maxAbsoluteError;
     private float maxRelativeError;
     
-    public ImutableAdaptiveStepConfiguraton(Configuration configuration, float[] maxAbsoluteError, float maxRelativeError) {
+    public ImmutableAdaptiveStepConfiguraton(Configuration configuration, float[] maxAbsoluteError, float maxRelativeError) {
         if (configuration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }

@@ -1,1 +1,9 @@
-<parasim></parasim>
+<parasim>
+    <extension qualifier="simulator">
+        <property name="maxAbsoluteError">
+            <value>0.001</value>
+            <value>0.02</value>
+        </property>
+        <property name="maxRelativeError">0.015</property>
+    </extension>
+</parasim>
