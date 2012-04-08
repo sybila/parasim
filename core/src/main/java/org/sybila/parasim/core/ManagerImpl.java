@@ -59,13 +59,14 @@ public final class ManagerImpl implements Manager {
             manager.applicationContext,
             manager.createExtensions(manager.extensionsByScope.get(manager.applicationContext.getScope()), manager.applicationContext)
         );
+        // fire manager processing
+        manager.fireProcessing(manager.applicationContext);
+        // load providers
         for (Extension extension: manager.extensionsByContext.get(manager.applicationContext)) {
             for (ProvidingPoint providingPoint: extension.getProvidingPoints()) {
                 ProviderImpl.bind(manager, manager.applicationContext, providingPoint, getType(providingPoint.getType()));
             }
-        }
-        // fire manager processing
-        manager.fireProcessing(manager.applicationContext);
+        }        
         // fire application context created
         manager.fire(Before.of(manager.applicationContext), manager.applicationContext);
         // add manager as a service
