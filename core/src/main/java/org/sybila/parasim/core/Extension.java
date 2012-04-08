@@ -18,4 +18,5 @@ public interface Extension {
     
     Collection<ObserverMethod> getObservers();
     
+    Collection<ProvidingPoint> getProvidingPoints();
 }

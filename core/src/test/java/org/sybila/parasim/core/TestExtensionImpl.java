@@ -2,6 +2,7 @@ package org.sybila.parasim.core;
 
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.context.ApplicationContext;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.testng.annotations.BeforeMethod;
@@ -19,8 +20,14 @@ public class TestExtensionImpl {
         private Instance<String> address;
         @Inject
         private Event<String> event;
-        
+        @Provide
+        private Integer staticNumber = 1;
+        private  long counter = 1;
         public void observe(@Observes ManagerStarted event) {}
+        @Provide
+        public Long getDynamicNumber() {
+            return counter;
+        }
     }
     
     @BeforeMethod
@@ -41,5 +48,10 @@ public class TestExtensionImpl {
     @Test
     public void testEventPoints() {
         assertEquals(extension.getEventPoints().size(), 1);
+    }
+    
+    @Test
+    public void testProvidingPoints() {
+        assertEquals(extension.getProvidingPoints().size(), 2);
     }
 }

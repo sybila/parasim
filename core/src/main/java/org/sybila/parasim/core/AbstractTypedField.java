@@ -1,28 +1,23 @@
 package org.sybila.parasim.core;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class AbstractTypedField implements Typed {
+public abstract class AbstractTypedField extends AbstractTyped {
     
-    private Field field;
-    private Object target;
-    private Type type;    
+    private final Field field;
+    private final Type type;    
     
     public AbstractTypedField(Object target, Field field) {
-        if (target == null) {
-            throw new IllegalArgumentException("The parameter [target] is null.");
-        }
+        super(target);
         if (field == null) {
             throw new IllegalArgumentException("The parameter [field] is null.");
         }
-        this.target = target;
         this.field = field;
-        this.type = loadType(field);        
+        this.type = loadType(field.getGenericType());        
     }
     
     public Type getType() {
@@ -31,20 +26,6 @@ public abstract class AbstractTypedField implements Typed {
     
     protected Field getField() {
         return field;
-    }
-    
-    protected Object getTarget() {
-        return target;
-    }
-    
-    private Type loadType(Field field) {
-        ParameterizedType loadedType = (ParameterizedType) field.getGenericType();
-        if(loadedType.getActualTypeArguments()[0] instanceof ParameterizedType) {
-            ParameterizedType first = (ParameterizedType)loadedType.getActualTypeArguments()[0];
-            return (Class<?>)first.getRawType();
-        } else {
-            return (Class<?>)loadedType.getActualTypeArguments()[0];
-        }
-    }    
+    }  
     
 }

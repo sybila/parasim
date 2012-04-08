@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.context.Context;
 
 /**
@@ -21,6 +22,7 @@ public class ExtensionImpl implements Extension {
     private Object target;
     private Collection<InjectionPoint> injectionPoints;
     private Collection<ObserverMethod> observers;
+    private Collection<ProvidingPoint> providingPoints;
     
     public ExtensionImpl(Object target, Context context) {
         if (target == null) {
@@ -37,6 +39,7 @@ public class ExtensionImpl implements Extension {
         this.injectionPoints = new ArrayList<InjectionPoint>();
         this.eventPoints = new ArrayList<EventPoint>();
         this.observers = new ArrayList<ObserverMethod>();
+        this.providingPoints = new ArrayList<ProvidingPoint>();
         
         // find event and injection points
         for (Field field: target.getClass().getDeclaredFields()) {
@@ -49,9 +52,15 @@ public class ExtensionImpl implements Extension {
                     contextEventPoints.add(new ContextEventPointImpl(target, field));
                 }
             }
+            if (isAnnotationPresent(Provide.class, field.getDeclaredAnnotations())) {
+                providingPoints.add(new ProvidingFieldPoint(target, field));
+            }
         }
         // find observers
         for (Method method: target.getClass().getDeclaredMethods()) {
+            if (isAnnotationPresent(Provide.class, method.getAnnotations())) {
+                providingPoints.add(new ProvidingMethodPoint(target, method, context, method.getAnnotation(Provide.class).fresh()));
+            }
             if (method.getParameterTypes().length == 0 || method.getParameterAnnotations().length == 0) {
                 continue;
             }
@@ -80,6 +89,10 @@ public class ExtensionImpl implements Extension {
     public Collection<ObserverMethod> getObservers() {
         return Collections.unmodifiableCollection(observers);
     }
+    
+    public Collection<ProvidingPoint> getProvidingPoints() {
+        return providingPoints;
+    }    
     
     private boolean isAnnotationPresent(Class<? extends Annotation> needle, Annotation[] haystack) {
         for (Annotation a: haystack) {

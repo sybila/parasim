@@ -57,7 +57,7 @@ public class DefaultComputationContainer implements ComputationContainer {
     public void init(Computation computation) {
         ComputationContext context = new ComputationContext();
         contextEvent.initialize(context);
-        getServiceFactory().provideFields(computation.getController(), context);
+        getServiceFactory().provideFieldsAndMethods(computation.getController(), context);
         getServiceFactory().injectFields(computation.getController(), context);
         executeMethods(Before.class, computation.getController(), context);
         computation.getController().getStatus().setInitialized();

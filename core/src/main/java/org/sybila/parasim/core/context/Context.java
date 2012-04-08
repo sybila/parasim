@@ -25,4 +25,6 @@ public interface Context {
     boolean isActive();
 
     void setParent(Context context);
+    
+    <T> T resolve(Class<T> type);
 }

@@ -2,9 +2,11 @@ package org.sybila.parasim.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import org.sybila.parasim.core.context.Context;
 
+/**
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ */
 public class ObserverMethodImpl implements ObserverMethod{
 
     private Context context;

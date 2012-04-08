@@ -56,4 +56,18 @@ public abstract class AbstractContext implements Context {
         parent = context;
     }
     
+    public <T> T resolve(Class<T> type) {
+        // the given context has priority
+        if (this.isActive()) {
+            T value = this.getStorage().get(type);
+            if (value != null) {
+                return value;
+            }
+        }
+        if (this.hasParent()) {
+            return this.getParent().resolve(type);
+        }
+        // nothing found
+        return null;
+    }
 }

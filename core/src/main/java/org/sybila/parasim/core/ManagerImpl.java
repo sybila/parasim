@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.sybila.parasim.core.annotations.ApplicationScope;
+import org.sybila.parasim.core.annotations.Scope;
 import org.sybila.parasim.core.context.ApplicationContext;
 import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.event.After;
@@ -58,6 +59,11 @@ public final class ManagerImpl implements Manager {
             manager.applicationContext,
             manager.createExtensions(manager.extensionsByScope.get(manager.applicationContext.getScope()), manager.applicationContext)
         );
+        for (Extension extension: manager.extensionsByContext.get(manager.applicationContext)) {
+            for (ProvidingPoint providingPoint: extension.getProvidingPoints()) {
+                ProviderImpl.bind(manager, manager.applicationContext, providingPoint, getType(providingPoint.getType()));
+            }
+        }
         // fire manager processing
         manager.fireProcessing(manager.applicationContext);
         // fire application context created
@@ -111,12 +117,18 @@ public final class ManagerImpl implements Manager {
 
     public void initializeContext(Context context) {
         try {
+            context.activate();
             if (!extensionsByContext.containsKey(context)) {
                 extensionsByContext.put(context, new ArrayList<Extension>());
             }
             extensionsByContext.get(context).addAll(createExtensions(extensionsByScope.get(context.getScope()), context));
             if (!(context instanceof ApplicationContext)) {
                 fire(Before.of(context), applicationContext);
+            }
+            for (Extension extension: extensionsByContext.get(context)) {
+                for (ProvidingPoint providingPoint: extension.getProvidingPoints()) {
+                    ProviderImpl.bind(this, context, providingPoint, getType(providingPoint.getType()));
+                }
             }
             fire(Before.of(context), context);
         } catch(Exception e) {
@@ -141,18 +153,7 @@ public final class ManagerImpl implements Manager {
     }
 
     public <T> T resolve(Class<T> type, Context context) {
-        // the given context has priority
-        if (context.isActive()) {
-            T value = context.getStorage().get(type);
-            if (value != null) {
-                return value;
-            }
-        }
-        if (context.hasParent()) {
-            return resolve(type, context.getParent());
-        }
-        // nothing found
-        return null;
+        return context.resolve(type);
     }
 
     public void shutdown() {
@@ -178,6 +179,34 @@ public final class ManagerImpl implements Manager {
         fire(new ManagerStarted(), applicationContext);
     }
 
+    private static Class<?> getType(Type type) {
+        // type is not parametrized
+        if (type instanceof  Class<?>) {
+            return (Class<?>) type;
+        }
+        // type is parametrized
+        if (type instanceof ParameterizedType) {
+            return getType(((ParameterizedType) type).getActualTypeArguments()[0]);
+        }
+        // type is wildcard;
+        if (type instanceof WildcardType) {
+            for (Type wildType: ((WildcardType) type).getUpperBounds()) {
+                Class<?> upperBoundsType = getType(wildType);
+                if (upperBoundsType != null) {
+                    return upperBoundsType;
+                }
+            }
+            for (Type wildType: ((WildcardType) type).getLowerBounds()) {
+                Class<?> lowerBoundsType = getType(wildType);
+                if (lowerBoundsType != null) {
+                    return lowerBoundsType;
+                }
+            }
+        }
+        // not success
+        return null;
+    }       
+        
     private Collection<Extension> createExtensions(final Collection<Class<?>> extensionClasses, Context context) throws Exception {
         List<Extension> created = new ArrayList<Extension>();
         for (Class<?> type: extensionClasses) {
@@ -241,40 +270,12 @@ public final class ManagerImpl implements Manager {
     
     private Class<? extends Annotation> getScope(Class<?> target) {
         for (Annotation annotation: target.getDeclaredAnnotations()) {
-            if (annotation.annotationType().getName().endsWith("Scope")) {
+            if (annotation.annotationType().getAnnotation(Scope.class) != null) {
                 continue;
             }
             return annotation.annotationType();
         }
         return ApplicationScope.class;
     }
-    
-    private static Class<?> getType(Type type) {
-        // type is not parametrized
-        if (type instanceof  Class<?>) {
-            return (Class<?>) type;
-        }
-        // type is parametrized
-        if (type instanceof ParameterizedType) {
-            return getType(((ParameterizedType) type).getActualTypeArguments()[0]);
-        }
-        // type is wildcard;
-        if (type instanceof WildcardType) {
-            for (Type wildType: ((WildcardType) type).getUpperBounds()) {
-                Class<?> upperBoundsType = getType(wildType);
-                if (upperBoundsType != null) {
-                    return upperBoundsType;
-                }
-            }
-            for (Type wildType: ((WildcardType) type).getLowerBounds()) {
-                Class<?> lowerBoundsType = getType(wildType);
-                if (lowerBoundsType != null) {
-                    return lowerBoundsType;
-                }
-            }
-        }
-        // not success
-        return null;
-    }    
 
 }

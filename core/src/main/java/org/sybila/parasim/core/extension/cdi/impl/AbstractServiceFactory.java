@@ -1,15 +1,20 @@
 package org.sybila.parasim.core.extension.cdi.impl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.sybila.parasim.core.ProviderImpl;
+import org.sybila.parasim.core.ProvidingFieldPoint;
+import org.sybila.parasim.core.ProvidingMethodPoint;
+import org.sybila.parasim.core.ProvidingPoint;
 import org.sybila.parasim.core.annotations.Inject;
+import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
-import org.sybila.parasim.core.extension.cdi.api.annotations.Provide;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -32,7 +37,7 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
     }
 
     @Override
-    public void provideFields(Object target, Context context) {
+    public void provideFieldsAndMethods(Object target, Context context) {
         if (target == null) {
             throw new IllegalArgumentException("The parameter [target] is null.");
         }
@@ -41,21 +46,16 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
         }
         for (Field field: target.getClass().getDeclaredFields()) {
             if (field.getAnnotation(Provide.class) != null) {
-                if (field.getType().isPrimitive()) {
-                    throw new IllegalStateException("The class [" + target.getClass().getName() + "] can't provide value of primitive type field [" + field.getName() + "]");
-                }
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-                try {
-                    if (field.get(target) != null) {
-                        bind(getType(field.getType()), context, field.get(target));
-                    } else if(field.getAnnotation(Provide.class).strict()) {
-                        throw new IllegalStateException("The field [" + field.getName() + "] in the class [" + target.getClass().getName() + "] providing values isn't initialized.");
-                    }
-                } catch (IllegalAccessException ex) {
-                    Logger.getLogger(AbstractServiceFactory.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                ProvidingPoint providingPoint = new ProvidingFieldPoint(target, field);
+                Class<?> type = getType(providingPoint.getType());
+                bind(type, context, providingPoint.value());
+            }
+        }
+        for (Method method: target.getClass().getDeclaredMethods()) {
+            if (method.getAnnotation(Provide.class) != null) {
+                ProvidingPoint providingPoint = new ProvidingMethodPoint(target, method, context, method.getAnnotation(Provide.class).fresh());
+                Class<?> type = getType(providingPoint.getType());
+                bind(type, context, ProviderImpl.of(providingPoint, type).get());
             }
         }
     }
