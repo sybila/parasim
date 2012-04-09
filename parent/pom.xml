@@ -10,7 +10,7 @@
     </parent>
 
     <properties>
-        <version.sybila.checkstyle>1-SNAPSHOT</version.sybila.checkstyle>
+        <version.sybila.checkstyle>1</version.sybila.checkstyle>
     </properties>
 
     <groupId>org.sybila.parasim</groupId>
