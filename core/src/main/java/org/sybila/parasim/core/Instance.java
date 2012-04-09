@@ -6,5 +6,5 @@ package org.sybila.parasim.core;
 public interface Instance<I> extends Provider<I> {
 
     void set(I instance);
-    
+
 }

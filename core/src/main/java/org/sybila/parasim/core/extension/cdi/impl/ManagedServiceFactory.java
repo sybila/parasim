@@ -9,14 +9,14 @@ import org.sybila.parasim.core.context.Context;
 public class ManagedServiceFactory extends AbstractServiceFactory {
 
     private ManagerImpl manager;
-    
+
     public ManagedServiceFactory(ManagerImpl manager) {
         if (manager == null) {
             throw new IllegalArgumentException("The parameter [manager] is null.");
         }
         this.manager = manager;
     }
-    
+
     public <T> T getService(Class<T> type, Context context) {
         return manager.resolve(type, context);
     }

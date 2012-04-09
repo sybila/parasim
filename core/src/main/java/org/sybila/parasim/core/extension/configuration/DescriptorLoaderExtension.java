@@ -12,5 +12,5 @@ public class DescriptorLoaderExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.extension(DescriptorLoaderRegistrar.class);
     }
-    
+
 }

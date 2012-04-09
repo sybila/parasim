@@ -8,7 +8,6 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,22 +33,22 @@ public final class ManagerImpl implements Manager {
     private ApplicationContext applicationContext;
     private Map<Class<? extends Annotation>, Collection<Class<?>>> extensionsByScope;
     private Map<Context, Collection<Extension>> extensionsByContext = new HashMap<Context, Collection<Extension>>();
-    
+
     private ManagerImpl(final Collection<Class<?>> extensionClasses) {
         if (extensionClasses == null) {
             throw new IllegalArgumentException("The parameter [extensionClasses] is null.");
         }
         extensionsByScope = getScopedExtensions(extensionClasses);
     }
-    
+
     public static Manager create() throws Exception {
         return create(ExtensionLoaderExtension.class);
     }
-    
+
     public static Manager create(Class<?>... extensionClasses) throws Exception {
         return create(Arrays.asList(extensionClasses));
     }
-    
+
     public static Manager create(final Collection<Class<?>> extensionClasses) throws Exception {
         // create manager
         ManagerImpl manager = new ManagerImpl(extensionClasses);
@@ -67,7 +66,7 @@ public final class ManagerImpl implements Manager {
             for (ProvidingPoint providingPoint: extension.getProvidingPoints()) {
                 ProviderImpl.bind(manager, manager.applicationContext, providingPoint, getType(providingPoint.getType()));
             }
-        }        
+        }
         // fire application context created
         manager.fire(Before.of(manager.applicationContext), manager.applicationContext);
         // add manager as a service
@@ -78,16 +77,16 @@ public final class ManagerImpl implements Manager {
     public <T> void bind(final Class<T> type, Context context, T value) {
         context.getStorage().add(type, value);
         fire(value, context);
-    }    
-    
+    }
+
     public Context getRootContext() {
         return applicationContext;
     }
-    
+
     public void finalizeContext(Context context) {
         finalizeContext(context, true);
     }
-    
+
     public void fire(Object event, Context context) {
         if (event == null) {
             throw new IllegalArgumentException("The parameter [event] is null.");
@@ -105,7 +104,7 @@ public final class ManagerImpl implements Manager {
                         method.invoke(this, event);
                     } catch(Exception e) {
                         LOGGER.warn("There is an error during firing event.", e);
-                    }                    
+                    }
                 }
             }
         }
@@ -130,7 +129,7 @@ public final class ManagerImpl implements Manager {
         } catch(Exception e) {
             throw new IllegalStateException("The extension for the given context can't be created.", e);
         }
-        
+
     }
 
     public void inject(Extension extension) {
@@ -186,7 +185,7 @@ public final class ManagerImpl implements Manager {
             extensionsByContext.remove(context);
         }
     }
-    
+
     private static Class<?> getType(Type type) {
         // type is not parametrized
         if (type instanceof  Class<?>) {
@@ -213,8 +212,8 @@ public final class ManagerImpl implements Manager {
         }
         // not success
         return null;
-    }       
-        
+    }
+
     private Collection<Extension> createExtensions(final Collection<Class<?>> extensionClasses, Context context) throws Exception {
         List<Extension> created = new ArrayList<Extension>();
         for (Class<?> type: extensionClasses) {
@@ -223,7 +222,7 @@ public final class ManagerImpl implements Manager {
             inject(extension);
         }
         return created;
-    }    
+    }
 
     private <T> T createInstance(Class<T> type) throws Exception {
         for (Constructor<?> constructor: type.getDeclaredConstructors()) {
@@ -235,8 +234,8 @@ public final class ManagerImpl implements Manager {
             }
         }
         throw new InvocationException("There is no empty constructor in class " + type.getName());
-    }    
-    
+    }
+
     private void fireProcessing(ApplicationContext applicationContext) throws Exception {
         final Collection<Class<?>> newExtensions = new ArrayList<Class<?>>();
         final Collection<Class<? extends Context>> newContexts = new ArrayList<Class<? extends Context>>();
@@ -275,7 +274,7 @@ public final class ManagerImpl implements Manager {
         }
         return scopedExtensions;
     }
-    
+
     private Class<? extends Annotation> getScope(Class<?> target) {
         for (Annotation annotation: target.getDeclaredAnnotations()) {
             if (annotation.annotationType().getAnnotation(Scope.class) != null) {
@@ -285,5 +284,4 @@ public final class ManagerImpl implements Manager {
         }
         return ApplicationScope.class;
     }
-
 }

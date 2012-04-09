@@ -12,5 +12,5 @@ public class ServiceFactoryExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.extension(ServiceFactoryRegistrar.class);
     }
-    
+
 }

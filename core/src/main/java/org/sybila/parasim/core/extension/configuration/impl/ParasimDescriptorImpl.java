@@ -24,11 +24,11 @@ import org.xml.sax.SAXException;
 public class ParasimDescriptorImpl implements ParasimDescriptor {
 
     private static DocumentBuilder builder;
-    
+
     private Map<String, ExtensionDescriptor> extensions = new HashMap<String, ExtensionDescriptor>();
 
     private ParasimDescriptorImpl() {}
-    
+
     public ExtensionDescriptor getExtensionDescriptor(String name) {
         return extensions.get(name);
     }
@@ -36,7 +36,7 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
     public Collection<ExtensionDescriptor> getExtensionDescriptors() {
         return Collections.unmodifiableCollection(extensions.values());
     }
-    
+
     public static ParasimDescriptor fromXMLFile(String propertyName, String defaultPath) throws IOException, SAXException {
         File configFile = loadFileDescriptor(propertyName, defaultPath);
         Document dom = getBuilder().parse(configFile);
@@ -56,7 +56,7 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
                 String name = property.getAttributes().getNamedItem("name").getTextContent();
                 if (name == null) {
                     throw new IOException("There is a property without name in the configuration of [" + qualifier + "] extension.");
-                }                
+                }
                 if (isArray(property)) {
                     // property is array
                     List<String> values = new ArrayList<String>();
@@ -80,7 +80,7 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
         }
         return descriptor;
     }
-    
+
     private static DocumentBuilder getBuilder() {
         if (builder == null) {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -92,7 +92,7 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
         }
         return builder;
     }
-    
+
     private static boolean isArray(Node node) {
         for (int i=0; i<node.getChildNodes().getLength(); i++) {
             if (node.getChildNodes().item(i).getNodeName().equals("value")) {
@@ -101,7 +101,7 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
         }
         return false;
     }
-    
+
     private static File loadFileDescriptor(String propertyName, String defaultPath) {
         String path = System.getProperty(propertyName);
         if (path == null) {
@@ -109,5 +109,5 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
         }
         return new File(path);
     }
-    
+
 }

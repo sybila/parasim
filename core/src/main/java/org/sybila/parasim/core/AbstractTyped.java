@@ -6,18 +6,18 @@ import java.lang.reflect.Type;
 public abstract class AbstractTyped implements Typed {
 
     private final Object target;
-    
+
     public AbstractTyped(Object target) {
         if (target == null) {
             throw new IllegalArgumentException("The parameter [target] is null.");
-        }        
+        }
         this.target = target;
     }
-    
+
     protected Object getTarget() {
         return target;
-    }    
-    
+    }
+
     protected Type loadType(Type type) {
         if (!(type instanceof ParameterizedType)) {
             return type;
@@ -29,6 +29,6 @@ public abstract class AbstractTyped implements Typed {
         } else {
             return (Class<?>)loadedType.getActualTypeArguments()[0];
         }
-    }     
-    
+    }
+
 }

@@ -87,7 +87,7 @@ public class ExtensionDescriptorMapperImpl implements ExtensionDescriptorMapper 
         }
         throw new IllegalArgumentException();
     }
-    
+
     private void set(Object target, Field field, ExtensionDescriptor descriptor) throws IllegalAccessException {
         if (!field.isAccessible()) {
             field.setAccessible(true);

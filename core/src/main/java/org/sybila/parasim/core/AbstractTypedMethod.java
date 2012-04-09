@@ -9,8 +9,8 @@ import java.lang.reflect.Type;
 public class AbstractTypedMethod extends AbstractTyped {
 
     private final Method method;
-    private final Type type;    
-    
+    private final Type type;
+
     public AbstractTypedMethod(Object target, Method method) {
         super(target);
         if (method == null) {
@@ -19,7 +19,7 @@ public class AbstractTypedMethod extends AbstractTyped {
         this.method = method;
         this.type = loadType(method.getGenericReturnType());
     }
-    
+
     public Type getType() {
         return type;
     }

@@ -8,7 +8,7 @@ import org.sybila.parasim.core.context.Context;
 public interface ContextEvent<C extends Context> {
 
     void initialize(C context);
-    
+
     void finalize(C context);
-    
+
 }

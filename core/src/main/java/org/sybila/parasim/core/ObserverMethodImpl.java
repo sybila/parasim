@@ -12,7 +12,7 @@ public class ObserverMethodImpl implements ObserverMethod{
     private Context context;
     private Method method;
     private Object target;
-    
+
     public ObserverMethodImpl(Object target, Context context, Method method) {
         if (target == null) {
             throw new IllegalArgumentException("The parameter [target] is null.");
@@ -27,7 +27,7 @@ public class ObserverMethodImpl implements ObserverMethod{
         this.target = target;
         this.method = method;
     }
-    
+
     public void invoke(Manager manager, Object event) {
         // resolve parameters
         Object[] parameters = new Object[method.getParameterTypes().length];
@@ -44,7 +44,6 @@ public class ObserverMethodImpl implements ObserverMethod{
             }
             method.invoke(target, parameters);
         } catch(Exception e) {
-//            System.err.println(target.getClass().getName() + "#" + method.getName());
             e.printStackTrace();
             throw new InvocationException(e);
         }
@@ -57,5 +56,4 @@ public class ObserverMethodImpl implements ObserverMethod{
     public Type getType() {
         return method.getGenericParameterTypes()[0];
     }
-    
 }

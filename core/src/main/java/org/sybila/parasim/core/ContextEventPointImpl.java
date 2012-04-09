@@ -8,11 +8,10 @@ import org.sybila.parasim.core.context.Context;
  */
 public class ContextEventPointImpl extends AbstractTypedField implements ContextEventPoint {
 
-
     public ContextEventPointImpl(Object target, Field field) {
         super(target, field);
     }
-    
+
     public void set(ContextEvent<? extends Context> value) {
         try {
             if (!getField().isAccessible()) {
@@ -23,5 +22,4 @@ public class ContextEventPointImpl extends AbstractTypedField implements Context
             throw new InvocationException(e);
         }
     }
-
 }

@@ -15,7 +15,7 @@ import org.sybila.parasim.core.context.Context;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ExtensionImpl implements Extension {
-    
+
     private Context context;
     private Collection<ContextEventPoint> contextEventPoints;
     private Collection<EventPoint> eventPoints;
@@ -23,7 +23,7 @@ public class ExtensionImpl implements Extension {
     private Collection<InjectionPoint> injectionPoints;
     private Collection<ObserverMethod> observers;
     private Collection<ProvidingPoint> providingPoints;
-    
+
     public ExtensionImpl(Object target, Context context) {
         if (target == null) {
             throw new IllegalArgumentException("The parameter [target] is null.");
@@ -31,16 +31,16 @@ public class ExtensionImpl implements Extension {
         if (context == null) {
             throw new IllegalArgumentException("The parameter [context] is null.");
         }
-        
+
         this.target = target;
         this.context = context;
-        
+
         this.contextEventPoints = new ArrayList<ContextEventPoint>();
         this.injectionPoints = new ArrayList<InjectionPoint>();
         this.eventPoints = new ArrayList<EventPoint>();
         this.observers = new ArrayList<ObserverMethod>();
         this.providingPoints = new ArrayList<ProvidingPoint>();
-        
+
         // find event and injection points
         for (Field field: target.getClass().getDeclaredFields()) {
             if (isAnnotationPresent(Inject.class, field.getDeclaredAnnotations())) {
@@ -73,11 +73,11 @@ public class ExtensionImpl implements Extension {
     public Context getContext() {
         return context;
     }
-    
+
     public Collection<ContextEventPoint> getContextEventPoints() {
         return Collections.unmodifiableCollection(contextEventPoints);
     }
-    
+
     public Collection<EventPoint> getEventPoints() {
         return Collections.unmodifiableCollection(eventPoints);
     }
@@ -89,11 +89,11 @@ public class ExtensionImpl implements Extension {
     public Collection<ObserverMethod> getObservers() {
         return Collections.unmodifiableCollection(observers);
     }
-    
+
     public Collection<ProvidingPoint> getProvidingPoints() {
         return providingPoints;
-    }    
-    
+    }
+
     private boolean isAnnotationPresent(Class<? extends Annotation> needle, Annotation[] haystack) {
         for (Annotation a: haystack) {
             if (a.annotationType() == needle) {

@@ -8,10 +8,10 @@ import org.sybila.parasim.core.context.Context;
 public interface ServiceFactory {
 
     <T> T getService(Class<T> type, Context context);
-        
+
     void injectFields(Object target, Context context);
-    
+
     boolean isServiceAvailable(Class<?> type, Context context);
-    
+
     void provideFieldsAndMethods(Object target, Context context);
 }

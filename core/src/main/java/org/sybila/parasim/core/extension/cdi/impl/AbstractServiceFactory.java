@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.sybila.parasim.core.ProviderImpl;
 import org.sybila.parasim.core.ProvidingFieldPoint;
 import org.sybila.parasim.core.ProvidingMethodPoint;

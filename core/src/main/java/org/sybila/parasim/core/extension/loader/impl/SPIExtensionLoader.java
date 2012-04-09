@@ -21,7 +21,7 @@ public class SPIExtensionLoader implements ExtensionLoader {
 
     private static final String SERVICES = "META-INF" + File.separator + "services";
     private static final Logger LOGGER = Logger.getLogger(SPIExtensionLoader.class);
-    
+
     public Collection<LoadableExtension> load() {
         Collection<LoadableExtension> extensions = new ArrayList<LoadableExtension>();
         for (Class<? extends LoadableExtension> loadableClass: load(SPIExtensionLoader.class.getClassLoader(), LoadableExtension.class)) {
@@ -33,8 +33,7 @@ public class SPIExtensionLoader implements ExtensionLoader {
         }
         return extensions;
     }
-    
-    
+
     private <T> Collection<Class<? extends T>> load(ClassLoader classLoader, Class<T> serviceClass) {
         String path = SERVICES + File.separator + serviceClass.getName();
         Collection<Class<? extends T>> services = new HashSet<Class<? extends T>>();
@@ -63,7 +62,7 @@ public class SPIExtensionLoader implements ExtensionLoader {
         }
         return services;
     }
-    
+
     private <T> T createInstance(Class<T> type) throws Exception {
         for (Constructor<?> constructor: type.getDeclaredConstructors()) {
             if (constructor.getParameterTypes().length == 0) {

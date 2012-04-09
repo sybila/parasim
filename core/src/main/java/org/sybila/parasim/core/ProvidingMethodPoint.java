@@ -11,7 +11,7 @@ public class ProvidingMethodPoint extends AbstractTypedMethod implements Providi
 
     private final boolean fresh;
     private final Context context;
-    
+
     public ProvidingMethodPoint(Object target, Method method, Context context, boolean fresh) {
         super(target, method);
         if (context == null) {
@@ -20,7 +20,7 @@ public class ProvidingMethodPoint extends AbstractTypedMethod implements Providi
         this.fresh = fresh;
         this.context = context;
     }
-    
+
     public boolean fresh() {
         return fresh;
     }

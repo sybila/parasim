@@ -13,7 +13,6 @@ import org.sybila.parasim.core.annotations.ApplicationScope;
  */
 public class ApplicationContext extends AbstractContext {
 
-   
     public ApplicationContext(InstanceStorage instanceStorage) {
         super(instanceStorage);
     }
@@ -21,7 +20,7 @@ public class ApplicationContext extends AbstractContext {
     public ApplicationContext() {
         super();
     }
-    
+
     public Class<? extends Annotation> getScope() {
         return ApplicationScope.class;
     }

@@ -15,18 +15,18 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class DescriptorLoaderRegistrar {
-    
+
     @Inject
     private Instance<ParasimDescriptor> parasimDescriptor;
     @Inject
     private Instance<ExtensionDescriptorMapper> extensionDescriptorMapper;
     @Inject
     private Event<ConfigurationLoaded> event;
-    
+
     public void loadDescriptor(@Observes ManagerStarted event) throws IOException, SAXException {
         parasimDescriptor.set(ParasimDescriptorImpl.fromXMLFile("parasim.config.file", "parasim.xml"));
         extensionDescriptorMapper.set(new ExtensionDescriptorMapperImpl());
         this.event.fire(new ConfigurationLoaded());
     }
-    
+
 }

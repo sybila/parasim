@@ -19,5 +19,5 @@ public class InvocationException extends RuntimeException {
 
     public InvocationException() {
     }
-    
+
 }

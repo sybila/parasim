@@ -9,18 +9,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MapInstanceStorage implements InstanceStorage {
 
     private Map<Class<?>, Object> instances;
-    
+
     public MapInstanceStorage(Map<Class<?>, Object> instances) {
         if (instances == null) {
             throw new IllegalArgumentException("The parameter [instances] is null.");
         }
         this.instances = instances;
     }
-    
+
     public MapInstanceStorage() {
         this(new ConcurrentHashMap<Class<?>, Object>());
     }
-    
+
     public <T> InstanceStorage add(Class<T> type, T value) {
         if (type == null) {
             throw new IllegalArgumentException("The parameter [type] is null.");
@@ -40,8 +40,8 @@ public class MapInstanceStorage implements InstanceStorage {
     public <T> T get(Class<T> type) {
         if (type == null) {
             throw new IllegalArgumentException("The parameter [type] is null.");
-        }        
+        }
         return type.cast(instances.get(type));
     }
-    
+
 }

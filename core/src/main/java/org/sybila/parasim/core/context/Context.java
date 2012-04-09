@@ -9,22 +9,22 @@ import org.sybila.parasim.core.InstanceStorage;
 public interface Context {
 
     void activate();
-    
+
     void deactivate();
-    
+
     void destroy();
-    
+
     Context getParent();
-    
+
     Class<? extends Annotation> getScope();
-    
+
     InstanceStorage getStorage();
-    
+
     boolean hasParent();
-    
+
     boolean isActive();
 
     void setParent(Context context);
-    
+
     <T> T resolve(Class<T> type);
 }

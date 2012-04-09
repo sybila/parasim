@@ -9,12 +9,12 @@ public class EventImpl<E> implements Event<E> {
 
     private Context context;
     private Manager manager;
-    
+
     private EventImpl(Manager manager, Context context) {
         this.manager = manager;
         this.context = context;
     }
-    
+
     public static <T> Event<T> of(Class<T> type, Context context, Manager manager) {
         if (type == null) {
             throw new IllegalArgumentException("The parameter [type] is null.");
@@ -27,7 +27,7 @@ public class EventImpl<E> implements Event<E> {
         }
         return new EventImpl<T>(manager, context);
     }
-    
+
     public void fire(E event) {
         manager.fire(event, context);
     }

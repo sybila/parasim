@@ -12,7 +12,7 @@ import org.sybila.parasim.core.context.Context;
 public class ProviderImpl<I> implements Provider<I> {
 
     private final I value;
-    
+
     private ProviderImpl(final ProvidingPoint providingPoint, Class<I> type) {
         if (providingPoint == null) {
             throw new IllegalArgumentException("The parameter [providingPoint] is null.");
@@ -31,9 +31,9 @@ public class ProviderImpl<I> implements Provider<I> {
                 type.getClassLoader(),
                 ArrayUtils.addAll(new Class<?>[] {type}, type.getInterfaces()),
                 new InvocationHandler() {
-                    
+
                     private Object toDelegate;
-                    
+
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                         if (providingPoint.fresh()) {
                             if (!method.isAccessible()) {
@@ -54,11 +54,11 @@ public class ProviderImpl<I> implements Provider<I> {
             )
         );
     }
-    
+
     public static <I> Provider<I> of(ProvidingPoint providingPoint, Class<I> type) {
         return new ProviderImpl<I>(providingPoint, type);
     }
-    
+
     public static <I> void bind(ManagerImpl manager, Context context, ProvidingPoint providingPoint, Class<I> type) {
         if (manager == null) {
             throw new IllegalArgumentException("The parameter [manager] is null.");
@@ -68,9 +68,9 @@ public class ProviderImpl<I> implements Provider<I> {
         }
         manager.bind(type, context, of(providingPoint, type).get());
     }
-    
+
     public I get() {
         return value;
     }
-    
+
 }

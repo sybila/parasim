@@ -11,7 +11,7 @@ public abstract class AbstractContext implements Context {
     private boolean activity = false;
     private InstanceStorage instanceStorage;
     private Context parent;
-    
+
     public AbstractContext(InstanceStorage instanceStorage) {
         if (instanceStorage == null) {
             throw new IllegalArgumentException("The parameter [instanceStorage] is null.");
@@ -22,15 +22,15 @@ public abstract class AbstractContext implements Context {
     public AbstractContext() {
         this(new MapInstanceStorage());
     }
- 
+
     public void activate() {
         activity = true;
     }
 
     public void deactivate() {
         activity = false;
-    }    
-    
+    }
+
     public void destroy() {
         instanceStorage.clear();
         instanceStorage = null;
@@ -39,23 +39,23 @@ public abstract class AbstractContext implements Context {
     public Context getParent() {
         return parent;
     }
-    
+
     public InstanceStorage getStorage() {
         return instanceStorage;
     }
-   
+
     public boolean hasParent() {
         return parent != null;
     }
 
     public boolean isActive() {
         return activity;
-    }    
-    
+    }
+
     public void setParent(Context context) {
         parent = context;
     }
-    
+
     public <T> T resolve(Class<T> type) {
         // the given context has priority
         if (this.isActive()) {
