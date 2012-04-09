@@ -11,21 +11,21 @@ import org.w3c.dom.Element;
 public class OrthogonalSpace implements Space {
 
     private Point maxBounds;
-    private Point minBounds; 
-    
+    private Point minBounds;
+
     public OrthogonalSpace(Point minBounds, Point maxBounds) {
         if (minBounds == null) {
             throw new IllegalArgumentException("The parameter [minBounds] is null.");
         }
         if (maxBounds == null) {
             throw new IllegalArgumentException("The parameter [maxBounds] is null.");
-        }        
+        }
         if (minBounds.getDimension() != maxBounds.getDimension()) {
             throw new IllegalArgumentException("The dimension of [minBounds] and [maxBounds] doesn't match.");
         }
-        for (int i=0; i < minBounds.getDimension(); i++) {
+        for (int i = 0; i < minBounds.getDimension(); i++) {
             if (minBounds.getValue(i) > maxBounds.getValue(i)) {
-                throw new IllegalArgumentException("The min bound " + minBounds + " in dimension <" + i + "> is greater than max bound "+maxBounds+".");
+                throw new IllegalArgumentException("The min bound " + minBounds + " in dimension <" + i + "> is greater than max bound " + maxBounds + ".");
             }
         }
         this.minBounds = minBounds;
@@ -40,11 +40,11 @@ public class OrthogonalSpace implements Space {
     public Point getMaxBounds() {
         return maxBounds;
     }
-    
+
     public Point getMinBounds() {
         return minBounds;
     }
-    
+
     @Override
     public float getSize(int dimension) {
         return maxBounds.getValue(dimension) - minBounds.getValue(dimension);
@@ -55,7 +55,7 @@ public class OrthogonalSpace implements Space {
         if (point.getDimension() != getDimension()) {
             throw new IllegalArgumentException("The given point has different dimension than the space.");
         }
-        for (int dim=0; dim<getDimension(); dim++) {
+        for (int dim = 0; dim < getDimension(); dim++) {
             if (point.getValue(dim) < minBounds.getValue(dim)) {
                 return false;
             }
@@ -65,13 +65,12 @@ public class OrthogonalSpace implements Space {
         }
         return true;
     }
-    
-    
+
     public boolean isIn(float[] point) {
         if (point.length != getDimension()) {
             throw new IllegalArgumentException("The given point has different dimension than the space.");
         }
-        for (int dim=0; dim<getDimension(); dim++) {
+        for (int dim = 0; dim < getDimension(); dim++) {
             if (point[dim] < minBounds.getValue(dim)) {
                 return false;
             }
@@ -81,7 +80,7 @@ public class OrthogonalSpace implements Space {
         }
         return true;
     }
-    
+
     @Override
     public Element toXML(Document doc) {
         Element space = doc.createElement(OrthogonalSpaceFactory.SPACE_NAME);
@@ -96,8 +95,12 @@ public class OrthogonalSpace implements Space {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (!(obj instanceof OrthogonalSpace)) return false;
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof OrthogonalSpace)) {
+            return false;
+        }
         OrthogonalSpace target = (OrthogonalSpace) obj;
         return (maxBounds.equals(target.maxBounds) && minBounds.equals(target.minBounds));
     }
@@ -105,6 +108,6 @@ public class OrthogonalSpace implements Space {
     @Override
     public int hashCode() {
         final int prime = 41;
-        return maxBounds.hashCode()*prime+minBounds.hashCode();
+        return maxBounds.hashCode() * prime + minBounds.hashCode();
     }
 }

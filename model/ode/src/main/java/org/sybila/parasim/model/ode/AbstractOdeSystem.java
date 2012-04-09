@@ -6,7 +6,7 @@ import org.sybila.parasim.model.trajectory.Point;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public abstract class AbstractOdeSystem implements OdeSystem {
-    
+
     public float value(Point point, int dimension) {
         if (dimension < 0 || dimension >= dimension()) {
             throw new IndexOutOfBoundsException("The dimension is out of the range [0, " + (dimension() - 1) + "].");
@@ -35,6 +35,5 @@ public abstract class AbstractOdeSystem implements OdeSystem {
             result += subResult;
         }
         return result;
-    }    
-    
+    }
 }

@@ -1,7 +1,6 @@
 package org.sybila.parasim.model.sbml;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.sybila.parasim.model.ode.OdeSystemEncoding;
 import org.sybila.parasim.model.ode.AbstractOdeSystem;
 import org.sybila.parasim.model.ode.ArrayOdeSystemEncoding;
 import org.sybila.parasim.model.ode.Variable;
-import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
@@ -25,7 +23,7 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
     private OdeSystemEncoding encoding;
     private Model model;
     private List<Variable> variables;
-    
+
     public SBMLOdeSystem(Model model) {
         if (model == null) {
             throw new IllegalArgumentException("The parameter [model] is null.");
@@ -45,7 +43,7 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
     public OdeSystemEncoding encoding() {
         return encoding;
     }
-    
+
     private void setup() {
         // map containing all variables: name -> variable instance
         Map<String, Variable> variablesMemory = new HashMap<String, Variable>(model.getListOfSpecies().size());
@@ -78,7 +76,7 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
             // if the kinetic law is real number, just take it
             if (reaction.getKineticLaw().getMath().isReal()) {
                 coefficient = reaction.getKineticLaw().getMath().getReal();
-            // if the kinetic law is a function (only TIMES is supported), take list of products and compute coefficient
+                // if the kinetic law is a function (only TIMES is supported), take list of products and compute coefficient
             } else if (reaction.getKineticLaw().getMath().getType().equals(Type.TIMES)) {
                 String[] varNames = reaction.getKineticLaw().getMath().toFormula().split("\\*");
                 for (int i = 0; i < varNames.length; i++) {
@@ -91,7 +89,7 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
                         throw new IllegalArgumentException("The kinetic law can't be processed, because the uknown variable [" + varName + "].");
                     }
                 }
-            // Not supported
+                // Not supported
             } else {
                 throw new IllegalStateException("The kinetic law has to be a number or TIMES type.");
             }
@@ -110,7 +108,7 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
             for (SpeciesReference p : reaction.getListOfProducts()) {
                 Variable var = variablesMemory.get(p.getSpecies());
                 factors.get(var).add(currentProducts);
-                coefficients.get(var).add(coefficient); 
+                coefficients.get(var).add(coefficient);
                 numberOfCoefficients++;
                 if (reaction.isReversible()) {
                     factors.get(var).add(currentProductsReverse);
@@ -121,7 +119,7 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
             for (SpeciesReference p : reaction.getListOfReactants()) {
                 Variable var = variablesMemory.get(p.getSpecies());
                 factors.get(var).add(currentProducts);
-                coefficients.get(var).add(-coefficient); 
+                coefficients.get(var).add(-coefficient);
                 numberOfCoefficients++;
                 if (reaction.isReversible()) {
                     factors.get(var).add(currentProductsReverse);
@@ -132,18 +130,18 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
         }
         // build coefficients
         float[] coefficientsInEncoding = new float[numberOfCoefficients];
-        int[] factorIndexesInEncoding = new int[numberOfCoefficients+1];
-        int[] coefficientIndexesInEncoding = new int[variables.size()+1];
+        int[] factorIndexesInEncoding = new int[numberOfCoefficients + 1];
+        int[] coefficientIndexesInEncoding = new int[variables.size() + 1];
         factorIndexesInEncoding[0] = 0;
         coefficientIndexesInEncoding[0] = 0;
         int currentCoef = 0;
         int numberOfFactors = 0;
         for (Variable var : variables) {
-            coefficientIndexesInEncoding[var.getIndex()+1] += coefficientIndexesInEncoding[var.getIndex()] + coefficients.get(var).size();
-            for (int i=0; i<coefficients.get(var).size(); i++) {
+            coefficientIndexesInEncoding[var.getIndex() + 1] += coefficientIndexesInEncoding[var.getIndex()] + coefficients.get(var).size();
+            for (int i = 0; i < coefficients.get(var).size(); i++) {
                 coefficientsInEncoding[currentCoef] = (float) (double) coefficients.get(var).get(i);
                 numberOfFactors += factors.get(var).get(i).size();
-                factorIndexesInEncoding[currentCoef+1] = numberOfFactors;
+                factorIndexesInEncoding[currentCoef + 1] = numberOfFactors;
                 currentCoef++;
             }
         }

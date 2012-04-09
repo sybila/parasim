@@ -9,7 +9,7 @@ public class ArrayOdeSystemEncoding implements OdeSystemEncoding {
     private float[] coefficients;
     private int[] factorIndexes;
     private int[] factors;
-    
+
     public ArrayOdeSystemEncoding(int[] coefficientIndexes, float[] coefficients, int[] factorIndexes, int[] factors) {
         if (coefficientIndexes == null) {
             throw new IllegalArgumentException("The parameter coefficientIndexes is null.");
@@ -28,7 +28,7 @@ public class ArrayOdeSystemEncoding implements OdeSystemEncoding {
         this.factorIndexes = factorIndexes;
         this.factors = factors;
     }
-    
+
     public float coefficient(int variableIndex, int coefficientIndex) {
         if (coefficientIndex < 0 || coefficientIndex >= countCoefficients(variableIndex)) {
             throw new IllegalArgumentException("The parameter coefficientIndex is out of the range [0," + (countCoefficients(variableIndex) - 1) + "].");
@@ -39,7 +39,7 @@ public class ArrayOdeSystemEncoding implements OdeSystemEncoding {
     public int countCoefficients() {
         return coefficients.length;
     }
-    
+
     public int countCoefficients(int variableIndex) {
         if (variableIndex < 0 || variableIndex >= countVariables()) {
             throw new IllegalArgumentException("The parameter variableIndex is out of the range [0," + (countVariables() - 1) + "].");
@@ -50,7 +50,7 @@ public class ArrayOdeSystemEncoding implements OdeSystemEncoding {
     public int countFactors() {
         return factors.length;
     }
-    
+
     public int countFactors(int variableIndex, int coefficientIndex) {
         if (coefficientIndex < 0 || coefficientIndex >= countCoefficients(variableIndex)) {
             throw new IllegalArgumentException("The parameter coefficientIndex is out of the range [0," + (countCoefficients(variableIndex) - 1) + "].");
@@ -68,5 +68,4 @@ public class ArrayOdeSystemEncoding implements OdeSystemEncoding {
         }
         return factors[factorIndexes[coefficientIndexes[variableIndex] + coefficientIndex] + factorIndex];
     }
-    
 }

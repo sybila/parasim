@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
 /**
  * Implements some auxiliary methods of {@link VerificationResult}
  * according with use of its interface methods.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public abstract class AbstractVerificationResult implements VerificationResult {
@@ -18,14 +18,14 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         for (int i = 0; i < size(); i++) {
             target.appendChild(pointToXML(doc, i));
         }
-        
+
         return target;
     }
-    
+
     private Element pointToXML(Document doc, int index) {
         Point p = getPoint(index);
         float r = getRobustness(index);
-        
+
         Element target = doc.createElement(VerificationResultFactory.POINT_NAME);
         for (int i = 0; i < p.getDimension(); i++) {
             Element dim = doc.createElement(VerificationResultFactory.DIMENSION_NAME);
@@ -35,19 +35,27 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         Element rob = doc.createElement(VerificationResultFactory.ROBUSTNESS_NAME);
         rob.appendChild(doc.createTextNode(Float.toString(r)));
         target.appendChild(rob);
-        
+
         return target;
     }
 
     @Override
     public boolean equals(Object obj) {
         //if (obj == this) return true;
-        if (!(obj instanceof VerificationResult)) return false;
+        if (!(obj instanceof VerificationResult)) {
+            return false;
+        }
         VerificationResult target = (VerificationResult) obj;
-        if (size() != target.size()) return false;
+        if (size() != target.size()) {
+            return false;
+        }
         for (int i = 0; i < size(); i++) {
-            if (!getPoint(i).equals(target.getPoint(i))) return false;
-            if (Float.floatToIntBits(getRobustness(i)) != Float.floatToIntBits(target.getRobustness(i))) return false;
+            if (!getPoint(i).equals(target.getPoint(i))) {
+                return false;
+            }
+            if (Float.floatToIntBits(getRobustness(i)) != Float.floatToIntBits(target.getRobustness(i))) {
+                return false;
+            }
         }
         return true;
     }
@@ -64,8 +72,4 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         }
         return result;
     }
-    
-    
-    
-    
 }

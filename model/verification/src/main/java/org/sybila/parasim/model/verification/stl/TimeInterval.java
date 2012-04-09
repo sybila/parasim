@@ -5,8 +5,8 @@ import org.w3c.dom.Element;
 
 /**
  * Represents an time interval and enables basic operations with it's bounds.
- * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ *
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class TimeInterval implements FormulaInterval {
@@ -74,7 +74,7 @@ public class TimeInterval implements FormulaInterval {
     /**
      * Returns the value of the comparison <b>a</b> OP <code>getUpperBound</code>
      * where OP is either "&lt;=" if the right bound is tight and "&lt;" if it is open.
-     * 
+     *
      * @param a Value to compare with upper bound
      * @return Result of comparison <b>a</b> OP <code>getUpperBound</code>.
      */
@@ -93,7 +93,7 @@ public class TimeInterval implements FormulaInterval {
         target.appendChild(FormulaIntervalFactory.getUpperBound(doc, getUpperBound(), getUpperBoundaryType()));
         return target;
     }
-    
+
     @Override
     public String toString() {
         return (lowerType == IntervalBoundaryType.CLOSED ? "[" : "(") + lower

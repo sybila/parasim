@@ -26,7 +26,7 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
     /**
      * Appends the given trajectory on the end of this trajectory. After calling
      * this method, the reference of the given trajectory will point to this trajectory.
-     * 
+     *
      * @param trajectory the trajectory which will be appended
      */
     public void append(Trajectory trajectory) {
@@ -36,8 +36,7 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
         if (trajectory.getFirstPoint().getTime() < trajectories.get(trajectories.size() - 1).getLastPoint().getTime()) {
             throw new IllegalArgumentException("The time of the first point of the given trajectory is lower than the time of the last point of original trajectory.");
         }
-        if (getDimension() != trajectory.getDimension())
-        {
+        if (getDimension() != trajectory.getDimension()) {
             throw new IllegalArgumentException("The dimensions of the trajectories differ.");
         }
         setLength(getLength() + trajectory.getLength());
@@ -85,43 +84,34 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
     }
 
     @Override
-    public void truncate(int newLength)
-    {
-        if (newLength < 1 || newLength > getLength())
-        {
+    public void truncate(int newLength) {
+        if (newLength < 1 || newLength > getLength()) {
             throw new IllegalArgumentException("The parameter [newLength] must be positive and smaller then the current length.");
         }
         ListIterator<Trajectory> it = trajectories.listIterator(trajectories.size());
         Trajectory last = null;
-        while (it.hasPrevious())
-        {
+        while (it.hasPrevious()) {
             last = it.previous();
-            if (this.getLength() - last.getLength() >= newLength)
-            {
+            if (this.getLength() - last.getLength() >= newLength) {
                 it.remove();
                 setLength(this.getLength() - last.getLength());
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
-        if (getLength() > newLength)
-        {
+        if (getLength() > newLength) {
             int newLastLength = getLength() - newLength;
-            if (last.getLength() < newLastLength)
-            {
+            if (last.getLength() < newLastLength) {
                 throw new RuntimeException("Last trajectory segment has incorrect length.");
             }
             int dim = getDimension();
             float[] points = new float[dim * newLastLength];
             float[] times = new float[newLastLength];
             TrajectoryIterator lit = last.iterator();
-            for (int i = 0; i < newLastLength; i++)
-            {
+            for (int i = 0; i < newLastLength; i++) {
                 Point tmp = lit.next();
                 times[i] = tmp.getTime();
-                System.arraycopy(tmp.toArray(), 0, points, i*dim, dim);
+                System.arraycopy(tmp.toArray(), 0, points, i * dim, dim);
             }
             ArrayTrajectory newLast = new ArrayTrajectory(points, times, dim);
             it.remove();
@@ -152,7 +142,7 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
             for (Trajectory t : trajectories) {
                 if (index >= startIndex && index < startIndex + t.getLength()) {
                     iterator = t.iterator(index - startIndex);
-                    absolutePointIndex = index;                    
+                    absolutePointIndex = index;
                 }
                 trajectoryIndex++;
                 startIndex += t.getLength();
@@ -166,30 +156,22 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
         }
 
         @Override
-        public boolean hasNext(int jump)
-        {
+        public boolean hasNext(int jump) {
             checkModification();
-            if (iterator != null)
-            {
-                if (iterator.hasNext(jump))
-                {
+            if (iterator != null) {
+                if (iterator.hasNext(jump)) {
                     return true;
-                }
-                else
-                {
-                    if (trajectoryIndex >= trajectory.trajectories.size()-1)
-                    {
+                } else {
+                    if (trajectoryIndex >= trajectory.trajectories.size() - 1) {
                         return false;
                     }
-                    Iterator<Trajectory> it = trajectory.trajectories.listIterator(trajectoryIndex+1);
-                    while (it.hasNext())
-                    {
+                    Iterator<Trajectory> it = trajectory.trajectories.listIterator(trajectoryIndex + 1);
+                    while (it.hasNext()) {
                         Trajectory t = it.next();
-                        if (jump < t.getLength())
-                        {
+                        if (jump < t.getLength()) {
                             return true;
                         }
-                        jump -= t.getLength();                        
+                        jump -= t.getLength();
                     }
                 }
             }
@@ -199,16 +181,15 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
         @Override
         public Point next() {
             checkModification();
-            if (iterator == null)
-            {
+            if (iterator == null) {
                 throw new NoSuchElementException();
             }
             Point point = iterator.next();
-            absolutePointIndex++;            
+            absolutePointIndex++;
             if (!iterator.hasNext()) {
                 trajectoryIndex++;
                 if (trajectoryIndex < trajectory.trajectories.size()) {
-                    iterator = trajectory.trajectories.get(trajectoryIndex).iterator();                    
+                    iterator = trajectory.trajectories.get(trajectoryIndex).iterator();
                 } else {
                     iterator = null;
                 }
@@ -219,29 +200,22 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
         @Override
         public Point next(int jump) {
             checkModification();
-            if (iterator == null)
-            {
+            if (iterator == null) {
                 throw new NoSuchElementException();
             }
-            if (iterator.hasNext(jump))
-            {
-                absolutePointIndex += jump;                
+            if (iterator.hasNext(jump)) {
+                absolutePointIndex += jump;
                 return iterator.next(jump);
-            }
-            else
-            {
-                if (trajectoryIndex >= trajectory.trajectories.size()-1)
-                {
+            } else {
+                if (trajectoryIndex >= trajectory.trajectories.size() - 1) {
                     throw new NoSuchElementException();
                 }
-                int newTrajectoryIndex = trajectoryIndex + 1;                
+                int newTrajectoryIndex = trajectoryIndex + 1;
                 int newAbsolutePointIndex = absolutePointIndex += jump;
                 Iterator<Trajectory> it = trajectory.trajectories.listIterator(newTrajectoryIndex);
-                while (it.hasNext()) 
-                {
+                while (it.hasNext()) {
                     Trajectory t = it.next();
-                    if (jump < t.getLength())
-                    {                        
+                    if (jump < t.getLength()) {
                         absolutePointIndex = newAbsolutePointIndex;
                         trajectoryIndex = newTrajectoryIndex;
                         iterator = t.iterator(jump);
@@ -255,11 +229,9 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
         }
 
         @Override
-        public int getPositionOnTrajectory()
-        {
+        public int getPositionOnTrajectory() {
             checkModification();
-            if (iterator == null)
-            {
+            if (iterator == null) {
                 throw new NoSuchElementException("Iterator doesn't point to any Point so it doesn't have a position.");
             }
             return absolutePointIndex;
@@ -275,10 +247,8 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
          * in the increase of trajectory.truncateCounter. If it has been
          * truncated then an exception is thrown.
          */
-        private void checkModification()
-        {
-            if (truncateCounter != trajectory.truncateCounter)
-            {
+        private void checkModification() {
+            if (truncateCounter != trajectory.truncateCounter) {
                 throw new RuntimeException("Trajectory has been truncated.");
             }
         }

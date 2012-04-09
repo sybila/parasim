@@ -5,12 +5,11 @@ package org.sybila.parasim.model.trajectory;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Distance {    
+public interface Distance {
 
     /**
      * Returns the overall distance of two objects as a real number.
      * @return Distance as a real number.
      */
     float value();
-    
 }

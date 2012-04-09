@@ -5,7 +5,7 @@ import org.w3c.dom.Node;
 
 /**
  * Transforms XML elements into objects.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
  * @param <T> Type of objects which will be created.

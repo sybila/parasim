@@ -32,9 +32,9 @@ import org.xml.sax.SAXException;
 
 /**
  * Stores and loads objects from streams (i.e. InputStream and OutputStream).
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
- * 
+ *
  * @param <T>
  *            Type of object being stored/loaded.
  */
@@ -56,7 +56,7 @@ public abstract class StreamXMLResource<T extends XMLRepresentable> implements
 
     /**
      * Specifies way of obtaining input stream.
-     * 
+     *
      * @return a new open input stream.
      * @throws XMLException
      *             when stream could not be opened.
@@ -65,7 +65,7 @@ public abstract class StreamXMLResource<T extends XMLRepresentable> implements
 
     /**
      * Specifies way of obtaining output stream.
-     * 
+     *
      * @return a new open output stream.
      * @throws XMLException
      *             when stream could not be opened.
@@ -74,21 +74,21 @@ public abstract class StreamXMLResource<T extends XMLRepresentable> implements
 
     /**
      * Specifies way of obtaining factory for contained objects.
-     * 
+     *
      * @return Factory used to transform XML into contained objects.
      */
     protected abstract XMLRepresentableFactory<T> getFactory();
 
     /**
      * Specifies way of obtaining XLM schema for validation.
-     * 
+     *
      * @return URL of XML schema used to validate input.
      */
     protected abstract URL getXMLSchema();
 
     /**
      * Specifies way of obtaining name of XML namespace
-     * 
+     *
      * @return XML namespace of contained objects.
      */
     protected abstract String getNamespace();

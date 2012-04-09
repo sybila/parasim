@@ -9,7 +9,7 @@ public class DefaultOdeSystem extends AbstractOdeSystem {
 
     private OdeSystemEncoding encoding;
     private List<Variable> variables;
-    
+
     public DefaultOdeSystem(OdeSystemEncoding encoding, List<Variable> variables) {
         if (encoding == null) {
             throw new IllegalArgumentException("The parameter encoding is null.");
@@ -17,19 +17,19 @@ public class DefaultOdeSystem extends AbstractOdeSystem {
         this.encoding = encoding;
         this.variables = variables;
     }
-    
+
     public DefaultOdeSystem(OdeSystemEncoding encoding) {
         this(encoding, null);
     }
-    
+
     public int dimension() {
         return encoding.countVariables();
     }
-    
+
     public OdeSystemEncoding encoding() {
         return encoding;
     }
-    
+
     public Variable getVariable(int dimension) {
         if (variables == null) {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -37,5 +37,4 @@ public class DefaultOdeSystem extends AbstractOdeSystem {
             return variables.get(dimension);
         }
     }
-    
 }

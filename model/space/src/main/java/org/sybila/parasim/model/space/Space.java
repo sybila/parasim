@@ -7,7 +7,7 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Space extends XMLRepresentable {
-    
+
     /**
      * @return a space dimension
      */
@@ -18,19 +18,18 @@ public interface Space extends XMLRepresentable {
      * @return size of space in the given dimension
      */
     float getSize(int dimension);
-    
+
     /**
      * Checks whether the given point is in the space (it doesn't check time).
      * @param point
-     * @return 
+     * @return
      */
     boolean isIn(Point point);
- 
+
     /**
      * Checks whether the given point is in the space.
      * @param point
-     * @return 
+     * @return
      */
     boolean isIn(float[] point);
-    
 }

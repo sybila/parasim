@@ -6,25 +6,25 @@ import java.util.Iterator;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public abstract class AbstractDataBlock<T extends Trajectory> implements DataBlock<T> {
-    
+
     private int size;
-    
+
     protected AbstractDataBlock(int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("The size has to be a positive number.");
         }
         this.size = size;
     }
-    
+
     public int size() {
         return size;
     }
-    
+
     public Iterator<T> iterator() {
         return new Iterator<T>() {
 
             private int index = 0;
-            
+
             public boolean hasNext() {
                 return index < size;
             }
@@ -40,5 +40,4 @@ public abstract class AbstractDataBlock<T extends Trajectory> implements DataBlo
             }
         };
     }
-    
 }

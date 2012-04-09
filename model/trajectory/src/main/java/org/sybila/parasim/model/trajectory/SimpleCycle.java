@@ -6,34 +6,28 @@ package org.sybila.parasim.model.trajectory;
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class SimpleCycle implements TrajectoryCycle
-{
+public class SimpleCycle implements TrajectoryCycle {
+
     private Trajectory trajectory;
     private boolean hasCycle;
     private int cycleStartPosition;
     private int cycleEndPosition;
 
-    public SimpleCycle()
-    {
+    public SimpleCycle() {
         hasCycle = false;
     }
 
-    public SimpleCycle(Trajectory trajectory, int cycleStartPosition, int cycleEndPosition)
-    {
-        if (trajectory == null)
-        {
+    public SimpleCycle(Trajectory trajectory, int cycleStartPosition, int cycleEndPosition) {
+        if (trajectory == null) {
             throw new IllegalArgumentException("The parameter trajectory is null.");
         }
-        if (cycleStartPosition < 0)
-        {
+        if (cycleStartPosition < 0) {
             throw new IllegalArgumentException("The parameter cycleStartPosition must be positive.");
         }
-        if (cycleEndPosition <= cycleStartPosition)
-        {
+        if (cycleEndPosition <= cycleStartPosition) {
             throw new IllegalArgumentException("The parameter cycleStartPosition must smaller then cycleEndPosition.");
         }
-        if (cycleEndPosition >= trajectory.getLength())
-        {
+        if (cycleEndPosition >= trajectory.getLength()) {
             throw new IllegalArgumentException("The parameter cycleEndPosition must be smaller then the length of the trajectory.");
         }
         this.trajectory = trajectory;
@@ -43,26 +37,21 @@ public class SimpleCycle implements TrajectoryCycle
     }
 
     @Override
-    public boolean hasCycle()
-    {
+    public boolean hasCycle() {
         return hasCycle;
     }
 
     @Override
-    public int getCycleStartPosition() 
-    {
-        if (!hasCycle)
-        {
+    public int getCycleStartPosition() {
+        if (!hasCycle) {
             throw new UnsupportedOperationException("The trajectory does not have a cycle.");
         }
         return cycleStartPosition;
     }
 
     @Override
-    public int getCycleEndPosition()
-    {
-        if (!hasCycle)
-        {
+    public int getCycleEndPosition() {
+        if (!hasCycle) {
             throw new UnsupportedOperationException("The trajectory does not have a cycle.");
         }
         return cycleEndPosition;
@@ -76,8 +65,7 @@ public class SimpleCycle implements TrajectoryCycle
      */
     @Override
     public CyclicTrajectoryIterator cyclicIterator() {
-        if (!hasCycle)
-        {
+        if (!hasCycle) {
             throw new UnsupportedOperationException("The trajectory does not have a cycle.");
         }
         return new CyclicIterator(0);
@@ -93,12 +81,10 @@ public class SimpleCycle implements TrajectoryCycle
      */
     @Override
     public CyclicTrajectoryIterator cyclicIterator(int index) {
-        if (!hasCycle)
-        {
+        if (!hasCycle) {
             throw new UnsupportedOperationException("The trajectory does not have a cycle.");
         }
-        if (index < 0)
-        {
+        if (index < 0) {
             throw new IllegalArgumentException("The parameter [index] must be positive.");
         }
         return new CyclicIterator(index);
@@ -107,45 +93,39 @@ public class SimpleCycle implements TrajectoryCycle
     /**
      * The cyclic iterator is defined only for trajectories with a cycle.
      */
-    private class CyclicIterator implements CyclicTrajectoryIterator
-    {
+    private class CyclicIterator implements CyclicTrajectoryIterator {
+
         private int index;
         private int cycleLength;
         private float period;
 
-        public CyclicIterator(int index)
-        {
+        public CyclicIterator(int index) {
             this.index = index;
             this.period = -1;
             this.cycleLength = cycleEndPosition - cycleStartPosition;
         }
 
         @Override
-        public boolean nextLoopsBack()
-        {
-            return (index > cycleStartPosition &&
-                    ((index - cycleStartPosition) % cycleLength) == 0);
+        public boolean nextLoopsBack() {
+            return (index > cycleStartPosition
+                    && ((index - cycleStartPosition) % cycleLength) == 0);
         }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return true;
         }
 
         @Override
-        public Point next()
-        {
-            if (index < cycleEndPosition)
-            {
+        public Point next() {
+            if (index < cycleEndPosition) {
                 return trajectory.getPoint(index++);
             }
-            if (period < 0)
-            {
+            if (period < 0) {
                 period = trajectory.getPoint(cycleEndPosition).getTime()
-                        -trajectory.getPoint(cycleStartPosition).getTime();
+                        - trajectory.getPoint(cycleStartPosition).getTime();
             }
-            int cycleIndex = index - cycleStartPosition;            
+            int cycleIndex = index - cycleStartPosition;
             int cycleCount = cycleIndex / cycleLength;
             cycleIndex = (cycleIndex % cycleLength) + cycleStartPosition;
             Point tmp = trajectory.getPoint(cycleIndex);
@@ -154,13 +134,8 @@ public class SimpleCycle implements TrajectoryCycle
             return p;
         }
 
-        public void remove()
-        {
+        public void remove() {
             throw new UnsupportedOperationException("Is not supported.");
         }
-        
     }
-
-
-
 }

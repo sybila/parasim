@@ -5,10 +5,9 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
 /**
  * Time interval used in Until, Future and Globaly operators of STL.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface FormulaInterval extends XMLRepresentable
-{
+public interface FormulaInterval extends XMLRepresentable {
 
     /**
      * Returns the lower bound of the time interval.

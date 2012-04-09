@@ -2,7 +2,7 @@ package org.sybila.parasim.model.xml;
 
 /**
  * Exception during XML parsing: the XML input was of wrong format and could not be parsed properly.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
  * @see XMLRepresentableFactory

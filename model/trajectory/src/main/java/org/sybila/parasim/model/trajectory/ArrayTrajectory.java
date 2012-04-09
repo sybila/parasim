@@ -12,7 +12,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
     private float[] points;
     private ArrayPointLocator pointLocator;
     private float[] times;
-    
+
     public ArrayTrajectory(float[] points, float[] times, final int dimension) {
         this(points, times, dimension, times.length, new ArrayPointLocator() {
 
@@ -25,7 +25,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
             }
         });
     }
-    
+
     public ArrayTrajectory(float[] points, float[] times, final int dimension, final int length, ArrayPointLocator pointLocator) {
         super(dimension, length);
         if (points.length % dimension != 0) {
@@ -48,15 +48,12 @@ public class ArrayTrajectory extends AbstractTrajectory {
     }
 
     @Override
-    public TrajectoryIterator iterator()
-    {
+    public TrajectoryIterator iterator() {
         return new SimpleTrajectoryIterator(this, 0);
     }
 
     @Override
-    public TrajectoryIterator iterator(int index)
-    {
+    public TrajectoryIterator iterator(int index) {
         return new SimpleTrajectoryIterator(this, index);
-    }    
-
+    }
 }

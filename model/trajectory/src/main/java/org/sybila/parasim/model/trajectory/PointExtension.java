@@ -7,14 +7,14 @@ package org.sybila.parasim.model.trajectory;
  *
  * This means that as long as the trajectory T contains the given point P
  * calling T.getPoint(P.getPoisitionOnTrajectory()) must return P.
- * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ *
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public interface PointExtension extends Point {
 
     /**
      * Returns the position of this point on it's trajectory as an integer.
-     * The first point on a untruncated trajectory has index 0. 
+     * The first point on a untruncated trajectory has index 0.
      *
      * @return Unique position on trajectory.
      */

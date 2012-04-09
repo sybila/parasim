@@ -22,14 +22,13 @@ package org.sybila.parasim.model.trajectory;
  *
  * The positions of xS and xE are returned by getCycleStartPosition() and
  * getCycleEndPosition().
- * 
- * Possible infinite iteration is enabled by the CyclicTrajectoryIterator
- * given by the cyclicIterator() methods. 
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * Possible infinite iteration is enabled by the CyclicTrajectoryIterator
+ * given by the cyclicIterator() methods.
+ *
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface TrajectoryCycle
-{
+public interface TrajectoryCycle {
     /**
      * @return True if the trajectory has a cycle, false otherwise.
      */

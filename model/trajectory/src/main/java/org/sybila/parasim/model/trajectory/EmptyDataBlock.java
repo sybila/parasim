@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 public class EmptyDataBlock<T extends Trajectory> implements DataBlock<T> {
 
     public static final EmptyDataBlock<Trajectory> EMPTY_DATA_BLOCK = new EmptyDataBlock<Trajectory>();
-    
+
     public T getTrajectory(int index) {
         throw new IndexOutOfBoundsException();
     }
@@ -34,7 +34,4 @@ public class EmptyDataBlock<T extends Trajectory> implements DataBlock<T> {
             }
         };
     }
-    
-    
-    
 }

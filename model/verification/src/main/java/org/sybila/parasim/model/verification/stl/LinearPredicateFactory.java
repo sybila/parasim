@@ -12,9 +12,9 @@ import org.w3c.dom.NodeList;
 
 /**
  * Factory creating {@link LinearPredicate} objects from XML.
- * 
+ *
  * Needs mapping between variable names and indices.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
  */

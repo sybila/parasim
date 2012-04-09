@@ -2,9 +2,9 @@ package org.sybila.parasim.model.xml;
 
 /**
  * Exception during storing or loading of xml resource.
- * 
+ *
  * @see XMLResource
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
  */

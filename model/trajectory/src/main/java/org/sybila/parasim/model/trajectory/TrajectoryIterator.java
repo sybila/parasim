@@ -5,10 +5,10 @@ import java.util.Iterator;
 /**
  * Enables iterating over points of a trajectory with arbitrary jumps.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface TrajectoryIterator extends Iterator<Point>
-{
+public interface TrajectoryIterator extends Iterator<Point> {
+
     /**
      * If jump = 1 then the behaviour is equal to hasNext().
      *
@@ -40,5 +40,4 @@ public interface TrajectoryIterator extends Iterator<Point>
      * @return Unique position on trajectory.
      */
     int getPositionOnTrajectory();
-
 }

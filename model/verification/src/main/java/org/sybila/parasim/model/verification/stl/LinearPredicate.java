@@ -15,13 +15,13 @@ import org.w3c.dom.Element;
  * <li>relational operator</li>
  * <li>left side -- a linear combination of variables,</li>
  * <li>right side -- a constant</li>
- * 
+ *
  * Validity is determined as the validity of inequality in the given point.
  * Value is determined as difference between right and left side, which is
  * positive when valid and negative when not valid.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
- * 
+ *
  */
 public class LinearPredicate extends Predicate {
     /** Type of relational operator in the predicate */
@@ -94,7 +94,7 @@ public class LinearPredicate extends Predicate {
 
     /**
      * Creates a new linear predicate.
-     * 
+     *
      * @param multipliers
      *            List of left-side multipliers, each with associated variable
      *            index.

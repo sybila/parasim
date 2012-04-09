@@ -1,9 +1,9 @@
 package org.sybila.parasim.model.xml;
 
 /**
- * 
+ *
  * External resource of objects in XML format. Contains one object of a designated type.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
  * @param <T> Type of object being stored.

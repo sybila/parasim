@@ -6,13 +6,12 @@ package org.sybila.parasim.model.trajectory;
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface MutableTrajectory extends Trajectory
-{
+public interface MutableTrajectory extends Trajectory {
 
     /**
      * Appends the given trajectory to the end of this trajectory thus increasing
      * it's length.
-     * 
+     *
      * @param trajectory Trajectory to be appended to this one.
      */
     void append(Trajectory trajectory);
@@ -25,5 +24,4 @@ public interface MutableTrajectory extends Trajectory
      *        from begining.
      */
     void truncate(int newLength);
-
 }

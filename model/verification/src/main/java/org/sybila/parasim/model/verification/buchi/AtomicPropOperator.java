@@ -2,42 +2,37 @@ package org.sybila.parasim.model.verification.buchi;
 
 /**
  * Operators in atomic propositions of transition guards.
- * @author Sven Dražan <sven@mail.muni.cz>
+ * @author Sven Drazan <sven@mail.muni.cz>
  */
 public enum AtomicPropOperator {
-    AP_LESS
-    {
-        float evaluate(float x, float y)
-        {
-            return y-x;
+
+    AP_LESS {
+
+        float evaluate(float x, float y) {
+            return y - x;
         }
 
-        boolean validate(float x, float y)
-        {
+        boolean validate(float x, float y) {
             return x < y;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "<";
         }
     },
-    AP_GREATER 
-    { 
-        float evaluate(float x, float y)
-        { 
-            return x-y; 
+    AP_GREATER {
+
+        float evaluate(float x, float y) {
+            return x - y;
         }
 
-        boolean validate(float x, float y)
-        {
+        boolean validate(float x, float y) {
             return x > y;
         }
-        
+
         @Override
-        public String toString()
-        {
+        public String toString() {
             return ">";
         }
     };

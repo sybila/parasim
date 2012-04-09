@@ -41,10 +41,10 @@ public abstract class AbstractPoint implements Point {
         float[] temp = new float[dimension];
         for (int dim = 0; dim < dimension; dim++) {
             temp[dim] = getValue(dim);
-        }       
+        }
         return temp;
     }
-    
+
     @Override
     public Iterator<Float> iterator() {
         return new Iterator<Float>() {

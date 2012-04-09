@@ -5,27 +5,24 @@ import org.sybila.parasim.model.ode.OdeSystem;
 
 /**
  * Operand is a variable of the given OdeSystem.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class Variable<P extends Point> implements AtomicPropOperand<P>
-{
+public class Variable<P extends Point> implements AtomicPropOperand<P> {
+
     private OdeSystem ode;
     private int varIndex;
 
-    public Variable(OdeSystem ode, int varIndex)
-    {
+    public Variable(OdeSystem ode, int varIndex) {
         this.ode = ode;
         this.varIndex = varIndex;
     }
 
-    public float getValue(P point)
-    {
+    public float getValue(P point) {
         return point.getValue(varIndex);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return ode.getVariable(varIndex).getName();
     }
 }

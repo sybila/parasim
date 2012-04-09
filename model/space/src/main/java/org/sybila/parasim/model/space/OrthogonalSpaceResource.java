@@ -7,7 +7,7 @@ import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 
 public class OrthogonalSpaceResource extends FileXMLResource<OrthogonalSpace> {
-    
+
     public OrthogonalSpaceResource(File file) {
         super(file);
     }

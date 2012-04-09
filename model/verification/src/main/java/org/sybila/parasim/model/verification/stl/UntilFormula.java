@@ -4,9 +4,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Until operator. 
+ * Until operator.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class UntilFormula extends BinaryFormula implements TemporalFormula {
@@ -41,7 +41,7 @@ public class UntilFormula extends BinaryFormula implements TemporalFormula {
     public FormulaType getType() {
         return FormulaType.UNTIL;
     }
-    
+
     @Override
     public Element toXML(Document doc) {
         Element target = super.toXML(doc);

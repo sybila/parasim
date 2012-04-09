@@ -6,9 +6,9 @@ import java.util.Map;
 /**
  * Simple implementation of {@link VariableMapping} using two maps. Implements
  * methods for element operation.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
- * 
+ *
  * @param <K>
  *            Type of objects associated with variables (see
  *            {@link VariableMapping}).
@@ -25,7 +25,7 @@ public class DoubleMap<K> implements VariableMapping<K> {
 
     /**
      * Creates {@link VariableMapping} from existing Map.
-     * 
+     *
      * @param map
      *            Input map. Must be injective, i.e. there are no two keys with
      *            the same value.
@@ -52,7 +52,7 @@ public class DoubleMap<K> implements VariableMapping<K> {
 
     /**
      * Adds new entry to mapping.
-     * 
+     *
      * @return <code>true</code> when the entry was added successfully,
      *         <code>false</code> otherwise (i.e. <code>key</code> or
      *         <code>name</code> is already in the mapping).
@@ -99,14 +99,14 @@ public class DoubleMap<K> implements VariableMapping<K> {
     public String getName(K variableKey) {
         return keyMap.get(variableKey);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (!(obj instanceof DoubleMap<?>)) return false;
         return keyMap.equals(((DoubleMap<?>)obj).keyMap);
     }
-    
+
     @Override
     public int hashCode() {
         return keyMap.hashCode();

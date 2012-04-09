@@ -6,10 +6,10 @@ package org.sybila.parasim.model.trajectory;
  * and should return zero distance for two same objects.
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface DistanceMetric<O extends Object, D extends Distance>
-{
+public interface DistanceMetric<O extends Object, D extends Distance> {
+
     /**
      * Returns distance between two given objects of type O.
      * The method should be symetric ie.
@@ -20,5 +20,4 @@ public interface DistanceMetric<O extends Object, D extends Distance>
      * @return distance between two given points
      */
     D distance(O first, O second);
-
 }

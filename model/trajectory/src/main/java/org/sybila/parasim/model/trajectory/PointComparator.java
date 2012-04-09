@@ -2,8 +2,8 @@ package org.sybila.parasim.model.trajectory;
 
 /**
  * Enables comparison of two points.
- * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ *
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public interface PointComparator {
 

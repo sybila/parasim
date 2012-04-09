@@ -36,9 +36,8 @@ public class SimpleTrajectoryIterator implements TrajectoryIterator {
     }
 
     @Override
-    public boolean hasNext(int jump)
-    {
-        return index+jump-1 < trajectory.getLength();
+    public boolean hasNext(int jump) {
+        return index + jump - 1 < trajectory.getLength();
     }
 
     @Override
@@ -50,9 +49,8 @@ public class SimpleTrajectoryIterator implements TrajectoryIterator {
     }
 
     @Override
-    public Point next(int jump)
-    {
-        if (index+jump-1 >= trajectory.getLength()) {
+    public Point next(int jump) {
+        if (index + jump - 1 >= trajectory.getLength()) {
             throw new NoSuchElementException();
         }
         index += jump;
@@ -60,14 +58,12 @@ public class SimpleTrajectoryIterator implements TrajectoryIterator {
     }
 
     @Override
-    public int getPositionOnTrajectory()
-    {
+    public int getPositionOnTrajectory() {
         return index;
     }
 
     @Override
-    public void remove()
-    {
+    public void remove() {
         throw new UnsupportedOperationException("Not supported.");
     }
 }

@@ -14,12 +14,12 @@ public class VerificationResultResource extends FileXMLResource<VerificationResu
     public VerificationResultResource(File file) {
         super(file);
     }
-    
+
     @Override
     protected URL getXMLSchema() {
         return getClass().getClassLoader().getResource("verification_result.xsd");
     }
-    
+
     @Override
     protected String getNamespace() {
         return "http://www.sybila.org/parasim/verification-result";
@@ -29,5 +29,4 @@ public class VerificationResultResource extends FileXMLResource<VerificationResu
     protected XMLRepresentableFactory<VerificationResult> getFactory() {
         return new VerificationResultFactory();
     }
-    
 }

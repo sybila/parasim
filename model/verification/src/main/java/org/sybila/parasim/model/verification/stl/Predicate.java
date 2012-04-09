@@ -5,11 +5,11 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * A general predicate evaluable in a Point of a Trajectory.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class Predicate extends AbstractFormula
-{
+public abstract class Predicate extends AbstractFormula {
+
     /**
      * Returns the boolean validity of this predicate in given point.
      *
@@ -27,20 +27,17 @@ public abstract class Predicate extends AbstractFormula
     public abstract float getValue(Point p);
 
     @Override
-    public int getArity()
-    {
+    public int getArity() {
         return 0;
     }
 
     @Override
-    public Formula getSubformula(int index)
-    {
+    public Formula getSubformula(int index) {
         throw new IllegalArgumentException("Predicate has no subformulas.");
     }
 
     @Override
-    public float getTimeNeeded()
-    {
+    public float getTimeNeeded() {
         return 0;
     }
 
@@ -48,8 +45,7 @@ public abstract class Predicate extends AbstractFormula
     public abstract String toString();
 
     @Override
-    public FormulaType getType()
-    {
+    public FormulaType getType() {
         return FormulaType.PREDICATE;
     }
 }

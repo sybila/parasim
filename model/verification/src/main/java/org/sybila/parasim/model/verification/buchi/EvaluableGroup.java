@@ -4,15 +4,14 @@ import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * Represents a conjunction or disjunction of a group of evaluable subexpressions.
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class EvaluableGroup<P extends Point> implements Evaluable<P>
-{
+public class EvaluableGroup<P extends Point> implements Evaluable<P> {
+
     private EvaluableGroupType type;
     private Evaluable[] subExpressions;
 
-    public EvaluableGroup(Evaluable[] subExpressions, EvaluableGroupType type)
-    {
+    public EvaluableGroup(Evaluable[] subExpressions, EvaluableGroupType type) {
         this.type = type;
         this.subExpressions = subExpressions;
     }
@@ -24,36 +23,27 @@ public class EvaluableGroup<P extends Point> implements Evaluable<P>
      * @param point Point in which to evaluate subexpressions.
      * @return Overall value.
      */
-    public float evaluate(P point)
-    {
-        if (subExpressions == null || subExpressions.length == 0)
-        {
+    public float evaluate(P point) {
+        if (subExpressions == null || subExpressions.length == 0) {
             return 0;
         }
-        
+
         float result = subExpressions[0].evaluate(point);
         float tmp;
-        if (type == EvaluableGroupType.AP_GROUP_AND) /* Minimum */
-        {
-            for (int i=1; i<subExpressions.length; i++)
-            {
+        if (type == EvaluableGroupType.AP_GROUP_AND) /* Minimum */ {
+            for (int i = 1; i < subExpressions.length; i++) {
                 tmp = subExpressions[i].evaluate(point);
-                if (tmp < result) 
-                {
+                if (tmp < result) {
                     result = tmp;
                 }
-            }                    
-        }
-        else /* type == AP_GROUP_OR => Maximum */
-        {
-            for (int i=1; i<subExpressions.length; i++)
-            {
+            }
+        } else /* type == AP_GROUP_OR => Maximum */ {
+            for (int i = 1; i < subExpressions.length; i++) {
                 tmp = subExpressions[i].evaluate(point);
-                if (tmp > result)                  
-                {
+                if (tmp > result) {
                     result = tmp;
                 }
-            }            
+            }
         }
         return result;
     }
@@ -63,40 +53,32 @@ public class EvaluableGroup<P extends Point> implements Evaluable<P>
      * @param point Point in which to compute validity of subexpressions.
      * @return Validity of the whole expression.
      */
-    public boolean valid(P point)
-    {
-        if (type == EvaluableGroupType.AP_GROUP_AND)
-        {
-          for (int i=0; i<subExpressions.length; i++)
-          {
-            if (!subExpressions[i].valid(point))
-            {
-              return false;
+    public boolean valid(P point) {
+        if (type == EvaluableGroupType.AP_GROUP_AND) {
+            for (int i = 0; i < subExpressions.length; i++) {
+                if (!subExpressions[i].valid(point)) {
+                    return false;
+                }
             }
-          }
-          return true;
-        }
-        else /* type == AP_GROUP_OR */
-        {
-          for (int i=0; i<subExpressions.length; i++)
-          {
-            if (!subExpressions[i].valid(point))
-            {
-              return true;
+            return true;
+        } else /* type == AP_GROUP_OR */ {
+            for (int i = 0; i < subExpressions.length; i++) {
+                if (!subExpressions[i].valid(point)) {
+                    return true;
+                }
             }
-          }
-          return false;
+            return false;
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String out = new String();
-        for (int i=0; i<subExpressions.length; i++)
-        {
-          if (i>0) out += type.toString();
-          out += subExpressions[i].toString();
+        for (int i = 0; i < subExpressions.length; i++) {
+            if (i > 0) {
+                out += type.toString();
+            }
+            out += subExpressions[i].toString();
         }
         return '(' + out + ')';
     }

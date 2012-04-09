@@ -10,23 +10,24 @@ import org.w3c.dom.NodeList;
 
 /**
  * Factory creating {@link Formula} objects from XML.
- * 
+ *
  * In order to load predicates, it contains mapping between variable names and indices.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
- * 
+ *
  */
 public class FormulaFactory implements XMLRepresentableFactory<Formula> {
+
     private PointVariableMapping mapping;
 
     /**
      * Sets contained variable name-to-index mapping.
-     * @param mapping Mapping between model variable names and indices. 
+     * @param mapping Mapping between model variable names and indices.
      */
     public FormulaFactory(PointVariableMapping mapping) {
         this.mapping = mapping;
     }
-    
+
     @Override
     public Formula getObject(Node source) throws XMLFormatException {
         FormulaType type;
@@ -36,7 +37,7 @@ public class FormulaFactory implements XMLRepresentableFactory<Formula> {
         } catch (IllegalArgumentException iae) {
             throw new XMLFormatException(
                     "Invalid document: unknown name of element: "
-                            + source.getNodeName());
+                    + source.getNodeName());
         }
         NodeList children = source.getChildNodes();
 
@@ -84,8 +85,7 @@ public class FormulaFactory implements XMLRepresentableFactory<Formula> {
                         + children.getLength() + " (expected at least 2).");
             }
 
-            FormulaInterval interval = new FormulaIntervalFactory()
-                    .getObject(children.item(0));
+            FormulaInterval interval = new FormulaIntervalFactory().getObject(children.item(0));
             Formula phi = getObject(children.item(1));
 
             /* FUTURE */

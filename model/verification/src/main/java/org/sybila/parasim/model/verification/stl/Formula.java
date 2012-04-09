@@ -5,11 +5,11 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
 /**
  * Represents an STL (Signal Temporal Logic) formula.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public interface Formula extends XMLRepresentable
-{
+public interface Formula extends XMLRepresentable {
+
     /**
      * Returns the arity of this formula, that is how many subformulas it consists of.
      *
@@ -30,7 +30,7 @@ public interface Formula extends XMLRepresentable
      * an interval. To evaluate the satisfaction of a formula on a trajectory
      * a minimal length is needed which can be computed from the structure
      * of the formula.
-     * 
+     *
      * This method returns the time needed to evaluate this formula and all
      * its subformulas. If a formula is evaluated in a single time point 0
      * will be returned.
@@ -41,7 +41,7 @@ public interface Formula extends XMLRepresentable
 
     /**
      * Returns the type of the formula.
-     * 
+     *
      * @return Type of formula.
      */
     FormulaType getType();

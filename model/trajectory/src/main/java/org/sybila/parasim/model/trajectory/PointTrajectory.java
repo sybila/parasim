@@ -16,7 +16,7 @@ public class PointTrajectory extends AbstractTrajectory {
     public PointTrajectory(float time, float... data) {
         this(new ArrayPoint(time, data));
     }
-    
+
     @Override
     public Point getPoint(int index) {
         if (index != 0) {
@@ -27,7 +27,6 @@ public class PointTrajectory extends AbstractTrajectory {
 
     @Override
     public String toString() {
-        return "[" + initialPoint +"]";
+        return "[" + initialPoint + "]";
     }
-    
 }

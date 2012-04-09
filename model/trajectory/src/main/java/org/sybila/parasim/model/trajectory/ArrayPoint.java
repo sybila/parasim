@@ -13,7 +13,7 @@ public class ArrayPoint extends AbstractPoint {
     public ArrayPoint(float time, float... data) {
         this(time, data, 0, data.length);
     }
-    
+
     public ArrayPoint(float time, float[] data, int startIndex, int dimension) {
         super(dimension, time);
         if (data == null) {
@@ -28,6 +28,7 @@ public class ArrayPoint extends AbstractPoint {
         this.data = data;
         this.startIndex = startIndex;
     }
+
     @Override
     public float getValue(int index) {
         if (index < 0 || index >= getDimension()) {
@@ -35,7 +36,7 @@ public class ArrayPoint extends AbstractPoint {
         }
         return data[startIndex + index];
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Point)) {
@@ -50,7 +51,7 @@ public class ArrayPoint extends AbstractPoint {
         }
         Iterator<Float> thisIter = iterator();
         Iterator<Float> otherIter = other.iterator();
-        while(thisIter.hasNext()) {
+        while (thisIter.hasNext()) {
             if (!thisIter.next().equals(otherIter.next())) {
                 return false;
             }

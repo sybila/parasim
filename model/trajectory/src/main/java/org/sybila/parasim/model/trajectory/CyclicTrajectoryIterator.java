@@ -7,7 +7,7 @@ import java.util.Iterator;
  *
  * A cycle is marked by two points (xS - start, xE - end) that have been found
  * similar by some PointComparator.
- * 
+ *
  * x0, x1, x2, ..., xS, x(S+1), x(S+2), ..., xE, x(E+1), x(E+2), ...
  *                  ^                        ^
  * If indeed there is a cycle the iterator will go through the cycle
@@ -31,10 +31,10 @@ import java.util.Iterator;
  * xk.getValue(m) == x(S+r).getValue(m)
  * xk.getTime() == x(S+r).getTime()+i*T
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface CyclicTrajectoryIterator extends Iterator<Point>
-{
+public interface CyclicTrajectoryIterator extends Iterator<Point> {
+
     /**
      * Returns true if the next call to next() loops back.
      * @return True if next call to next() will loop back.

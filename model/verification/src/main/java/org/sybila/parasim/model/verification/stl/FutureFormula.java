@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 /**
  * Future or Finally F operator.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class FutureFormula extends UnaryFormula implements TemporalFormula {
@@ -39,7 +39,7 @@ public class FutureFormula extends UnaryFormula implements TemporalFormula {
     public FormulaType getType() {
         return FormulaType.FUTURE;
     }
-    
+
     @Override
     public Element toXML(Document doc) {
         Element target = super.toXML(doc);

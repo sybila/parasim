@@ -4,11 +4,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * 
+ *
  * Implements <code>equals</code> and <code>hashCode</code>.
  * Two formulae are equal if they represent the same predicate (denotated
  * by {@link #getType()}) and all their subformulae are equal (in given order).
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
  */
@@ -22,7 +22,7 @@ public abstract class AbstractFormula implements Formula {
         }
         return formula;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

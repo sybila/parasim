@@ -5,19 +5,17 @@ import java.util.NoSuchElementException;
 /**
  * This class represents an empty trajectory which can be used when trajectory
  * trajectory is needed, but it will be available in the future.
- * 
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class EmptyTrajectory implements Trajectory {
 
     public static final EmptyTrajectory EMPTY_TRAJECTORY = new EmptyTrajectory();
-    
     private int dimension;
-    
     private TrajectoryReference reference = new TrajectoryReference() {
 
         private Trajectory trajectory = EmptyTrajectory.this;
-                
+
         public Trajectory getTrajectory() {
             return trajectory;
         }
@@ -26,15 +24,15 @@ public class EmptyTrajectory implements Trajectory {
             this.trajectory = trajectory;
         }
     };
-    
+
     public EmptyTrajectory() {
         this(-1);
     }
-    
+
     public EmptyTrajectory(int dimension) {
         this.dimension = dimension;
     }
-    
+
     public int getDimension() {
         if (dimension <= 0) {
             throw new UnsupportedOperationException("Not supported yet.");
@@ -98,5 +96,4 @@ public class EmptyTrajectory implements Trajectory {
     public TrajectoryIterator iterator(int index) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
 }

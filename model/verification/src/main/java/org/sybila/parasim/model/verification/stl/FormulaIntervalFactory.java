@@ -1,21 +1,22 @@
 package org.sybila.parasim.model.verification.stl;
 
 import org.sybila.parasim.model.xml.XMLFormatException;
-import org.sybila.parasim.model.xml.XMLRepresentable;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 /**
  * Factory creating {@link TimeInterval} objects from XML. Also contains some
  * auxiliary methods for converting {@link FormulaInterval} to XML.
- * 
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
- * 
+ *
  */
 public class FormulaIntervalFactory implements
         XMLRepresentableFactory<FormulaInterval> {
+
     /** Name of XML element representing FormulaInterval */
     public static final String INTERVAL_NAME = "interval";
     /** Name of element representing lower bound */
@@ -60,7 +61,7 @@ public class FormulaIntervalFactory implements
     /**
      * Used by {@link XMLRepresentable#toXML} method to obtain XML element
      * representing interval upper bound.
-     * 
+     *
      * @param doc
      *            Parent XML document.
      * @param value
@@ -77,7 +78,7 @@ public class FormulaIntervalFactory implements
     /**
      * Used by {@link XMLRepresentable#toXML} method to obtain XML element
      * representing interval lower bound.
-     * 
+     *
      * @param doc
      *            Parent XML document.
      * @param value
@@ -96,8 +97,7 @@ public class FormulaIntervalFactory implements
      */
     private static IntervalBoundaryType getBoundaryType(Node parent)
             throws XMLFormatException {
-        String target = parent.getAttributes().getNamedItem(TYPE_NAME)
-                .getNodeValue();
+        String target = parent.getAttributes().getNamedItem(TYPE_NAME).getNodeValue();
         if (target.equals(OPEN_NAME)) {
             return IntervalBoundaryType.OPEN;
         } else if (target.equals(CLOSED_NAME)) {
@@ -144,7 +144,7 @@ public class FormulaIntervalFactory implements
                         + "\" or \"" + LOWER_NAME + "\").");
             }
         }
-        
+
         /* CONTROL */
         if (upperType == null) {
             throw new XMLFormatException("Upper boundary not set.");

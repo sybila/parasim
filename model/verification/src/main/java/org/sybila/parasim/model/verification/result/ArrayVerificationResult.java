@@ -7,10 +7,11 @@ import org.sybila.parasim.model.trajectory.Point;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class ArrayVerificationResult extends AbstractVerificationResult {
+
     private int size;
     private Point[] points;
     private float[] robustness;
-    
+
     /**
      * Creates new verification result with specified contents. Note: arguments are not copied.
      * @param size Number of points.
@@ -41,5 +42,4 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
     public int size() {
         return size;
     }
-    
 }

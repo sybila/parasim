@@ -8,7 +8,7 @@ import java.util.Iterator;
  * Enables to retrieve derivatives of the OdeSystem in the given point.
  * Computations are cached for further use so each dimension is computed at
  * most once.
- * 
+ *
  * @author Sven Drazan <sven@mail.muni.cz>
  */
 public class PointDerivativeCache implements PointDerivative {
@@ -18,8 +18,7 @@ public class PointDerivativeCache implements PointDerivative {
     private float[] derivatives;
     private boolean[] computed;
 
-    public PointDerivativeCache(Point p, OdeSystem ode)
-    {
+    public PointDerivativeCache(Point p, OdeSystem ode) {
         this.p = p;
         this.ode = ode;
         computed = new boolean[p.getDimension()];
@@ -31,14 +30,11 @@ public class PointDerivativeCache implements PointDerivative {
      * @param varIndex Index of the variable who's derivative to return.
      * @return Value of the derivative.
      */
-    public float getDerivative(int varIndex)
-    {
-        if (varIndex < 0 || varIndex >= p.getDimension())
-        {
+    public float getDerivative(int varIndex) {
+        if (varIndex < 0 || varIndex >= p.getDimension()) {
             throw new IllegalArgumentException("The index is out of the range [0, " + (p.getDimension() - 1) + "]");
         }
-        if (!computed[varIndex])
-        {
+        if (!computed[varIndex]) {
             derivatives[varIndex] = ode.value(p, varIndex);
             computed[varIndex] = true;
         }
@@ -48,16 +44,14 @@ public class PointDerivativeCache implements PointDerivative {
     /**
      * @return Number of dimensions of given point.
      */
-    public int getDimension()
-    {
-      return p.getDimension();
+    public int getDimension() {
+        return p.getDimension();
     }
 
     /**
      * @return time of the point
      */
-    public float getTime()
-    {
+    public float getTime() {
         return p.getTime();
     }
 
@@ -65,16 +59,14 @@ public class PointDerivativeCache implements PointDerivative {
      * @param index The dimension of who's value to return.
      * @return Value of given dimension.
      */
-    public float getValue(int index)
-    {
+    public float getValue(int index) {
         return p.getValue(index);
     }
 
     /**
      * @return Values of all dimensions as an array without time
      */
-    public float[] toArray()
-    {
+    public float[] toArray() {
         return p.toArray();
     }
 

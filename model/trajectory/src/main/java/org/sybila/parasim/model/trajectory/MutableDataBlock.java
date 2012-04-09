@@ -2,11 +2,10 @@ package org.sybila.parasim.model.trajectory;
 
 /**
  * Enables appending and adding to the DataBlock.
- * 
+ *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface MutableDataBlock extends DataBlock<Trajectory>
-{
+public interface MutableDataBlock extends DataBlock<Trajectory> {
     /**
      * Appends all the trajectories to the end of the ones already in the
      * DataBlock. If the number of trajectories to be appended and the ones

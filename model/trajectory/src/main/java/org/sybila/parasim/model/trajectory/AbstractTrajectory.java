@@ -3,7 +3,7 @@ package org.sybila.parasim.model.trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-abstract public class AbstractTrajectory implements Trajectory{
+abstract public class AbstractTrajectory implements Trajectory {
 
     private int dimension;
     private int length;
@@ -44,7 +44,7 @@ abstract public class AbstractTrajectory implements Trajectory{
     public int getLength() {
         return length;
     }
-   
+
     @Override
     public TrajectoryReference getReference() {
         if (reference == null) {
@@ -52,7 +52,7 @@ abstract public class AbstractTrajectory implements Trajectory{
             reference = new TrajectoryReference() {
 
                 private Trajectory referencedTrajectory = thisTrajectory;
-                
+
                 @Override
                 public Trajectory getTrajectory() {
                     return referencedTrajectory;
@@ -65,8 +65,8 @@ abstract public class AbstractTrajectory implements Trajectory{
             };
         }
         return reference;
-    }    
-    
+    }
+
     @Override
     public TrajectoryIterator iterator() {
         return iterator(0);
@@ -75,13 +75,12 @@ abstract public class AbstractTrajectory implements Trajectory{
     @Override
     public TrajectoryIterator iterator(int index) {
         return new SimpleTrajectoryIterator(this, index);
-    }    
-    
+    }
+
     protected final void setLength(int length) {
         if (length <= 0) {
             throw new IllegalArgumentException("The length has to be a positive number.");
         }
         this.length = length;
-    }    
-    
+    }
 }
