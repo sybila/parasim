@@ -11,5 +11,4 @@ public class ComputationDensityExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.extension(ComputationDensityRegistrar.class);
     }
-    
 }

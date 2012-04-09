@@ -10,60 +10,59 @@ package org.sybila.parasim.computation.monitoring.stl.cpu;
  * //EQUAL     x == const   -abs(x-const)
  * //NOTEQUAL  x != const   abs(x-const)
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public enum InequalityType {
-    LESS 
-    {
-        public float value(float x, float constant)
-        {
+
+    LESS {
+
+        public float value(float x, float constant) {
             return constant - x;
         }
-        public float derivative(float d)
-        {
+
+        public float derivative(float d) {
             return -d;
         }
-        public String toString()
-        {
+
+        public String toString() {
             return "<";
         }
     },
-    MORE
-    {
-        public float value(float x, float constant)
-        {
+    MORE {
+
+        public float value(float x, float constant) {
             return x - constant;
         }
-        public float derivative(float d)
-        {
+
+        public float derivative(float d) {
             return d;
         }
-        public String toString()
-        {
+
+        public String toString() {
             return ">";
         }
     }/*,
     EQUAL / not linear
     {
-        public float evaluate(float x, float constant)
-        {
-            return -Math.abs(constant - x);
-        }
-        public String toString()
-        {
-            return "==";
-        }
+    public float evaluate(float x, float constant)
+    {
+    return -Math.abs(constant - x);
+    }
+    public String toString()
+    {
+    return "==";
+    }
     },
     NOTEQUAL / not linear
     {
-        public float evaluate(float x, float constant)
-        {
-            return Math.abs(constant - x);
-        }
-        public String toString()
-        {
-            return "!=";
-        }
+    public float evaluate(float x, float constant)
+    {
+    return Math.abs(constant - x);
+    }
+    public String toString()
+    {
+    return "!=";
+    }
     }*/;
 
     /**

@@ -15,8 +15,8 @@ import org.sybila.parasim.core.extension.cdi.api.event.ServiceFactoryRegistered;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ComputationContainerRegistrar {
-    
-    @Inject 
+
+    @Inject
     private Instance<ServiceFactory> serviceFactory;
     @Inject
     private Instance<ComputationContainer> container;
@@ -26,10 +26,9 @@ public class ComputationContainerRegistrar {
     private Event<ComputationContainerRegistered> event;
     @Inject
     private ContextEvent<ComputationContext> contextEvent;
-    
+
     public void register(@Observes ServiceFactoryRegistered event) {
         container.set(new DefaultComputationContainer(serviceFactory.get(), contextEvent));
         this.event.fire(new ComputationContainerRegistered());
     }
-    
 }

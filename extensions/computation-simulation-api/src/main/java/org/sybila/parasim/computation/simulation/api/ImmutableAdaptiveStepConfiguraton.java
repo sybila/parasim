@@ -7,11 +7,11 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ImmutableAdaptiveStepConfiguraton implements AdaptiveStepConfiguration {
-    
+
     private Configuration configuration;
     private float[] maxAbsoluteError;
     private float maxRelativeError;
-    
+
     public ImmutableAdaptiveStepConfiguraton(Configuration configuration, float[] maxAbsoluteError, float maxRelativeError) {
         if (configuration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
@@ -65,5 +65,5 @@ public class ImmutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurat
     public OrthogonalSpace getSpace() {
         return configuration.getSpace();
     }
-    
+
 }

@@ -23,9 +23,9 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * It iterates through all trajectories and their neighbors with invalid distance. For each
  * pair of trajectory and neighbor with invalid distance it tries to spawn new set of trajectories.
- * 
+ *
  * The way of spawning is defined in classes extended this abstract class.
- * 
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
@@ -60,10 +60,9 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         }
         spawnTearDown(configuration, trajectories);
         return new SpawnedDataBlockWrapper(
-            new ListDataBlock<Trajectory>(newTrajectories),
-            new MapTrajectoryNeighborhood<Trajectory>(neighborhood),
-            new ListDataBlock<Trajectory>(newSecondaryTrajectories)
-        );
+                new ListDataBlock<Trajectory>(newTrajectories),
+                new MapTrajectoryNeighborhood<Trajectory>(neighborhood),
+                new ListDataBlock<Trajectory>(newSecondaryTrajectories));
     }
 
     @Override
@@ -114,16 +113,16 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
                     neighborhoodLists.get(toBeNeighbor).add(newTrajectory);
                     // update "to be neighbor" trajectory
                     toBeNeighbor = newTrajectory;
-                }                
+                }
             }
         }
         // reorganize data
-        for (Entry<Trajectory, Boolean> entry: allSeedsMap.entrySet()) {
+        for (Entry<Trajectory, Boolean> entry : allSeedsMap.entrySet()) {
             if (entry.getValue()) {
                 seeds.add(entry.getKey());
             } else {
                 secondarySeeds.add(entry.getKey());
-                for(Trajectory master: neighborhoodLists.get(entry.getKey())) {
+                for (Trajectory master : neighborhoodLists.get(entry.getKey())) {
                     neighborhoodLists.get(master).add(entry.getKey());
                 }
                 neighborhoodLists.remove(entry.getKey());
@@ -136,18 +135,17 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         }
         // return the result
         return new SpawnedDataBlockWrapper(
-            new ListDataBlock<Trajectory>(seeds),
-            new MapTrajectoryNeighborhood<Trajectory>(neighborhoodDataBlocks),
-            new ListDataBlock<Trajectory>(secondarySeeds)
-        );
+                new ListDataBlock<Trajectory>(seeds),
+                new MapTrajectoryNeighborhood<Trajectory>(neighborhoodDataBlocks),
+                new ListDataBlock<Trajectory>(secondarySeeds));
     }
 
     /**
      * This method is executed in the beginning of the {@link AbstractTrajectorySpawner#spawn(org.sybila.parasim.computation.density.Configuration, org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock) } method.
      * Override it to clean the spawner after the spawning ends.
-     * 
+     *
      * @param configuration
-     * @param trajectories 
+     * @param trajectories
      */
     protected void spawnSetup(Configuration configuration, DistanceCheckedDataBlock trajectories) {
     }
@@ -155,20 +153,20 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
     /**
      * This method is executed in the end of the {@link AbstractTrajectorySpawner#spawn(org.sybila.parasim.computation.density.Configuration, org.sybila.parasim.computation.density.distancecheck.DistanceCheckedDataBlock) } method.
      * @param configuration
-     * @param trajectories 
+     * @param trajectories
      */
     protected void spawnTearDown(Configuration configuration, DistanceCheckedDataBlock trajectories) {
     }
 
     /**
      * Override to provide trajectory spawning.
-     * 
+     *
      * WARNING: This method has to be consistent with the {@link AbstractTrajectorySpawner#createNeighborhoods(org.sybila.parasim.model.trajectory.Trajectory, org.sybila.parasim.model.trajectory.Trajectory, org.sybila.parasim.model.distance.Distance) }.
-     * 
+     *
      * @param trajectory
      * @param neighbor
      * @param distance
-     * 
+     *
      * @return collection containing spawned trajectories
      */
     protected abstract SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance);
@@ -177,6 +175,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
 
         private Map<Trajectory, DataBlock<Trajectory>> neighborhoods;
         private Collection<Trajectory> secondaryTrajectories;
+
         /**
          * Creates result with no trajectory spawned
          */
@@ -200,7 +199,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         public Collection<Trajectory> getSecondaryTrajectories() {
             return secondaryTrajectories;
         }
-        
+
         public Collection<Trajectory> getTrajectories() {
             return neighborhoods.keySet();
         }

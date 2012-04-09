@@ -9,7 +9,7 @@ import org.sybila.parasim.core.annotations.Provide;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class SimulatorRegistrar {
-    
+
     @Provide
     public AdaptiveStepSimulator registerAdaptiveStepSimulator() {
         if (OctaveSimulator.isAvailable()) {

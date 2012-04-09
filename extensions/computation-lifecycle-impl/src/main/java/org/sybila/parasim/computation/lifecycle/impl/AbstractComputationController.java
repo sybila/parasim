@@ -10,9 +10,8 @@ import org.sybila.parasim.computation.lifecycle.api.Resources;
 public class AbstractComputationController implements ComputationController {
 
     private Resources speed;
-    
     protected final SimpleComputationStatus status = new SimpleComputationStatus();
-    
+
     public Resources getSpeed() {
         return speed;
     }
@@ -27,5 +26,4 @@ public class AbstractComputationController implements ComputationController {
         }
         this.speed = speed;
     }
-
 }

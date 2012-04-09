@@ -6,7 +6,7 @@ import org.apache.commons.lang3.Validate;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ExtensionConfiguration {
-    
+
     private Float[] maxAbsoluteError;
     private float maxRelativeError;
 
@@ -22,5 +22,4 @@ public class ExtensionConfiguration {
         Validate.notNull(maxAbsoluteError);
         Validate.notNull(maxRelativeError);
     }
-    
 }

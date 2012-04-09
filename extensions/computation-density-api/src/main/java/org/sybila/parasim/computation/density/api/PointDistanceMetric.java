@@ -6,7 +6,7 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * Defines distance metric between two points. The metric should be symmetric
  * and should return zero distance for two same points.
- * 
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface PointDistanceMetric extends DistanceMetric<Point, LimitedDistance> {
@@ -14,7 +14,7 @@ public interface PointDistanceMetric extends DistanceMetric<Point, LimitedDistan
     /**
      * Returns distance between two given points. The method should hold
      * that distance(A, B) == distance(B, A) and distance(A, A) = 0.
-     * 
+     *
      * @param first
      * @param second
      * @return distance between two given points
@@ -24,7 +24,7 @@ public interface PointDistanceMetric extends DistanceMetric<Point, LimitedDistan
     /**
      * Returns distance between two given points. The method should hold
      * that distance(A, B) == distance(B, A) and distance(A, A) = 0.
-     * 
+     *
      * @param first
      * @param second
      * @return distance between two given points

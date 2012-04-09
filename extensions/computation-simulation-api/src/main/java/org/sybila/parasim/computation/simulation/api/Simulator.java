@@ -9,5 +9,5 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 public interface Simulator<Conf extends Configuration, Out extends SimulatedDataBlock> {
 
     Out simulate(Conf configuration, DataBlock<Trajectory> trajectories);
-   
+
 }

@@ -15,11 +15,11 @@ package org.sybila.parasim.computation.cycledetection.api;
 ///**
 // * Enables cycle detection on datablocks of trajectories given a specific
 // * type of cycle detector and it's factory.
-// * 
+// *
 // * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
 // */
 //public class CycleDetectionModule<CD extends CycleDetector,
-//                                  CDF extends CycleDetectorFactory<CD>, 
+//                                  CDF extends CycleDetectorFactory<CD>,
 //                                  CT extends CyclicTrajectory>
 ////implements Module<DataBlock, CycleDetectDataBlock<Trajectory, CD>, DataBlock<CT>>
 //{
@@ -31,7 +31,7 @@ package org.sybila.parasim.computation.cycledetection.api;
 //    {
 //        if (detector == null) {
 //            throw new IllegalArgumentException("The parameter detector is null.");
-//        }        
+//        }
 //        if (factory == null) {
 //            throw new IllegalArgumentException("The parameter factory is null.");
 //        }
@@ -103,7 +103,7 @@ package org.sybila.parasim.computation.cycledetection.api;
 //        CycleDetectDataBlock<Trajectory, CD> interNew = new ArrayCycleDetectionDataBlock<Trajectory, CD>(other, cycleDetectors, statuses);
 //
 //        return new MixedOutput<DataBlock<CT>, CycleDetectDataBlock<Trajectory, CD>>(finished, interNew);
-//    }    
+//    }
 //
 //    /**
 //     * Returns the CycleDetectionFactory used to create CycleDetectors.

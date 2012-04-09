@@ -34,16 +34,16 @@ import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
  * RAPointComparator which is itself final, however since it is public, it's
  * setter methods are accessible.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetector<T>
-{
+public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetector<T> {
+
     private ExtremesMode[] mode;
     private PointComparator comparator;
     private ExtremesQueue[] minQueue;
     private ExtremesQueue[] maxQueue;
     /** p1 is the last point, p2 is the one before the last, these points
-        are compared to the new one to detect minima and maxima */
+    are compared to the new one to detect minima and maxima */
     private Point p1, p2;
     private int p1Index;
     private int nextPointIndex;
@@ -60,18 +60,14 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
      * @param comparator Point comparator used to test points for similarity
      *        during cycle detection.
      */
-    private ExtremesCycleDetector(int capacity, PointComparator comparator)
-    {
-        if (capacity < 1)
-        {
+    private ExtremesCycleDetector(int capacity, PointComparator comparator) {
+        if (capacity < 1) {
             throw new IllegalArgumentException("Capacity must be positive.");
         }
-        if (comparator == null)
-        {
+        if (comparator == null) {
             throw new IllegalArgumentException("Parameter comparator is null.");
         }
-        if (comparator.getDimension() < 1)
-        {
+        if (comparator.getDimension() < 1) {
             throw new IllegalArgumentException("Comparator dimension must be positive.");
         }
         this.comparator = comparator;
@@ -86,29 +82,24 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
     /**
      * Creates a new CycleDetector with given mode for each dimension,
      * relative tolerance, absolute tolerance, capacity and number of dimensions.
-     *     
+     *
      * @param capacity Number of points the detector holds at most in every
      *        dimension to compare with new points.
      * @param comparator Point comparator used to test points for similarity
      *        during cycle detection.
      * @param modes Modes of detection for each dimension.
      */
-    public ExtremesCycleDetector(int capacity, PointComparator comparator, ExtremesMode modes[])
-    {
+    public ExtremesCycleDetector(int capacity, PointComparator comparator, ExtremesMode modes[]) {
         this(capacity, comparator);
-        if (modes == null || modes.length != comparator.getDimension())
-        {
+        if (modes == null || modes.length != comparator.getDimension()) {
             throw new IllegalArgumentException("modes array must have [dimension] elements");
-        }        
-        this.mode = modes;        
-        for (int i=0; i<comparator.getDimension(); i++)
-        {
-            if (mode[i] == ExtremesMode.EXTREME_MIN || mode[i] == ExtremesMode.EXTREME_BOTH)
-            {
+        }
+        this.mode = modes;
+        for (int i = 0; i < comparator.getDimension(); i++) {
+            if (mode[i] == ExtremesMode.EXTREME_MIN || mode[i] == ExtremesMode.EXTREME_BOTH) {
                 minQueue[i] = new ExtremesQueue(capacity);
             }
-            if (mode[i] == ExtremesMode.EXTREME_MAX || mode[i] == ExtremesMode.EXTREME_BOTH)
-            {
+            if (mode[i] == ExtremesMode.EXTREME_MAX || mode[i] == ExtremesMode.EXTREME_BOTH) {
                 maxQueue[i] = new ExtremesQueue(capacity);
             }
         }
@@ -117,68 +108,52 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
     /**
      * Creates a new CycleDetector with given mode, relative tolerance,
      * absolute tolerance, capacity and number of dimensions.
-     *     
+     *
      * @param capacity Number of points the detector holds at most in every
      *        dimension to compare with new points.
      * @param comparator Point comparator used to test points for similarity
      *        during cycle detection.
      * @param mode Detection mode to use for all dimensions.
      */
-    public ExtremesCycleDetector(int capacity, PointComparator comparator, ExtremesMode mode)
-    {
+    public ExtremesCycleDetector(int capacity, PointComparator comparator, ExtremesMode mode) {
         this(capacity, comparator);
-        
-        for (int i=0; i<comparator.getDimension(); i++)
-        {
-            if (mode == ExtremesMode.EXTREME_MIN || mode == ExtremesMode.EXTREME_BOTH)
-            {
+
+        for (int i = 0; i < comparator.getDimension(); i++) {
+            if (mode == ExtremesMode.EXTREME_MIN || mode == ExtremesMode.EXTREME_BOTH) {
                 minQueue[i] = new ExtremesQueue(capacity);
             }
-            if (mode == ExtremesMode.EXTREME_MAX || mode == ExtremesMode.EXTREME_BOTH)
-            {
+            if (mode == ExtremesMode.EXTREME_MAX || mode == ExtremesMode.EXTREME_BOTH) {
                 maxQueue[i] = new ExtremesQueue(capacity);
             }
         }
-    }    
+    }
 
     @Override
-    public int detectCycle(T trajectory, int stepLimit)
-    {
-        if (cycleDetected)
-        {
+    public int detectCycle(T trajectory, int stepLimit) {
+        if (cycleDetected) {
             return 0;
         }
         TrajectoryIterator iterator;
-        if (nextPointIndex == -1)
-        {
+        if (nextPointIndex == -1) {
             iterator = trajectory.iterator();
-        }
-        else
-        {
+        } else {
             iterator = trajectory.iterator(nextPointIndex);
         }
         Point p;
         int stepsUsed = 0;
-        if (stepLimit == 0)
-        {
-            while (iterator.hasNext())
-            {
+        if (stepLimit == 0) {
+            while (iterator.hasNext()) {
                 p = iterator.next();
                 stepsUsed++;
-                if (detectCycle(p, iterator.getPositionOnTrajectory()))
-                {
+                if (detectCycle(p, iterator.getPositionOnTrajectory())) {
                     return stepsUsed;
                 }
             }
-        }
-        else
-        {
-            while (stepsUsed < stepLimit && iterator.hasNext())
-            {
+        } else {
+            while (stepsUsed < stepLimit && iterator.hasNext()) {
                 p = iterator.next();
                 stepsUsed++;
-                if (detectCycle(p, iterator.getPositionOnTrajectory()))
-                {
+                if (detectCycle(p, iterator.getPositionOnTrajectory())) {
                     return stepsUsed;
                 }
             }
@@ -194,68 +169,56 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
      *
      * @param newPoint new point to compare to past extreme points
      * @return last similar point to newPoint on success else null
-     */    
-    private boolean detectCycle(Point newPoint, int newPointIndex)
-    {
+     */
+    private boolean detectCycle(Point newPoint, int newPointIndex) {
         /*
         if (newPoint == null)
         {
-            throw new IllegalArgumentException("newPoint is null");
+        throw new IllegalArgumentException("newPoint is null");
         }
         if (newPoint.getDimension() != getDimension())
         {
-            throw new IllegalArgumentException("newPoint differs in dimension");
+        throw new IllegalArgumentException("newPoint differs in dimension");
         }*/
-        if (p1 == null)
-        {
+        if (p1 == null) {
             p1 = newPoint;
             p1Index = newPointIndex;
             return false;
         }
-        if (p2 == null)
-        {
-            p2 = p1;            
+        if (p2 == null) {
+            p2 = p1;
             p1 = newPoint;
             p1Index = newPointIndex;
             return false;
         }
         Point tmp = null;
-        for (int i=0; i<getDimension(); i++)
-        {
-            if (minQueue[i] != null &&
-                p2.getValue(i) > p1.getValue(i) &&
-                p1.getValue(i) < newPoint.getValue(i))
-            { /* p1 has been detected as a minimum */
+        for (int i = 0; i < getDimension(); i++) {
+            if (minQueue[i] != null
+                    && p2.getValue(i) > p1.getValue(i)
+                    && p1.getValue(i) < newPoint.getValue(i)) { /* p1 has been detected as a minimum */
                 tmp = findSimilar(p1, minQueue[i]);
-                if (tmp != null) 
-                {
-                    cycleStart = tmp;                    
-                    cycleEnd = newPoint;
-                    cycleEndPosition = newPointIndex;
-                    cycleDetected = true;
-                    return true;
-                }
-                else
-                {
-                    minQueue[i].add(p1, p1Index);
-                }
-            }
-
-            if (maxQueue[i] != null &&
-                p2.getValue(i) < p1.getValue(i) &&
-                p1.getValue(i) > newPoint.getValue(i))
-            { /* p1 has been detected as a maximum */
-                tmp = findSimilar(p1, maxQueue[i]);
-                if (tmp != null) 
-                {
+                if (tmp != null) {
                     cycleStart = tmp;
                     cycleEnd = newPoint;
                     cycleEndPosition = newPointIndex;
                     cycleDetected = true;
                     return true;
+                } else {
+                    minQueue[i].add(p1, p1Index);
                 }
-                else
-                {
+            }
+
+            if (maxQueue[i] != null
+                    && p2.getValue(i) < p1.getValue(i)
+                    && p1.getValue(i) > newPoint.getValue(i)) { /* p1 has been detected as a maximum */
+                tmp = findSimilar(p1, maxQueue[i]);
+                if (tmp != null) {
+                    cycleStart = tmp;
+                    cycleEnd = newPoint;
+                    cycleEndPosition = newPointIndex;
+                    cycleDetected = true;
+                    return true;
+                } else {
                     maxQueue[i].add(p1, p1Index);
                 }
             }
@@ -275,51 +238,41 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
      * @param q Queue of points.
      * @return Point from q similar to p on success, else null.
      */
-    private Point findSimilar(Point p, ExtremesQueue q)
-    {
+    private Point findSimilar(Point p, ExtremesQueue q) {
         ExtremesQueue.ExtremesQueueIterator it = q.iterator();
-        while (it.hasNext())
-        {
-            Point tmp = (Point)it.next();
-            if (comparator.similar(p, tmp))
-            {
+        while (it.hasNext()) {
+            Point tmp = (Point) it.next();
+            if (comparator.similar(p, tmp)) {
                 cycleStartPosition = it.getIndex();
                 return tmp;
-            }            
+            }
         }
         return null;
     }
-    
-    ExtremesMode getMode(int index)
-    {
-        if (index < 0 || index >= mode.length)
-        {
-            throw new IllegalArgumentException("index must be in range [0, "+
-                    (mode.length-1)+"], is "+index);
+
+    ExtremesMode getMode(int index) {
+        if (index < 0 || index >= mode.length) {
+            throw new IllegalArgumentException("index must be in range [0, "
+                    + (mode.length - 1) + "], is " + index);
         }
         return mode[index];
-    }    
+    }
 
-    private int getDimension()
-    {
+    private int getDimension() {
         return mode.length;
     }
 
     @Override
-    public Point getCycleStart()
-    {
-        if (cycleDetected)
-        {
+    public Point getCycleStart() {
+        if (cycleDetected) {
             return cycleStart;
         }
         return null;
     }
 
     @Override
-    public Point getCycleEnd()
-    {
-        if (cycleDetected)
-        {
+    public Point getCycleEnd() {
+        if (cycleDetected) {
             return cycleEnd;
         }
         return null;
@@ -330,16 +283,13 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
      * @return True if a cycle has been detected, false otherwise.
      */
     @Override
-    public boolean cycleDetected()
-    {
+    public boolean cycleDetected() {
         return cycleDetected;
     }
 
     @Override
-    public int getCycleStartPosition()
-    {
-        if (cycleDetected)
-        {
+    public int getCycleStartPosition() {
+        if (cycleDetected) {
             return cycleStartPosition;
         }
         throw new RuntimeException("Cycle hasn't been detected.");
@@ -347,12 +297,9 @@ public class ExtremesCycleDetector<T extends Trajectory> implements CycleDetecto
 
     @Override
     public int getCycleEndPosition() {
-        if (cycleDetected)
-        {
+        if (cycleDetected) {
             return cycleEndPosition;
         }
         throw new RuntimeException("Cycle hasn't been detected.");
     }
-
 }
-

@@ -5,7 +5,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * Enables cycle detection over data blocks of trajectories.
- * 
+ *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
  */
 public interface Detector<CD extends CycleDetector, CDF extends CycleDetectorFactory<CD>, Out extends CycleDetectDataBlock> {
@@ -29,7 +29,7 @@ public interface Detector<CD extends CycleDetector, CDF extends CycleDetectorFac
      *
      * If stepLimit = 0 each computation is carried out until a cycle is found or
      * the end of the trajectory is reached.
-     *     
+     *
      * @param trajectories Cycle detection data block of trajectories.
      * @param stepLimit Limit on amount of work to do on each trajectory.
      * @return Cycle detection data block with results.
@@ -50,7 +50,7 @@ public interface Detector<CD extends CycleDetector, CDF extends CycleDetectorFac
      *
      * @param factory CycleDetectorFactory to build new cycle detectors.
      * @param oldTrajectories DataBlock of trajectories that have already been
-     *        partialy processed in previous iteration.     
+     *        partialy processed in previous iteration.
      * @param newTrajectories DataBlock of trajectories that have not yet had any
      *        cycle detection performed on them.
      * @param stepLimit Limit on amount of work to do on each trajectory.

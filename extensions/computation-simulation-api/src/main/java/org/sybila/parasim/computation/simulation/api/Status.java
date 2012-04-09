@@ -10,7 +10,7 @@ public enum Status {
     /**
      * Converts an integer to the simulation status
      * @return simulation status
-     * 
+     *
      * @throws IllegalArgumentException if the given integer doesn't correspond
      * to any simulation status
      */
@@ -24,7 +24,7 @@ public enum Status {
                 return PRECISION;
             case 3:
                 return TIMEOUT;
-                
+
             default:
                 throw new IllegalStateException("There is no status corresponding to the number [" + status + "].");
         }

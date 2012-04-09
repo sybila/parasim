@@ -10,34 +10,29 @@ import java.util.Iterator;
 /**
  * Monitors the negation of a subformula. The output is a negation of the signal.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public class NotMonitor<T extends Trajectory>
-       implements Evaluable<T, SimplePropertyRobustness>
-{
+        implements Evaluable<T, SimplePropertyRobustness> {
+
     private Evaluable<T, PropertyRobustness> sub;
 
-    public NotMonitor(Evaluable<T, PropertyRobustness> subExpression)
-    {
-        if (subExpression == null)
-        {
+    public NotMonitor(Evaluable<T, PropertyRobustness> subExpression) {
+        if (subExpression == null) {
             throw new NullPointerException("Parameter sub is null.");
         }
         this.sub = subExpression;
     }
 
     @Override
-    public List<SimplePropertyRobustness> evaluate(T trajectory, TimeInterval interval)
-    {
+    public List<SimplePropertyRobustness> evaluate(T trajectory, TimeInterval interval) {
         List<PropertyRobustness> subResult = sub.evaluate(trajectory, interval);
         ArrayList<SimplePropertyRobustness> result = new ArrayList<SimplePropertyRobustness>();
         Iterator<PropertyRobustness> it = subResult.iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             PropertyRobustness value = it.next();
             result.add(new SimplePropertyRobustness(value.getTime(), -value.value(), -value.getValueDerivative()));
         }
         return result;
     }
-
 }

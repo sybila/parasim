@@ -11,7 +11,7 @@ public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
     private TrajectoryNeighborhood<Trajectory> neighborhood;
     private DataBlock<Trajectory> secondaryTrajectories;
     private DataBlock<Trajectory> trajectories;
-    
+
     public SpawnedDataBlockWrapper(DataBlock<Trajectory> trajectories, TrajectoryNeighborhood<Trajectory> neighborhood, DataBlock<Trajectory> secondaryTrajectories) {
         if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
@@ -26,7 +26,7 @@ public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
         this.neighborhood = neighborhood;
         this.secondaryTrajectories = secondaryTrajectories;
     }
-    
+
     @Override
     public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
         return neighborhood;
@@ -41,7 +41,7 @@ public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
     public DataBlock<Trajectory> getSecondaryTrajectories() {
         return secondaryTrajectories;
     }
-    
+
     @Override
     public int size() {
         return trajectories.size();
@@ -51,5 +51,4 @@ public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
     public Iterator<Trajectory> iterator() {
         return trajectories.iterator();
     }
-    
 }

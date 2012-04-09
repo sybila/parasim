@@ -19,9 +19,9 @@ public class OnePairDistanceChecker implements DistanceChecker {
 
     /**
      * Checks distance of corresponding points of trajectory and trajectories in its neighborhood.
-     * If the required distance is violated, distance checking of the current trajectory 
+     * If the required distance is violated, distance checking of the current trajectory
      * is stopped and the violating distance is memorized.
-     * 
+     *
      * @param congfiguration
      * @param trajectories
      * @return the biggest ratio between measured and required distance
@@ -37,12 +37,12 @@ public class OnePairDistanceChecker implements DistanceChecker {
         List<List<LimitedDistance>> distances = new ArrayList<List<LimitedDistance>>(trajectories.size());
         List<List<Integer>> trajectoryPosition = new ArrayList<List<Integer>>(trajectories.size());
         List<List<Integer>> neighborPosition = new ArrayList<List<Integer>>(trajectories.size());
-        for(int index=0; index < trajectories.size(); index++) {
+        for (int index = 0; index < trajectories.size(); index++) {
             List<LimitedDistance> currentDistances = new ArrayList<LimitedDistance>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             List<Integer> currentTajectoryPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             List<Integer> currentNeighborPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
-            for (Trajectory trajectory: neighbors) {
+            for (Trajectory trajectory : neighbors) {
                 DistanceAndPosition distanceAndPosition = checkTrajectoriesDistance(congfiguration, trajectories.getTrajectory(index), trajectory);
                 currentDistances.add(distanceAndPosition.distance);
                 currentTajectoryPositions.add(distanceAndPosition.trajectoryPosition);
@@ -54,10 +54,10 @@ public class OnePairDistanceChecker implements DistanceChecker {
         }
         return new ListDistanceCheckedDataBlock(trajectories, distances, trajectoryPosition, neighborPosition);
     }
-    
+
     /**
      * Checks distance between two trajectories
-     * 
+     *
      * @param configuration
      * @param first the first trajectory
      * @param second the second trajectory
@@ -67,8 +67,8 @@ public class OnePairDistanceChecker implements DistanceChecker {
         DistanceAndPosition distance = null;
         Iterator<Point> firstIterator = first.iterator();
         Iterator<Point> secondIterator = second.iterator();
-        
-        while(firstIterator.hasNext() && secondIterator.hasNext()) {
+
+        while (firstIterator.hasNext() && secondIterator.hasNext()) {
             DistanceAndPosition currentDistance = getNextDistance(configuration, firstIterator, secondIterator);
             if (currentDistance != null) {
                 if (distance != null) {
@@ -77,15 +77,14 @@ public class OnePairDistanceChecker implements DistanceChecker {
                     }
                     distance.trajectoryPosition += currentDistance.trajectoryPosition + 1;
                     distance.neighborPosition += currentDistance.neighborPosition + 1;
-                }
-                else {
+                } else {
                     distance = currentDistance;
                 }
             }
         }
         return distance;
     }
-    
+
     private DistanceAndPosition getNextDistance(Configuration configuration, Iterator<Point> firstIterator, Iterator<Point> secondIterator) {
         Point firstPoint = firstIterator.next();
         Point secondPoint = secondIterator.next();
@@ -95,22 +94,21 @@ public class OnePairDistanceChecker implements DistanceChecker {
         int trajectoryPosition = 0;
         int neighborPosition = 0;
         if (firstPoint.getTime() > secondPoint.getTime()) {
-            while(secondIterator.hasNext()) {
+            while (secondIterator.hasNext()) {
                 neighborPosition++;
                 Point currentPoint = secondIterator.next();
                 if (currentPoint.getTime() >= firstPoint.getTime()) {
                     return new DistanceAndPosition(checkPointDistance(configuration, secondPoint, currentPoint, firstPoint), trajectoryPosition, neighborPosition);
                 }
             }
-        }
-        else {
-            while(firstIterator.hasNext()) {
+        } else {
+            while (firstIterator.hasNext()) {
                 trajectoryPosition++;
                 Point currentPoint = firstIterator.next();
                 if (currentPoint.getTime() >= secondPoint.getTime()) {
                     return new DistanceAndPosition(checkPointDistance(configuration, firstPoint, currentPoint, secondPoint), trajectoryPosition, neighborPosition);
                 }
-                
+
             }
         }
         return null;
@@ -121,22 +119,22 @@ public class OnePairDistanceChecker implements DistanceChecker {
             return configuration.getDistanceMetric().distance(endFirstPoint, secondPoint);
         }
         float[] firstData = new float[beginFirstPoint.getDimension()];
-        for(int dim=0; dim<firstData.length; dim++) {
+        for (int dim = 0; dim < firstData.length; dim++) {
             firstData[dim] = (beginFirstPoint.getValue(dim) + endFirstPoint.getValue(dim)) / 2;
         }
         return configuration.getDistanceMetric().distance(firstData, secondPoint.toArray());
     }
- 
+
     private class DistanceAndPosition {
+
         public LimitedDistance distance;
         public int trajectoryPosition;
         public int neighborPosition;
+
         public DistanceAndPosition(LimitedDistance distance, int trajectoryPosition, int neighborPosition) {
             this.distance = distance;
             this.trajectoryPosition = trajectoryPosition;
             this.neighborPosition = neighborPosition;
         }
     }
-    
 }
-

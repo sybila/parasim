@@ -7,93 +7,76 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * Represents a cycle detection data block of trajectories being cycle detected.
  * All cycle detectors and computation statuses are held in arrays.
- * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ *
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class ArrayCycleDetectionDataBlock<T extends Trajectory, CD extends CycleDetector> implements CycleDetectDataBlock<T, CD>
-{
+public class ArrayCycleDetectionDataBlock<T extends Trajectory, CD extends CycleDetector> implements CycleDetectDataBlock<T, CD> {
+
     private DataBlock<T> dataBlock;
     private CD[] cycleDetectors;
     private CycleDetectionStatus[] statuses;
 
     public ArrayCycleDetectionDataBlock(DataBlock<T> dataBlock,
-            CD[] cycleDetectors, CycleDetectionStatus[] statuses)
-    {
-        if (dataBlock == null)
-        {
+            CD[] cycleDetectors, CycleDetectionStatus[] statuses) {
+        if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }
-        if (cycleDetectors == null)
-        {
+        if (cycleDetectors == null) {
             throw new IllegalArgumentException("The parameter cycleDetectors is null.");
-        }        
-        if (statuses == null)
-        {
+        }
+        if (statuses == null) {
             throw new IllegalArgumentException("The parameter statuses is null.");
         }
-        if (dataBlock.size() != cycleDetectors.length)
-        {
+        if (dataBlock.size() != cycleDetectors.length) {
             throw new IllegalArgumentException("The number of trajectories does not match number of cycle detectors.");
-        }        
-        if (dataBlock.size() != statuses.length)
-        {
+        }
+        if (dataBlock.size() != statuses.length) {
             throw new IllegalArgumentException("The number of trajectories in data block doesn't match the number of statuses.");
         }
         this.dataBlock = dataBlock;
-        this.cycleDetectors = cycleDetectors;        
+        this.cycleDetectors = cycleDetectors;
         this.statuses = statuses;
     }
 
     @Override
-    public CD getCycleDetector(int index)
-    {
-        if (index < 0 || index > cycleDetectors.length)
-        {
-            throw new IllegalArgumentException("Index must be in range [0, "+cycleDetectors.length+").");
+    public CD getCycleDetector(int index) {
+        if (index < 0 || index > cycleDetectors.length) {
+            throw new IllegalArgumentException("Index must be in range [0, " + cycleDetectors.length + ").");
         }
         return cycleDetectors[index];
     }
 
     @Override
-    public CycleDetectionStatus getStatus(int index) 
-    {
-        if (index < 0 || index > statuses.length)
-        {
-            throw new IllegalArgumentException("Index must be in range [0, "+statuses.length+")");
+    public CycleDetectionStatus getStatus(int index) {
+        if (index < 0 || index > statuses.length) {
+            throw new IllegalArgumentException("Index must be in range [0, " + statuses.length + ")");
         }
         return statuses[index];
     }
 
     @Override
-    public T getTrajectory(int index) 
-    {
-        if (index < 0 || index > dataBlock.size())
-        {
-            throw new IllegalArgumentException("Index must be in range [0, "+dataBlock.size()+")");
+    public T getTrajectory(int index) {
+        if (index < 0 || index > dataBlock.size()) {
+            throw new IllegalArgumentException("Index must be in range [0, " + dataBlock.size() + ")");
         }
         return dataBlock.getTrajectory(index);
     }
 
     @Override
-    public Iterator<T> iterator()
-    {
+    public Iterator<T> iterator() {
         return dataBlock.iterator();
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
         return dataBlock.size();
     }
 
     @Override
-    public void setStatus(int index, CycleDetectionStatus status)
-    {
-        if (index < 0 || index >= statuses.length)
-        {
-            throw new IllegalArgumentException("Index must be in range [0, "+statuses.length+")");
+    public void setStatus(int index, CycleDetectionStatus status) {
+        if (index < 0 || index >= statuses.length) {
+            throw new IllegalArgumentException("Index must be in range [0, " + statuses.length + ")");
         }
         statuses[index] = status;
     }
-
 }

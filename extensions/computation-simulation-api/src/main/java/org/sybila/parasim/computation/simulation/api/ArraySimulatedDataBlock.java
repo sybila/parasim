@@ -12,7 +12,7 @@ public class ArraySimulatedDataBlock implements SimulatedDataBlock {
 
     private DataBlock<Trajectory> dataBlock;
     private Status[] statuses;
-    
+
     public ArraySimulatedDataBlock(DataBlock<Trajectory> dataBlock, Status[] statuses) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
@@ -30,8 +30,8 @@ public class ArraySimulatedDataBlock implements SimulatedDataBlock {
     @Override
     public Status getStatus(int index) {
         return statuses[index];
-    }    
-    
+    }
+
     @Override
     public Trajectory getTrajectory(int index) {
         return dataBlock.getTrajectory(index);
@@ -41,12 +41,9 @@ public class ArraySimulatedDataBlock implements SimulatedDataBlock {
     public Iterator<Trajectory> iterator() {
         return dataBlock.iterator();
     }
-    
+
     @Override
     public int size() {
         return dataBlock.size();
     }
-
-
-    
 }

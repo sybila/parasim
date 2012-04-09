@@ -10,13 +10,13 @@ import java.util.List;
  * For computational purposes the trajectory may be looked at as prolonged past
  * it's last point using the last point's value and valueDerivative.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @param <T> Class of trajectories on which property robustness computation
  *            is enabled.
  * @param <R> Class of property robustness that will be computed.
  */
-public interface Evaluable<T extends Trajectory, R extends PropertyRobustness>
-{
+public interface Evaluable<T extends Trajectory, R extends PropertyRobustness> {
+
     /**
      * Evaluates the property's robustness on the given trajectory over a segment
      * covering the given time interval.
@@ -29,7 +29,7 @@ public interface Evaluable<T extends Trajectory, R extends PropertyRobustness>
      * @param trajectory Trajectory on which to evaluate robustness.
      * @param interval Time interval over which to evaluate robustness.
      * @return List of time points with computed robustness values and their
-     *         derivatives. The time of the first point will be 
+     *         derivatives. The time of the first point will be
      *         precisely <code>interval.getLowerBound()</code>, the
      *         time of the last point will be <code>interval.getUpperBound()</code>
      *         or less depending on the length of the trajectory.

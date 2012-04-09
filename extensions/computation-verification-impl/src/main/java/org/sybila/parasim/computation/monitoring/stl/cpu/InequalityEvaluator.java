@@ -6,18 +6,16 @@ import org.sybila.parasim.model.trajectory.PointDerivative;
 /**
  * Evaluates simple inequality predicates in given points.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class InequalityEvaluator implements PredicateEvaluator<SimplePropertyRobustness>
-{
+public class InequalityEvaluator implements PredicateEvaluator<SimplePropertyRobustness> {
+
     private int dimIndex;
     private float constant;
     private InequalityType op;
 
-    InequalityEvaluator(int dimIndex, float constant, InequalityType op)
-    {
-        if (dimIndex < 0)
-        {
+    InequalityEvaluator(int dimIndex, float constant, InequalityType op) {
+        if (dimIndex < 0) {
             throw new IllegalArgumentException("Parameter dimIndex must be >= 0.");
         }
         this.constant = constant;
@@ -26,22 +24,19 @@ public class InequalityEvaluator implements PredicateEvaluator<SimplePropertyRob
     }
 
     @Override
-    public SimplePropertyRobustness value(Point p, Point next)
-    {
-        return new SimplePropertyRobustness(p.getTime(), 
+    public SimplePropertyRobustness value(Point p, Point next) {
+        return new SimplePropertyRobustness(p.getTime(),
                 op.value(p.getValue(dimIndex), constant),
-                op.derivative((next.getValue(dimIndex) - p.getValue(dimIndex)) / (next.getTime() - p.getTime()) ));
+                op.derivative((next.getValue(dimIndex) - p.getValue(dimIndex)) / (next.getTime() - p.getTime())));
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "(X[" + dimIndex + "] " + op.toString() + " " + constant + ")";
     }
 
     @Override
-    public SimplePropertyRobustness value(PointDerivative p)
-    {
+    public SimplePropertyRobustness value(PointDerivative p) {
         return new SimplePropertyRobustness(p.getTime(),
                 op.value(p.getValue(dimIndex), constant),
                 op.derivative(p.getDerivative(dimIndex)));

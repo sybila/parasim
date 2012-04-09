@@ -3,7 +3,6 @@ package org.sybila.parasim.computation.monitoring.stl.cpu;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Deque;
-import java.util.ArrayList;
 import org.sybila.parasim.computation.monitoring.api.PropertyRobustness;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
@@ -19,24 +18,20 @@ import java.util.ListIterator;
  *
  * Rob(G<sub>[a,b]</sub>sub,w,t) = min<sub>t' in [t+a, t+b]</sub>(Rob(sub,w,t'))
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @param <T> Type of trajectory over which the monitor functions.
  */
-public class GlobalyMonitor <T extends Trajectory>
-       implements Evaluable<T, SimplePropertyRobustness>
-{
+public class GlobalyMonitor<T extends Trajectory>
+        implements Evaluable<T, SimplePropertyRobustness> {
+
     private Evaluable<T, PropertyRobustness> sub;
     private TimeInterval operatorInterval;
 
-
-    public GlobalyMonitor(Evaluable<T, PropertyRobustness> sub, TimeInterval operatorInterval)
-    {        
-        if (sub == null)
-        {
+    public GlobalyMonitor(Evaluable<T, PropertyRobustness> sub, TimeInterval operatorInterval) {
+        if (sub == null) {
             throw new IllegalArgumentException("Parameter sub is null.");
         }
-        if (operatorInterval == null)
-        {
+        if (operatorInterval == null) {
             throw new IllegalArgumentException("Parameter operatorInterva is null.");
         }
         this.sub = sub;
@@ -57,32 +52,27 @@ public class GlobalyMonitor <T extends Trajectory>
      *         length b-a, starting at interval.getLowerBound + a.
      */
     protected List<SimplePropertyRobustness> evaluate(List<PropertyRobustness> signal,
-                                                      TimeInterval interval)
-    {
-        if (signal == null)
-        {
+            TimeInterval interval) {
+        if (signal == null) {
             throw new IllegalArgumentException("Parameter signal is null.");
         }
-        if (interval == null)
-        {
+        if (interval == null) {
             throw new IllegalArgumentException("Parameter interval is null.");
         }
-        if (signal.isEmpty())
-        {
+        if (signal.isEmpty()) {
             throw new IllegalArgumentException("List signal is empty.");
         }
 
         ListIterator<PropertyRobustness> iterator = signal.listIterator();
         PropertyRobustness pr = iterator.next();
 
-        if (pr.getTime() != interval.getLowerBound() + operatorInterval.getLowerBound())
-        {
+        if (pr.getTime() != interval.getLowerBound() + operatorInterval.getLowerBound()) {
             throw new IllegalArgumentException("The signal begining is incorrect.");
         }
 
         Deque<PropertyRobustness> maxWedge = new LinkedList<PropertyRobustness>();
         //PropertyRobustness localMax = new SimplePropertyRobustness();
-        
+
         throw new RuntimeException("Not implemented.");
         //return null;
     }
@@ -97,32 +87,33 @@ public class GlobalyMonitor <T extends Trajectory>
      * @return List of values being the minimum over floating windows of time
      *         length b-a, starting at interval.getLowerBound + a.
      */
-    public List<SimplePropertyRobustness> evaluate(T trajectory, TimeInterval interval)
-    {
+    public List<SimplePropertyRobustness> evaluate(T trajectory, TimeInterval interval) {
         IntervalBoundaryType lowerType;
-        if ((operatorInterval.getLowerBoundaryType() == IntervalBoundaryType.OPEN) ||
-            (interval.getLowerBoundaryType() == IntervalBoundaryType.OPEN)) lowerType = IntervalBoundaryType.OPEN;
-        else lowerType = IntervalBoundaryType.CLOSED;
+        if ((operatorInterval.getLowerBoundaryType() == IntervalBoundaryType.OPEN)
+                || (interval.getLowerBoundaryType() == IntervalBoundaryType.OPEN)) {
+            lowerType = IntervalBoundaryType.OPEN;
+        } else {
+            lowerType = IntervalBoundaryType.CLOSED;
+        }
 
         IntervalBoundaryType upperType;
-        if ((operatorInterval.getLowerBoundaryType() == IntervalBoundaryType.OPEN) ||
-            (interval.getLowerBoundaryType() == IntervalBoundaryType.OPEN)) upperType = IntervalBoundaryType.OPEN;
-        else upperType = IntervalBoundaryType.CLOSED;
+        if ((operatorInterval.getLowerBoundaryType() == IntervalBoundaryType.OPEN)
+                || (interval.getLowerBoundaryType() == IntervalBoundaryType.OPEN)) {
+            upperType = IntervalBoundaryType.OPEN;
+        } else {
+            upperType = IntervalBoundaryType.CLOSED;
+        }
 
 
-        TimeInterval evalInterval = new TimeInterval(operatorInterval.getLowerBound()+interval.getLowerBound(),
-                                                     operatorInterval.getUpperBound()+interval.getUpperBound(),
-                                                     lowerType, upperType);
+        TimeInterval evalInterval = new TimeInterval(operatorInterval.getLowerBound() + interval.getLowerBound(),
+                operatorInterval.getUpperBound() + interval.getUpperBound(),
+                lowerType, upperType);
         List<PropertyRobustness> signal = sub.evaluate(trajectory, evalInterval);
         return evaluate(signal, interval);
     }
 
-
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "G_" + operatorInterval.toString() + sub.toString();
     }
-
 }

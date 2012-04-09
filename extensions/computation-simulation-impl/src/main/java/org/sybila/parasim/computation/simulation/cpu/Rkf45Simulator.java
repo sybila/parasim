@@ -22,7 +22,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
      * Minimal time step using during simulation
      */
     public static final float MINIMAL_TIME_STEP = (float) 0.00000000001;
-    
+
     private static final float A2 = (float) (1.0 / 4.0);
     private static final float B2 = (float) (1.0 / 4.0);
     private static final float A3 = (float) (3.0 / 8.0);
@@ -54,8 +54,8 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
     private static final float N5 = (float) (-1.0 / 5.0);
 
     /**
-     * It executes Runge-Kutta-Fehlberg 45 simulation algorithm to generate trajectories. 
-     * 
+     * It executes Runge-Kutta-Fehlberg 45 simulation algorithm to generate trajectories.
+     *
      * @param configuration configuration of the simulation
      * @param data trajectories whose last points are used as init point of simulations
      * @return simulated data

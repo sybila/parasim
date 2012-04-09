@@ -13,5 +13,4 @@ public class ResultPlotterExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.extension(ResultPlotterRegistrar.class); //sem přijde konkrétní třída, která se registruje
     }
-    
 }

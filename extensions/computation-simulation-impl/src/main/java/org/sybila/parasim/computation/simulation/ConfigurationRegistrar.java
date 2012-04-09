@@ -15,7 +15,7 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
  */
 @ComputationScope
 public class ConfigurationRegistrar {
-    
+
     @Provide
     public AdaptiveStepConfiguration registerAdaptiveStepConfiguration(Configuration configuration, ExtensionConfiguration extensionConfiguration) {
        return new ImmutableAdaptiveStepConfiguraton(
@@ -24,10 +24,9 @@ public class ConfigurationRegistrar {
             extensionConfiguration.getMaxRelativeError()
         );
     }
-    
+
     @Provide
     public Configuration registerConfiguration(OdeSystem odeSystem, OrthogonalSpace space) {
         return new ImmutableConfiguration(odeSystem, space);
     }
-    
 }

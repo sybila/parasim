@@ -18,12 +18,12 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawner {
 
     private Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<Point, Trajectory>();
-    
+
     @Override
     protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {
         // find dimension which the first points of the given trajectories differ in
         int diffDimension = -1;
-        for (int dim=0; dim<trajectory.getDimension(); dim++) {
+        for (int dim = 0; dim < trajectory.getDimension(); dim++) {
             if (trajectory.getFirstPoint().getValue(dim) != neighbor.getFirstPoint().getValue(dim)) {
                 if (diffDimension != -1) {
                     throw new IllegalStateException("The first points of the given trajectories differ in more than one dimension.");
@@ -42,13 +42,13 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         List<Trajectory> spawnedTrajectories = new ArrayList<Trajectory>();
         List<Trajectory> spawnedSecondaryTrajectories = new ArrayList<Trajectory>();
         // create neighbor trajectories which can have collision
-        for (int dim=0; dim<trajectory.getDimension(); dim++) {
+        for (int dim = 0; dim < trajectory.getDimension(); dim++) {
             if (dim == diffDimension) {
                 continue;
             }
-            for (int sign=-1; sign<=1; sign+=2) {
+            for (int sign = -1; sign <= 1; sign += 2) {
                 float[] newPointData = middleTrajectory.getFirstPoint().toArrayCopy();
-                newPointData[dim] += sign*radius;
+                newPointData[dim] += sign * radius;
                 Trajectory newTrajectory = new PointTrajectory(trajectory.getFirstPoint().getTime(), newPointData);
                 if (alreadySpawnedCollisionTrajectories.containsKey(newTrajectory.getFirstPoint())) {
                     newTrajectory = alreadySpawnedCollisionTrajectories.get(newTrajectory.getFirstPoint());
@@ -62,7 +62,7 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         // reorganize
         Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>(neighborTrajectories.size() + 1);
         neighborhood.put(middleTrajectory, new ListDataBlock<Trajectory>(neighborTrajectories));
-        for(Trajectory t : spawnedTrajectories) {
+        for (Trajectory t : spawnedTrajectories) {
             neighborhood.put(t, EmptyDataBlock.EMPTY_DATA_BLOCK);
         }
         return new SpawnedResult(neighborhood, spawnedSecondaryTrajectories);

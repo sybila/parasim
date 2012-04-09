@@ -12,5 +12,4 @@ public class ComputationContainerExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.extension(ComputationContainerRegistrar.class);
     }
-    
 }

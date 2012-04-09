@@ -6,11 +6,10 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * Represents a method to compute the robustness of a property on a trajectory
  * of an OdeSystem.
- * 
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ *
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface PropertyRobustnessMonitor<P extends Property, T extends Trajectory, R extends PropertyRobustness>
-{
+public interface PropertyRobustnessMonitor<P extends Property, T extends Trajectory, R extends PropertyRobustness> {
     /**
      * Computes the robustness of the property on the trajectory.
      *

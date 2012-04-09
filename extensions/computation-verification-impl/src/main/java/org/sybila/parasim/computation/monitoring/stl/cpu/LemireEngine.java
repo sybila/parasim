@@ -33,64 +33,58 @@ import java.util.Iterator;
 deque<int> U,L;
 for (uint i = 1; i < a.size(); i++)
 {
-    if (i >= w)
-    {
-        maxval[i-w] = a[U.size()>0 ? U.front() : i-1];
-        maxval[i-w] = a[L.size()>0 ? L.front() : i-1];
-    } // end if
-    if (a[i] > a[i-1])
-    {
-        L.push_back(i-1);
-        if (i == w+L.front()) L.pop_front();
-        while (U.size() > 0)
-        {
-            if (a[i] <= a[U.back()])
-            {
-                if (i == w+U.front()) U.pop_front();
-                break;
-            } // end if
-            U.pop_back();
-        } // end while
-    } else
-    {
-        U.push_back(i-1);
-        if (i == w+U.front()) U.pop_front();
-        while (L.size() > 0)
-        {
-            if (a[i] >= a[L.back()])
-            {
-                if (i == w+L.front()) L.pop_front();
-                break;
-            } // end if
-            L.pop_back();
-        } // end while
-    } // end if else
+if (i >= w)
+{
+maxval[i-w] = a[U.size()>0 ? U.front() : i-1];
+maxval[i-w] = a[L.size()>0 ? L.front() : i-1];
+} // end if
+if (a[i] > a[i-1])
+{
+L.push_back(i-1);
+if (i == w+L.front()) L.pop_front();
+while (U.size() > 0)
+{
+if (a[i] <= a[U.back()])
+{
+if (i == w+U.front()) U.pop_front();
+break;
+} // end if
+U.pop_back();
+} // end while
+} else
+{
+U.push_back(i-1);
+if (i == w+U.front()) U.pop_front();
+while (L.size() > 0)
+{
+if (a[i] >= a[L.back()])
+{
+if (i == w+L.front()) L.pop_front();
+break;
+} // end if
+L.pop_back();
+} // end while
+} // end if else
 } // end for
 maxval[a.size()-w] = a[U.size()>0 ? U.front() : a.size()-1];
 maxval[a.size()-w] = a[L.size()>0 ? L.front() : a.size()-1];
 </code>
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public class LemireEngine
-{
-    LemireEngine()
-    {
-        
+public class LemireEngine {
+
+    LemireEngine() {
     }
 
-    List<SimplePropertyRobustness> evaluateMinimum(List<PropertyRobustness> signal, TimeInterval interval)
-    {
-        if (signal == null)
-        {
+    List<SimplePropertyRobustness> evaluateMinimum(List<PropertyRobustness> signal, TimeInterval interval) {
+        if (signal == null) {
             throw new IllegalArgumentException("Parameter signal is null.");
         }
-        if (interval == null)
-        {
+        if (interval == null) {
             throw new IllegalArgumentException("Parameter interval is null.");
         }
-        if (signal.isEmpty())
-        {
+        if (signal.isEmpty()) {
             throw new IllegalArgumentException("List signal is empty.");
         }
 
@@ -103,13 +97,11 @@ public class LemireEngine
         return null;
     }
 
-    List<SimplePropertyRobustness> evaluateMaximum(List<SimplePropertyRobustness> signal, TimeInterval interval)
-    {
+    List<SimplePropertyRobustness> evaluateMaximum(List<SimplePropertyRobustness> signal, TimeInterval interval) {
         return null;
     }
 
-    List<SimplePropertyRobustness>[] evaluateMinMax(List<SimplePropertyRobustness> signal, TimeInterval interval)
-    {
+    List<SimplePropertyRobustness>[] evaluateMinMax(List<SimplePropertyRobustness> signal, TimeInterval interval) {
         return null;
     }
 }

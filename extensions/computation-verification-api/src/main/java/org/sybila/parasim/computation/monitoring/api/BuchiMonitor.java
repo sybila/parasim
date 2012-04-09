@@ -20,7 +20,7 @@ import java.util.Iterator;
  * If the property is proven to be true or false over the existing portion
  * of a trajectory the computation is stopped.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
 public class BuchiMonitor {
 
@@ -29,21 +29,19 @@ public class BuchiMonitor {
     /** Current set of reached states of the automaton */
     private Set<Integer> states;
     /** Position of computation on trajectory, successors of states at this
-        point will be computed in next compute step. */
+    point will be computed in next compute step. */
     private int position;
     /** Status of the computation */
     private BuchiStatus status;
 
-    public BuchiMonitor(Buchi automaton, Trajectory trajectory)
-    {
+    public BuchiMonitor(Buchi automaton, Trajectory trajectory) {
         this.automaton = automaton;
         this.trajectory = trajectory;
         states = new TreeSet(automaton.getInitialStates());
         position = 0;
     }
 
-    public BuchiStatus getStatus()
-    {
+    public BuchiStatus getStatus() {
         return status;
     }
 
@@ -55,16 +53,13 @@ public class BuchiMonitor {
      *        batch
      * @return number of points processed on trajectory
      */
-    public int compute(int stepLimit)
-    {
+    public int compute(int stepLimit) {
         Iterator<Point> it = trajectory.iterator(position);
         int stepsUsed = 0;
-        while (stepsUsed < stepLimit && it.hasNext())
-        {
+        while (stepsUsed < stepLimit && it.hasNext()) {
             Point p = it.next();//FIXME cycle
             states = automaton.getSuccessors(states, p);
         }
         return stepsUsed;
     }
-
 }

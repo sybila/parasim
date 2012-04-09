@@ -9,10 +9,9 @@ import org.sybila.parasim.model.distance.Distance;
  * secondary signal may deviate from this one's and still have the same property
  * validity.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dražan</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface PropertyRobustness extends Distance
-{
+public interface PropertyRobustness extends Distance {
     /**
      * Returns the time for which the robustness was computed.
      * @return time

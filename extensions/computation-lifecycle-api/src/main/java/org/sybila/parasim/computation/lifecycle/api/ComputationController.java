@@ -21,6 +21,5 @@ public interface ComputationController {
     /**
      * @param speed relative amount of work to do in future computation batches
      */
-    void setSpeed(Resources speed);    
-    
+    void setSpeed(Resources speed);
 }

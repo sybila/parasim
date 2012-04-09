@@ -12,8 +12,8 @@ import java.util.Arrays;
  * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
  */
 public class GeneralDetector<CD extends CycleDetector, CDF extends CycleDetectorFactory<CD>, T extends Trajectory>
-       implements Detector<CD, CDF, CycleDetectDataBlock<T, CD>>
-{
+        implements Detector<CD, CDF, CycleDetectDataBlock<T, CD>> {
+
     /**
      * Detects cycles on given trajectories using the cycle detectors created
      * by the given cycle detection factory with a maximum
@@ -26,21 +26,17 @@ public class GeneralDetector<CD extends CycleDetector, CDF extends CycleDetector
      */
     @Override
     public CycleDetectDataBlock detect(CDF factory,
-                   DataBlock<Trajectory> trajectories, int stepLimit)
-    {
-        if (trajectories == null)
-        {
+            DataBlock<Trajectory> trajectories, int stepLimit) {
+        if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
-        if (trajectories.size() <= 0)
-        {
+        if (trajectories.size() <= 0) {
             throw new IllegalArgumentException("Trajectories must contain at least one trajectory.");
         }
         CycleDetector[] cycleDetectors = new CycleDetector[trajectories.size()];
         CycleDetectionStatus[] statuses = new CycleDetectionStatus[trajectories.size()];
         Arrays.fill(statuses, CycleDetectionStatus.COMPUTING);
-        for (int i=0; i<trajectories.size(); i++)
-        {
+        for (int i = 0; i < trajectories.size(); i++) {
             cycleDetectors[i] = factory.create();
         }
         CycleDetectDataBlock<T, CD> dataBlock = new ArrayCycleDetectionDataBlock(trajectories, cycleDetectors, statuses);
@@ -51,47 +47,38 @@ public class GeneralDetector<CD extends CycleDetector, CDF extends CycleDetector
      * Resumes cycle detection on given trajectories using the cycle detectors
      * already initialized in the cycle detection data block. A maximum
      * of stepLimit points is processed on every trajectory.
-     *     
-     * @param trajectories Set of trajectories on which to detect cycles.     
+     *
+     * @param trajectories Set of trajectories on which to detect cycles.
      * @param stepLimit Maximum number of points to process from each trajectory.
      * @return Cycle detection data block with results of the computation.
      */
     @Override
-    public CycleDetectDataBlock<T, CD> detect(CycleDetectDataBlock<T, CD> trajectories, int stepLimit)
-    {        
-        if (trajectories == null)
-        {
+    public CycleDetectDataBlock<T, CD> detect(CycleDetectDataBlock<T, CD> trajectories, int stepLimit) {
+        if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
-        if (trajectories.size() <= 0)
-        {
+        if (trajectories.size() <= 0) {
             throw new IllegalArgumentException("Trajectories must contain at least one trajectory.");
-        }        
-        if (stepLimit < 0)
-        {
+        }
+        if (stepLimit < 0) {
             throw new IllegalArgumentException("The parameter stepLimit must be none negative.");
-        }        
+        }
 
         Iterator<T> tIterator = trajectories.iterator();
         int index = 0;
-        while (tIterator.hasNext())
-        {
+        while (tIterator.hasNext()) {
             Trajectory t = tIterator.next();
             CD detector = trajectories.getCycleDetector(index);
             int stepsUsed = detector.detectCycle(t, stepLimit);
-            if (detector.cycleDetected())
-            {
+            if (detector.cycleDetected()) {
                 trajectories.setStatus(index, CycleDetectionStatus.CYCLE);
-            }
-            else if (stepLimit == 0 || stepLimit > stepsUsed)
-            {
+            } else if (stepLimit == 0 || stepLimit > stepsUsed) {
                 trajectories.setStatus(index, CycleDetectionStatus.NOCYCLE);
             }
             index++;
         }
-        return trajectories;        
+        return trajectories;
     }
-
     /**
      * Detects cycles on two blocks of trajectories merging the results.
      * The first set given by oldTrajectories is expected to have already
@@ -107,33 +94,32 @@ public class GeneralDetector<CD extends CycleDetector, CDF extends CycleDetector
      * @return Cycle detection data block with results of the computation for both
      *         DataBlocks, old first then new ones.
      */
-/*    public ArrayCycleDetectionDataBlock detect(CDF factory,
-                                               DataBlock<Trajectory> oldTrajectories,
-                                               CD[] oldDetectors,
-                                               DataBlock<Trajectory> newTrajectories,
-                                               int stepLimit)
+    /*    public ArrayCycleDetectionDataBlock detect(CDF factory,
+    DataBlock<Trajectory> oldTrajectories,
+    CD[] oldDetectors,
+    DataBlock<Trajectory> newTrajectories,
+    int stepLimit)
     {
-        if (oldTrajectories == null)
-        {
-            throw new IllegalArgumentException("The parameter oldTrajectories is null.");
-        }
-        if (newTrajectories == null || newTrajectories.size() == 0)
-        {
-            return detect(oldTrajectories, oldDetectors, stepLimit);
-        }
-
-        CycleDetector[] cycleDetectors = new CycleDetector[oldDetectors.length + newTrajectories.size()];
-        System.arraycopy(oldDetectors, 0, cycleDetectors, 0, oldDetectors.length);
-        for (int i=oldDetectors.length; i<cycleDetectors.length; i++)
-        {
-            cycleDetectors[i] = factory.create();
-        }
-
-        ListMutableDataBlock<Trajectory> allTrajectories = new ListMutableDataBlock(oldTrajectories);
-        allTrajectories.merge(newTrajectories);
-
-        return this.detect(allTrajectories, (CD[])cycleDetectors, stepLimit);
+    if (oldTrajectories == null)
+    {
+    throw new IllegalArgumentException("The parameter oldTrajectories is null.");
     }
-*/
-}
+    if (newTrajectories == null || newTrajectories.size() == 0)
+    {
+    return detect(oldTrajectories, oldDetectors, stepLimit);
+    }
 
+    CycleDetector[] cycleDetectors = new CycleDetector[oldDetectors.length + newTrajectories.size()];
+    System.arraycopy(oldDetectors, 0, cycleDetectors, 0, oldDetectors.length);
+    for (int i=oldDetectors.length; i<cycleDetectors.length; i++)
+    {
+    cycleDetectors[i] = factory.create();
+    }
+
+    ListMutableDataBlock<Trajectory> allTrajectories = new ListMutableDataBlock(oldTrajectories);
+    allTrajectories.merge(newTrajectories);
+
+    return this.detect(allTrajectories, (CD[])cycleDetectors, stepLimit);
+    }
+     */
+}

@@ -30,7 +30,7 @@ public class DefaultComputationContainer implements ComputationContainer {
     private Map<Computation, ComputationContext> contexts = new HashMap<Computation, ComputationContext>();
     private ContextEvent<ComputationContext> contextEvent;
     private ServiceFactory serviceFactory;
-    
+
     public DefaultComputationContainer(ServiceFactory serviceFactory, ContextEvent<ComputationContext> contextEvent) {
         if (serviceFactory == null) {
             throw new IllegalArgumentException("The parameter [serviceFactory] is null.");
@@ -89,7 +89,7 @@ public class DefaultComputationContainer implements ComputationContainer {
             contexts.put(computation, context);
         }
         return contexts.get(computation);
-    }    
+    }
 
     private void executeMethods(Class<? extends Annotation> annotation, final ComputationController controller, ComputationContext context) {
         SortedSet<Method> methods = new TreeSet<Method>(new Comparator<Method>() {
