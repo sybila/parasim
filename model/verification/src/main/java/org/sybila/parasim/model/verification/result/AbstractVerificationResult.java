@@ -32,13 +32,13 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public abstract class AbstractVerificationResult implements VerificationResult {
-    
+
     /**
      * Return smallest space including all points comprising this result.
      * Linear to the number of points.
-     * 
+     *
      * Might be elevated into a factory in the future.
-     * 
+     *
      * @return Smallest space including all points.
      */
     public OrthogonalSpace getEncompassingSpace() {
@@ -50,12 +50,12 @@ public abstract class AbstractVerificationResult implements VerificationResult {
 
         float [] mins = new float[dims];
         float [] maxs = new float[dims];
-        
+
         for (int dim = 0; dim < dims; dim++) {
             mins[dim] = getPoint(0).getValue(dim);
             maxs[dim] = getPoint(0).getValue(dim);
         }
-        
+
         for (int pointIndex = 1; pointIndex < size(); pointIndex++) {
             for (int dim = 0; dim < dims; dim++) {
                 float val = getPoint(pointIndex).getValue(dim);
@@ -66,7 +66,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
                 }
             }
         }
-        
+
         return new OrthogonalSpace(new ArrayPoint(0, mins, 0, dims), new ArrayPoint(0, maxs, 0, dims));
     }
 
