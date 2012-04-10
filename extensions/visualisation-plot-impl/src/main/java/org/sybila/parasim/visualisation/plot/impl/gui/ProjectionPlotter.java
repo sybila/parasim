@@ -10,6 +10,10 @@ import javax.swing.border.EmptyBorder;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 
 /**
+ * Plots a 2D projection of a generally n-D space in a window. Exactly two axes
+ * are taken for the 2D space base, the other coordinates are left out. For the
+ * points not to overlap, left out axes are divided into intervals which may be
+ * chosen using sliders.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
