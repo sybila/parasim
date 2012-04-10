@@ -24,6 +24,7 @@ import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.event.ManagerStarted;
+import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.api.event.ResultPlotterRegistered;
 
 /**
@@ -33,12 +34,13 @@ import org.sybila.parasim.visualisation.plot.api.event.ResultPlotterRegistered;
 public class ResultPlotterRegistrar {
 
     @Inject
-    private Instance<Object> plotter; //sem přijde něco jako ResultPlotter místo Object
+    private Instance<PlotterFactory> plotterFactory;
     @Inject
     private Event<ResultPlotterRegistered> event;
 
     public void register(@Observes ManagerStarted startEvent) {
-        plotter.set(new Object()); //TODO
+        plotterFactory.set(new ProjectionPlotterFactory());
         event.fire(new ResultPlotterRegistered());
     }
 }
+
