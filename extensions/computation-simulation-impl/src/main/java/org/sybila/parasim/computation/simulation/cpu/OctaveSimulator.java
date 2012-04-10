@@ -45,8 +45,8 @@ public class OctaveSimulator implements AdaptiveStepSimulator {
         OctaveOdeSystem octaveOdeSystem = new OctaveOdeSystem(configuration.getOdeSystem().encoding());
         octave.eval(octaveOdeSystem.octaveString());
         octave.eval("lsode_options(\"step limit\", " + configuration.getMaxNumberOfIterations() + ");");
-        if (configuration.getMaxRelativeError() > 0) {
-            octave.eval("lsode_options(\"relative tolerance\", " + configuration.getMaxRelativeError() + ");");
+        if (configuration.getPrecisionConfiguration().getMaxRelativeError() > 0) {
+            octave.eval("lsode_options(\"relative tolerance\", " + configuration.getPrecisionConfiguration().getMaxRelativeError() + ");");
         }
         Trajectory[] trajectories = new Trajectory[data.size()];
         Status[] statuses = new Status[data.size()];

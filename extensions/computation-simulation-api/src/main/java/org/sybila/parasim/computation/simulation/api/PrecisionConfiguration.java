@@ -19,18 +19,16 @@
  */
 package org.sybila.parasim.computation.simulation.api;
 
+import org.sybila.parasim.model.xml.XMLRepresentable;
+
 /**
- * Adaptive step simulation descriptor
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface AdaptiveStepConfiguration extends Configuration {
+public interface PrecisionConfiguration extends XMLRepresentable {
 
-    /**
-     * Returns precision configuration which has to be kept by the simulations
-     *
-     * @return precision configuration with max absolute error and max relative
-     * error per dimension
-     */
-    PrecisionConfiguration getPrecisionConfiguration();
+    int getDimension();
+
+    float getMaxAbsoluteError(int dim);
+
+    float getMaxRelativeError();
 }

@@ -20,13 +20,15 @@
 package org.sybila.parasim.computation.simulation;
 
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
+import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
-import org.sybila.parasim.model.trajectory.Trajectory;
 import static org.testng.Assert.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -58,22 +60,30 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             private float[] maxAbsoluteError;
             private OrthogonalSpace space;
             private float[] steps;
+            private PrecisionConfiguration precisionConfiguration = new PrecisionConfiguration() {
 
-            @Override
-            public float[] getMaxAbsoluteError() {
-                if (maxAbsoluteError == null) {
-                    maxAbsoluteError = new float[getDimension()];
-                    for (int dim = 0; dim < getDimension(); dim++) {
-                        maxAbsoluteError[dim] = 1;
-                    }
+                public int getDimension() {
+                    return 10;
                 }
-                return maxAbsoluteError;
-            }
 
-            @Override
-            public float getMaxRelativeError() {
-                return (float) 0.1;
-            }
+                public float getMaxAbsoluteError(int dim) {
+                    if (maxAbsoluteError == null) {
+                        maxAbsoluteError = new float[getDimension()];
+                        for (int d = 0; d < getDimension(); d++) {
+                            maxAbsoluteError[d] = 1;
+                        }
+                    }
+                    return maxAbsoluteError[dim];
+                }
+
+                public float getMaxRelativeError() {
+                    return (float) 0.1;
+                }
+
+                public Element toXML(Document doc) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+            };
 
             @Override
             public int getDimension() {
@@ -119,6 +129,10 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             @Override
             public float getTimeStep() {
                 return (float) 0.01;
+            }
+
+            public PrecisionConfiguration getPrecisionConfiguration() {
+                return precisionConfiguration;
             }
         };
     }

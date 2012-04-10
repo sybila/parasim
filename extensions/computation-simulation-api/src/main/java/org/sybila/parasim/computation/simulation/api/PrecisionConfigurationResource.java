@@ -19,18 +19,32 @@
  */
 package org.sybila.parasim.computation.simulation.api;
 
+import java.io.File;
+import java.net.URL;
+import org.sybila.parasim.model.xml.FileXMLResource;
+import org.sybila.parasim.model.xml.XMLRepresentableFactory;
+
 /**
- * Adaptive step simulation descriptor
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface AdaptiveStepConfiguration extends Configuration {
+public class PrecisionConfigurationResource extends FileXMLResource<PrecisionConfiguration> {
 
-    /**
-     * Returns precision configuration which has to be kept by the simulations
-     *
-     * @return precision configuration with max absolute error and max relative
-     * error per dimension
-     */
-    PrecisionConfiguration getPrecisionConfiguration();
+    public PrecisionConfigurationResource(File file) {
+        super(file);
+    }
+
+    @Override
+    protected XMLRepresentableFactory<PrecisionConfiguration> getFactory() {
+        return new PrecisionConfigurationFactory();
+    }
+
+    @Override
+    protected URL getXMLSchema() {
+        return getClass().getClassLoader().getResource("precision.xsd");
+    }
+
+    @Override
+    protected String getNamespace() {
+        return "http://www.sybila.org/parasim/precision";
+    }
 }

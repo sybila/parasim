@@ -27,33 +27,25 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
  */
 public class ImmutableAdaptiveStepConfiguraton implements AdaptiveStepConfiguration {
 
-    private Configuration configuration;
-    private float[] maxAbsoluteError;
-    private float maxRelativeError;
+    private final Configuration configuration;
+    private final PrecisionConfiguration precisionConfiguration;
 
-    public ImmutableAdaptiveStepConfiguraton(Configuration configuration, float[] maxAbsoluteError, float maxRelativeError) {
+    public ImmutableAdaptiveStepConfiguraton(Configuration configuration, PrecisionConfiguration precisionConfiguration) {
         if (configuration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
-        if (maxAbsoluteError == null) {
-            throw new IllegalArgumentException("The parameter maxAbsoluteError is null.");
+        if (precisionConfiguration == null) {
+            throw new IllegalArgumentException("The parameter precisionConfiguration is null.");
         }
-        if (configuration.getDimension() != maxAbsoluteError.length) {
-            throw new IllegalArgumentException("The number of dimensions doesn't match with size of maxAbsoluteError array.");
+        if (precisionConfiguration.getDimension() != configuration.getDimension()) {
+            throw new IllegalArgumentException("The dimension of configuration and precision configuration doesn't match.");
         }
         this.configuration = configuration;
-        this.maxAbsoluteError = maxAbsoluteError;
-        this.maxRelativeError = maxRelativeError;
+        this.precisionConfiguration = precisionConfiguration;
     }
 
-    @Override
-    public float[] getMaxAbsoluteError() {
-        return maxAbsoluteError;
-    }
-
-    @Override
-    public float getMaxRelativeError() {
-        return maxRelativeError;
+    public PrecisionConfiguration getPrecisionConfiguration() {
+        return precisionConfiguration;
     }
 
     @Override

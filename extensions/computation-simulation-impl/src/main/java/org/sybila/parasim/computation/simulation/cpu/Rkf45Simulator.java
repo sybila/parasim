@@ -149,7 +149,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
             // Absolute error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
                 absoluteError[dim] = Math.abs(R1 * computation.k1[dim] + R3 * computation.k3[dim] + R4 * computation.k4[dim] + R5 * computation.k5[dim] + R6 * computation.k6[dim]);
-                if (computation.configuration.getMaxAbsoluteError()[dim] != 0 && absoluteError[dim] > computation.configuration.getMaxAbsoluteError()[dim]) {
+                if (computation.configuration.getPrecisionConfiguration().getMaxAbsoluteError(dim) != 0 && absoluteError[dim] > computation.configuration.getPrecisionConfiguration().getMaxAbsoluteError(dim)) {
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;
@@ -164,7 +164,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
             }
             // Relative error
             for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-                if (computation.configuration.getMaxRelativeError() != 0 && Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getMaxRelativeError()) {
+                if (computation.configuration.getPrecisionConfiguration().getMaxRelativeError() != 0 && Math.abs(absoluteError[dim] / successorData[dim]) > computation.configuration.getPrecisionConfiguration().getMaxRelativeError()) {
                     computation.timeStep /= 2;
                     if (computation.timeStep < MINIMAL_TIME_STEP) {
                         computation.status = Status.PRECISION;

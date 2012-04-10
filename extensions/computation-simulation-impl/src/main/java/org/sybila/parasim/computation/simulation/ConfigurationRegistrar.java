@@ -19,12 +19,12 @@
  */
 package org.sybila.parasim.computation.simulation;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.Configuration;
 import org.sybila.parasim.computation.simulation.api.ImmutableAdaptiveStepConfiguraton;
 import org.sybila.parasim.computation.simulation.api.ImmutableConfiguration;
+import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -36,11 +36,10 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 public class ConfigurationRegistrar {
 
     @Provide
-    public AdaptiveStepConfiguration registerAdaptiveStepConfiguration(Configuration configuration, ExtensionConfiguration extensionConfiguration) {
+    public AdaptiveStepConfiguration registerAdaptiveStepConfiguration(Configuration configuration, PrecisionConfiguration precisionConfiguration) {
        return new ImmutableAdaptiveStepConfiguraton(
             configuration,
-            ArrayUtils.toPrimitive(extensionConfiguration.getMaxAbsoluteError()),
-            extensionConfiguration.getMaxRelativeError()
+            precisionConfiguration
         );
     }
 
