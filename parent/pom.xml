@@ -1,4 +1,3 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -11,6 +10,9 @@
 
     <properties>
         <version.sybila.checkstyle>1</version.sybila.checkstyle>
+        <version.maven.license.plugin>1.9.0</version.maven.license.plugin>
+        <license.year>2011 - 2012</license.year>
+        <license.name>Sybila, Systems Biology Laboratory</license.name>
     </properties>
 
     <groupId>org.sybila.parasim</groupId>
@@ -87,7 +89,7 @@
                     </execution>
                 </executions>
             </plugin>
-                        <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${version.maven.checkstyle.plugin}</version>
@@ -127,6 +129,73 @@
                                     <goal>instrument</goal>
                                     <goal>aggregate</goal>
                                     <goal>clover</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generate-license</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.4</version>
+                        <executions>
+                            <execution>
+                                <id>copy-license</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.sybila.parasim</groupId>
+                                            <artifactId>parasim-license</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+                                            <overWrite>false</overWrite>
+                                            <output-directory>${project.build.directory}</output-directory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>                    
+                    <plugin>
+                        <groupId>com.mycila.maven-license-plugin</groupId>
+                        <artifactId>maven-license-plugin</artifactId>
+                        <version>${version.maven.license.plugin}</version>
+                        <configuration>
+                            <basedir>${basedir}</basedir>
+                            <header>${project.build.directory}/license.txt</header>
+                            <quiet>false</quiet>
+                            <failIfMissing>false</failIfMissing>
+                            <strictCheck>true</strictCheck>
+                            <aggregate>false</aggregate>
+                            <includes>
+                                <include>src/**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>target/**</exclude>
+                                <exclude>.clover/**</exclude>
+                            </excludes>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <properties>
+                                <year>${license.year}</year>
+                                <name>${license.name}</name>
+                            </properties>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>format</goal>
                                 </goals>
                             </execution>
                         </executions>
