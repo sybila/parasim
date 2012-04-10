@@ -15,6 +15,14 @@
     <packaging>jar</packaging>
 
     <name>visualisation-plot-api</name>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.sybila.parasim.model</groupId>
+            <artifactId>verification</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 
 </project>
