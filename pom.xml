@@ -48,7 +48,11 @@
                 <module>core</module>
             </modules>    
         </profile>
+        <profile>
+            <id>license</id>
+            <modules>
+                <module>license</module>
+            </modules>
+        </profile>
     </profiles>
-    
-    
 </project>
