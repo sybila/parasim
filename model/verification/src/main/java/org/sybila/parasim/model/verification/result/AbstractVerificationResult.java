@@ -1,5 +1,7 @@
 package org.sybila.parasim.model.verification.result;
 
+import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -11,6 +13,43 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public abstract class AbstractVerificationResult implements VerificationResult {
+    
+    /**
+     * Return smallest space including all points comprising this result.
+     * Linear to the number of points.
+     * 
+     * Might be elevated into a factory in the future.
+     * 
+     * @return Smallest space including all points.
+     */
+    public OrthogonalSpace getEncompassingSpace() {
+        if (size() == 0) {
+            Point empty = new ArrayPoint(0, new float [0], 0, 0);
+            return new OrthogonalSpace(empty, empty);
+        }
+        int dims = getPoint(0).getDimension();
+
+        float [] mins = new float[dims];
+        float [] maxs = new float[dims];
+        
+        for (int dim = 0; dim < dims; dim++) {
+            mins[dim] = getPoint(0).getValue(dim);
+            maxs[dim] = getPoint(0).getValue(dim);
+        }
+        
+        for (int pointIndex = 1; pointIndex < size(); pointIndex++) {
+            for (int dim = 0; dim < dims; dim++) {
+                float val = getPoint(pointIndex).getValue(dim);
+                if (val < mins[dim]) {
+                    mins[dim] = val;
+                } else if (val > maxs[dim]) {
+                    maxs[dim] = val;
+                }
+            }
+        }
+        
+        return new OrthogonalSpace(new ArrayPoint(0, mins, 0, dims), new ArrayPoint(0, maxs, 0, dims));
+    }
 
     @Override
     public Element toXML(Document doc) {
