@@ -24,6 +24,7 @@ import org.sybila.parasim.model.trajectory.Point;
 import java.util.Set;
 import java.util.HashSet;
 import org.sybila.parasim.computation.density.AbstractDensityTest;
+import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -108,7 +109,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         }
         return spawner.spawn(
             space,
-            toSpawn
+            new ArrayInitialSampling(toSpawn)
         );
     }
         

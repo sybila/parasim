@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
@@ -85,8 +86,8 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
     }
 
     @Override
-    public SpawnedDataBlock spawn(OrthogonalSpace space, int... numOfSamples) {
-        if (space.getDimension() != numOfSamples.length) {
+    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling) {
+        if (space.getDimension() != initialSampling.getDimension()) {
             throw new IllegalArgumentException("The number of space dimension and length of [numOfSamples] array doesn't match.");
         }
         // distance between two seeds in the grid
@@ -94,15 +95,12 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         // compute number of seeds at all
         int numOfSeeds = 1;
         for (int dim = 0; dim < space.getDimension(); dim++) {
-            if (numOfSamples[dim] <= 0) {
-                throw new IllegalArgumentException("Number of samples has to be a positive number. It doesn't hold in dimension <" + dim + ">");
-            }
-            if (numOfSamples[dim] > 1) {
-                distance[dim] = space.getSize(dim) / (numOfSamples[dim] - 1);
+            if (initialSampling.getNumberOfSamples(dim) > 1) {
+                distance[dim] = space.getSize(dim) / (initialSampling.getNumberOfSamples(dim) - 1);
             } else {
                 distance[dim] = 0;
             }
-            numOfSeeds *= numOfSamples[dim];
+            numOfSeeds *= initialSampling.getNumberOfSamples(dim);
         }
         // auxiliary structures
         List<Trajectory> seeds = new ArrayList<Trajectory>(numOfSeeds / 2);
@@ -120,7 +118,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
             int numOfOldSeeds = allSeeds.size();
             for (int seed = 0; seed < numOfOldSeeds; seed++) {
                 Trajectory toBeNeighbor = allSeeds.get(seed);
-                for (int sample = 1; sample < numOfSamples[dim]; sample++) {
+                for (int sample = 1; sample < initialSampling.getNumberOfSamples(dim); sample++) {
                     float[] newPoint = allSeeds.get(seed).getFirstPoint().toArrayCopy();
                     newPoint[dim] += sample * distance[dim];
                     // create a new seed

@@ -20,6 +20,7 @@
 package org.sybila.parasim.computation.density.spawn.api;
 
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 
@@ -45,5 +46,5 @@ public interface TrajectorySpawner {
      * @param space
      * @param numOfSamples
      */
-    SpawnedDataBlock spawn(OrthogonalSpace space, int... numOfSamples);
+    SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling);
 }
