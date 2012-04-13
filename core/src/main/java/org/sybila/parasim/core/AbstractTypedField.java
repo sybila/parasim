@@ -31,10 +31,7 @@ public abstract class AbstractTypedField extends AbstractTyped {
     private final Type type;
 
     public AbstractTypedField(Object target, Field field) {
-        super(target);
-        if (field == null) {
-            throw new IllegalArgumentException("The parameter [field] is null.");
-        }
+        super(target, loadQualifier(field.getDeclaredAnnotations()));
         this.field = field;
         this.type = loadType(field.getGenericType());
     }
@@ -46,5 +43,4 @@ public abstract class AbstractTypedField extends AbstractTyped {
     protected Field getField() {
         return field;
     }
-
 }

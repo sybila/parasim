@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.sybila.parasim.core.annotations.ApplicationScope;
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Scope;
 import org.sybila.parasim.core.context.ApplicationContext;
 import org.sybila.parasim.core.context.Context;
@@ -83,18 +84,18 @@ public final class ManagerImpl implements Manager {
         // load providers
         for (Extension extension: manager.extensionsByContext.get(manager.applicationContext)) {
             for (ProvidingPoint providingPoint: extension.getProvidingPoints()) {
-                ProviderImpl.bind(manager, manager.applicationContext, providingPoint, getType(providingPoint.getType()));
+                ProviderImpl.bind(manager, manager.applicationContext, providingPoint, getType(providingPoint.getType()), providingPoint.getQualifier());
             }
         }
         // fire application context created
         manager.fire(Before.of(manager.applicationContext), manager.applicationContext);
         // add manager as a service
-        manager.bind(Manager.class, manager.applicationContext, manager);
+        manager.bind(Manager.class, Default.class, manager.applicationContext, manager);
         return manager;
     }
 
-    public <T> void bind(final Class<T> type, Context context, T value) {
-        context.getStorage().add(type, value);
+    public <T> void bind(final Class<T> type, Class<? extends Annotation> qualifier, Context context, T value) {
+        context.getStorage().add(type, qualifier, value);
         fire(value, context);
     }
 
@@ -141,7 +142,7 @@ public final class ManagerImpl implements Manager {
             }
             for (Extension extension: extensionsByContext.get(context)) {
                 for (ProvidingPoint providingPoint: extension.getProvidingPoints()) {
-                    ProviderImpl.bind(this, context, providingPoint, getType(providingPoint.getType()));
+                    ProviderImpl.bind(this, context, providingPoint, getType(providingPoint.getType()), providingPoint.getQualifier());
                 }
             }
             fire(Before.of(context), context);
@@ -154,7 +155,7 @@ public final class ManagerImpl implements Manager {
     public void inject(Extension extension) {
         // inject fields
         for(InjectionPoint point: extension.getInjectionPoints()) {
-            point.set(InstanceImpl.of(getType(point.getType()), extension.getContext(), this));
+            point.set(InstanceImpl.of(getType(point.getType()), point.getQualifier(), extension.getContext(), this));
         }
         // inject events
         for(EventPoint point: extension.getEventPoints()) {
@@ -166,8 +167,8 @@ public final class ManagerImpl implements Manager {
         }
     }
 
-    public <T> T resolve(Class<T> type, Context context) {
-        return context.resolve(type);
+    public <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier, Context context) {
+        return context.resolve(type, qualifier);
     }
 
     public void shutdown() {

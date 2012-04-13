@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core;
 
+import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.context.Context;
 
 /**
@@ -26,11 +27,12 @@ import org.sybila.parasim.core.context.Context;
  */
 public class InstanceImpl<T> implements Instance<T> {
 
-    private ManagerImpl manager;
-    private Context context;
-    private Class<T> type;
+    private final ManagerImpl manager;
+    private final Context context;
+    private final Class<T> type;
+    private final Class<? extends Annotation> qualifier;
 
-    private InstanceImpl(Class<T> type, Context context, ManagerImpl manager) {
+    private InstanceImpl(Class<T> type, Class<? extends Annotation> qualifier, Context context, ManagerImpl manager) {
         if (type == null) {
             throw new IllegalArgumentException("The parameter [type] is null.");
         }
@@ -40,21 +42,29 @@ public class InstanceImpl<T> implements Instance<T> {
         if (context == null) {
             throw new IllegalArgumentException("The parameter [context] is null.");
         }
+        if (qualifier == null) {
+            throw new IllegalArgumentException("The parameter [qualifier] is null.");
+        }
         this.manager = manager;
         this.type = type;
         this.context = context;
+        this.qualifier = qualifier;
     }
 
-    public static <T> Instance<T> of(Class<T> type, Context context, ManagerImpl manager) {
-        return new InstanceImpl<T>(type, context, manager);
+    public static <T> Instance<T> of(Class<T> type, Class<? extends Annotation> qualifier, Context context, ManagerImpl manager) {
+        return new InstanceImpl<T>(type, qualifier, context, manager);
     }
 
     public T get() {
-        return manager.resolve(type, context);
+        return manager.resolve(type, qualifier, context);
     }
 
     public void set(T instance) {
-        manager.bind(type, context, instance);
+        manager.bind(type, qualifier, context, instance);
+    }
+
+    public Class<? extends Annotation> qualifier() {
+        return qualifier;
     }
 
 }

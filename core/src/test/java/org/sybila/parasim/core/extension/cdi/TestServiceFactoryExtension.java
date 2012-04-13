@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core.extension.cdi;
 
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.extension.AbstractExtensionTest;
@@ -47,7 +48,7 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
         serviceFactory.provideFieldsAndMethods(this, getManager().getRootContext());
         serviceFactory.injectFields(this, getManager().getRootContext());
         assertEquals(toInject, "HELLO");
-        assertEquals(getManager().resolve(Integer.class, getManager().getRootContext()), toProvide);
+        assertEquals(getManager().resolve(Integer.class, Default.class, getManager().getRootContext()), toProvide);
     }
     
     @Test

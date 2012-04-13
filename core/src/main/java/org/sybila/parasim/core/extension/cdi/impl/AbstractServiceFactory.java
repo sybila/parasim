@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core.extension.cdi.impl;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -65,19 +66,19 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
             if (field.getAnnotation(Provide.class) != null) {
                 ProvidingPoint providingPoint = new ProvidingFieldPoint(target, field);
                 Class<?> type = getType(providingPoint.getType());
-                bind(type, context, providingPoint.value());
+                bind(type, providingPoint.getQualifier(), context, providingPoint.value());
             }
         }
         for (Method method: target.getClass().getDeclaredMethods()) {
             if (method.getAnnotation(Provide.class) != null) {
                 ProvidingPoint providingPoint = new ProvidingMethodPoint(target, method, context, method.getAnnotation(Provide.class).fresh());
                 Class<?> type = getType(providingPoint.getType());
-                bind(type, context, ProviderImpl.of(providingPoint, type).get());
+                bind(type, providingPoint.getQualifier(), context, ProviderImpl.of(providingPoint, type, providingPoint.getQualifier()).get());
             }
         }
     }
 
-    abstract protected <T> void bind(Class<T> clazz, Context context, Object value);
+    abstract protected <T> void bind(Class<T> clazz, Class<? extends Annotation> qualifier, Context context, Object value);
 
     private static Class<?> getType(Type type) {
         // type is not parametrized

@@ -45,5 +45,5 @@ public interface Context {
 
     void setParent(Context context);
 
-    <T> T resolve(Class<T> type);
+    <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier);
 }

@@ -47,7 +47,7 @@ public class ProvidingMethodPoint extends AbstractTypedMethod implements Providi
     public Object value() {
         Object[] params = new Object[getMethod().getParameterTypes().length];
         for (int i=0; i<params.length; i++) {
-            params[i] = context.resolve(getMethod().getParameterTypes()[i]);
+            params[i] = context.resolve(getMethod().getParameterTypes()[i], loadQualifier(getMethod().getParameterTypes()[i].getDeclaredAnnotations()));
             if (params[i] == null) {
                 throw new InvocationException("There is no available instance for class <" + getMethod().getParameterTypes()[i].getName() + ">.");
             }

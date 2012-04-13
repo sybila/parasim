@@ -20,7 +20,6 @@
 package org.sybila.parasim.computation.lifecycle.impl;
 
 import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.InstanceStorage;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.ComputationStatus;
@@ -48,7 +47,7 @@ public class TestAbstractComputationController extends AbstractComputationTest {
     public void setUp() {
         ServiceFactory serviceFactory = new AbstractServiceFactory() {
 
-            public <T> T getService(Class<T> type, Context context) {
+            public <T> T getService(Class<T> type, Context context, Class<? extends Annotation> qualifier) {
                 if (type.equals(String.class)) {
                     return type.cast(TO_INJECT);
                 } else {
@@ -56,7 +55,7 @@ public class TestAbstractComputationController extends AbstractComputationTest {
                 }
             }
 
-            public boolean isServiceAvailable(Class<?> type, Context context) {
+            public boolean isServiceAvailable(Class<?> type, Context context, Class<? extends Annotation> qualifier) {
                 if (type.equals(String.class)) {
                     return true;
                 } else {
@@ -65,8 +64,16 @@ public class TestAbstractComputationController extends AbstractComputationTest {
             }
 
             @Override
-            protected <T> void bind(Class<T> clazz, Context context, Object value) {
+            protected <T> void bind(Class<T> clazz, Class<? extends Annotation> qualifier, Context context, Object value) {
                 throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public <T> T getService(Class<T> type, Context context) {
+                return getService(type, context, null);
+            }
+
+            public boolean isServiceAvailable(Class<?> type, Context context) {
+                return isServiceAvailable(type, context, null);
             }
         };
         ContextEvent<ComputationContext> contextEvent = new ContextEvent<ComputationContext>() {

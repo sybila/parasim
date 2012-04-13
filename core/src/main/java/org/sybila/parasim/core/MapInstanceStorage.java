@@ -19,17 +19,22 @@
  */
 package org.sybila.parasim.core;
 
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.sybila.parasim.core.annotations.Any;
+import org.sybila.parasim.core.annotations.Empty;
+import org.sybila.parasim.core.annotations.Qualifier;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class MapInstanceStorage implements InstanceStorage {
 
-    private Map<Class<?>, Object> instances;
+    private Map<Class<?>, Map<Class<? extends Annotation>, Object>> instances;
 
-    public MapInstanceStorage(Map<Class<?>, Object> instances) {
+    public MapInstanceStorage(Map<Class<?>, Map<Class<? extends Annotation>,Object>> instances) {
         if (instances == null) {
             throw new IllegalArgumentException("The parameter [instances] is null.");
         }
@@ -37,17 +42,23 @@ public class MapInstanceStorage implements InstanceStorage {
     }
 
     public MapInstanceStorage() {
-        this(new ConcurrentHashMap<Class<?>, Object>());
+        this(new ConcurrentHashMap<Class<?>, Map<Class<? extends Annotation>, Object>>());
     }
 
-    public <T> InstanceStorage add(Class<T> type, T value) {
+    public <T> InstanceStorage add(Class<T> type, Class<? extends Annotation> qualifier, T value) {
         if (type == null) {
             throw new IllegalArgumentException("The parameter [type] is null.");
         }
         if (value == null) {
             throw new IllegalArgumentException("The parameter [value] is null.");
         }
-        instances.put(type, value);
+        if (qualifier == null) {
+            throw new IllegalArgumentException("The parameter [qualifier] is null.");
+        }
+        if (!instances.containsKey(type)) {
+            instances.put(type, new HashMap<Class<? extends Annotation>, Object>());
+        }
+        instances.get(type).put(qualifier, value);
         return this;
     }
 
@@ -56,9 +67,35 @@ public class MapInstanceStorage implements InstanceStorage {
         return this;
     }
 
-    public <T> T get(Class<T> type) {
+    public <T> T get(Class<T> type, Class<? extends Annotation> qualifier) {
         if (type == null) {
             throw new IllegalArgumentException("The parameter [type] is null.");
+        }
+        Map<Class<? extends Annotation>, Object> qualifiedInstances = instances.get(type);
+        if (qualifiedInstances == null) {
+            return null;
+        }
+        if (qualifier.equals(Any.class)) {
+            if (qualifiedInstances.size() > 1) {
+                throw new AmbigousException("There is more available instance of class <" + type.getName() + ">.");
+            }
+            for (Object o: qualifiedInstances.values()) {
+                return type.cast(o);
+            }
+        } else {
+            Class<? extends Annotation> toFind = qualifier;
+            while (!toFind.equals(Empty.class)) {
+                Qualifier qualified = toFind.getAnnotation(Qualifier.class);
+                if (qualified == null) {
+                    throw new IllegalArgumentException("The qualifier " + qualifier.getClass().getName() + " has to be annotated by <" + Qualifier.class.getName() + ">. ");
+                }
+                Object o = qualifiedInstances.get(toFind);
+                if (o != null) {
+                    return type.cast(o);
+                } else {
+                    toFind = qualified.parent();
+                }
+            }
         }
         return type.cast(instances.get(type));
     }

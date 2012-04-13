@@ -17,18 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core;
+package org.sybila.parasim.core.annotations;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface InstanceStorage {
-
-    <T> InstanceStorage add(Class<T> type, Class<? extends Annotation> qualifier, T value);
-
-    InstanceStorage clear();
-
-    <T> T get(Class<T> type, Class<? extends Annotation> qualifier);
+@Target({ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface  Qualifier {
+    Class<? extends Annotation> parent() default Empty.class;
 }

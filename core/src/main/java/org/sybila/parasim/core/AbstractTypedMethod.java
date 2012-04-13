@@ -31,10 +31,7 @@ public class AbstractTypedMethod extends AbstractTyped {
     private final Type type;
 
     public AbstractTypedMethod(Object target, Method method) {
-        super(target);
-        if (method == null) {
-            throw new IllegalArgumentException("The parameter [method] is null.");
-        }
+        super(target, loadQualifier(method.getDeclaredAnnotations()));
         this.method = method;
         this.type = loadType(method.getGenericReturnType());
     }

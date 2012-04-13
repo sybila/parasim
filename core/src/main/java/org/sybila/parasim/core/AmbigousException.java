@@ -19,16 +19,23 @@
  */
 package org.sybila.parasim.core;
 
-import java.lang.annotation.Annotation;
-
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface InstanceStorage {
+public class AmbigousException extends RuntimeException {
 
-    <T> InstanceStorage add(Class<T> type, Class<? extends Annotation> qualifier, T value);
+    public AmbigousException() {
+    }
 
-    InstanceStorage clear();
+    public AmbigousException(String message) {
+        super(message);
+    }
 
-    <T> T get(Class<T> type, Class<? extends Annotation> qualifier);
+    public AmbigousException(Throwable cause) {
+        super(cause);
+    }
+
+    public AmbigousException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -31,7 +31,10 @@ import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.annotations.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.sybila.parasim.core.annotations.Any;
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.annotations.Qualifier;
 import org.sybila.parasim.core.context.AbstractContext;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
@@ -74,10 +77,9 @@ public class TestManagerImpl {
     public void testFieldProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedFieldProvidingExtension.class, TestedInjectingExtension.class);
         manager.start();
-        assertNotNull(manager.resolve(Number.class, manager.getRootContext()));
+        assertNotNull(manager.resolve(Number.class, Default.class, manager.getRootContext()));
         for (int i=0; i<10; i++) {
-            
-            assertEquals(manager.resolve(Number.class, manager.getRootContext()).get(), 0);
+            assertEquals(manager.resolve(Number.class, Default.class, manager.getRootContext()).get(), 0);
         }
     }
     
@@ -85,9 +87,9 @@ public class TestManagerImpl {
     public void testFreshProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedFreshProvidingExtension.class, TestedInjectingExtension.class);
         manager.start();
-        assertNotNull(manager.resolve(Number.class, manager.getRootContext()));
+        assertNotNull(manager.resolve(Number.class, Default.class, manager.getRootContext()));
         for (int i=0; i<10; i++) {   
-            assertEquals(manager.resolve(Number.class, manager.getRootContext()).get(), i);
+            assertEquals(manager.resolve(Number.class, Default.class, manager.getRootContext()).get(), i);
         }
     }
     
@@ -95,9 +97,9 @@ public class TestManagerImpl {
     public void testStaticProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedStaticProvidingExtension.class, TestedInjectingExtension.class);
         manager.start();
-        assertNotNull(manager.resolve(Number.class, manager.getRootContext()));
+        assertNotNull(manager.resolve(Number.class, Default.class, manager.getRootContext()));
         for (int i=0; i<10; i++) {
-            assertEquals(manager.resolve(Number.class, manager.getRootContext()).get(), 0);
+            assertEquals(manager.resolve(Number.class, Default.class, manager.getRootContext()).get(), 0);
         }
     }    
     
@@ -105,13 +107,38 @@ public class TestManagerImpl {
     public void testScopedStaticProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedScopedStaticProvidingExtension.class, TestedInjectingExtension.class);
         manager.start();
-        assertNull(manager.resolve(Number.class, manager.getRootContext()));
+        assertNull(manager.resolve(Number.class, Default.class, manager.getRootContext()));
         Context testedContext = new TestContext();
         manager.initializeContext(testedContext);
-        assertNotNull(manager.resolve(Number.class, testedContext));
+        assertNotNull(manager.resolve(Number.class, Default.class, testedContext));
         for (int i=0; i<10; i++) {
-            assertEquals(manager.resolve(Number.class, testedContext).get(), 0);
+            assertEquals(manager.resolve(Number.class, Default.class, testedContext).get(), 0);
         }
+    }
+    
+    @Test
+    public void testAmbigousResolving() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerImpl.create();
+        manager.start();;
+        manager.bind(String.class, Default.class, manager.getRootContext(), "default");
+        manager.bind(String.class, MyQualifier.class, manager.getRootContext(), "my-qualifier");
+        try {
+            manager.resolve(String.class, Any.class, manager.getRootContext());
+            fail("Exception hasn't been thrown when ambigous resolving happened.");
+        } catch (AmbigousException e) {}
+    }
+    
+    @Test
+    public void testNonDefaultResolving() throws Exception {
+        ManagerImpl manager = (ManagerImpl) ManagerImpl.create();
+        manager.start();
+        assertNull(manager.resolve(Float.class, Default.class, manager.getRootContext()));
+        assertNull(manager.resolve(Float.class, MyQualifier.class, manager.getRootContext()));
+        manager.bind(String.class, Default.class, manager.getRootContext(), "default");
+        assertEquals(manager.resolve(String.class, MyQualifier.class, manager.getRootContext()), "default");
+        manager.bind(String.class, MyQualifier.class, manager.getRootContext(), "my-qualifier");
+        assertEquals(manager.resolve(String.class, Default.class, manager.getRootContext()), "default");
+        assertEquals(manager.resolve(String.class, MyQualifier.class, manager.getRootContext()), "my-qualifier");
     }
 }
 
@@ -234,3 +261,9 @@ class TestContext extends AbstractContext {
         return TestScope.class;
     }
 }
+
+@Qualifier(parent=Default.class)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@interface MyQualifier {}

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -30,9 +31,10 @@ import org.sybila.parasim.core.context.Context;
  */
 public class ProviderImpl<I> implements Provider<I> {
 
+    private final Class<? extends Annotation> qualifier;
     private final I value;
 
-    private ProviderImpl(final ProvidingPoint providingPoint, Class<I> type) {
+    private ProviderImpl(final ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier) {
         if (providingPoint == null) {
             throw new IllegalArgumentException("The parameter [providingPoint] is null.");
         }
@@ -45,6 +47,10 @@ public class ProviderImpl<I> implements Provider<I> {
         if (type.isPrimitive()) {
             throw new IllegalArgumentException("The primitive type can't be provided.");
         }
+        if (qualifier == null) {
+            throw new IllegalArgumentException("The parameter [qualifier] is null.");
+        }
+        this.qualifier = qualifier;
         this.value = type.cast(
             Proxy.newProxyInstance(
                 type.getClassLoader(),
@@ -74,22 +80,26 @@ public class ProviderImpl<I> implements Provider<I> {
         );
     }
 
-    public static <I> Provider<I> of(ProvidingPoint providingPoint, Class<I> type) {
-        return new ProviderImpl<I>(providingPoint, type);
+    public static <I> Provider<I> of(ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier) {
+        return new ProviderImpl<I>(providingPoint, type, qualifier);
     }
 
-    public static <I> void bind(ManagerImpl manager, Context context, ProvidingPoint providingPoint, Class<I> type) {
+    public static <I> void bind(ManagerImpl manager, Context context, ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier) {
         if (manager == null) {
             throw new IllegalArgumentException("The parameter [manager] is null.");
         }
         if (context == null) {
             throw new IllegalArgumentException("The parameter [context] is null.");
         }
-        manager.bind(type, context, of(providingPoint, type).get());
+        manager.bind(type, qualifier, context, of(providingPoint, type, qualifier).get());
     }
 
     public I get() {
         return value;
+    }
+
+    public Class<? extends Annotation> qualifier() {
+        return qualifier;
     }
 
 }

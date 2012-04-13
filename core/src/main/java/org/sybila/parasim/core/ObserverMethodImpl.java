@@ -21,21 +21,19 @@ package org.sybila.parasim.core;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.context.Context;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ObserverMethodImpl implements ObserverMethod{
+public class ObserverMethodImpl extends AbstractTyped implements ObserverMethod{
 
-    private Context context;
-    private Method method;
-    private Object target;
+    private final Context context;
+    private final Method method;
 
     public ObserverMethodImpl(Object target, Context context, Method method) {
-        if (target == null) {
-            throw new IllegalArgumentException("The parameter [target] is null.");
-        }
+        super(target, Default.class);
         if (context == null) {
             throw new IllegalArgumentException("The parameter [context] is null.");
         }
@@ -43,31 +41,31 @@ public class ObserverMethodImpl implements ObserverMethod{
             throw new IllegalArgumentException("The parameter [method] is null.");
         }
         this.context = context;
-        this.target = target;
         this.method = method;
     }
 
     public void invoke(Manager manager, Object event) {
         // resolve parameters
-        Object[] parameters = new Object[method.getParameterTypes().length];
+        Object[] parameters = new Object[getMethod().getParameterTypes().length];
         parameters[0] = event;
         for(int i=1; i<parameters.length; i++) {
-            parameters[i] = manager.resolve(method.getParameterTypes()[i], context);
+            parameters[i] = manager.resolve(getMethod().getParameterTypes()[i], loadQualifier(getMethod().getParameterTypes()[i].getDeclaredAnnotations()), context);
             if (parameters[i] == null) {
-                throw new InvocationException("There is no available instance for class <" + method.getParameterTypes()[i].getName() + ">.");
+                throw new InvocationException("There is no available instance for class <" + getMethod().getParameterTypes()[i].getName() + ">.");
             }
         }
         try {
-            if (!method.isAccessible()) {
-                method.setAccessible(true);
+            if (!getMethod().isAccessible()) {
+                getMethod().setAccessible(true);
             }
-            method.invoke(target, parameters);
+            getMethod().invoke(getTarget(), parameters);
         } catch(Exception e) {
             e.printStackTrace();
             throw new InvocationException(e);
         }
     }
 
+    @Override
     public Method getMethod() {
         return method;
     }

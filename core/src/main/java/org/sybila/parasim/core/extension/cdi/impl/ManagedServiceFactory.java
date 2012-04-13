@@ -19,7 +19,9 @@
  */
 package org.sybila.parasim.core.extension.cdi.impl;
 
+import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.ManagerImpl;
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.context.Context;
 
 /**
@@ -37,15 +39,23 @@ public class ManagedServiceFactory extends AbstractServiceFactory {
     }
 
     public <T> T getService(Class<T> type, Context context) {
-        return manager.resolve(type, context);
+        return this.getService(type, context, Default.class);
+    }
+
+    public <T> T getService(Class<T> type, Context context, Class<? extends Annotation> qualifier) {
+        return manager.resolve(type, qualifier, context);
     }
 
     public boolean isServiceAvailable(Class<?> type, Context context) {
-        return manager.resolve(type, context) != null;
+        return this.isServiceAvailable(type, context, Default.class);
+    }
+
+    public boolean isServiceAvailable(Class<?> type, Context context, Class<? extends Annotation> qualifier) {
+        return manager.resolve(type, qualifier, context) != null;
     }
 
     @Override
-    protected <T> void bind(Class<T> clazz, Context context, Object value) {
-        manager.bind(clazz, context, (T) value);
+    protected <T> void bind(Class<T> clazz, Class<? extends Annotation> qualifier, Context context, Object value) {
+        manager.bind(clazz, qualifier, context, (T) value);
     }
 }

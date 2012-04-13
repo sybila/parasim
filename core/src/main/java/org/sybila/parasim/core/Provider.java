@@ -19,10 +19,14 @@
  */
 package org.sybila.parasim.core;
 
+import java.lang.annotation.Annotation;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Provider<I> {
+
+    Class<? extends Annotation> qualifier();
 
     I get();
 

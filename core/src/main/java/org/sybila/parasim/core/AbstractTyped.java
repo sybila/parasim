@@ -19,18 +19,30 @@
  */
 package org.sybila.parasim.core;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotations.Qualifier;
 
 public abstract class AbstractTyped implements Typed {
 
     private final Object target;
+    private final Class<? extends Annotation> qualifier;
 
-    public AbstractTyped(Object target) {
+    public AbstractTyped(Object target, Class<? extends Annotation> qualifier) {
         if (target == null) {
             throw new IllegalArgumentException("The parameter [target] is null.");
         }
+        if (qualifier == null) {
+            throw new IllegalArgumentException("The parameter [qualifier] is null.");
+        }
         this.target = target;
+        this.qualifier = qualifier;
+    }
+
+    public Class<? extends Annotation> getQualifier() {
+        return qualifier;
     }
 
     protected Object getTarget() {
@@ -50,4 +62,12 @@ public abstract class AbstractTyped implements Typed {
         }
     }
 
+    protected static Class<? extends Annotation> loadQualifier(Annotation[] annotations) {
+        for (Annotation annotation: annotations) {
+            if (annotation.getClass().getAnnotation(Qualifier.class) != null) {
+                return annotation.getClass();
+            }
+        }
+        return Default.class;
+    }
 }

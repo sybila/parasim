@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core.extension.cdi.api;
 
+import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.context.Context;
 
 /**
@@ -28,9 +29,13 @@ public interface ServiceFactory {
 
     <T> T getService(Class<T> type, Context context);
 
+    <T> T getService(Class<T> type, Context context, Class<? extends Annotation> qualifier);
+
     void injectFields(Object target, Context context);
 
     boolean isServiceAvailable(Class<?> type, Context context);
+
+    boolean isServiceAvailable(Class<?> type, Context context, Class<? extends Annotation> qualifier);
 
     void provideFieldsAndMethods(Object target, Context context);
 }

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core;
 
+import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.context.Context;
 
 /**
@@ -36,7 +37,7 @@ public interface Manager {
 
     void inject(Extension target);
 
-    <T> T resolve(Class<T> type, Context context);
+    <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier, Context context);
 
     void shutdown();
 

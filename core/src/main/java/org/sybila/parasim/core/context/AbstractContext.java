@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core.context;
 
+import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.InstanceStorage;
 import org.sybila.parasim.core.MapInstanceStorage;
 
@@ -75,16 +76,16 @@ public abstract class AbstractContext implements Context {
         parent = context;
     }
 
-    public <T> T resolve(Class<T> type) {
+    public <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier) {
         // the given context has priority
         if (this.isActive()) {
-            T value = this.getStorage().get(type);
+            T value = this.getStorage().get(type, qualifier);
             if (value != null) {
                 return value;
             }
         }
         if (this.hasParent()) {
-            return this.getParent().resolve(type);
+            return this.getParent().resolve(type, qualifier);
         }
         // nothing found
         return null;
