@@ -33,5 +33,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface  Qualifier {
-    Class<? extends Annotation> parent() default Empty.class;
+    public Class<? extends Annotation> parent() default Empty.class;
 }
