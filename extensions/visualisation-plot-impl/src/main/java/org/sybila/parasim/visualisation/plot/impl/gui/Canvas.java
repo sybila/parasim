@@ -22,17 +22,34 @@ package org.sybila.parasim.visualisation.plot.impl.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
  * Draws points on a 2D canvas. Handles coordinate transformation and resizing.
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class Canvas extends JPanel {
 
     protected static final Color BLANK = Color.WHITE;
     private Point2DLayer points = null;
+    private float xFact, yFact;
+
+    public Canvas() {
+        addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (points != null) {
+                    refreshFactors();
+                }
+                repaint();
+            }
+        });
+    }
 
     @Override
     public void paint(Graphics g) {
@@ -40,14 +57,45 @@ public class Canvas extends JPanel {
         Graphics2D canvas = (Graphics2D) g;
         canvas.setBackground(BLANK);
         canvas.clearRect(0, 0, getWidth(), getHeight());
+
+        // draw points //
+        if (points != null) {
+            for (int i = 0; i < points.size(); i++) {
+                drawPoint(canvas, transformX(points.getX(i)), transformY(points.getY(i)), points.robustness(i));
+            }
+        }
+    }
+
+    /**
+     * Draws point on given canvas. Coordinates are on-screen.
+     */
+    private void drawPoint(Graphics2D canvas, float x, float y, float robustness) {
+        //TODO
     }
 
     /**
      * Designates points to be rendered. Forces repaint.
+     *
      * @param layer Rendered points.
      */
     public void setPoints(Point2DLayer layer) {
         points = layer;
+        refreshFactors();
     }
 
+    /**
+     * Called to refresh transformation factors.
+     */
+    private void refreshFactors() {
+        xFact = getWidth() / (points.maxX() - points.minX());
+        yFact = getHeight() / (points.maxY() - points.minY());
+    }
+
+    private float transformX(float x) {
+        return (x - points.minX()) * xFact;
+    }
+
+    private float transformY(float y) {
+        return getHeight() - (y - points.minY()) * yFact;
+    }
 }

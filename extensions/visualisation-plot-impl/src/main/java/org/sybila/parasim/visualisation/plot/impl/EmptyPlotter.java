@@ -19,22 +19,17 @@
  */
 package org.sybila.parasim.visualisation.plot.impl;
 
-import org.sybila.parasim.model.ode.PointVariableMapping;
-import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
-import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
-import org.sybila.parasim.visualisation.plot.impl.gui.ProjectionPlotter;
 
 /**
+ * Mockup plotter created when threre are no points in the result.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class ProjectionPlotterFactory implements PlotterFactory {
+public class EmptyPlotter implements Plotter {
 
-    public Plotter getPlotter(VerificationResult result, PointVariableMapping names) {
-        if (result.size() < 2) {
-            return new EmptyPlotter();
-        }
-        return new ProjectionPlotter(result, names);
+    @Override
+    public void plot() {
+        System.out.println("There are no points to be plotted.");
     }
 }
