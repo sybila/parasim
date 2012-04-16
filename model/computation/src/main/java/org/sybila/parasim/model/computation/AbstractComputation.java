@@ -17,20 +17,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.model.computation;
 
-import java.util.concurrent.Future;
-import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.Mergeable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public abstract class AbstractComputation<Result extends Mergeable<Result>> implements Computation<Result> {
 
-    void abort(Computation<?> computation) throws AbortionException;
+    private volatile boolean destroyed = false;
 
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    public void destroy() {
+        destroyed = true;
+    }
 
-    void destroy(Computation<?> computation);
+    public boolean isDestroyed() {
+        return destroyed;
+    }
 }

@@ -236,6 +236,9 @@ public final class ManagerImpl implements Manager {
 
     private Collection<Extension> createExtensions(final Collection<Class<?>> extensionClasses, Context context) throws Exception {
         List<Extension> created = new ArrayList<Extension>();
+        if (extensionClasses == null) {
+            return created;
+        }
         for (Class<?> type: extensionClasses) {
             Extension extension = new ExtensionImpl(createInstance(type), context);
             created.add(extension);

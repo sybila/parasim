@@ -17,20 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.execution;
 
-import java.util.concurrent.Future;
-import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.Mergeable;
+import org.testng.annotations.Test;
+import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.execution.api.Executor;
+import org.sybila.parasim.execution.api.SequentialExecutor;
+import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public class TestLoadableExtension extends AbstractExecutionTest {
 
-    void abort(Computation<?> computation) throws AbortionException;
+    @Test
+    public void testExecutorIsLoaded() {
+        assertNotNull(getManager().resolve(Executor.class, Default.class, getManager().getRootContext()));
+    }
 
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
-
-    void destroy(Computation<?> computation);
+    @Test
+    public void testSequentialExecutorIsLoaded() {
+        assertNotNull(getManager().resolve(SequentialExecutor.class, Default.class, getManager().getRootContext()));
+    }
 }

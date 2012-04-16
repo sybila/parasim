@@ -19,6 +19,12 @@
  */
 package org.sybila.parasim.core.extension.cdi;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.sybila.parasim.core.annotations.Qualifier;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.annotations.Inject;
@@ -38,6 +44,16 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
     private Number providedNumber;
     @Provide
     private Integer toProvide = 10;
+    @TestQualifier
+    @Inject
+    private Number toInjectWithQualifier;
+    @TestQualifier
+    @Provide
+    private Number toProvideWithQualifier = new Number() {
+        public int get() {
+            return -10;
+        }
+    };
     public static ServiceFactory serviceFactory;
     public int counter = 0;
     
@@ -49,6 +65,7 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
         serviceFactory.injectFields(this, getManager().getRootContext());
         assertEquals(toInject, "HELLO");
         assertEquals(getManager().resolve(Integer.class, Default.class, getManager().getRootContext()), toProvide);
+        assertEquals(toInjectWithQualifier.get(), toProvideWithQualifier.get());
     }
     
     @Test
@@ -60,7 +77,7 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
             assertEquals(providedNumber.get(), i);
         }
     }
-    
+
     @Provide(fresh=true)
     private Number provider() {
         final int x = counter++;
@@ -77,3 +94,9 @@ interface Number {
     
     int get();
 }
+
+@Qualifier
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@interface TestQualifier {}

@@ -64,7 +64,7 @@ public abstract class AbstractTyped implements Typed {
 
     protected static Class<? extends Annotation> loadQualifier(Annotation[] annotations) {
         for (Annotation annotation: annotations) {
-            if (annotation.getClass().getAnnotation(Qualifier.class) != null) {
+            if (annotation.annotationType().getAnnotation(Qualifier.class) != null) {
                 return annotation.getClass();
             }
         }

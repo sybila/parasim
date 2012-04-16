@@ -20,6 +20,8 @@
 package org.sybila.parasim.core;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,7 +60,10 @@ public class MapInstanceStorage implements InstanceStorage {
         if (!instances.containsKey(type)) {
             instances.put(type, new HashMap<Class<? extends Annotation>, Object>());
         }
-        instances.get(type).put(qualifier, value);
+        instances.get(type).put(
+            Proxy.isProxyClass(qualifier) ? (Class<? extends Annotation>) qualifier.getInterfaces()[0] : qualifier,
+            value
+        );
         return this;
     }
 
@@ -85,9 +90,12 @@ public class MapInstanceStorage implements InstanceStorage {
         } else {
             Class<? extends Annotation> toFind = qualifier;
             while (!toFind.equals(Empty.class)) {
+                if (Proxy.isProxyClass(toFind)) {
+                    toFind = (Class<? extends Annotation>) toFind.getInterfaces()[0];
+                }
                 Qualifier qualified = toFind.getAnnotation(Qualifier.class);
                 if (qualified == null) {
-                    throw new IllegalArgumentException("The qualifier " + qualifier.getClass().getName() + " has to be annotated by <" + Qualifier.class.getName() + ">. ");
+                    throw new IllegalArgumentException("The qualifier " + toFind.getName() + " has to be annotated by <" + Qualifier.class.getName() + ">. Found annotations: " + Arrays.toString(toFind.getAnnotations()));
                 }
                 Object o = qualifiedInstances.get(toFind);
                 if (o != null) {

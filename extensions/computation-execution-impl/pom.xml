@@ -3,12 +3,6 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.sybila.parasim.extension</groupId>
-    <artifactId>computation-lifecycle-api</artifactId>
-    <packaging>jar</packaging>
-
-    <name>computation-lifecycle-api</name>
-    
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
@@ -16,22 +10,27 @@
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
 
+    <groupId>org.sybila.parasim.extension</groupId>
+    <artifactId>computation-execution-impl</artifactId>
+    <packaging>jar</packaging>
+
+    <name>computation-execution-impl</name>
+    
     <dependencies>
         <dependency>
-            <groupId>org.sybila.parasim.model</groupId>
-            <artifactId>computation</artifactId>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-execution-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.sybila.parasim.model</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
-            <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-execution-api</artifactId>
+            <groupId>org.sybila.parasim.model</groupId>
+            <artifactId>computation</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-
 </project>

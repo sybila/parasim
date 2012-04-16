@@ -17,20 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.computation.lifecycle.api.annotations;
 
-import java.util.concurrent.Future;
-import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.Mergeable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.sybila.parasim.execution.api.Executor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface RunWith {
 
-    void abort(Computation<?> computation) throws AbortionException;
+    Class<? extends Executor> executor();
 
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
-
-    void destroy(Computation<?> computation);
 }

@@ -17,20 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.model.computation.annotations;
 
-import java.util.concurrent.Future;
-import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.Mergeable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Methods annotated by this annotation will be executed by
+ * {@link DefaultComputationContainer#finalize(org.sybila.parasim.computation.lifecycle.Computation computation)}
+ * method. Annotated methods shouldn't create new threads.
+ *
+ * After methods are called, the computation status is set to finalized.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
-
-    void abort(Computation<?> computation) throws AbortionException;
-
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
-
-    void destroy(Computation<?> computation);
-}
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface  After {}

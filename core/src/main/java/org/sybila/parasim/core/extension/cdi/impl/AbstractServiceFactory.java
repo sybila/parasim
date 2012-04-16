@@ -31,6 +31,7 @@ import org.sybila.parasim.core.ProvidingMethodPoint;
 import org.sybila.parasim.core.ProvidingPoint;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.annotations.Qualifier;
 import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 
@@ -109,7 +110,13 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
     }
 
     private void injectField(Object object, Field field, Context context) {
-        Object service = getService(field.getType(), context);
+        Class<? extends Annotation> qualifier = loadQualifier(field.getDeclaredAnnotations());
+        Object service = null;
+        if (qualifier != null) {
+            service = getService(field.getType(), context, qualifier);
+        } else {
+            service = getService(field.getType(), context);
+        }
         if (service == null) {
             throw new IllegalStateException("The service " + field.getType().getName() + " requested in " + object.getClass().getName() + " is not available.");
         }
@@ -119,5 +126,14 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
         } catch (Exception ex) {
             throw new IllegalStateException("The service can't be injected.", ex);
         }
+    }
+
+    private Class<? extends Annotation> loadQualifier(Annotation[] annotations) {
+        for (Annotation annotation: annotations) {
+            if (annotation.annotationType().getAnnotation(Qualifier.class) != null) {
+                return annotation.getClass();
+            }
+        }
+        return null;
     }
 }

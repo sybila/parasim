@@ -19,18 +19,23 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
-import java.util.concurrent.Future;
-import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.Mergeable;
-
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public class AbortionException extends Exception {
 
-    void abort(Computation<?> computation) throws AbortionException;
+    public AbortionException() {
+    }
 
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    public AbortionException(String message) {
+        super(message);
+    }
 
-    void destroy(Computation<?> computation);
+    public AbortionException(Throwable cause) {
+        super(cause);
+    }
+
+    public AbortionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

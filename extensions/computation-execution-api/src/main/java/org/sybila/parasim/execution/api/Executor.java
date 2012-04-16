@@ -17,20 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.execution.api;
 
-import java.util.concurrent.Future;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.Mergeable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public interface Executor {
 
-    void abort(Computation<?> computation) throws AbortionException;
+    <L extends Mergeable<L>> Execution<L> execute(Computation<L> computation);
 
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
-
-    void destroy(Computation<?> computation);
 }

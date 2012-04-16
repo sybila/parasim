@@ -22,6 +22,8 @@
                 <module>extensions/computation-cycledetection-impl</module>
                 <module>extensions/computation-density-api</module>
                 <module>extensions/computation-density-impl</module>
+                <module>extensions/computation-execution-api</module>
+                <module>extensions/computation-execution-impl</module>
                 <module>extensions/computation-lifecycle-api</module>
                 <module>extensions/computation-lifecycle-impl</module>
                 <module>extensions/computation-simulation-api</module>
@@ -35,6 +37,7 @@
         <profile>
             <id>model</id>
             <modules>
+                <module>model/computation</module>
                 <module>model/core</module>
                 <module>model/ode</module>
                 <module>model/space</module>

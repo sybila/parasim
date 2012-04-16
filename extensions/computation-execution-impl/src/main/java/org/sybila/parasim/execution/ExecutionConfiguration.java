@@ -17,20 +17,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
-
-import java.util.concurrent.Future;
-import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.Mergeable;
+package org.sybila.parasim.execution;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public class ExecutionConfiguration {
 
-    void abort(Computation<?> computation) throws AbortionException;
+    private int queueSize = 1;
+    private int coreThreadPoolSize = Runtime.getRuntime().availableProcessors();
+    private int maxThreadPoolSize = coreThreadPoolSize * 2;
+    private String defaultExecutorClass = "org.sybila.parasim.execution.sequential.SequentialExecutor";
+    private long keepThreadAliveTimeInSeconds = 5;
 
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    public int getQueueSize() {
+        return queueSize;
+    }
 
-    void destroy(Computation<?> computation);
+    public String getDefaultExecutorClass() {
+        return defaultExecutorClass;
+    }
+
+    public int getCoreThreadPoolSize() {
+        return coreThreadPoolSize;
+    }
+
+    public int getMaxThreadPoolSize() {
+        return maxThreadPoolSize;
+    }
+
+    public long getKeepThreadAliveTimeInSeconds() {
+        return keepThreadAliveTimeInSeconds;
+    }
 }

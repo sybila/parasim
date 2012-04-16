@@ -43,6 +43,18 @@ public abstract class AbstractContext implements Context {
         this(new MapInstanceStorage());
     }
 
+    public static Context of(final Class<? extends Annotation> scope) {
+        return of(scope, new MapInstanceStorage());
+    }
+
+    public static Context of(final Class<? extends Annotation> scope, final InstanceStorage storage) {
+        return new AbstractContext(storage) {
+            public Class<? extends Annotation> getScope() {
+                return scope;
+            }
+        };
+    }
+
     public void activate() {
         activity = true;
     }
