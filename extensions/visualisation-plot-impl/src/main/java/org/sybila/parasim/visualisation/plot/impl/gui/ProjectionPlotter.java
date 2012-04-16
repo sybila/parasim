@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
@@ -25,6 +25,8 @@ import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -41,30 +43,45 @@ import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.verification.result.ArrayVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
+import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
+import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
+import org.sybila.parasim.visualisation.plot.impl.layer.EmptyLayerMetaFactory;
 
 /**
- *                    Plots a 2D projection of a generally n-D space in a window. Exactly two axes
+ * Plots a 2D projection of a generally n-D space in a window. Exactly two axes
  * are taken for the 2D space base, the other coordinates are left out. For the
  * points not to overlap, left out axes are divided into intervals which may be
  * chosen using sliders.
  *
- *                    @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class ProjectionPlotter extends JFrame implements Plotter {
 
-    PointVariableMapping names;
     private static final int INSET = 10;
     private static final Insets PADDING = new Insets(INSET, INSET, INSET, INSET);
-    JPanel sliders, axes;
-    Canvas canvas;
-    int dimension;
-    AxisChooser xAxis, yAxis;
-    AxisSlider[] axisSliders;
+    //components//
+    private JPanel sliders, axes;
+    private Canvas canvas;
+    private AxisChooser xAxis, yAxis;
+    private AxisSlider[] axisSliders;
+    //variables//
+    private PointVariableMapping names;
+    private int dimension;
+    private LayerMetaFactory metaLayers; //needs initialization
+    private LayerFactory layers;
 
     public ProjectionPlotter(VerificationResult result, PointVariableMapping names) {
         dimension = result.getPoint(0).getDimension();
         this.names = names;
         init();
+
+        metaLayers = new EmptyLayerMetaFactory(); //FIXME
+        //initially, (0,1) are chosen//
+        layers = metaLayers.getLayerFactory(0, 1);
+        //updating sliders//
+        for (int i = 0; i < dimension; i++) {
+            axisSliders[i].update(layers.ticks(i), 0);
+        }
     }
 
     private void init() {
@@ -139,7 +156,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     }
 
     /**
-     *                  Called when an axis is selected by AxisChoosers.
+     * Called when an axis is selected by AxisChoosers.
      */
     private void updateAxes() {
         int xSelected = xAxis.getSelected();
@@ -152,14 +169,29 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         axisSliders[xSelected].setActive(false);
         axisSliders[ySelected].setActive(false);
 
-
+        float[] values = new float[dimension];
+        //get real values from axisSliders//
+        for (int i = 0; i < dimension; i++) {
+            values[i] = layers.getValue(i, axisSliders[i].getValue());
+        }
+        //create new LayerFactory//
+        layers = metaLayers.getLayerFactory(xSelected, ySelected);
+        //update values and maximums of axissliders//
+        for (int i = 0; i < dimension; i++) {
+            axisSliders[i].update(layers.ticks(i), layers.getTicks(i, values[i]));
+        }
     }
 
     /**
-     *                  Called when an axis slider is moved and view has to be changed
+     * Called when an axis slider is moved and view has to be changed
      * accordingly.
      */
     private void updateView() {
+        Map<Integer, Integer> projections = new HashMap<Integer, Integer>();
+        for (int i = 0; i < dimension; i++) {
+            projections.put(i, axisSliders[i].getValue());
+        }
+        canvas.setPoints(layers.getLayer(projections));
     }
 
     @Override

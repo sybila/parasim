@@ -81,6 +81,7 @@ public class Canvas extends JPanel {
     public void setPoints(Point2DLayer layer) {
         points = layer;
         refreshFactors();
+        repaint();
     }
 
     /**
