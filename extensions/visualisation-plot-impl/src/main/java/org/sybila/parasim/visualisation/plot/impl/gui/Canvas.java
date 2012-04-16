@@ -24,7 +24,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.geom.Ellipse2D;
 import javax.swing.JPanel;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
@@ -37,14 +36,13 @@ public class Canvas extends JPanel {
 
     //drawing constants
     protected static final Color BLANK = Color.WHITE;
-    protected static final Color VALID = Color.GREEN;
-    protected static final Color INVALID = Color.RED;
-    protected static final int RADIUS = 3;
     //attributes
     private Point2DLayer points = null;
     private float xFact, yFact;
+    private PointRenderer render;
 
-    public Canvas() {
+    public Canvas(PointRenderer renderer) {
+        render = renderer;
         addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -67,7 +65,7 @@ public class Canvas extends JPanel {
         // draw points //
         if (points != null) {
             for (int i = 0; i < points.size(); i++) {
-                drawPoint(canvas, transformX(points.getX(i)), transformY(points.getY(i)), points.robustness(i));
+                render.drawPoint(canvas, transformX(points.getX(i)), transformY(points.getY(i)), points.robustness(i));
             }
         }
     }
@@ -75,15 +73,6 @@ public class Canvas extends JPanel {
     /**
      * Draws point on given canvas. Coordinates are on-screen.
      */
-    private void drawPoint(Graphics2D canvas, float x, float y, float robustness) {
-        if (robustness > 0) {
-            canvas.setPaint(VALID);
-        } else {
-            canvas.setPaint(INVALID);
-        }
-        canvas.fill(new Ellipse2D.Float(x-RADIUS, y-RADIUS, 2*RADIUS, 2*RADIUS));
-    }
-
     /**
      * Designates points to be rendered. Forces repaint.
      *

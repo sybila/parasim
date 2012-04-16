@@ -105,7 +105,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     }
 
     private void initCanvas() {
-        canvas = new Canvas();
+        canvas = new Canvas(new RGCirclePointRenderer());
         JPanel canvasPanel = new JPanel(new BorderLayout());
         canvasPanel.setBorder(new EmptyBorder(PADDING));
         canvasPanel.add(canvas, BorderLayout.CENTER);
