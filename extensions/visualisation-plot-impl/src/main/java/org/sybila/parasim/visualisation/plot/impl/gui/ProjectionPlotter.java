@@ -73,13 +73,14 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private LayerMetaFactory metaLayers;
     private LayerFactory layers;
 
-    public ProjectionPlotter(VerificationResult result, PointVariableMapping names) {
+    public ProjectionPlotter(VerificationResult result, PointVariableMapping names, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
         dimension = result.getPoint(0).getDimension();
         this.names = names;
         extent = AbstractVerificationResult.getEncompassingSpace(result);
-        init();
 
-        metaLayers = new OverlapLayer(result, extent);
+        init(pointAppearance);
+
+        metaLayers = pointSource;
         //initially, (0,1) are chosen//
         layers = metaLayers.getLayerFactory(0, 1);
         //updating sliders//
@@ -89,7 +90,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         updateView();
     }
 
-    private void init() {
+    private void init(PointRenderer appearance) {
         ResourceBundle strings = ResourceBundle.getBundle(getClass().getSimpleName());
         setTitle(strings.getString("title"));
 
@@ -99,13 +100,13 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
         setLayout(new BorderLayout());
 
-        initCanvas();
+        initCanvas(appearance);
         initSliders();
         initAxes(strings.getString("x_axis"), strings.getString("y_axis"));
     }
 
-    private void initCanvas() {
-        canvas = new Canvas(new RGCirclePointRenderer());
+    private void initCanvas(PointRenderer appearance) {
+        canvas = new Canvas(appearance);
         JPanel canvasPanel = new JPanel(new BorderLayout());
         canvasPanel.setBorder(new EmptyBorder(PADDING));
         canvasPanel.add(canvas, BorderLayout.CENTER);
@@ -212,13 +213,13 @@ public class ProjectionPlotter extends JFrame implements Plotter {
                 Point[] points = new Point[5];
                 points[0] = new ArrayPoint(0, 0f, 2.3f, 0f);
                 points[1] = new ArrayPoint(0, 3.5f, 4.3f, 0f);
-                points[2] = new ArrayPoint(0, 5.1f, 0.6f, 0f);
-                points[3] = new ArrayPoint(0, 4.1f, 1.3f, 1f);
+                points[2] = new ArrayPoint(0, 5.1f, 0.6f, 0.5f);
+                points[3] = new ArrayPoint(0, 4.1f, 1.3f, 0.8f);
                 points[4] = new ArrayPoint(0, 1.8f, 3.8f, 1f);
                 float[] robustness = new float[]{-2.5f, 0.8f, 3.4f, 2.9f, -5.3f};
                 VerificationResult result = new ArrayVerificationResult(5, points, robustness);
 
-                Plotter test = new ProjectionPlotter(result, new TestVariableMapping());
+                Plotter test = new ProjectionPlotter(result, new TestVariableMapping(), new OverlapLayer(result, AbstractVerificationResult.getEncompassingSpace(result)), new RGCirclePointRenderer());
                 test.plot();
             }
         });

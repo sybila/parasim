@@ -20,10 +20,14 @@
 package org.sybila.parasim.visualisation.plot.impl;
 
 import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.impl.gui.ProjectionPlotter;
+import org.sybila.parasim.visualisation.plot.impl.gui.RGCirclePointRenderer;
+import org.sybila.parasim.visualisation.plot.impl.layer.OverlapLayer;
 
 /**
  *
@@ -35,6 +39,7 @@ public class ProjectionPlotterFactory implements PlotterFactory {
         if (result.size() < 2) {
             return new EmptyPlotter();
         }
-        return new ProjectionPlotter(result, names);
+        OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
+        return new ProjectionPlotter(result, names, new OverlapLayer(result, extent), new RGCirclePointRenderer());
     }
 }
