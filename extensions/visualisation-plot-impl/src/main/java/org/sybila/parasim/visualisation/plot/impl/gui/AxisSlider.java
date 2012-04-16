@@ -36,7 +36,7 @@ public class AxisSlider extends JPanel {
 
     private static final int INSET = 10;
     private JSlider slider;
-    float min, max;
+    private float min, max;
 
     public AxisSlider(int dimension, String label, ChangeListener updateView, float min, float max) {
         this.min = min;

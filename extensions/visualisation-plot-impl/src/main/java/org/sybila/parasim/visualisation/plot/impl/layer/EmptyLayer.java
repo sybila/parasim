@@ -27,8 +27,6 @@ public class EmptyLayer implements Point2DLayer {
         throw new IllegalArgumentException("Index out of bounds.");
     }
 
-
-
     @Override
     public float maxX() {
         return 1;
