@@ -46,6 +46,7 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
                 OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
                 Plotter test = new ProjectionPlotter(result, new TestVariableMapping(), new OverlapLayer(result, extent), new RGCirclePointRenderer());
                 test.plot();
+                System.out.println(extent.toString());
             }
         });
 

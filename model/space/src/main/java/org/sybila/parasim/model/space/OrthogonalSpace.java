@@ -129,4 +129,11 @@ public class OrthogonalSpace implements Space {
         final int prime = 41;
         return maxBounds.hashCode() * prime + minBounds.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "[" + minBounds.toString() + ", " + maxBounds.toString() + "]";
+    }
+
+
 }
