@@ -38,8 +38,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.sybila.parasim.model.ode.DoubleMap;
 import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.ArrayVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
@@ -66,13 +68,15 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private AxisSlider[] axisSliders;
     //variables//
     private PointVariableMapping names;
+    private OrthogonalSpace extent;
     private int dimension;
-    private LayerMetaFactory metaLayers; //needs initialization
+    private LayerMetaFactory metaLayers;
     private LayerFactory layers;
 
     public ProjectionPlotter(VerificationResult result, PointVariableMapping names) {
         dimension = result.getPoint(0).getDimension();
         this.names = names;
+        extent = AbstractVerificationResult.getEncompassingSpace(result);
         init();
 
         metaLayers = new EmptyLayerMetaFactory(); //FIXME
@@ -121,7 +125,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         };
         axisSliders = new AxisSlider[dimension];
         for (int i = 0; i < dimension; i++) {
-            axisSliders[i] = new AxisSlider(dimension, names.getName(i), changed);
+            axisSliders[i] = new AxisSlider(dimension, names.getName(i), changed, extent.getMinBounds().getValue(i), extent.getMaxBounds().getValue(i));
             sliders.add(axisSliders[i]);
         }
         axisSliders[0].setActive(false);

@@ -20,6 +20,7 @@
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
 import java.awt.BorderLayout;
+import java.util.Hashtable;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,8 +36,12 @@ public class AxisSlider extends JPanel {
 
     private static final int INSET = 10;
     private JSlider slider;
+    float min, max;
 
-    public AxisSlider(int dimension, String label, ChangeListener updateView) {
+    public AxisSlider(int dimension, String label, ChangeListener updateView, float min, float max) {
+        this.min = min;
+        this.max = max;
+
         setLayout(new BorderLayout(INSET, INSET));
         setBorder(new EmptyBorder(INSET, INSET, INSET, INSET));
 
@@ -44,6 +49,7 @@ public class AxisSlider extends JPanel {
 
         slider = new JSlider(JSlider.VERTICAL);
         slider.addChangeListener(updateView);
+        slider.setPaintLabels(true);
         add(slider, BorderLayout.CENTER);
     }
 
@@ -62,5 +68,11 @@ public class AxisSlider extends JPanel {
 
     public void update(int ticks, int value) {
         slider.setModel(new DefaultBoundedRangeModel(value, 0, 0, ticks));
+
+        //create labels//
+        Hashtable<Integer,JLabel> labels = new Hashtable<Integer, JLabel>();
+        labels.put(0, new JLabel(Float.toString(min)));
+        labels.put(ticks, new JLabel(Float.toString(max)));
+        slider.setLabelTable(labels);
     }
 }
