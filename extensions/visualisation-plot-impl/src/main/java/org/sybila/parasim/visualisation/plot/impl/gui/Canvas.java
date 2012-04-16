@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
@@ -24,6 +24,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.Ellipse2D;
 import javax.swing.JPanel;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
@@ -34,7 +35,12 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
  */
 public class Canvas extends JPanel {
 
+    //drawing constants
     protected static final Color BLANK = Color.WHITE;
+    protected static final Color VALID = Color.GREEN;
+    protected static final Color INVALID = Color.RED;
+    protected static final int RADIUS = 3;
+    //attributes
     private Point2DLayer points = null;
     private float xFact, yFact;
 
@@ -70,7 +76,12 @@ public class Canvas extends JPanel {
      * Draws point on given canvas. Coordinates are on-screen.
      */
     private void drawPoint(Graphics2D canvas, float x, float y, float robustness) {
-        //TODO
+        if (robustness > 0) {
+            canvas.setPaint(VALID);
+        } else {
+            canvas.setPaint(INVALID);
+        }
+        canvas.fill(new Ellipse2D.Float(x-RADIUS, y-RADIUS, 2*RADIUS, 2*RADIUS));
     }
 
     /**

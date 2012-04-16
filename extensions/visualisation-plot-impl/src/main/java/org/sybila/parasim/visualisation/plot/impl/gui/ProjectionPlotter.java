@@ -47,7 +47,7 @@ import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
-import org.sybila.parasim.visualisation.plot.impl.layer.EmptyLayerMetaFactory;
+import org.sybila.parasim.visualisation.plot.impl.layer.OverlapLayer;
 
 /**
  * Plots a 2D projection of a generally n-D space in a window. Exactly two axes
@@ -79,13 +79,14 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         extent = AbstractVerificationResult.getEncompassingSpace(result);
         init();
 
-        metaLayers = new EmptyLayerMetaFactory(); //FIXME
+        metaLayers = new OverlapLayer(result, extent);
         //initially, (0,1) are chosen//
         layers = metaLayers.getLayerFactory(0, 1);
         //updating sliders//
         for (int i = 0; i < dimension; i++) {
             axisSliders[i].update(layers.ticks(i), 0);
         }
+        updateView();
     }
 
     private void init() {
@@ -184,6 +185,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         for (int i = 0; i < dimension; i++) {
             axisSliders[i].update(layers.ticks(i), layers.getTicks(i, values[i]));
         }
+        updateView();
     }
 
     /**
