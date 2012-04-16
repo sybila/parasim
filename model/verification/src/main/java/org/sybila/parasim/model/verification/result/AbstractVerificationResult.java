@@ -42,23 +42,37 @@ public abstract class AbstractVerificationResult implements VerificationResult {
      * @return Smallest space including all points.
      */
     public OrthogonalSpace getEncompassingSpace() {
-        if (size() == 0) {
+       return getEncompassingSpace(this);
+    }
+
+    /**
+     * Return smallest space including all points comprising a result.
+     * Linear to the number of points.
+     *
+     * Might be elevated into a factory in the future.
+     *
+     * @param result Source result.
+     *
+     * @return Smallest space including all points.
+     */
+    public static OrthogonalSpace getEncompassingSpace(VerificationResult result) {
+        if (result.size() == 0) {
             Point empty = new ArrayPoint(0, new float [0], 0, 0);
             return new OrthogonalSpace(empty, empty);
         }
-        int dims = getPoint(0).getDimension();
+        int dims = result.getPoint(0).getDimension();
 
         float [] mins = new float[dims];
         float [] maxs = new float[dims];
 
         for (int dim = 0; dim < dims; dim++) {
-            mins[dim] = getPoint(0).getValue(dim);
-            maxs[dim] = getPoint(0).getValue(dim);
+            mins[dim] = result.getPoint(0).getValue(dim);
+            maxs[dim] = result.getPoint(0).getValue(dim);
         }
 
-        for (int pointIndex = 1; pointIndex < size(); pointIndex++) {
+        for (int pointIndex = 1; pointIndex < result.size(); pointIndex++) {
             for (int dim = 0; dim < dims; dim++) {
-                float val = getPoint(pointIndex).getValue(dim);
+                float val = result.getPoint(pointIndex).getValue(dim);
                 if (val < mins[dim]) {
                     mins[dim] = val;
                 } else if (val > maxs[dim]) {
