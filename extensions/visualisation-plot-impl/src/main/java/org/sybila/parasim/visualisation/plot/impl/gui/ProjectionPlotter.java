@@ -67,6 +67,15 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private LayerMetaFactory metaLayers;
     private LayerFactory layers;
 
+    /**
+     * Creates new plotter on a given verification result with specified axes labels,
+     * algorithm of projection into 2D and point appearance.
+     *
+     * @param result Result of verification. Is not necessarily rendered.
+     * @param names Labels of axes.
+     * @param pointSource Specifies manner of projection into 2D and contains rendered points.
+     * @param pointAppearance Specifies point appearance.
+     */
     public ProjectionPlotter(VerificationResult result, PointVariableMapping names, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
         dimension = result.getPoint(0).getDimension();
         this.names = names;
@@ -121,7 +130,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         };
         axisSliders = new AxisSlider[dimension];
         for (int i = 0; i < dimension; i++) {
-            axisSliders[i] = new AxisSlider(dimension, names.getName(i), changed, extent.getMinBounds().getValue(i), extent.getMaxBounds().getValue(i));
+            axisSliders[i] = new AxisSlider(names.getName(i), changed, extent.getMinBounds().getValue(i), extent.getMaxBounds().getValue(i));
             sliders.add(axisSliders[i]);
         }
         axisSliders[0].setActive(false);

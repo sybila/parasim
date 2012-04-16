@@ -22,16 +22,41 @@ package org.sybila.parasim.visualisation.plot.impl;
 import java.util.Map;
 
 /**
+ * Contains verification result projected into 2D. Rules the granularity of
+ * unprojected axes. When position along unprojected axes is changed,
+ * returns new {@link Point2DLayer} which stores rendered points.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public interface LayerFactory {
 
+    /**
+     * Returns granularity of given unprojected axis.
+     * @param index Dimension of axis.
+     * @return Number of discrete relevant positions on given axis.
+     */
     public int ticks(int index);
 
+    /**
+     * Transforms real position on unprojected axis into its discrete value.
+     * @param index Dimension of axis.
+     * @param value Position on axis.
+     * @return Discrete position on given axis.
+     */
     public int getTicks(int index, float value);
 
+    /**
+     * Transforms discrete position on unprojected axis into float value.
+     * @param index Dimension of axis.
+     * @param ticks Position on axis.
+     * @return Real position on given axis.
+     */
     public float getValue(int index, int ticks);
 
+    /**
+     * Given discrete positions on all axes returns all rendered points.
+     * @param projections Positions on unprojected axes -- pairs (dimension,position).
+     * @return Rendered points encapsulated in {@link Point2DLayer}.
+     */
     public Point2DLayer getLayer(Map<Integer, Integer> projections);
 }

@@ -27,10 +27,13 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
+import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 
 /**
+ * Slider used to choose discrete position on unprojected axes.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @see LayerFactory
  */
 public class AxisSlider extends JPanel {
 
@@ -38,7 +41,14 @@ public class AxisSlider extends JPanel {
     private JSlider slider;
     private float min, max;
 
-    public AxisSlider(int dimension, String label, ChangeListener updateView, float min, float max) {
+    /**
+     * Create new slider with given labels and action called on update.
+     * @param label Name of the axis.
+     * @param updateView Action done when slider value is changed.
+     * @param min Minimum label.
+     * @param max Maximum label.
+     */
+    public AxisSlider(String label, ChangeListener updateView, float min, float max) {
         this.min = min;
         this.max = max;
 
@@ -53,19 +63,38 @@ public class AxisSlider extends JPanel {
         add(slider, BorderLayout.CENTER);
     }
 
+    /**
+     * Hides/show slider.
+     * @param active <code>false</code> when the slider should be disabled
+     * (when its axis is projected), <code>true</code> when it should be enabled.
+     */
     public void setActive(boolean active) {
         setVisible(active);
         slider.setEnabled(active);
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isActive() {
         return isVisible();
     }
 
+    /**
+     * Returns discrete position on axis.
+     * @return Position in discrete steps (ticks) from the minimum.
+     */
     public int getValue() {
         return slider.getValue();
     }
 
+    /**
+     * Updates the number of discrete positions on the axis
+     * and the current position.
+     * @param ticks Number of discrete positions.
+     * @param value Current position.
+     */
     public void update(int ticks, int value) {
         slider.setModel(new DefaultBoundedRangeModel(value, 0, 0, ticks));
 

@@ -20,10 +20,18 @@
 package org.sybila.parasim.visualisation.plot.impl;
 
 /**
+ * Contains verification result which is projected into 2D. When
+ * axes of projection are changed, new {@link LayerFactory} is produced.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public interface LayerMetaFactory {
 
+    /**
+     * When axis of projection are changed, new {@link LayerFactory} is produced.
+     * @param xAxis Dimension for horizontal axis.
+     * @param yAxis Dimension for vertical axis.
+     * @return {@link LayerFactory} which projects points along given axes.
+     */
     public LayerFactory getLayerFactory(int xAxis, int yAxis);
 }

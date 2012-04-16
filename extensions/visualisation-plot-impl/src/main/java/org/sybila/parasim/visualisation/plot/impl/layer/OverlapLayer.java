@@ -8,7 +8,11 @@ import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
+ * Projection algorithm which renders all points projected into 2D
+ * by omitting other coordinates. Whether the point is rendered is
+ * independent on positions on unprojected axes.
  *
+ * Contains verification result.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class OverlapLayer implements Point2DLayer, LayerFactory, LayerMetaFactory {
@@ -17,6 +21,11 @@ public class OverlapLayer implements Point2DLayer, LayerFactory, LayerMetaFactor
     private OrthogonalSpace space;
     private int xAxis, yAxis;
 
+    /**
+     * Initialize contained verification result and bounding space.
+     * @param source Verification result.
+     * @param bounds Bounding space.
+     */
     public OverlapLayer(VerificationResult source, OrthogonalSpace bounds) {
         src = source;
         space = bounds;

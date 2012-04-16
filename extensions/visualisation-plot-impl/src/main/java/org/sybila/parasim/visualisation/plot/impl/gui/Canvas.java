@@ -29,6 +29,7 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
  * Draws points on a 2D canvas. Handles coordinate transformation and resizing.
+ * The appearance of point is handled by {@link PointRenderer}.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
@@ -41,6 +42,10 @@ public class Canvas extends JPanel {
     private float xFact, yFact;
     private PointRenderer render;
 
+    /**
+     * Create new canvas with given point appearance.
+     * @param renderer Class handling point appearance.
+     */
     public Canvas(PointRenderer renderer) {
         render = renderer;
         addComponentListener(new ComponentAdapter() {
@@ -70,9 +75,6 @@ public class Canvas extends JPanel {
         }
     }
 
-    /**
-     * Draws point on given canvas. Coordinates are on-screen.
-     */
     /**
      * Designates points to be rendered. Forces repaint.
      *

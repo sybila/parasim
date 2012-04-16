@@ -6,7 +6,8 @@ import java.awt.geom.Ellipse2D;
 import org.sybila.parasim.visualisation.plot.impl.gui.PointRenderer;
 
 /**
- *
+ * Draws point as a circle. When the robustness is positive (i.e. property is valid),
+ * it is green (red otherwise).
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class RGCirclePointRenderer implements PointRenderer {
