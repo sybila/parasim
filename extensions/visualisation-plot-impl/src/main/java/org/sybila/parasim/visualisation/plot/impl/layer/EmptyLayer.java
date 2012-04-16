@@ -3,9 +3,10 @@ package org.sybila.parasim.visualisation.plot.impl.layer;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
- *
+ * @deprecated bogus class
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
+@Deprecated
 public class EmptyLayer implements Point2DLayer {
 
     @Override

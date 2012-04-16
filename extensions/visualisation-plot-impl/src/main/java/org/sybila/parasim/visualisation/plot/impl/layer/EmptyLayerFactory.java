@@ -5,9 +5,10 @@ import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
- *
+ * @deprecated Bogus class.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
+@Deprecated
 public class EmptyLayerFactory implements LayerFactory {
 
     @Override
@@ -35,8 +36,4 @@ public class EmptyLayerFactory implements LayerFactory {
         }
         return val;
     }
-
-
-
-
 }
