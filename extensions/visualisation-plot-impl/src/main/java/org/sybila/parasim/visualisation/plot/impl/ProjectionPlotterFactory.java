@@ -26,7 +26,7 @@ import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.impl.gui.ProjectionPlotter;
-import org.sybila.parasim.visualisation.plot.impl.gui.RGCirclePointRenderer;
+import org.sybila.parasim.visualisation.plot.impl.render.RGCirclePointRenderer;
 import org.sybila.parasim.visualisation.plot.impl.layer.OverlapLayer;
 
 /**

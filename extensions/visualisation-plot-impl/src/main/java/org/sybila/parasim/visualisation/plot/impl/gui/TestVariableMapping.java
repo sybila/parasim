@@ -1,5 +1,6 @@
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
+import org.sybila.parasim.visualisation.plot.impl.render.RGCirclePointRenderer;
 import java.awt.EventQueue;
 import org.sybila.parasim.model.ode.DoubleMap;
 import org.sybila.parasim.model.ode.PointVariableMapping;
