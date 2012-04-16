@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>ode</name>
-    
+
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
@@ -18,8 +18,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.sybila.parasim</groupId>
-            <artifactId>parasim-model-trajectory</artifactId>
+            <groupId>org.sybila.parasim.model</groupId>
+            <artifactId>trajectory</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

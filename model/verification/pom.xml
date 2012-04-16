@@ -8,10 +8,10 @@
     <packaging>jar</packaging>
 
     <name>verification</name>
-    
+
     <parent>
         <groupId>org.sybila.parasim</groupId>
-        <artifactId>parasim-model-parent</artifactId>
+        <artifactId>parasim-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
@@ -25,6 +25,11 @@
         <dependency>
         	<groupId>org.sybila.parasim.model</groupId>
         	<artifactId>core</artifactId>
+        	<version>${project.version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.sybila.parasim.model</groupId>
+        	<artifactId>space</artifactId>
         	<version>${project.version}</version>
         </dependency>
     </dependencies>
