@@ -30,4 +30,6 @@ public interface ParasimDescriptor {
 
     Collection<ExtensionDescriptor> getExtensionDescriptors();
 
+    boolean isVerbose();
+
 }

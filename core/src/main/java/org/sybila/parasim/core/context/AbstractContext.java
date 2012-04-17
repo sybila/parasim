@@ -20,6 +20,7 @@
 package org.sybila.parasim.core.context;
 
 import java.lang.annotation.Annotation;
+import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.InstanceStorage;
 import org.sybila.parasim.core.MapInstanceStorage;
 
@@ -89,6 +90,8 @@ public abstract class AbstractContext implements Context {
     }
 
     public <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier) {
+        Validate.notNull(type);
+        Validate.notNull(qualifier);
         // the given context has priority
         if (this.isActive()) {
             T value = this.getStorage().get(type, qualifier);

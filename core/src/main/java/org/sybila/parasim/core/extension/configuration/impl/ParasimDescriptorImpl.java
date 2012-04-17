@@ -43,7 +43,6 @@ import org.xml.sax.SAXException;
 public class ParasimDescriptorImpl implements ParasimDescriptor {
 
     private static DocumentBuilder builder;
-
     private Map<String, ExtensionDescriptor> extensions = new HashMap<String, ExtensionDescriptor>();
 
     private ParasimDescriptorImpl() {}
@@ -91,7 +90,7 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
                     extensionDescriptor.setProperty(name, valuesInArray);
                 } else {
                     // property isn't array
-                    String value = property.getTextContent();
+                    String value = property.getTextContent().trim();
                     extensionDescriptor.setProperty(name, value);
                 }
             }
@@ -127,6 +126,15 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
             path = defaultPath;
         }
         return new File(path);
+    }
+
+    public boolean isVerbose() {
+        if (System.getProperty("parasim.verbose") != null) {
+            return true;
+        } else {
+            ExtensionDescriptor coreExtensionDescriptor = getExtensionDescriptor("core");
+            return coreExtensionDescriptor != null && coreExtensionDescriptor.containsProperty("parasim.verbose") && Boolean.getBoolean(coreExtensionDescriptor.getProperty("verbose"));
+        }
     }
 
 }
