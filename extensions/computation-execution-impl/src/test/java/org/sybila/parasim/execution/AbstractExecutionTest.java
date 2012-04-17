@@ -19,17 +19,25 @@
  */
 package org.sybila.parasim.execution;
 
+import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.computation.ThreadId;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.model.Mergeable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.sybila.parasim.execution.impl.TestSequentialExecution;
 import org.sybila.parasim.model.computation.AbstractComputation;
-import org.sybila.parasim.model.computation.annotations.ThreadId;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.model.MergeableBox;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import static org.testng.Assert.*;
@@ -43,7 +51,7 @@ public class AbstractExecutionTest {
 
     @BeforeMethod
     public void startManager() throws Exception {
-        System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/computation/execution/parasim.xml");
+        System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/execution/parasim.xml");
         manager = ManagerImpl.create();
         manager.start();
         assertNotNull(manager.resolve(ExtensionDescriptorMapper.class, Default.class, manager.getRootContext()));
@@ -53,35 +61,52 @@ public class AbstractExecutionTest {
     public void stopManager() {
         manager.shutdown();
     }
-    
+
+    protected <R extends Mergeable<R>> void testExecute(Execution<R> execution, R expected) throws InterruptedException, ExecutionException, TimeoutException {
+        assertEquals(execution.execute().get(2, TimeUnit.SECONDS), expected);
+    }
+
+    protected void testAbort(Execution execution) throws InterruptedException, ExecutionException, TimeoutException {
+        Future<MergeableString> result = execution.execute();
+        result.cancel(true);
+        try {
+            result.get(2, TimeUnit.SECONDS);
+            fail("The execution has been canceled, so the Future.get() method should throw exception.");
+        } catch(CancellationException e) {
+        }
+    }
+
     protected final Manager getManager() {
         return manager;
     }
-    
-    protected static class MergeableString implements Mergeable<MergeableString> {
 
-        private final String original;
-        
+    protected static class MergeableString extends MergeableBox<MergeableString, String> {
         public MergeableString(String original) {
-            this.original = original;
+            super(original);
+        }
+        public MergeableString merge(MergeableString toMerge) {
+            return new MergeableString(get() + toMerge.get());
+        }
+    }
+
+    protected static class MergeableInteger extends MergeableBox<MergeableInteger, Integer> {
+
+        public MergeableInteger(Integer load) {
+            super(load);
         }
 
-        public MergeableString merge(MergeableString toMerge) {
-            return new MergeableString(getOriginal() + toMerge.getOriginal());
+        public MergeableInteger merge(MergeableInteger toMerge) {
+            return new MergeableInteger(get() + toMerge.get());
         }
-        
-        public String getOriginal() {
-            return original;
-        }
-    }    
-    
-    protected static class TestComputation extends AbstractComputation<MergeableString> {
+
+    }
+
+    protected static class TestStringComputation extends AbstractComputation<MergeableString> {
         private String message;
         private long delay;
-        @ThreadId
         @Inject
-        private Integer threadId;
-        public TestComputation(String message, long delay) {
+        private ThreadId threadId;
+        public TestStringComputation(String message, long delay) {
             this.message = message;
             this.delay = delay;
         }
@@ -91,7 +116,30 @@ public class AbstractExecutionTest {
             } catch (InterruptedException ex) {
                 Logger.getLogger(TestSequentialExecution.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return new MergeableString(threadId + message);
+            return new MergeableString(threadId.currentId() + message);
         }
-    }    
+        public Computation<MergeableString> cloneComputation() {
+            return new TestStringComputation(message, delay);
+        }
+    }
+
+    protected static class TestIntegerComputation extends AbstractComputation<MergeableInteger> {
+        private long delay;
+        @Inject
+        private ThreadId threadId;
+        public TestIntegerComputation(long delay) {
+            this.delay = delay;
+        }
+        public MergeableInteger compute() {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TestSequentialExecution.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return new MergeableInteger(threadId.currentId());
+        }
+        public Computation<MergeableInteger> cloneComputation() {
+            return new TestIntegerComputation(delay);
+        }
+    }
 }

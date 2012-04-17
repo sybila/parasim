@@ -15,11 +15,16 @@
     <packaging>jar</packaging>
 
     <name>computation-execution-impl</name>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
             <artifactId>computation-execution-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-execution-conf</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

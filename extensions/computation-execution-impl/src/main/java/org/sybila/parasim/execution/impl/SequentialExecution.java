@@ -26,6 +26,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.ContextEvent;
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Qualifier;
 import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
@@ -35,7 +36,7 @@ import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.model.computation.annotations.After;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.Mergeable;
-import org.sybila.parasim.model.computation.annotations.ThreadId;
+import org.sybila.parasim.model.computation.ThreadId;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -44,22 +45,37 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
 
     private final FutureTask<Result> task;
     private final java.util.concurrent.Executor runnableExecutor;
+    private final Computation computation;
     private volatile boolean running = false;
 
-    private SequentialExecution(final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadId) {
+    private SequentialExecution(final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadId, final int threadMaxId) {
         Validate.notNull(runnableExecutor);
         Validate.notNull(computation);
         Validate.notNull(serviceFactory);
         Validate.notNull(contextEvent);
+        if (threadMaxId < 0) {
+            throw new IllegalArgumentException("The paramater [threadMaxId] has to be a non negative number.");
+        }
         this.runnableExecutor = runnableExecutor;
+        this.computation = computation;
         this.task = new FutureTask<Result>(new Callable<Result>() {
 
             public Result call() throws Exception {
                 ComputationContext context = new ComputationContext();
+                contextEvent.initialize(context);
                 try {
-                    contextEvent.initialize(context);
-                    context.activate();
-                    context.getStorage().add(Integer.class, ThreadId.class, threadId);
+                    context.getStorage().add(
+                        ThreadId.class,
+                        Default.class,
+                        new ThreadId() {
+                            public int currentId() {
+                                return threadId;
+                            }
+                            public int maxId() {
+                                return threadMaxId;
+                            }
+                        }
+                    );
                     serviceFactory.provideFieldsAndMethods(computation, context);
                     serviceFactory.injectFields(computation, context);
                     try {
@@ -70,18 +86,20 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
                         executeMethodsByAnnotation(serviceFactory, context, computation, After.class);
                     }
                 } finally {
+                    computation.destroy();
                     contextEvent.finalize(context);
                 }
             }
         });
     }
 
-    public static <R extends Mergeable<R>> Execution<R> of(final java.util.concurrent.Executor runnableExecutor, final Computation<R> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadId) {
-        return new SequentialExecution<R>(runnableExecutor, computation, serviceFactory, contextEvent, threadId);
+    public static <R extends Mergeable<R>> Execution<R> of(final java.util.concurrent.Executor runnableExecutor, final Computation<R> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadId, final int threadMaxId) {
+        return new SequentialExecution<R>(runnableExecutor, computation, serviceFactory, contextEvent, threadId, threadMaxId);
     }
 
     public void abort() {
         task.cancel(true);
+        computation.destroy();
     }
 
     public Future<Result> execute() {
@@ -129,4 +147,5 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
         }
         return null;
     }
+
 }

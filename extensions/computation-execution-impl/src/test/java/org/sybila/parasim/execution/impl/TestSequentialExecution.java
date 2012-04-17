@@ -19,9 +19,8 @@
  */
 package org.sybila.parasim.execution.impl;
 
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.Future;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
@@ -30,31 +29,22 @@ import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.model.computation.Computation;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestSequentialExecution extends AbstractExecutionTest {
-    
+
     @Test
-    public void testExecute() throws InterruptedException, ExecutionException {
-        Execution<MergeableString> execution = createSequentialExecution(new TestComputation("AHOJ", 0));
-        assertEquals(execution.execute().get().getOriginal(), "0AHOJ");
+    public void testExecute() throws InterruptedException, ExecutionException, TimeoutException {
+        super.testExecute(createSequentialExecution(new TestStringComputation("AHOJ", 0)), new MergeableString("0AHOJ"));
     }
 
     @Test
-    public void testAbort() throws InterruptedException, ExecutionException {
-        Execution<MergeableString> execution = createSequentialExecution(new TestComputation("AHOJ", 10000));
-        Future<MergeableString> result = execution.execute();
-        result.cancel(true);
-        try {
-            result.get();
-            fail("The execution has been canceled, so the Future.get() method should throw exception.");
-        } catch(CancellationException e) {
-        }
+    public void testAbort() throws InterruptedException, ExecutionException, TimeoutException {
+        super.testAbort(createSequentialExecution(new TestStringComputation("AHOJ", 10000)));
     }
-    
+
     protected Execution<MergeableString> createSequentialExecution(Computation computation) {
         return SequentialExecution.of(
             getManager().resolve(java.util.concurrent.Executor.class, Default.class, getManager().getRootContext()),
@@ -63,13 +53,15 @@ public class TestSequentialExecution extends AbstractExecutionTest {
             new ContextEvent<ComputationContext>() {
                 public void initialize(ComputationContext context) {
                     context.setParent(getManager().getRootContext());
+                    getManager().initializeContext(context);
                 }
                 public void finalize(ComputationContext context) {
-                    context.destroy();
+                    getManager().finalizeContext(context);
                 }
             },
+            0,
             0
-        );        
+        );
     }
 
 }

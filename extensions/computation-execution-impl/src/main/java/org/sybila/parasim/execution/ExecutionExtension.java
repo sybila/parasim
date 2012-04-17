@@ -28,7 +28,6 @@ import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 public class ExecutionExtension implements LoadableExtension {
 
     public void register(ExtensionBuilder builder) {
-        builder.extension(ExecutionConfigurator.class);
         builder.extension(ExecutorRegistrar.class);
     }
 }

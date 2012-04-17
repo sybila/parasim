@@ -31,6 +31,4 @@ public interface ComputationContainer {
     void abort(Computation<?> computation) throws AbortionException;
 
     <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
-
-    void destroy(Computation<?> computation);
 }

@@ -19,6 +19,4 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<parasim>
-    <extension qualifier="execution"></extension>
-</parasim>
+<parasim></parasim>

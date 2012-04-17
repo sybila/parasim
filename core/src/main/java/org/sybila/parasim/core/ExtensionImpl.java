@@ -121,4 +121,9 @@ public class ExtensionImpl implements Extension {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return target.getClass().getCanonicalName();
+    }
 }

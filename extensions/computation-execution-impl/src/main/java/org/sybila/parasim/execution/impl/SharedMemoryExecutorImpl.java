@@ -25,20 +25,28 @@ import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Execution;
-import org.sybila.parasim.execution.api.SequentialExecutor;
-import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.execution.api.SharedMemoryExecutor;
 import org.sybila.parasim.model.Mergeable;
+import org.sybila.parasim.model.computation.Computation;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SequentialExecutorImpl extends AbstractExecutor implements SequentialExecutor {
+public class SharedMemoryExecutorImpl extends AbstractExecutor implements SharedMemoryExecutor {
 
-    public SequentialExecutorImpl(ContextEvent<ComputationContext> contextEvent, ServiceFactory serviceFactory, Executor runnableExecutor, ExecutionConfiguration configuration) {
+    public SharedMemoryExecutorImpl(ContextEvent<ComputationContext> contextEvent, ServiceFactory serviceFactory, Executor runnableExecutor, ExecutionConfiguration configuration) {
         super(contextEvent, serviceFactory, runnableExecutor, configuration);
     }
 
     public <L extends Mergeable<L>> Execution<L> execute(Computation<L> computation) {
-        return SequentialExecution.of(getRunnableExecutor(), computation, getServiceFactory(), getContextEvent(), 0, 0);
+        return SharedMemoryExecution.of(
+            getRunnableExecutor(),
+            computation,
+            getServiceFactory(),
+            getContextEvent(),
+            0,
+            getConfiguration().getNumberOfThreadsInSharedMemory() - 1,
+            getConfiguration().getNumberOfThreadsInSharedMemory() - 1
+        );
     }
 }

@@ -33,4 +33,6 @@ public interface Computation<Result extends Mergeable<Result>> extends Serializa
     void destroy();
 
     boolean isDestroyed();
+
+    Computation<Result> cloneComputation();
 }
