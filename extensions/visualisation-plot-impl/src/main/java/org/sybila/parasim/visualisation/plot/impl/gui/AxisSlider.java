@@ -59,6 +59,9 @@ public class AxisSlider extends JPanel {
         slider = new JSlider(JSlider.VERTICAL);
         slider.addChangeListener(updateView);
         slider.setPaintLabels(true);
+        slider.setPaintTicks(true);
+        slider.setMinorTickSpacing(1);
+        slider.setSnapToTicks(true);
         add(slider, BorderLayout.CENTER);
     }
 
@@ -96,6 +99,8 @@ public class AxisSlider extends JPanel {
      */
     public void update(int ticks, int value) {
         slider.setModel(new DefaultBoundedRangeModel(value, 0, 0, ticks));
+
+        slider.setMajorTickSpacing(ticks);
 
         //create labels//
         Hashtable<Integer,JLabel> labels = new Hashtable<Integer, JLabel>();
