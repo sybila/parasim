@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
 import org.sybila.parasim.core.annotations.ApplicationScope;
 import org.sybila.parasim.core.annotations.Default;
@@ -55,7 +56,7 @@ public final class ManagerImpl implements Manager {
     private static final Logger LOGGER = Logger.getLogger(ManagerImpl.class);
     private ApplicationContext applicationContext;
     private Map<Class<? extends Annotation>, Collection<Class<?>>> extensionsByScope;
-    private Map<Context, Collection<Extension>> extensionsByContext = new HashMap<Context, Collection<Extension>>();
+    private Map<Context, Collection<Extension>> extensionsByContext = new ConcurrentHashMap<Context, Collection<Extension>>();
     private ParasimDescriptor descriptor;
 
     private ManagerImpl(final Collection<Class<?>> extensionClasses) {

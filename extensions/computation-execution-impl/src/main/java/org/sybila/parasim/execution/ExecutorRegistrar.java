@@ -31,7 +31,10 @@ import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.execution.api.SequentialExecutor;
+import org.sybila.parasim.execution.api.SharedMemoryExecutor;
 import org.sybila.parasim.execution.impl.SequentialExecutorImpl;
+import org.sybila.parasim.execution.impl.SharedMemoryExecutorImpl;
+import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -52,8 +55,13 @@ public class ExecutorRegistrar {
     }
 
     @Provide
-    public SequentialExecutor provideSequentialExecutor(java.util.concurrent.Executor runnableExecutor, ServiceFactory serviceFactory) {
-        return new SequentialExecutorImpl(contextEvent, serviceFactory, runnableExecutor);
+    public SequentialExecutor provideSequentialExecutor(java.util.concurrent.Executor runnableExecutor, ServiceFactory serviceFactory, ExecutionConfiguration configuration) {
+        return new SequentialExecutorImpl(contextEvent, serviceFactory, runnableExecutor, configuration);
+    }
+
+    @Provide
+    public SharedMemoryExecutor provideSharedMemoryExecutor(java.util.concurrent.Executor runnableExecutor, ServiceFactory serviceFactory, ExecutionConfiguration configuration) {
+        return new SharedMemoryExecutorImpl(contextEvent, serviceFactory, runnableExecutor, configuration);
     }
 
     @Provide

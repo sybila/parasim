@@ -17,20 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.computation.annotations;
+package org.sybila.parasim.execution.conf;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import org.sybila.parasim.core.annotations.Qualifier;
+import org.sybila.parasim.core.LoadableExtension;
+import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@Qualifier
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface ThreadId {}
+public class ExecutionConfigurationExtension implements LoadableExtension {
+
+    public void register(ExtensionBuilder builder) {
+        builder.extension(ExecutionConfigurator.class);
+    }
+}

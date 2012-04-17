@@ -23,6 +23,7 @@
                 <module>extensions/computation-density-api</module>
                 <module>extensions/computation-density-impl</module>
                 <module>extensions/computation-execution-api</module>
+                <module>extensions/computation-execution-conf</module>
                 <module>extensions/computation-execution-impl</module>
                 <module>extensions/computation-lifecycle-api</module>
                 <module>extensions/computation-lifecycle-impl</module>
@@ -32,7 +33,7 @@
                 <module>extensions/computation-verification-impl</module>
                 <module>extensions/visualisation-plot-api</module>
                 <module>extensions/visualisation-plot-impl</module>
-            </modules>    
+            </modules>
         </profile>
         <profile>
             <id>model</id>
@@ -43,13 +44,13 @@
                 <module>model/space</module>
                 <module>model/trajectory</module>
                 <module>model/verification</module>
-            </modules>    
+            </modules>
         </profile>
         <profile>
             <id>core</id>
             <modules>
                 <module>core</module>
-            </modules>    
+            </modules>
         </profile>
         <profile>
             <id>license</id>

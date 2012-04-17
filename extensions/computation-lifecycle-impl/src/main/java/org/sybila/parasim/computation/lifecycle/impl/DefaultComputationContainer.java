@@ -80,20 +80,4 @@ public class DefaultComputationContainer implements ComputationContainer {
         executions.put(computation, execution);
         return execution.execute();
     }
-
-    @Override
-    public void destroy(Computation<?> computation) {
-        Validate.notNull(computation);
-        if (computation.isDestroyed()) {
-            throw new IllegalArgumentException("The computation is already destroyed.");
-        }
-        Execution execution = executions.get(computation);
-        if (execution != null) {
-            if (execution.isRunning()) {
-                throw new IllegalStateException("Can't destroy the computation, because it's running.");
-            }
-            executions.remove(computation);
-        }
-        computation.destroy();
-    }
 }

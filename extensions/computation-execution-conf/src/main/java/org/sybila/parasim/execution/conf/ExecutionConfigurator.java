@@ -17,11 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.execution;
+package org.sybila.parasim.execution.conf;
 
 import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
 import org.sybila.parasim.core.extension.configuration.api.event.ConfigurationLoaded;
@@ -36,7 +37,10 @@ public class ExecutionConfigurator {
 
     public void provideConfiguration(@Observes ConfigurationLoaded event, ExtensionDescriptorMapper mapper, ParasimDescriptor descriptor) throws IllegalAccessException {
         ExecutionConfiguration configuration = new ExecutionConfiguration();
-        mapper.map(descriptor.getExtensionDescriptor("execution"), configuration);
+        ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("execution");
+        if (extensionDescriptor != null) {
+            mapper.map(extensionDescriptor, configuration);
+        }
         configurationInstance.set(configuration);
     }
 }

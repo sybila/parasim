@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <name>computation-lifecycle-impl</name>
-    
+
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
@@ -35,7 +35,7 @@
             <groupId>org.sybila.parasim.model</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
-        </dependency>        
+        </dependency>
     </dependencies>
 
 </project>

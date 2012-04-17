@@ -17,36 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.execution;
+package org.sybila.parasim.model.computation.annotations;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ExecutionConfiguration {
-
-    private int queueSize = 1;
-    private int coreThreadPoolSize = Runtime.getRuntime().availableProcessors();
-    private int maxThreadPoolSize = coreThreadPoolSize * 2;
-    private String defaultExecutorClass = "org.sybila.parasim.execution.sequential.SequentialExecutor";
-    private long keepThreadAliveTimeInSeconds = 5;
-
-    public int getQueueSize() {
-        return queueSize;
-    }
-
-    public String getDefaultExecutorClass() {
-        return defaultExecutorClass;
-    }
-
-    public int getCoreThreadPoolSize() {
-        return coreThreadPoolSize;
-    }
-
-    public int getMaxThreadPoolSize() {
-        return maxThreadPoolSize;
-    }
-
-    public long getKeepThreadAliveTimeInSeconds() {
-        return keepThreadAliveTimeInSeconds;
-    }
-}
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ThreadId {}
