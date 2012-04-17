@@ -40,6 +40,6 @@ public class ProjectionPlotterFactory implements PlotterFactory {
             return new EmptyPlotter();
         }
         OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
-        return new ProjectionPlotter(result, names, new OverlapLayer(result, extent), new RGCirclePointRenderer());
+        return new ProjectionPlotter(null, result, names, new OverlapLayer(result, extent), new RGCirclePointRenderer());
     }
 }

@@ -42,6 +42,7 @@ import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
+import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
 
 /**
  * Plots a 2D projection of a generally n-D space in a window. Exactly two axes
@@ -76,12 +77,12 @@ public class ProjectionPlotter extends JFrame implements Plotter {
      * @param pointSource Specifies manner of projection into 2D and contains rendered points.
      * @param pointAppearance Specifies point appearance.
      */
-    public ProjectionPlotter(VerificationResult result, PointVariableMapping names, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
+    public ProjectionPlotter(ResultPlotterConfiguration conf, VerificationResult result, PointVariableMapping names, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
         dimension = result.getPoint(0).getDimension();
         this.names = names;
         extent = AbstractVerificationResult.getEncompassingSpace(result);
 
-        init(pointAppearance);
+        init(pointAppearance, conf.getPlotterWindowWidth(), conf.getPlotterWindowHeight());
 
         metaLayers = pointSource;
         //initially, (0,1) are chosen//
@@ -93,11 +94,11 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         updateView();
     }
 
-    private void init(PointRenderer appearance) {
+    private void init(PointRenderer appearance, int width, int height) {
         ResourceBundle strings = ResourceBundle.getBundle(getClass().getSimpleName());
         setTitle(strings.getString("title"));
 
-        setSize(500, 250); //TODO move to configuration
+        setSize(width, height);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         //setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 

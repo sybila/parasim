@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
@@ -30,6 +30,7 @@ import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.ArrayVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
+import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
 import org.sybila.parasim.visualisation.plot.impl.layer.OverlapLayer;
 
 /**
@@ -64,9 +65,8 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
                 VerificationResult result = new ArrayVerificationResult(5, points, robustness);
 
                 OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
-                Plotter test = new ProjectionPlotter(result, new TestVariableMapping(), new OverlapLayer(result, extent), new RGCirclePointRenderer());
+                Plotter test = new ProjectionPlotter(new ResultPlotterConfiguration(), result, new TestVariableMapping(), new OverlapLayer(result, extent), new RGCirclePointRenderer());
                 test.plot();
-                System.out.println(extent.toString());
             }
         });
 
