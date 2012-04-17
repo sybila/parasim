@@ -115,7 +115,7 @@ public class OverlapLayer implements Point2DLayer, LayerFactory, LayerMetaFactor
 
     @Override
     public float maxX() {
-        return space.getMaxBounds().getValue(yAxis);
+        return space.getMaxBounds().getValue(xAxis);
     }
 
     @Override
