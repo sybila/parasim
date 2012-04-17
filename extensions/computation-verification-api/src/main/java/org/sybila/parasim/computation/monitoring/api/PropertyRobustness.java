@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.computation.monitoring.api;
 
-import org.sybila.parasim.model.distance.Distance;
+import org.sybila.parasim.model.trajectory.Distance;
 
 /**
  * Represents the robustness of a property on a single trajectory of an OdeSystem.
