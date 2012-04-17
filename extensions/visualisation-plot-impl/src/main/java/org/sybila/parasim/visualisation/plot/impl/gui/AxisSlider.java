@@ -27,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
-import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 
 /**
  * Slider used to choose discrete position on unprojected axes.
