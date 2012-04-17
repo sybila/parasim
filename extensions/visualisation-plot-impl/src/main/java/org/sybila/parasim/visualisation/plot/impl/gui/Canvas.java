@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
@@ -37,6 +37,7 @@ public class Canvas extends JPanel {
 
     //drawing constants
     protected static final Color BLANK = Color.WHITE;
+    private static final int PADDING = 10;
     //attributes
     private Point2DLayer points = null;
     private float xFact, yFact;
@@ -44,6 +45,7 @@ public class Canvas extends JPanel {
 
     /**
      * Create new canvas with given point appearance.
+     *
      * @param renderer Class handling point appearance.
      */
     public Canvas(PointRenderer renderer) {
@@ -90,15 +92,15 @@ public class Canvas extends JPanel {
      * Called to refresh transformation factors.
      */
     private void refreshFactors() {
-        xFact = getWidth() / (points.maxX() - points.minX());
-        yFact = getHeight() / (points.maxY() - points.minY());
+        xFact = (getWidth() - 2 * PADDING) / (points.maxX() - points.minX());
+        yFact = (getHeight() - 2 * PADDING) / (points.maxY() - points.minY());
     }
 
     private float transformX(float x) {
-        return (x - points.minX()) * xFact;
+        return (x - points.minX()) * xFact + PADDING;
     }
 
     private float transformY(float y) {
-        return getHeight() - (y - points.minY()) * yFact;
+        return getHeight() - (y - points.minY()) * yFact - PADDING;
     }
 }
