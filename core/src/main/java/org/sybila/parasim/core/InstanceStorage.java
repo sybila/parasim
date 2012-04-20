@@ -22,13 +22,39 @@ package org.sybila.parasim.core;
 import java.lang.annotation.Annotation;
 
 /**
+ * The storage is used by contexts to control instances belonging to the context.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface InstanceStorage {
 
+    /**
+     * Adds an instance to the storage. The key for the given instance is a pair
+     * of the given type and given qualifier.
+     *
+     * @param <T> type used for retrieving instance from the storage
+     * @param type used for retrieving instance from the storage
+     * @param qualifier used for retrieving instance from the storage
+     * @param value the given instance
+     * @return
+     */
     <T> InstanceStorage add(Class<T> type, Class<? extends Annotation> qualifier, T value);
 
+    /**
+     * Clears the storage. It means that all references to instances are dropped.
+     * @return
+     */
     InstanceStorage clear();
 
+    /**
+     * Retrieves an instance which has been already added to the storage.
+     *
+     * @param <T> type of the wanted instance
+     * @param type of the wanted instance
+     * @param qualifier of the wanted instance, if {@link org.sybila.parasim.core.annotations.Any} qualifier is used
+     * then qualifier isn't considered
+     * @return
+     * @throws org.sybila.parasim.core.AmbigousException if there are more than one candidates to retrieve
+     */
     <T> T get(Class<T> type, Class<? extends Annotation> qualifier);
 }

@@ -26,6 +26,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Instance which aren't annotated by any qualifier has this qualifier implicitly.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 @Qualifier

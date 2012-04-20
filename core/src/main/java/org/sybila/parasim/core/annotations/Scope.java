@@ -23,6 +23,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
+ * Use this annotation to create a new scope from some annotation.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 @Target(ElementType.ANNOTATION_TYPE)

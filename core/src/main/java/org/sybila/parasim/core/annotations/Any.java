@@ -26,7 +26,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Use this annotation to resolve instance of some type regardless of its
+ * qualifier.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @see {@link org.sybila.parasim.core.Manager}
  */
 @Qualifier
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

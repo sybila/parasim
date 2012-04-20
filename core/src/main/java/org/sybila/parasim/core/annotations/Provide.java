@@ -26,11 +26,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Use this annotation to annotate fields and methods to provide them.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @see {@link org.sybila.parasim.core.Manager}
+ * @see {@link org.sybila.parasim.core.extension.cdi.api.ServiceFactory#provideFieldsAndMethods(java.lang.Object, org.sybila.parasim.core.context.Context) }
+ * @see {@link org.sybila.parasim.core.ProvidingPoint}
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface  Provide {
+
+    /**
+     * Determines whether the provider will call the providing point every time,
+     * when someone calls the provided instance.
+     *
+     * @return TRUE if the provider should call the providing point when someone
+     * calls the provided instance, FALSE when provider is enabled to cache.
+     */
     boolean fresh() default false;
 }

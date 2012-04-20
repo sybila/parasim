@@ -22,10 +22,16 @@ package org.sybila.parasim.core;
 import org.sybila.parasim.core.context.Context;
 
 /**
+ * Point of the extension where the context event can be set.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface ContextEventPoint extends Typed {
 
-    void set(ContextEvent<? extends Context> value);
+    /**
+     * Sets the context event.
+     * @param value
+     */
+    void set(ContextEvent<? extends Context> contextEvent);
 
 }

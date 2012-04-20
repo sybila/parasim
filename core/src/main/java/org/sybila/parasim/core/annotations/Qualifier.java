@@ -27,11 +27,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Use this annotation to create a new qualifier from some annotation.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface  Qualifier {
+
+    /**
+     * Parent qualifier is used when {@link org.sybila.parasim.core.Manager} tries
+     * to resolve an instance. When the {@link org.sybila.parasim.core.Manager}
+     * doesn't find the instance with the given qualifier, it tries to find it
+     * with the parent one.
+     *
+     * @return parent qualifier
+     * @see {@link org.sybila.parasim.core.Manager#resolve(java.lang.Class, java.lang.Class, org.sybila.parasim.core.context.Context) }
+     */
     public Class<? extends Annotation> parent() default Empty.class;
 }

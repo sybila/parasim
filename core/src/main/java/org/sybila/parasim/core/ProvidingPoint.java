@@ -20,11 +20,25 @@
 package org.sybila.parasim.core;
 
 /**
+ * Part of the extensions which can be used as an provider. This providing points
+ * are searched by {@link org.sybila.parasim.core.annotations.Provide} annotation
+ * before fields and methods.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface ProvidingPoint extends Typed {
 
+    /**
+     * Determines whether the provider will call the providing point every time,
+     * when someone calls the provided instance.
+     *
+     * @return TRUE if the provider should call the providing point when someone
+     * calls the provided instance, FALSE when provider is enabled to cache.
+     */
     boolean fresh();
 
+    /**
+     * @return provided instance
+     */
     Object value();
 }

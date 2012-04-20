@@ -26,6 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Extensions annotated by this annotation are assigned to the
+ * {@link org.sybila.parasim.core.context.ApplicationContext}
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 @Scope

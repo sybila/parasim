@@ -22,12 +22,22 @@ package org.sybila.parasim.core;
 import java.lang.annotation.Annotation;
 
 /**
+ * Object providing an instance of the given type.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @param <I> type of the provided instance
  */
 public interface Provider<I> {
 
+    /**
+     * @return qualifier of the provided instance
+     * @see {@link org.sybila.parasim.core.annotations.Qualifier}
+     */
     Class<? extends Annotation> qualifier();
 
+    /**
+     * @return provided instance
+     */
     I get();
 
 }

@@ -30,7 +30,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * This annotation says that the annotated field should be injected.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @see {@link org.sybila.parasim.core.Manager}
+ * @see {@link org.sybila.parasim.core.extension.cdi.api.ServiceFactory}
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

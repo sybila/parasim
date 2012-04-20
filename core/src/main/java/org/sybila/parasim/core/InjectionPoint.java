@@ -20,10 +20,19 @@
 package org.sybila.parasim.core;
 
 /**
+ * Point which can be used to inject instance objects. Injection points are searched
+ * by {@link org.sybila.parasim.core.annotations.Inject} annotation before
+ * {@link org.sybila.parasim.core.Instance} fields.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface InjectionPoint extends Typed {
 
+    /**
+     * Sets the instance object to the injection point.
+     *
+     * @param value
+     */
     void set(Instance<?> value);
 
 }

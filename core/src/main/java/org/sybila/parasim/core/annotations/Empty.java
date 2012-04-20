@@ -26,6 +26,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * The manager won't resolve instances for this qualifier. It recommended to
+ * use this qualifier as an {@link org.sybila.parasim.core.annotations.Qualifier#parent() }
+ * for qualifier which has to be resolved exactly.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 @Qualifier

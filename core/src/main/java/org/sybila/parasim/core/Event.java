@@ -20,10 +20,17 @@
 package org.sybila.parasim.core;
 
 /**
+ * The event class can be used to fire events and communicate through the events
+ * with other extensions.
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Event<E> {
 
+    /**
+     * Fires event to all extensions belonging to the same contex like the extension
+     * which fires the given event.
+     * @param event
+     */
     void fire(E event);
 
 }

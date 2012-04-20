@@ -22,12 +22,27 @@ package org.sybila.parasim.core;
 import java.lang.reflect.Method;
 
 /**
+ * Methods observing events. These methods are searched in extension classes
+ * by {@link org.sybila.parasim.core.annotations.Observes} annotation before its first argument.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface ObserverMethod extends Typed {
 
+    /**
+     * Invokes the method. The first argument has to be an observing event object.
+     * It tries to resolve all arguments using the given manager, if there is an
+     * argument which can't be resolved, the method fails.
+     *
+     * @param manager
+     * @param event
+     * @throws IllegalStateException if the method arguments can't be resolved
+     */
     void invoke(Manager manager, Object event);
 
+    /**
+     * @return the method object
+     */
     Method getMethod();
 
 }

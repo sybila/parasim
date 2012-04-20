@@ -20,10 +20,20 @@
 package org.sybila.parasim.core;
 
 /**
+ * Instance object can be used to bind the service object to provide it for
+ * other extensions and to retrieve binded objects.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Instance<I> extends Provider<I> {
 
+    /**
+     * Sets the service object and provide it for other extensions. It also fires
+     * event containing the object to all observers belonging to the context
+     * where the extensions holding the injection point is placed.
+     *
+     * @param instance
+     */
     void set(I instance);
 
 }
