@@ -29,30 +29,23 @@ import org.sybila.parasim.visualisation.plot.impl.gui.PointRenderer;
  * Circle radius and color of valid and invalid points is specified.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class CirclePointRenderer implements PointRenderer {
+public class CirclePointRenderer extends ColorPointRenderer {
 
     private float radius;
-    private Color valid, invalid;
 
     /**
-     * Specifiy circle radius and color of valid and invalid points.
+     * Specify circle radius and color of valid and invalid points.
      * @param radius Circle radius.
      * @param valid Color of valid points.
      * @param invalid Color of invalid points.
      */
     public CirclePointRenderer(float radius, Color valid, Color invalid) {
+        super(valid, invalid);
         this.radius = radius;
-        this.valid = valid;
-        this.invalid = invalid;
     }
 
     @Override
-    public void drawPoint(Graphics2D canvas, float x, float y, float robustness) {
-        if (robustness > 0) {
-            canvas.setPaint(valid);
-        } else {
-            canvas.setPaint(invalid);
-        }
+    protected void drawPoint(Graphics2D canvas, float x, float y) {
         canvas.fill(new Ellipse2D.Float(x - radius, y - radius, 2 * radius, 2 * radius));
     }
 }
