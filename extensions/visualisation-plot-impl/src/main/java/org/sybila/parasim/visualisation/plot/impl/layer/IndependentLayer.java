@@ -15,13 +15,18 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class IndependentLayer extends OrthogonalBoundedLayer implements LayerMetaFactory, LayerFactory, Point2DLayer {
+public class IndependentLayer extends OrthogonalBoundedLayer implements LayerMetaFactory, LayerFactory, Point2DLayer {
 
-    protected static interface Layer {
+    public static interface Layer {
 
         public boolean isIn(float x);
 
         public float getValue();
+    }
+
+    public static interface Layering {
+
+        public List<Layer>[] computeLayers(VerificationResult result, OrthogonalSpace bounds);
     }
 
     protected static class LayerComparator implements Comparator<Layer> {
@@ -33,15 +38,18 @@ public abstract class IndependentLayer extends OrthogonalBoundedLayer implements
     private VerificationResult result;
     private int xAxis, yAxis;
     private List<float[]> layer;
+    private List<Layer>[] layers;
 
-    public IndependentLayer(VerificationResult result, OrthogonalSpace bounds) {
+    public IndependentLayer(VerificationResult result, OrthogonalSpace bounds, Layering layering) {
         super(bounds);
         this.result = result;
+        layers = layering.computeLayers(result, bounds);
         layer = new ArrayList<float[]>();
     }
 
-    protected abstract List<Layer> getLayers(int index); //will be called often
-    //expects layers to be sorted by their value
+    protected List<Layer> getLayers(int index) {
+        return layers[index];
+    }
 
     protected VerificationResult getResult() {
         return result;
@@ -92,7 +100,7 @@ public abstract class IndependentLayer extends OrthogonalBoundedLayer implements
         while ((i < list.size()) && (value < list.get(i).getValue())) {
             i++;
         }
-        return i-1;
+        return i - 1;
     }
 
     @Override
