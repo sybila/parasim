@@ -179,18 +179,15 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         axisSliders[xSelected].setActive(false);
         axisSliders[ySelected].setActive(false);
 
-        System.out.println("update");
         float[] values = new float[dimension];
         //get real values from axisSliders//
         for (int i = 0; i < dimension; i++) {
             values[i] = layers.getValue(i, axisSliders[i].getValue());
-            System.out.println("axis " + i + ": " + values[i]);
         }
         //create new LayerFactory//
         layers = metaLayers.getLayerFactory(xSelected, ySelected);
         //update values and maximums of axissliders//
         for (int i = 0; i < dimension; i++) {
-            System.out.println("axis " + i + ": " + layers.getTicks(i, values[i]));
             axisSliders[i].update(layers.ticks(i), layers.getTicks(i, values[i]));
         }
         updateView();
