@@ -44,6 +44,9 @@ public class IndependentLayer extends OrthogonalBoundedLayer implements LayerMet
         super(bounds);
         this.result = result;
         layers = layering.computeLayers(result, bounds);
+        if (layers.length != bounds.getDimension()) {
+            throw new IllegalArgumentException("Layering returned a wrong number of dimensions.");
+        }
         layer = new ArrayList<float[]>();
     }
 
