@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.visualisation.plot.impl.layer;
 
@@ -27,27 +27,28 @@ import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
- * Projection algorithm which renders all points projected into 2D
- * by omitting other coordinates. Whether the point is rendered is
- * independent on positions on unprojected axes.
+ * Projection algorithm which renders all points projected into 2D by omitting
+ * other coordinates. Whether the point is rendered is independent on positions
+ * on unprojected axes.
  *
  * Contains verification result.
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class OverlapLayer implements Point2DLayer, LayerFactory, LayerMetaFactory {
+public class OverlapLayer extends OrthogonalBoundedLayer implements Point2DLayer, LayerFactory, LayerMetaFactory {
 
     private VerificationResult src;
-    private OrthogonalSpace space;
     private int xAxis, yAxis;
 
     /**
      * Initialize contained verification result and bounding space.
+     *
      * @param source Verification result.
      * @param bounds Bounding space.
      */
     public OverlapLayer(VerificationResult source, OrthogonalSpace bounds) {
+        super(bounds);
         src = source;
-        space = bounds;
     }
 
     //LayerMetaFactory
@@ -109,22 +110,12 @@ public class OverlapLayer implements Point2DLayer, LayerFactory, LayerMetaFactor
     }
 
     @Override
-    public float minX() {
-        return space.getMinBounds().getValue(xAxis);
+    protected int getXAxis() {
+        return xAxis;
     }
 
     @Override
-    public float maxX() {
-        return space.getMaxBounds().getValue(xAxis);
-    }
-
-    @Override
-    public float minY() {
-        return space.getMinBounds().getValue(yAxis);
-    }
-
-    @Override
-    public float maxY() {
-        return space.getMaxBounds().getValue(yAxis);
+    protected int getYAxis() {
+        return yAxis;
     }
 }

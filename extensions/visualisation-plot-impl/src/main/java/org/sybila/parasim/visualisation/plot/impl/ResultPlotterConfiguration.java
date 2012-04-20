@@ -7,6 +7,7 @@ package org.sybila.parasim.visualisation.plot.impl;
 public class ResultPlotterConfiguration {
     private int plotterWindowHeight = 500;
     private int plotterWindowWidth = 750;
+    private float minimumDifference = 0.001f;
 
     public int getPlotterWindowHeight() {
         return plotterWindowHeight;
@@ -14,6 +15,10 @@ public class ResultPlotterConfiguration {
 
     public int getPlotterWindowWidth() {
         return plotterWindowWidth;
+    }
+
+    public float getMinimumDifference() {
+        return minimumDifference;
     }
 
 }
