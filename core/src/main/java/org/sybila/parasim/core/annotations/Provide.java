@@ -42,6 +42,8 @@ public @interface  Provide {
      * Determines whether the provider will call the providing point every time,
      * when someone calls the provided instance.
      *
+     * <strong>WARNING: Type of the provider has to be an interface.</strong>
+     *
      * @return TRUE if the provider should call the providing point when someone
      * calls the provided instance, FALSE when provider is enabled to cache.
      */
