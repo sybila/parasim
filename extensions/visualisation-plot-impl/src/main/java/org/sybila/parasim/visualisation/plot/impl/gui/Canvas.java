@@ -25,6 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
@@ -37,7 +38,7 @@ public class Canvas extends JPanel {
 
     //drawing constants
     protected static final Color BLANK = Color.WHITE;
-    private static final int PADDING = 10;
+    public static final int PADDING = 10;
     //attributes
     private Point2DLayer points = null;
     private float xFact, yFact;
@@ -50,6 +51,7 @@ public class Canvas extends JPanel {
      */
     public Canvas(PointRenderer renderer) {
         render = renderer;
+        setBorder(new LineBorder(Color.BLACK));
         addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -63,7 +65,7 @@ public class Canvas extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         // clean //
         Graphics2D canvas = (Graphics2D) g;
         canvas.setBackground(BLANK);
