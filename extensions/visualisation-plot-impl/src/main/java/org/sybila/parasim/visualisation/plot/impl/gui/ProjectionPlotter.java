@@ -4,23 +4,25 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +63,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private Canvas canvas;
     private AxisChooser xAxis, yAxis;
     private AxisSlider[] axisSliders;
+    private Rule hRule, vRule;
     //variables//
     private PointVariableMapping names;
     private OrthogonalSpace extent;
@@ -69,12 +72,13 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private LayerFactory layers;
 
     /**
-     * Creates new plotter on a given verification result with specified axes labels,
-     * algorithm of projection into 2D and point appearance.
+     * Creates new plotter on a given verification result with specified axes
+     * labels, algorithm of projection into 2D and point appearance.
      *
      * @param result Result of verification. Is not necessarily rendered.
      * @param names Labels of axes.
-     * @param pointSource Specifies manner of projection into 2D and contains rendered points.
+     * @param pointSource Specifies manner of projection into 2D and contains
+     * rendered points.
      * @param pointAppearance Specifies point appearance.
      */
     public ProjectionPlotter(ResultPlotterConfiguration conf, VerificationResult result, PointVariableMapping names, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
@@ -82,7 +86,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         this.names = names;
         extent = AbstractVerificationResult.getEncompassingSpace(result);
 
-        init(pointAppearance, conf.getPlotterWindowWidth(), conf.getPlotterWindowHeight());
+        init(conf, pointAppearance, conf.getPlotterWindowWidth(), conf.getPlotterWindowHeight());
 
         metaLayers = pointSource;
         //initially, (0,1) are chosen//
@@ -91,10 +95,11 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         for (int i = 0; i < dimension; i++) {
             axisSliders[i].update(layers.ticks(i), 0);
         }
+        updateRules(0, 1);
         updateView();
     }
 
-    private void init(PointRenderer appearance, int width, int height) {
+    private void init(ResultPlotterConfiguration conf, PointRenderer appearance, int width, int height) {
         ResourceBundle strings = ResourceBundle.getBundle(getClass().getSimpleName());
         setTitle(strings.getString("title"));
 
@@ -104,17 +109,47 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
         setLayout(new BorderLayout());
 
-        initCanvas(appearance);
+        initCanvas(appearance, conf);
         initSliders();
         initAxes(strings.getString("x_axis"), strings.getString("y_axis"));
     }
 
-    private void initCanvas(PointRenderer appearance) {
+    private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
         canvas = new Canvas(appearance);
-        JPanel canvasPanel = new JPanel(new BorderLayout());
+        hRule = new Rule(conf, Rule.Orientation.HORIZONTAL);
+        vRule = new Rule(conf, Rule.Orientation.VERTICAL);
+
+        JPanel canvasPanel = new JPanel(new GridBagLayout());
         canvasPanel.setBorder(new EmptyBorder(PADDING));
-        canvasPanel.add(canvas, BorderLayout.CENTER);
+
+        GridBagConstraints pos = getDefaultConstraints();
+        pos.weightx = 1;
+        pos.weighty = 1;
+        pos.gridx = 1;
+        pos.gridy = 0;
+        canvasPanel.add(canvas, pos);
+
+        pos = getDefaultConstraints();
+        pos.gridx = 0;
+        pos.gridy = 0;
+        canvasPanel.add(vRule, pos);
+
+        pos = getDefaultConstraints();
+        pos.gridx = 1;
+        pos.gridy = 1;
+        canvasPanel.add(hRule, pos);
+
         add(canvasPanel, BorderLayout.CENTER);
+    }
+
+    private GridBagConstraints getDefaultConstraints() {
+        GridBagConstraints result = new GridBagConstraints();
+        result.gridwidth = 1;
+        result.gridheight = 1;
+        result.fill = GridBagConstraints.BOTH;
+        result.weightx = 0;
+        result.weighty = 0;
+        return result;
     }
 
     private void initSliders() {
@@ -190,6 +225,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         for (int i = 0; i < dimension; i++) {
             axisSliders[i].update(layers.ticks(i), layers.getTicks(i, values[i]));
         }
+        updateRules(xSelected, ySelected);
         updateView();
     }
 
@@ -203,6 +239,11 @@ public class ProjectionPlotter extends JFrame implements Plotter {
             projections.put(i, axisSliders[i].getValue());
         }
         canvas.setPoints(layers.getLayer(projections));
+    }
+
+    private void updateRules(int selHor, int selVer) {
+        hRule.update(extent.getMinBounds().getValue(selHor), extent.getMaxBounds().getValue(selHor));
+        vRule.update(extent.getMinBounds().getValue(selVer), extent.getMaxBounds().getValue(selVer));
     }
 
     @Override
