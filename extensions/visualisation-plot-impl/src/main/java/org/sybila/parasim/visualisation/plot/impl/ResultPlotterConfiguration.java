@@ -9,6 +9,8 @@ public class ResultPlotterConfiguration {
     private int plotterWindowHeight = 500;
     private int plotterWindowWidth = 750;
     private float minimumDifference = 0.001f;
+    private int statusFontSize = 12;
+    private int statusDecimalDigits = 3;
     //RULE//
     private int ruleWidth = 45;
     private int ruleHeight = 30;
@@ -28,6 +30,14 @@ public class ResultPlotterConfiguration {
 
     public float getMinimumDifference() {
         return minimumDifference;
+    }
+
+    public int getStatusFontSize() {
+        return statusFontSize;
+    }
+
+    public int getStatusDecimalDigits() {
+        return statusDecimalDigits;
     }
 
     public int getRuleWidth() {

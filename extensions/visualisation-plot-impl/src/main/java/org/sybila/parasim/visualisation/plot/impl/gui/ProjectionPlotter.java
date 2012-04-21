@@ -64,6 +64,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private AxisChooser xAxis, yAxis;
     private AxisSlider[] axisSliders;
     private Rule hRule, vRule;
+    private StatusBar status;
     //variables//
     private PointVariableMapping names;
     private OrthogonalSpace extent;
@@ -109,9 +110,9 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
         setLayout(new BorderLayout());
 
-        initCanvas(appearance, conf);
         initSliders();
-        initAxes(strings.getString("x_axis"), strings.getString("y_axis"));
+        initAxes(conf, strings.getString("x_axis"), strings.getString("y_axis"));
+        initCanvas(appearance, conf);
     }
 
     private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
@@ -175,7 +176,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         add(sliders, BorderLayout.LINE_END);
     }
 
-    private void initAxes(String xAxe, String yAxe) {
+    private void initAxes(ResultPlotterConfiguration conf, String xAxe, String yAxe) {
         AxisChooser[] axisChoosers = AxisChooser.getPairedAxes(dimension, names, new ActionListener() {
 
             @Override
@@ -185,6 +186,9 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         });
         xAxis = axisChoosers[0];
         yAxis = axisChoosers[1];
+
+        JPanel bottom = new JPanel();
+        bottom.setLayout(new BoxLayout(bottom, BoxLayout.PAGE_AXIS));
 
         axes = new JPanel();
         axes.setLayout(new BoxLayout(axes, BoxLayout.LINE_AXIS));
@@ -197,7 +201,12 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         axes.add(Box.createRigidArea(new Dimension(INSET, INSET)));
         axes.add(yAxis);
         axes.add(Box.createHorizontalGlue());
-        add(axes, BorderLayout.PAGE_END);
+        bottom.add(axes);
+
+        status = new StatusBar(conf, dimension, names);
+        bottom.add(status);
+
+        add(bottom, BorderLayout.PAGE_END);
     }
 
     /**
@@ -236,7 +245,9 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private void updateView() {
         Map<Integer, Integer> projections = new HashMap<Integer, Integer>();
         for (int i = 0; i < dimension; i++) {
-            projections.put(i, axisSliders[i].getValue());
+            int ticks = axisSliders[i].getValue();
+            projections.put(i, ticks);
+            status.setValue(i, layers.getValue(i, ticks));
         }
         canvas.setPoints(layers.getLayer(projections));
     }
