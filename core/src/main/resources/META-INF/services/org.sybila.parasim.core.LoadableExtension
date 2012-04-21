@@ -1,2 +1,1 @@
 org.sybila.parasim.core.extension.cdi.ServiceFactoryExtension
-org.sybila.parasim.core.extension.configuration.DescriptorLoaderExtension

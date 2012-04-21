@@ -22,10 +22,10 @@ package org.sybila.parasim.execution.conf;
 import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
-import org.sybila.parasim.core.extension.configuration.api.event.ConfigurationLoaded;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -35,7 +35,7 @@ public class ExecutionConfigurator {
     @Inject
     private Instance<ExecutionConfiguration> configurationInstance;
 
-    public void provideConfiguration(@Observes ConfigurationLoaded event, ExtensionDescriptorMapper mapper, ParasimDescriptor descriptor) throws IllegalAccessException {
+    public void provideConfiguration(@Observes ManagerStarted event, ExtensionDescriptorMapper mapper, ParasimDescriptor descriptor) throws IllegalAccessException {
         ExecutionConfiguration configuration = new ExecutionConfiguration();
         ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("execution");
         if (extensionDescriptor != null) {

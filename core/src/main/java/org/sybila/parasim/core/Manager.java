@@ -86,6 +86,11 @@ public interface Manager {
     void inject(Extension target);
 
     /**
+     * Checks whether the manager is running
+     */
+    boolean isRunning();
+
+    /**
      * Tries to resolve the instance determined by a pair of the type and qualifier.
      *
      * @param <T> type of the wanted instance

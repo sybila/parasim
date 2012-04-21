@@ -32,16 +32,19 @@ public class ExtensionDescriptorImpl implements ExtensionDescriptor {
 
     private String name;
     private Map<String, Property> properties = new HashMap<String, Property>();
+    private String propertyNamePrefix;
 
     public ExtensionDescriptorImpl(String name) {
         if (name == null) {
             throw new IllegalArgumentException("The parameter [name] is null.");
         }
         this.name = name;
+        this.propertyNamePrefix = "parasim." + name + ".";
     }
 
     public boolean containsProperty(String name) {
-        return properties.containsKey(name);
+        String propertyName = propertyNamePrefix + camelCaseToPropertyName(name);
+        return System.getProperty(propertyName) != null || properties.containsKey(name);
     }
 
     public String getName() {
@@ -53,11 +56,15 @@ public class ExtensionDescriptorImpl implements ExtensionDescriptor {
     }
 
     public String getProperty(String name, String defaultValue) {
+        String propertyName = propertyNamePrefix + camelCaseToPropertyName(name);
         Property prop = properties.get(name);
+        if (prop == null) {
+            return System.getProperty(propertyName, defaultValue);
+        }
         if (!(prop.getValue() instanceof String)) {
             throw new IllegalStateException("The value of the property is not String.");
         }
-        return prop == null ? defaultValue : (String) prop.getValue();
+        return System.getProperty(propertyName, (String) prop.getValue());
     }
 
     public String[] getPropertyAsArray(String name) {
@@ -91,4 +98,14 @@ public class ExtensionDescriptorImpl implements ExtensionDescriptor {
         return properties.values().iterator();
     }
 
+    private static String camelCaseToPropertyName(String value) {
+        return value.replaceAll(
+              String.format("%s|%s|%s",
+                 "(?<=[A-Z])(?=[A-Z][a-z])",
+                 "(?<=[^A-Z])(?=[A-Z])",
+                 "(?<=[A-Za-z])(?=[^A-Za-z])"
+              ),
+              "."
+           ).toLowerCase();
+    }
 }

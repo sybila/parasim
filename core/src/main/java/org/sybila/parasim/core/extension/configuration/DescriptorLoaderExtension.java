@@ -19,17 +19,35 @@
  */
 package org.sybila.parasim.core.extension.configuration;
 
-import org.sybila.parasim.core.LoadableExtension;
-import org.sybila.parasim.core.extension.configuration.impl.DescriptorLoaderRegistrar;
-import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
+import java.io.IOException;
+import org.sybila.parasim.core.Event;
+import org.sybila.parasim.core.Instance;
+import org.sybila.parasim.core.annotations.Inject;
+import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.event.ManagerProcessing;
+import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.extension.configuration.api.event.ConfigurationLoaded;
+import org.sybila.parasim.core.extension.configuration.impl.ExtensionDescriptorMapperImpl;
+import org.sybila.parasim.core.extension.configuration.impl.ParasimDescriptorImpl;
+import org.xml.sax.SAXException;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class DescriptorLoaderExtension implements LoadableExtension {
+public class DescriptorLoaderExtension {
 
-    public void register(ExtensionBuilder builder) {
-        builder.extension(DescriptorLoaderRegistrar.class);
+    @Inject
+    private Instance<ParasimDescriptor> parasimDescriptor;
+    @Inject
+    private Instance<ExtensionDescriptorMapper> extensionDescriptorMapper;
+    @Inject
+    private Event<ConfigurationLoaded> event;
+
+    public void loadDescriptor(@Observes ManagerProcessing event) throws IOException, SAXException {
+        parasimDescriptor.set(ParasimDescriptorImpl.fromXMLFile("parasim.config.file", "parasim.xml"));
+        extensionDescriptorMapper.set(new ExtensionDescriptorMapperImpl());
+        this.event.fire(new ConfigurationLoaded());
     }
 
 }

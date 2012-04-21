@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.core.InvocationException;
 import org.sybila.parasim.core.extension.loader.api.ExtensionLoader;
 import org.sybila.parasim.core.LoadableExtension;
@@ -39,7 +40,7 @@ import org.sybila.parasim.core.LoadableExtension;
 public class SPIExtensionLoader implements ExtensionLoader {
 
     private static final String SERVICES = "META-INF" + File.separator + "services";
-    private static final Logger LOGGER = Logger.getLogger(SPIExtensionLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SPIExtensionLoader.class);
 
     public Collection<LoadableExtension> load() {
         Collection<LoadableExtension> extensions = new ArrayList<LoadableExtension>();

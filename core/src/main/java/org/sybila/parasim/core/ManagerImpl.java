@@ -34,7 +34,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.log4j.Logger;
+import org.apache.log4j.Appender;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.spi.LoggingEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.core.annotations.ApplicationScope;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Scope;
@@ -45,19 +50,30 @@ import org.sybila.parasim.core.event.Before;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.event.ManagerStopping;
-import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.extension.configuration.DescriptorLoaderExtension;
 import org.sybila.parasim.core.extension.loader.ExtensionLoaderExtension;
+import org.sybila.parasim.core.extension.logging.LoggingExtension;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public final class ManagerImpl implements Manager {
 
-    private static final Logger LOGGER = Logger.getLogger(ManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManagerImpl.class);
+    private static final Appender NULL_APPENDER  = new AppenderSkeleton() {
+        @Override
+        protected void append(LoggingEvent le) {
+        }
+        public void close() {
+        }
+        public boolean requiresLayout() {
+            return false;
+        }
+    };
     private ApplicationContext applicationContext;
     private Map<Class<? extends Annotation>, Collection<Class<?>>> extensionsByScope;
     private Map<Context, Collection<Extension>> extensionsByContext = new ConcurrentHashMap<Context, Collection<Extension>>();
-    private ParasimDescriptor descriptor;
+    private boolean running = false;
 
     private ManagerImpl(final Collection<Class<?>> extensionClasses) {
         if (extensionClasses == null) {
@@ -67,14 +83,15 @@ public final class ManagerImpl implements Manager {
     }
 
     public static Manager create() throws Exception {
-        return create(ExtensionLoaderExtension.class);
+        return create(DescriptorLoaderExtension.class, ExtensionLoaderExtension.class, LoggingExtension.class);
     }
 
     public static Manager create(Class<?>... extensionClasses) throws Exception {
         return create(Arrays.asList(extensionClasses));
     }
 
-    public static Manager create(final Collection<Class<?>> extensionClasses) throws Exception {
+    protected static Manager create(final Collection<Class<?>> extensionClasses) throws Exception {
+        BasicConfigurator.configure(NULL_APPENDER);
         // create manager
         ManagerImpl manager = new ManagerImpl(extensionClasses);
         // create application context and prepare its extensions
@@ -86,6 +103,7 @@ public final class ManagerImpl implements Manager {
         );
         // fire manager processing
         manager.fireProcessing(manager.applicationContext);
+        LOGGER.debug("loading loadable extensions");
         // load providers
         for (Extension extension: manager.extensionsByContext.get(manager.applicationContext)) {
             for (ProvidingPoint providingPoint: extension.getProvidingPoints()) {
@@ -101,7 +119,7 @@ public final class ManagerImpl implements Manager {
 
     public <T> void bind(final Class<T> type, Class<? extends Annotation> qualifier, Context context, T value) {
         Class<? extends Annotation> nonProxyQualifier = (Class<? extends Annotation>) (Proxy.isProxyClass(qualifier) ? qualifier.getInterfaces()[0] : qualifier);
-        printIfVerbose("bind [" + type + "] [" + nonProxyQualifier.getSimpleName() + "] as [" + value.getClass().getName() + "] to context [" + context.getClass().getSimpleName() + "]");
+        LOGGER.debug("bind [{}] [{}] as [{}] to context [{}]", new Object[] {type, nonProxyQualifier.getSimpleName(), value.getClass().getName(), context.getClass().getSimpleName() });
         context.getStorage().add(type, nonProxyQualifier, value);
         fire(value, context);
     }
@@ -128,10 +146,10 @@ public final class ManagerImpl implements Manager {
             for (ObserverMethod method: extension.getObservers()) {
                 if (getType(method.getType()).isAssignableFrom(event.getClass())) {
                     try {
-                        printIfVerbose("fire event [" + event + "] to [" + extension + "#" + method.getMethod().getName() + "()]");
+                        LOGGER.debug("fire event [{}] to [{}#{}()]", new Object[] {event, extension, method.getMethod().getName()});
                         method.invoke(this, event);
                     } catch(Exception e) {
-                        LOGGER.warn("There is an error during firing event.", e);
+                        LOGGER.warn("There is an error during firing event ["+event+"] to ["+extension+"#"+method.getMethod().getName()+"()].", e);
                     }
                 }
             }
@@ -175,10 +193,14 @@ public final class ManagerImpl implements Manager {
         }
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
     public <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier, Context context) {
         Class<? extends Annotation> nonProxyQualifier = (Class<? extends Annotation>) (Proxy.isProxyClass(qualifier) ? qualifier.getInterfaces()[0] : qualifier);
         T result = context.resolve(type, nonProxyQualifier);
-        printIfVerbose("resolve [" + type + "] [" + nonProxyQualifier.getSimpleName() + "] as [" + (result == null ? null : result.getClass()) + "] in [" + context.getClass().getSimpleName() + "]");
+        LOGGER.debug("resolve [{}] [{}] as [{}] in [{}]", new Object[] {type, nonProxyQualifier.getSimpleName(), (result == null ? null : result.getClass()), context.getClass().getSimpleName()});
         return result;
     }
 
@@ -198,18 +220,20 @@ public final class ManagerImpl implements Manager {
             // destroy manager
             extensionsByContext.clear();
             extensionsByScope.clear();
+            LOGGER.debug("manager shut down");
+            running = false;
         }
     }
 
     public void start() {
         fire(new ManagerStarted(), applicationContext);
-        descriptor = resolve(ParasimDescriptor.class, Default.class, getRootContext());
-        printIfVerbose("manager started");
-        if (isVerbose()) {
+        if (LOGGER.isDebugEnabled()) {
             for (Extension extension: extensionsByContext.get(applicationContext)) {
-                printIfVerbose("extension " + extension + " loaded to application context");
+                LOGGER.debug("extension {} loaded to application context",  extension);
             }
+            LOGGER.debug("manager started");
         }
+        running = true;
     }
 
     private void finalizeContext(Context context, boolean remove) {
@@ -324,16 +348,5 @@ public final class ManagerImpl implements Manager {
             return annotation.annotationType();
         }
         return ApplicationScope.class;
-    }
-
-    private boolean isVerbose() {
-//        return true;
-        return descriptor != null && descriptor.isVerbose();
-    }
-
-    private void printIfVerbose(String message) {
-        if (isVerbose()) {
-            System.out.println("[PARASIM MANGER] " + message);
-        }
     }
 }

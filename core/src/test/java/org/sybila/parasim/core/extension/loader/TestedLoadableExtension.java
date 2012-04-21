@@ -40,23 +40,23 @@ import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestedLoadableExtension implements LoadableExtension {
-    
+
     @Inject
     private Instance<String> toInject;
-    
+
     public void observesManagerStarted(@Observes ManagerStarted event) {
         TestExtensionLoaderExtension.managerStarted = System.currentTimeMillis();
         toInject.set("HELLO");
     }
-    
+
     public void observesServiceFactory(@Observes ServiceFactory serviceFactory) {
         TestServiceFactoryExtension.serviceFactory = serviceFactory;
     }
-    
-    public void observesExtensionDescriptorMapper(@Observes ExtensionDescriptorMapper mapper) {
+
+    public void observesExtensionDescriptorMapper(@Observes ManagerStarted event, ExtensionDescriptorMapper mapper) {
         TestExtensionDescriptorMapperImpl.mapper = mapper;
     }
-    
+
     public void register(ExtensionBuilder builder) {
         try {
             builder.extension(TestedLoadableExtension.class);
@@ -66,5 +66,5 @@ public class TestedLoadableExtension implements LoadableExtension {
             Logger.getLogger(TestedLoadableExtension.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }
