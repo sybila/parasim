@@ -39,7 +39,7 @@ public class ExtensionDescriptorImpl implements ExtensionDescriptor {
             throw new IllegalArgumentException("The parameter [name] is null.");
         }
         this.name = name;
-        this.propertyNamePrefix = "parasim." + name + ".";
+        this.propertyNamePrefix = "parasim." + camelCaseToPropertyName(name) + ".";
     }
 
     public boolean containsProperty(String name) {
