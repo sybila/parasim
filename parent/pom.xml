@@ -5,12 +5,13 @@
     <parent>
         <groupId>org.sybila</groupId>
         <artifactId>sybila-parent</artifactId>
-        <version>2</version>
+        <version>3-SNAPSHOT</version>
     </parent>
 
     <properties>
         <version.sybila.checkstyle>1</version.sybila.checkstyle>
         <version.maven.license.plugin>1.9.0</version.maven.license.plugin>
+        <version.slf4j>1.0.1</version.slf4j>
         <license.year>2011 - 2012</license.year>
         <license.name>Sybila, Systems Biology Laboratory</license.name>
     </properties>
@@ -27,7 +28,7 @@
         <connection>scm:git:git://github.com/sybila/parasim.git</connection>
         <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
         <url>https://github.com/sybila/parasim</url>
-    </scm>    
+    </scm>
     <distributionManagement>
         <site>
             <id>sybila-site-ssh</id>
@@ -39,14 +40,14 @@
     <repositories>
         <repository>
             <id>sybila-maven-http</id>
-            <url>http://sybila.fi.muni.cz/public/maven</url> 
+            <url>http://sybila.fi.muni.cz/public/maven</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
                 <updatePolicy>daily</updatePolicy>
                 <enabled>true</enabled>
-            </snapshots>        
+            </snapshots>
         </repository>
         <repository>
             <id>javaoctave-maven</id>
@@ -57,9 +58,22 @@
             <snapshots>
                 <updatePolicy>daily</updatePolicy>
                 <enabled>true</enabled>
-            </snapshots>        
-        </repository>        
+            </snapshots>
+        </repository>
     </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${version.slf4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+    </dependencies>
 
     <profiles>
         <profile>
@@ -117,7 +131,7 @@
                             <includeTestSourceDirectory>false</includeTestSourceDirectory>
                         </configuration>
                     </plugin>
-                </plugins>                
+                </plugins>
             </build>
         </profile>
         <profile>
@@ -175,7 +189,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>                    
+                    </plugin>
                     <plugin>
                         <groupId>com.mycila.maven-license-plugin</groupId>
                         <artifactId>maven-license-plugin</artifactId>

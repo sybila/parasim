@@ -26,6 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Use this annotation to annotate the first arguments of some method to define
+ * it as an {@link org.sybila.parasim.core.ObserverMethod}
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 @Target({ElementType.PARAMETER})

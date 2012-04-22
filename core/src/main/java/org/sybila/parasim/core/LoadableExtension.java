@@ -22,10 +22,20 @@ package org.sybila.parasim.core;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 
 /**
+ * Classes implemented this interface and mentioned in /META-INF.services/org.sybila.parasim.core.LoadableExtension
+ * (full qualified class name per line) are loaded by {@link org.sybila.parasim.core.ExtensionLoader}.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface LoadableExtension {
 
+    /**
+     * This method is called when the class is loaded by
+     * {@link org.sybila.parasim.core.extension.loader.api.ExtensionLoader}
+     * and provide registering other extensions.
+     *
+     * @param builder
+     */
     void register(ExtensionBuilder builder);
 
 }

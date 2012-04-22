@@ -24,10 +24,10 @@ import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
-import org.sybila.parasim.core.extension.configuration.api.event.ConfigurationLoaded;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.api.event.ResultPlotterRegistered;
 
@@ -42,7 +42,7 @@ public class ResultPlotterRegistrar {
     @Inject
     private Instance<ResultPlotterConfiguration> config;
 
-    public void registerConfiguration(@Observes ConfigurationLoaded confEvent, ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
+    public void registerConfiguration(@Observes ManagerStarted event, ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
         ResultPlotterConfiguration conf = new ResultPlotterConfiguration();
         ExtensionDescriptor extDesc = descriptor.getExtensionDescriptor("result_plotter");
         if (extDesc != null) {

@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>computation-simulation-api</name>
-    
+
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>

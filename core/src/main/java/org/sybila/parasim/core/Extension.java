@@ -27,15 +27,58 @@ import org.sybila.parasim.core.context.Context;
  */
 public interface Extension {
 
+    /**
+     * Context where the extensions is placed. The context is searched by
+     * {@link org.sybila.parasim.core.annotations.Scope}
+     * annotation placed before the extension class.
+     *
+     * @return the context where the extension is placed.
+     */
     Context getContext();
 
+    /**
+     * Points which can be used to inject context event objects. These points
+     * are searched by {@link org.sybila.parasim.core.Inject} annotation placed
+     * before the {@link org.sybila.parasim.core.ContextEvent}
+     * class fields.
+     *
+     * @return context events points
+     */
     Collection<ContextEventPoint> getContextEventPoints();
 
+    /**
+     * Points which can be used to inject instances objects. These points are
+     * searched by {@link org.sybila.parasim.core.annotations.Inject} annotation
+     * placed before the {@link org.sybila.parasim.core.Instance} class fields.
+     *
+     * @return injection points
+     */
     Collection<InjectionPoint> getInjectionPoints();
 
+    /**
+     * Points which can be used to inject event objects. These points are searched
+     * by {@link org.sybila.parasim.core.annotations.Inject} annotation placed before the {@link org.sybila.parasim.core.Event}
+     * class fields.
+     *
+     * @return event points
+     */
     Collection<EventPoint> getEventPoints();
 
+    /**
+     * Methods observing some events. These observers are searched by
+     * {@link org.sybila.parasim.core.annotations.Observes}
+     * annotation placed before the first method parameter.
+     *
+     * @return methods observing some events
+     */
     Collection<ObserverMethod> getObservers();
 
+    /**
+     * Methods and fields providing service instances. These providers are searched
+     * by {@link org.sybila.parasim.core.annotations.Provide} annotation placed
+     * before the class field or method.
+     *
+     * @return extension providers
+     */
     Collection<ProvidingPoint> getProvidingPoints();
 }

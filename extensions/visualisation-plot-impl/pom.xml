@@ -15,7 +15,7 @@
     <packaging>jar</packaging>
 
     <name>visualisation-plot-impl</name>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>

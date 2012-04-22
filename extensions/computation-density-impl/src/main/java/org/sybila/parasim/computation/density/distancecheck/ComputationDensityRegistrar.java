@@ -26,7 +26,7 @@ import org.sybila.parasim.computation.density.spawn.cpu.OneAndSurroundingsTrajec
 import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.event.ManagerStarted;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -38,7 +38,7 @@ public class ComputationDensityRegistrar {
     @Inject
     private Instance<TrajectorySpawner> spawner;
 
-    public void registerDistanceChecker(@Observes ParasimDescriptor descriptor) {
+    public void registerDistanceChecker(@Observes ManagerStarted event) {
         distanceChecker.set(new OnePairDistanceChecker());
         spawner.set(new OneAndSurroundingsTrajectorySpawner());
     }

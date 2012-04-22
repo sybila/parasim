@@ -20,10 +20,16 @@
 package org.sybila.parasim.core;
 
 /**
+ * Point of the extension where the event instance can be set.
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface EventPoint extends Typed {
 
-    void set(Event<?> value);
+    /**
+     * Sets event object which can be used to fire events to other extensions
+     * belonging to the same context.
+     * @param event
+     */
+    void set(Event<?> event);
 
 }

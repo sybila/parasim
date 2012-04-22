@@ -22,12 +22,37 @@ package org.sybila.parasim.core;
 import org.sybila.parasim.core.context.Context;
 
 /**
+ * The events to control context life cycle.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface ContextEvent<C extends Context> {
 
+    /**
+     * <p>Initializes the given context:</p>
+     * <ol>
+     * <li>sets parent (parent is context where the extension which fires the event is placed),</li>
+     * <li>activates context,</li>
+     * <li>fires {@link org.sybila.parasim.core.event.Before} in the parent context,</li>
+     * <li>initializes all extensions belonging to the given context (depends on the scope),</li>
+     * <li>binds providers of all extensions belonging to the given context,</li>
+     * <li>fires {@link org.sybila.parasim.core.event.Before} in the given context and its parent</li>
+     * </ol>
+     * @param context
+     */
     void initialize(C context);
 
+    /**
+     * <p>Finalizes the given context:</p>
+     * <ol>
+     * <li>sets parent (parent is context where the extension which fires the event is placed),</li>
+     * <li>fires {@link org.sybila.parasim.core.event.After} in the parent context,</li>
+     * <li>fires {@link org.sybila.parasim.core.event.After} in the given context,</li>
+     * <li>destroys the given context,</li>
+     * <li>drops all extension instances belonging to the context</li>
+     * </ol>
+     * @param context
+     */
     void finalize(C context);
 
 }

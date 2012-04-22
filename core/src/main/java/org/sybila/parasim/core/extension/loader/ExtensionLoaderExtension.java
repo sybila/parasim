@@ -20,7 +20,8 @@
 package org.sybila.parasim.core.extension.loader;
 
 import java.util.Collection;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.event.ManagerProcessing;
@@ -34,7 +35,7 @@ import org.sybila.parasim.core.extension.loader.impl.SPIExtensionLoader;
  */
 public class ExtensionLoaderExtension {
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionLoaderExtension.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtensionLoaderExtension.class);
 
     private ExtensionLoader extensionLoader;
 
@@ -52,7 +53,6 @@ public class ExtensionLoaderExtension {
     public void load(@Observes ManagerProcessing event) {
         ExtensionBuilder builder = createExtensionBuilder(event);
         for (LoadableExtension extension: locateExtensions()) {
-            LOGGER.info("Loading " + extension.getClass().getName());
             try {
                 extension.register(builder);
             } catch(Exception e) {
@@ -69,7 +69,7 @@ public class ExtensionLoaderExtension {
         return new ExtensionBuilder() {
 
             public void extension(Class<?> extension) {
-                LOGGER.info("[" + extension.getName() + "] registered");
+                LOGGER.debug("[" + extension.getName() + "] registered");
                 event.extension(extension);
             }
 

@@ -48,6 +48,9 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
     private ParasimDescriptorImpl() {}
 
     public ExtensionDescriptor getExtensionDescriptor(String name) {
+        if (!extensions.containsKey(name)) {
+            extensions.put(name, new ExtensionDescriptorImpl(name));
+        }
         return extensions.get(name);
     }
 
