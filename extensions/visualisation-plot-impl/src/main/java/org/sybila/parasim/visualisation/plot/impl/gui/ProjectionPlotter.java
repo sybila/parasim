@@ -118,7 +118,14 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
     private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
         canvas = new Canvas(appearance);
-        canvasPane = new CanvasPane(conf, canvas);
+        canvasPane = new CanvasPane(conf, canvas, new CanvasPane.PositionChangeListener() {
+
+            @Override
+            public void updatePosition(float x, float y) {
+                status.setValue(xAxis.getSelected(), x);
+                status.setValue(yAxis.getSelected(), y);
+            }
+        });
         hRule = new Rule(conf, Rule.Orientation.HORIZONTAL);
         vRule = new Rule(conf, Rule.Orientation.VERTICAL);
 

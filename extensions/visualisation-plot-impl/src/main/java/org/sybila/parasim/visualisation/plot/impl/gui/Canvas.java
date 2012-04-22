@@ -22,6 +22,7 @@ package org.sybila.parasim.visualisation.plot.impl.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JPanel;
@@ -88,6 +89,14 @@ public class Canvas extends JPanel {
         points = layer;
         refreshFactors();
         repaint();
+    }
+
+    public float getX(Point position) {
+        return (position.x - PADDING) / xFact + points.minX();
+    }
+
+    public float getY(Point position) {
+        return (getHeight() - position.y - PADDING) / yFact + points.minY();
     }
 
     /**

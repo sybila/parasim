@@ -16,8 +16,15 @@ import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
  */
 public class CanvasPane extends JRootPane {
 
+    public static interface PositionChangeListener {
+
+        public void updatePosition(float x, float y);
+    }
     private static final Color GUIDE_COLOR = Color.BLUE;
+    //non-static
     private Point position;
+    private Canvas contents;
+    private PositionChangeListener update;
 
     private class Overlay extends JComponent {
 
@@ -33,7 +40,9 @@ public class CanvasPane extends JRootPane {
         }
     }
 
-    public CanvasPane(ResultPlotterConfiguration conf, Canvas canvas) {
+    public CanvasPane(ResultPlotterConfiguration conf, Canvas canvas, PositionChangeListener onUpdate) {
+        contents = canvas;
+        update = onUpdate;
         setContentPane(canvas);
 
         setGlassPane(new Overlay());
@@ -44,6 +53,7 @@ public class CanvasPane extends JRootPane {
             @Override
             public void mouseMoved(MouseEvent e) {
                 position = e.getPoint();
+                update.updatePosition(contents.getX(position), contents.getY(position));
                 getGlassPane().repaint();
             }
 
