@@ -65,6 +65,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private AxisSlider[] axisSliders;
     private Rule hRule, vRule;
     private StatusBar status;
+    private CanvasPane canvasPane;
     //variables//
     private PointVariableMapping names;
     private OrthogonalSpace extent;
@@ -117,6 +118,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
     private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
         canvas = new Canvas(appearance);
+        canvasPane = new CanvasPane(conf, canvas);
         hRule = new Rule(conf, Rule.Orientation.HORIZONTAL);
         vRule = new Rule(conf, Rule.Orientation.VERTICAL);
 
@@ -128,7 +130,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         pos.weighty = 1;
         pos.gridx = 1;
         pos.gridy = 0;
-        canvasPanel.add(canvas, pos);
+        canvasPanel.add(canvasPane, pos);
 
         pos = getDefaultConstraints();
         pos.gridx = 0;

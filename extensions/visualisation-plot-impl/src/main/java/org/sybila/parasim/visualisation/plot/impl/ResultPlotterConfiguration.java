@@ -11,6 +11,7 @@ public class ResultPlotterConfiguration {
     private float minimumDifference = 0.001f;
     private int statusFontSize = 12;
     private int statusDecimalDigits = 3;
+    private boolean showGuides = true;
     //RULE//
     private int ruleWidth = 45;
     private int ruleHeight = 30;
@@ -38,6 +39,10 @@ public class ResultPlotterConfiguration {
 
     public int getStatusDecimalDigits() {
         return statusDecimalDigits;
+    }
+
+    public boolean getShowGuides() {
+        return showGuides;
     }
 
     public int getRuleWidth() {
