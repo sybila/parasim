@@ -45,7 +45,7 @@ public class ParasimDescriptorImpl implements ParasimDescriptor {
     private static DocumentBuilder builder;
     private Map<String, ExtensionDescriptor> extensions = new HashMap<String, ExtensionDescriptor>();
 
-    private ParasimDescriptorImpl() {}
+    public ParasimDescriptorImpl() {}
 
     public ExtensionDescriptor getExtensionDescriptor(String name) {
         if (!extensions.containsKey(name)) {

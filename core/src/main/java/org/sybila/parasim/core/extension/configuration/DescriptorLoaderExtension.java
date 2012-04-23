@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core.extension.configuration;
 
+import java.io.File;
 import java.io.IOException;
 import org.sybila.parasim.core.Event;
 import org.sybila.parasim.core.Instance;
@@ -45,7 +46,11 @@ public class DescriptorLoaderExtension {
     private Event<ConfigurationLoaded> event;
 
     public void loadDescriptor(@Observes ManagerProcessing event) throws IOException, SAXException {
-        parasimDescriptor.set(ParasimDescriptorImpl.fromXMLFile("parasim.config.file", "parasim.xml"));
+        if (System.getProperty("parasim.config.file") != null && new File(System.getProperty("parasim.config.file")).exists()) {
+            parasimDescriptor.set(ParasimDescriptorImpl.fromXMLFile("parasim.config.file", "parasim.xml"));
+        } else {
+            parasimDescriptor.set(new ParasimDescriptorImpl());
+        }
         extensionDescriptorMapper.set(new ExtensionDescriptorMapperImpl());
         this.event.fire(new ConfigurationLoaded());
     }
