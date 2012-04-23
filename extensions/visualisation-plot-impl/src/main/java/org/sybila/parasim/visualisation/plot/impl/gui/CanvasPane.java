@@ -52,9 +52,12 @@ public class CanvasPane extends JRootPane {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                position = e.getPoint();
-                update.updatePosition(contents.getX(position), contents.getY(position));
-                getGlassPane().repaint();
+                moveMouse(e.getPoint());
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                moveMouse(e.getPoint());
             }
 
             @Override
@@ -65,5 +68,11 @@ public class CanvasPane extends JRootPane {
         };
         addMouseListener(mouseActions);
         addMouseMotionListener(mouseActions);
+    }
+
+    private void moveMouse(Point position) {
+        this.position = position;
+        update.updatePosition(contents.getX(position), contents.getY(position));
+        getGlassPane().repaint();
     }
 }
