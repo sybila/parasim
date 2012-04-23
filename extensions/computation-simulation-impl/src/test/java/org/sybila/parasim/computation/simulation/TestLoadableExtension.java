@@ -19,9 +19,9 @@
  */
 package org.sybila.parasim.computation.simulation;
 
+import org.sybila.parasim.execution.api.annotations.ComputationScope;
 import org.sybila.parasim.core.context.Context;
 import java.lang.annotation.Annotation;
-import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.core.Manager;
@@ -38,9 +38,9 @@ import static org.testng.Assert.*;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestLoadableExtension {
-    
+
     private Manager manager;
-    
+
     @BeforeMethod
     public void startManager() throws Exception {
         System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/computation/simulation/parasim.xml");
@@ -48,22 +48,22 @@ public class TestLoadableExtension {
         manager.start();
         assertNotNull(manager.resolve(ExtensionDescriptorMapper.class, Default.class, manager.getRootContext()));
     }
-    
+
     @AfterMethod
     public void stopManager() {
         manager.shutdown();
     }
-    
+
     @Test
     public void testSimulatorLoaded() {
         assertNotNull(manager.resolve(AdaptiveStepSimulator.class, Default.class, manager.getRootContext()));
     }
-    
+
     @Test
     public void testExtensionConfigurationLoaded() {
         assertNotNull(manager.resolve(ExtensionConfiguration.class, Default.class, manager.getRootContext()));
     }
-    
+
     @Test
     public void testConfigurationLoaded() {
         Context context = new AbstractContext() {
@@ -74,5 +74,5 @@ public class TestLoadableExtension {
         manager.initializeContext(context);
         assertNotNull(manager.resolve(AdaptiveStepConfiguration.class, Default.class, context));
     }
-    
+
 }

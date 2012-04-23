@@ -37,10 +37,10 @@ import static org.testng.Assert.*;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest {
-    
+
     protected static final int DIMENSION = 4;
     protected static final int TO_SPAWN = 3;
-    
+
     protected void testInitialSpawn() {
         OrthogonalSpace space = new OrthogonalSpace(
             new ArrayPoint(0, 0, 0),
@@ -56,17 +56,17 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         for (Trajectory trajectory : spawned) {
             assertTrue(expected.contains(trajectory.getFirstPoint()), "There is unexpected seed " + trajectory.getFirstPoint() + ".");
         }
-    }    
+    }
 
     protected void testNumberOfTrajectoriesAfterInitialSpawn() {
         SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
         assertEquals(spawned.size() + spawned.getSecondaryTrajectories().size(), (int) Math.pow(TO_SPAWN, DIMENSION));
     }
-    
+
     protected void testDistanceOfTrajectoriesAfterInitialSpawn()     {
         SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((TO_SPAWN - 1) * 4.0f, DIMENSION), TO_SPAWN);
         for (Trajectory trajectory: spawned) {
-            for (Trajectory neighbor: spawned.getNeighborhood().getNeighbors(trajectory)) {
+            for (Trajectory neighbor: spawned.getConfiguration().getNeighborhood().getNeighbors(trajectory)) {
                 boolean distanceMatches = false;
                 for(int dim=0; dim<trajectory.getDimension(); dim++) {
                     if ((float) Math.abs(trajectory.getFirstPoint().getValue(dim) - neighbor.getFirstPoint().getValue(dim)) == (dim + 1) * 4.0f) {
@@ -80,14 +80,14 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
             }
         }
     }
-    
+
     protected void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn() {
         SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
         for (Trajectory trajectory : spawned) {
-            assertTrue(spawned.getNeighborhood().getNeighbors(trajectory).size() <= 2 * DIMENSION, "The number of trajectories in neigborhood has to be lower or equal to 2 * dimension <" + DIMENSION +">, but it is <" + spawned.getNeighborhood().getNeighbors(trajectory).size() +">.");
+            assertTrue(spawned.getConfiguration().getNeighborhood().getNeighbors(trajectory).size() <= 2 * DIMENSION, "The number of trajectories in neigborhood has to be lower or equal to 2 * dimension <" + DIMENSION +">, but it is <" + spawned.getConfiguration().getNeighborhood().getNeighbors(trajectory).size() +">.");
         }
     }
-    
+
     protected OrthogonalSpace createOrthogonalSpace(float base, int dimension) {
         float[] minBounds = new float[dimension];
         float[] maxBounds = new float[dimension];
@@ -100,7 +100,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
             new ArrayPoint(100, maxBounds)
         );
     }
-    
+
     protected SpawnedDataBlock initialSpawn(OrthogonalSpace space, int numSpawn) {
         TrajectorySpawner spawner = createTrajectorySpawner();
         int[] toSpawn = new int[space.getDimension()];
@@ -109,10 +109,11 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         }
         return spawner.spawn(
             space,
-            new ArrayInitialSampling(toSpawn)
+            new ArrayInitialSampling(toSpawn),
+            createPointDistanceMetric(1, space.getDimension())
         );
     }
-        
+
     abstract protected TrajectorySpawner createTrajectorySpawner();
-    
+
 }

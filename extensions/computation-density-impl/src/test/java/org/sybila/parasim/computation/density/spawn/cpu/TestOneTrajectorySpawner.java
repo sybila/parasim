@@ -35,45 +35,49 @@ import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestOneTrajectorySpawner extends AbstractTrajectorySpawnerTest {
- 
+
     @Test
     @Override
     public void testInitialSpawn() {
         super.testInitialSpawn();
     }
-    
+
     @Test
     public void testSimple() {
         DataBlock<Trajectory> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
-        Configuration configuration = createConfiguration(1, 4, neighborhood);
+        Configuration configuration = createConfiguration(
+                createPointDistanceMetric(1, 4),
+                createInitialSampling(createInitialSpace(1, DIMENSION), DIMENSION),
+                createInitialSpace(1, DIMENSION),
+                neighborhood);
         DistanceCheckedDataBlock distanceChecked = new OnePairDistanceChecker().check(configuration, dataBlock);
         SpawnedDataBlock spawned = new OneTrajectorySpawner().spawn(configuration, distanceChecked);
         assertEquals(1, spawned.size());
-        assertEquals(2, spawned.getNeighborhood().getNeighbors(spawned.getTrajectory(0)).size());
+        assertEquals(2, spawned.getConfiguration().getNeighborhood().getNeighbors(spawned.getTrajectory(0)).size());
     }
-    
+
     @Test
     @Override
     public void testDistanceOfTrajectoriesAfterInitialSpawn() {
         super.testDistanceOfTrajectoriesAfterInitialSpawn();
     }
-    
+
     @Test
     @Override
     public void testNumberOfTrajectoriesAfterInitialSpawn() {
         super.testNumberOfTrajectoriesAfterInitialSpawn();
     }
-    
+
     @Test
     @Override
     public void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn() {
         super.testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn();
     }
-    
+
     @Override
     protected TrajectorySpawner createTrajectorySpawner() {
         return new OneTrajectorySpawner();
-    }    
-    
+    }
+
 }

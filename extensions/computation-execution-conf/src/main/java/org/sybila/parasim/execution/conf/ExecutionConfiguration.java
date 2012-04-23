@@ -27,7 +27,7 @@ public class ExecutionConfiguration {
     private int queueSize = Runtime.getRuntime().availableProcessors() * 3;
     private int coreThreadPoolSize = Runtime.getRuntime().availableProcessors();
     private int maxThreadPoolSize = coreThreadPoolSize * 2;
-    private String defaultExecutorClass = "org.sybila.parasim.execution.sequential.SequentialExecutor";
+    private String defaultExecutorClass = "org.sybila.parasim.execution.api.SequentialExecutor";
     private long keepThreadAliveTimeInSeconds = 5;
     private int numberOfThreadsInSharedMemory = Runtime.getRuntime().availableProcessors();
 

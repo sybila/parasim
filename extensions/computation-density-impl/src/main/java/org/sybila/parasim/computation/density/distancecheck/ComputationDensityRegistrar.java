@@ -27,10 +27,12 @@ import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.event.ManagerStarted;
+import org.sybila.parasim.execution.api.annotations.ComputationScope;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
+@ComputationScope
 public class ComputationDensityRegistrar {
 
     @Inject

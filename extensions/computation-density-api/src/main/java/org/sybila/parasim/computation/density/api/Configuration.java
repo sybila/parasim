@@ -19,15 +19,31 @@
  */
 package org.sybila.parasim.computation.density.api;
 
+import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 /**
+ * Object containing configuration information.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Configuration {
 
+    /**
+     * @return metric used to determine whether two trajectories has valid/invalid distance
+     */
     PointDistanceMetric getDistanceMetric();
+
+    /**
+     * @return information how the initial space is sampled
+     */
+    InitialSampling getInitialSampling();
+
+    /**
+     * @return initial space
+     */
+    OrthogonalSpace getInitialSpace();
 
     TrajectoryNeighborhood<Trajectory> getNeighborhood();
 

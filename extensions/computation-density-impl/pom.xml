@@ -7,14 +7,14 @@
     <packaging>jar</packaging>
 
     <name>computation-density-impl</name>
-    
+
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
@@ -22,9 +22,28 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-execution-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.sybila.parasim</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-execution-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-lifecycle-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

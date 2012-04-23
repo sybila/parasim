@@ -23,9 +23,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.api.LimitedDistance;
 import org.sybila.parasim.computation.density.api.PointDistanceMetric;
+import org.sybila.parasim.computation.density.spawn.cpu.AbstractConfiguration;
+import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
@@ -38,71 +42,76 @@ import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 public abstract class AbstractDensityTest {
 
-    protected Configuration createConfiguration(final float expectedDistance, final int dimension, final TrajectoryNeighborhood<Trajectory> neighborhood) {
-        return new Configuration() {
+    protected Configuration createConfiguration(final PointDistanceMetric pointDistanceMetric, final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood) {
+        return new AbstractConfiguration(pointDistanceMetric, initialSampling, initialSpace) {
+            public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
+                return trajectoryNeighborhood;
+            }
+            public int getStartIndex(int index, int neighborIndex) {
+                return 0;
+            }
+        };
+    }
 
-            private float[] distance;
+    protected InitialSampling createInitialSampling(final OrthogonalSpace space, final int numOfSpawn) {
+        int[] toSpawn = new int[space.getDimension()];
+        for (int dim=0; dim<space.getDimension(); dim++) {
+            toSpawn[dim] = numOfSpawn;
+        }
+        return new ArrayInitialSampling(toSpawn);
+    }
 
-            private float[] getMaxAbsoluteDistance() {
-                if (distance == null) {
-                    distance = new float[dimension];
-                    for (int dim = 0; dim < dimension; dim++) {
-                        distance[dim] = expectedDistance;
+    protected OrthogonalSpace createInitialSpace(final float base, final int dimension) {
+        float[] minBounds = new float[dimension];
+        float[] maxBounds = new float[dimension];
+        for (int dim=0; dim<dimension; dim++) {
+            minBounds[dim] = 0;
+            maxBounds[dim] = (float) ((dim+1) * base);
+        }
+        return new OrthogonalSpace(
+            new ArrayPoint(0, minBounds),
+            new ArrayPoint(100, maxBounds)
+        );
+    }
+
+    protected PointDistanceMetric createPointDistanceMetric(final float expectedDistance, final int dimension) {
+        return new PointDistanceMetric() {
+            public LimitedDistance distance(float[] first, float[] second) {
+                final float[] distance = new float[first.length];
+                float maxDistance = 0;
+                for (int dim = 0; dim < first.length; dim++) {
+                    distance[dim] = Math.abs(first[dim] - second[dim]);
+                    if (distance[dim] > maxDistance) {
+                        maxDistance = distance[dim];
                     }
                 }
-                return distance;
-            }
+                final float maxDistanceFinal = maxDistance;
+                return new LimitedDistance() {
 
-            @Override
-            public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
-                return neighborhood;
-            }
-
-            public PointDistanceMetric getDistanceMetric() {
-                return new PointDistanceMetric() {
-
-                    public LimitedDistance distance(float[] first, float[] second) {
-                        final float[] distance = new float[first.length];
-                        float maxDistance = 0;
-                        for (int dim = 0; dim < first.length; dim++) {
-                            distance[dim] = Math.abs(first[dim] - second[dim]) / getMaxAbsoluteDistance()[dim];
-                            if (distance[dim] > maxDistance) {
-                                maxDistance = distance[dim];
-                            }
-                        }
-                        final float maxDistanceFinal = maxDistance;
-                        return new LimitedDistance() {
-
-                            public boolean isValid() {
-                                return value() < expectedDistance;
-                            }
-
-                            public boolean isValid(int dimensionIndex) {
-                                return value(dimensionIndex) < expectedDistance;
-                            }
-
-                            public float value() {
-                                return maxDistanceFinal;
-                            }
-
-                            public float value(int dimensionIndex) {
-                                return distance[dimensionIndex];
-                            }
-                        };
+                    public boolean isValid() {
+                        return value() < expectedDistance;
                     }
 
-                    public LimitedDistance distance(Point first, Point second) {
-                        return distance(first.toArray(), second.toArray());
+                    public boolean isValid(int dimensionIndex) {
+                        return value(dimensionIndex) < expectedDistance;
+                    }
+
+                    public float value() {
+                        return maxDistanceFinal;
+                    }
+
+                    public float value(int dimensionIndex) {
+                        return distance[dimensionIndex];
                     }
                 };
             }
 
-            public int getStartIndex(int index, int neighborIndex) {
-                return 0;
+            public LimitedDistance distance(Point first, Point second) {
+                return distance(first.toArray(), second.toArray());
             }
-        };        
+        };
     }
-    
+
     protected DataBlock<Trajectory> createDataBlock(int size, int length, int dimension, float x, float y, float z) {
         Trajectory[] trajectories = new Trajectory[size];
         for (int t = 0; t < size; t++) {

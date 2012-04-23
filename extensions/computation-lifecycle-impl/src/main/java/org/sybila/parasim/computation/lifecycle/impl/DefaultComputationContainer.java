@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.lifecycle.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -45,6 +46,7 @@ public class DefaultComputationContainer implements ComputationContainer {
     public DefaultComputationContainer(Manager manager) {
         Validate.notNull(manager);
         this.manager = manager;
+        this.executions = new HashMap<Computation, Execution>();
     }
 
     @Override

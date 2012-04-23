@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.InitialSampling;
+import org.sybila.parasim.computation.density.api.PointDistanceMetric;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
@@ -39,6 +40,7 @@ import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.MapTrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 /**
  * It iterates through all trajectories and their neighbors with invalid distance. For each
@@ -58,7 +60,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         // note secondary trajectories
         List<Trajectory> newSecondaryTrajectories = new ArrayList<Trajectory>();
         // note trajectory neighborhoods
-        Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
+        final Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
         // iterate through all pairs of trajectory and neighbor with invalid distance
         for (int i = 0; i < trajectories.size(); i++) {
             Trajectory trajectory = trajectories.getTrajectory(i);
@@ -81,12 +83,20 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         spawnTearDown(configuration, trajectories);
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<Trajectory>(newTrajectories),
-                new MapTrajectoryNeighborhood<Trajectory>(neighborhood),
+                new AbstractConfiguration(configuration.getDistanceMetric(), configuration.getInitialSampling(), configuration.getInitialSpace()) {
+                    private TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood = new MapTrajectoryNeighborhood<Trajectory>(neighborhood);
+                    public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
+                        return trajectoryNeighborhood;
+                    }
+                    public int getStartIndex(int index, int neighborIndex) {
+                        return 0;
+                    }
+                },
                 new ListDataBlock<Trajectory>(newSecondaryTrajectories));
     }
 
     @Override
-    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling) {
+    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling, PointDistanceMetric distanceMetric) {
         if (space.getDimension() != initialSampling.getDimension()) {
             throw new IllegalArgumentException("The number of space dimension and length of [numOfSamples] array doesn't match.");
         }
@@ -146,14 +156,22 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
             }
         }
         // transform neigborhood map of lists to the map of data blocks
-        Map<Trajectory, DataBlock<Trajectory>> neighborhoodDataBlocks = new HashMap<Trajectory, DataBlock<Trajectory>>(neighborhoodLists.size());
+        final Map<Trajectory, DataBlock<Trajectory>> neighborhoodDataBlocks = new HashMap<Trajectory, DataBlock<Trajectory>>(neighborhoodLists.size());
         for (Trajectory key : neighborhoodLists.keySet()) {
             neighborhoodDataBlocks.put(key, new ListDataBlock<Trajectory>(neighborhoodLists.get(key)));
         }
         // return the result
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<Trajectory>(seeds),
-                new MapTrajectoryNeighborhood<Trajectory>(neighborhoodDataBlocks),
+                new AbstractConfiguration(distanceMetric, initialSampling, space) {
+                    private TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood = new MapTrajectoryNeighborhood<Trajectory>(neighborhoodDataBlocks);
+                    public int getStartIndex(int index, int neighborIndex) {
+                        return 0;
+                    }
+                    public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
+                        return trajectoryNeighborhood;
+                    }
+                },
                 new ListDataBlock<Trajectory>(secondarySeeds));
     }
 
