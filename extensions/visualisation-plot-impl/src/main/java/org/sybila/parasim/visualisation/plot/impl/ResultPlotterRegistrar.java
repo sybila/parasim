@@ -54,6 +54,6 @@ public class ResultPlotterRegistrar {
     @Provide
     public PlotterFactory register(ResultPlotterConfiguration config) {
         event.fire(new ResultPlotterRegistered());
-        return new ProjectionPlotterFactory();
+        return new ProjectionPlotterFactory(config);
     }
 }
