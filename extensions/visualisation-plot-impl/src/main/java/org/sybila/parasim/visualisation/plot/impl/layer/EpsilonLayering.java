@@ -14,24 +14,6 @@ import org.sybila.parasim.visualisation.plot.impl.layer.IndependentLayer.Layer;
  */
 public class EpsilonLayering implements IndependentLayer.Layering {
 
-    private class FloatLayer implements IndependentLayer.Layer {
-
-        private float value;
-
-        public FloatLayer(float value) {
-            this.value = value;
-        }
-
-        @Override
-        public float getValue() {
-            return value;
-        }
-
-        @Override
-        public boolean isIn(float x) {
-            return Math.abs(value - x) < epsilon;
-        }
-    }
     private float epsilon;
 
     public EpsilonLayering(float epsilon) {
@@ -62,7 +44,7 @@ public class EpsilonLayering implements IndependentLayer.Layering {
             Point p = result.getPoint(i);
             if (bounds.isIn(p)) {
                 for (int dim = 0; dim < dimension; dim++) {
-                    layers[dim].add(new FloatLayer(p.getValue(dim)));
+                    layers[dim].add(new IntervalLayer(p.getValue(dim), epsilon));
                 }
             }
         }
