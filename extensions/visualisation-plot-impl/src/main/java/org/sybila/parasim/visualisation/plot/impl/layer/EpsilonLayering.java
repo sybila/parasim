@@ -6,13 +6,12 @@ import java.util.List;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.verification.result.VerificationResult;
-import org.sybila.parasim.visualisation.plot.impl.layer.IndependentLayer.Layer;
 
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class EpsilonLayering implements IndependentLayer.Layering {
+public class EpsilonLayering implements Layering {
 
     private float epsilon;
 
@@ -52,7 +51,7 @@ public class EpsilonLayering implements IndependentLayer.Layering {
 
     private void sortLists(List<Layer>[] layers) {
         for (List<Layer> list : layers) {
-            Collections.sort(list, new IndependentLayer.LayerComparator());
+            Collections.sort(list, new Layer.Comparator());
         }
     }
 

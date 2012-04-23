@@ -7,10 +7,11 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class OrthogonalBoundedLayer implements Point2DLayer {
+public abstract class OrthogonalBoundedPointLayer implements Point2DLayer {
+
     private OrthogonalSpace space;
 
-    public OrthogonalBoundedLayer(OrthogonalSpace bounds) {
+    public OrthogonalBoundedPointLayer(OrthogonalSpace bounds) {
         space = bounds;
     }
 
@@ -21,7 +22,6 @@ public abstract class OrthogonalBoundedLayer implements Point2DLayer {
     protected abstract int getXAxis();
 
     protected abstract int getYAxis();
-
 
     @Override
     public float minX() {

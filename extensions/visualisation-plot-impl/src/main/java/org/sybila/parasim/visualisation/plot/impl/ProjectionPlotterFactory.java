@@ -27,7 +27,7 @@ import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.impl.gui.ProjectionPlotter;
 import org.sybila.parasim.visualisation.plot.impl.render.RGCirclePointRenderer;
-import org.sybila.parasim.visualisation.plot.impl.layer.OverlapLayer;
+import org.sybila.parasim.visualisation.plot.impl.layer.OverlapPointLayer;
 
 /**
  *
@@ -49,6 +49,6 @@ public class ProjectionPlotterFactory implements PlotterFactory {
             return new OneDimensionalPlotter();
         }
         OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
-        return new ProjectionPlotter(conf, result, names, new OverlapLayer(result, extent), new RGCirclePointRenderer());
+        return new ProjectionPlotter(conf, result, names, new OverlapPointLayer(result, extent), new RGCirclePointRenderer());
     }
 }

@@ -8,9 +8,9 @@ import org.sybila.parasim.model.verification.result.VerificationResult;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class EpsilonLayer extends IndependentLayer {
+public class EpsilonPointLayer extends IndependentPointLayer {
 
-    public EpsilonLayer(float epsilon, VerificationResult result, OrthogonalSpace bounds) {
+    public EpsilonPointLayer(float epsilon, VerificationResult result, OrthogonalSpace bounds) {
         super(result, bounds, new EpsilonLayering(epsilon));
     }
 }

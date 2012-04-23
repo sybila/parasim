@@ -1,7 +1,6 @@
 package org.sybila.parasim.visualisation.plot.impl.layer;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -15,32 +14,14 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class IndependentLayer extends OrthogonalBoundedLayer implements LayerMetaFactory, LayerFactory, Point2DLayer {
+public class IndependentPointLayer extends OrthogonalBoundedPointLayer implements LayerMetaFactory, LayerFactory, Point2DLayer {
 
-    public static interface Layer {
-
-        public boolean isIn(float x);
-
-        public float getValue();
-    }
-
-    public static interface Layering {
-
-        public List<Layer>[] computeLayers(VerificationResult result, OrthogonalSpace bounds);
-    }
-
-    protected static class LayerComparator implements Comparator<Layer> {
-
-        public int compare(Layer t, Layer t1) {
-            return Float.compare(t.getValue(), t1.getValue());
-        }
-    }
     private VerificationResult result;
     private int xAxis, yAxis;
     private List<float[]> layer;
     private List<Layer>[] layers;
 
-    public IndependentLayer(VerificationResult result, OrthogonalSpace bounds, Layering layering) {
+    public IndependentPointLayer(VerificationResult result, OrthogonalSpace bounds, Layering layering) {
         super(bounds);
         this.result = result;
         layers = layering.computeLayers(result, bounds);

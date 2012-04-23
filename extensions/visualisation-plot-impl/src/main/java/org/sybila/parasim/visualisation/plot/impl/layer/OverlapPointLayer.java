@@ -35,7 +35,7 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class OverlapLayer extends OrthogonalBoundedLayer implements Point2DLayer, LayerFactory, LayerMetaFactory {
+public class OverlapPointLayer extends OrthogonalBoundedPointLayer implements Point2DLayer, LayerFactory, LayerMetaFactory {
 
     private VerificationResult src;
     private int xAxis, yAxis;
@@ -46,7 +46,7 @@ public class OverlapLayer extends OrthogonalBoundedLayer implements Point2DLayer
      * @param source Verification result.
      * @param bounds Bounding space.
      */
-    public OverlapLayer(VerificationResult source, OrthogonalSpace bounds) {
+    public OverlapPointLayer(VerificationResult source, OrthogonalSpace bounds) {
         super(bounds);
         src = source;
     }

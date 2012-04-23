@@ -31,7 +31,7 @@ import org.sybila.parasim.model.verification.result.ArrayVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
-import org.sybila.parasim.visualisation.plot.impl.layer.CoordinateLayer;
+import org.sybila.parasim.visualisation.plot.impl.layer.CoordinatePointLayer;
 
 /**
  *
@@ -92,7 +92,7 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
                 VerificationResult result = createResult();
                 OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
                 ResultPlotterConfiguration conf = new ResultPlotterConfiguration();
-                Plotter test = new ProjectionPlotter(new ResultPlotterConfiguration(), result, new TestVariableMapping(), new CoordinateLayer(conf, result, extent), new RGCirclePointRenderer());
+                Plotter test = new ProjectionPlotter(new ResultPlotterConfiguration(), result, new TestVariableMapping(), new CoordinatePointLayer(conf, result, extent), new RGCirclePointRenderer());
                 test.plot();
             }
         });

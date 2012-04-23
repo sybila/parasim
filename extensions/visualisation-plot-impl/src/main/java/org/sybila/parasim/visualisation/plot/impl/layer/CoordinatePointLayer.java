@@ -8,9 +8,9 @@ import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class CoordinateLayer extends EpsilonLayer {
+public class CoordinatePointLayer extends EpsilonPointLayer {
 
-    public CoordinateLayer(ResultPlotterConfiguration conf, VerificationResult result, OrthogonalSpace bounds) {
+    public CoordinatePointLayer(ResultPlotterConfiguration conf, VerificationResult result, OrthogonalSpace bounds) {
         super(conf.getMinimumDifference(), result, bounds);
     }
 }

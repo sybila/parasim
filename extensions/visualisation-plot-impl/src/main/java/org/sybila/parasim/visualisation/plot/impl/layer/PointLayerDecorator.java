@@ -16,7 +16,7 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class LayerDecorator implements LayerMetaFactory, LayerFactory, Point2DLayer {
+public class PointLayerDecorator implements LayerMetaFactory, LayerFactory, Point2DLayer {
 
     private LayerMetaFactory meta;
     private LayerFactory fact;
@@ -25,7 +25,7 @@ public class LayerDecorator implements LayerMetaFactory, LayerFactory, Point2DLa
     /**
      * Initializes decorator with {@link LayerMetaFactory}.
      */
-    public LayerDecorator(LayerMetaFactory contents) {
+    public PointLayerDecorator(LayerMetaFactory contents) {
         meta = contents;
     }
 
