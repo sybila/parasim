@@ -42,8 +42,11 @@ public class ProjectionPlotterFactory implements PlotterFactory {
     }
 
     public Plotter getPlotter(VerificationResult result, PointVariableMapping names) {
-        if (result.size() < 2) {
+        if (result.size() < 1) {
             return new EmptyPlotter();
+        }
+        if (result.getPoint(0).getDimension() < 2) {
+            return new OneDimensionalPlotter();
         }
         OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
         return new ProjectionPlotter(conf, result, names, new OverlapLayer(result, extent), new RGCirclePointRenderer());
