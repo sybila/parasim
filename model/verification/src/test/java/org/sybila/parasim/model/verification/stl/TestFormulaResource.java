@@ -41,8 +41,10 @@ public class TestFormulaResource {
     private FormulaResource resource;
 
     @BeforeMethod
-    public void createResource() {
-        resource = new FormulaResource(null);
+    public void createResource() throws IOException {
+        File tmpFile = File.createTempFile("parasim", "resource");
+        tmpFile.deleteOnExit();
+        resource = new FormulaResource(tmpFile);
     }
 
     /**

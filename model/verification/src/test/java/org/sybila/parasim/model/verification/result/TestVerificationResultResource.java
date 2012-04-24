@@ -42,8 +42,10 @@ public class TestVerificationResultResource {
     private VerificationResultResource resource;
 
     @BeforeMethod
-    public void initResource() {
-        resource = new VerificationResultResource(null);
+    public void initResource() throws IOException {
+        File tmpFile = File.createTempFile("parasim", "resource");
+        tmpFile.deleteOnExit();
+        resource = new VerificationResultResource(tmpFile);
     }
 
     /**

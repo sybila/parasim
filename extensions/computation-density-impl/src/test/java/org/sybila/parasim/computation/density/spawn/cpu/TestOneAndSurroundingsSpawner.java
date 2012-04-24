@@ -38,7 +38,7 @@ public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest
     @Test
     public void testNumberOfTrajectoriesAfterSpawn() {
         // initial sampling
-        SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), 2), 4);
+        SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), DIMENSION), 4);
         // load configuration
         Configuration configuration = createConfiguration(
                 createPointDistanceMetric(1.5f, DIMENSION),

@@ -43,14 +43,16 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
 
     protected void testInitialSpawn() {
         OrthogonalSpace space = new OrthogonalSpace(
-            new ArrayPoint(0, 0, 0),
-            new ArrayPoint(0, 3 * (TO_SPAWN - 1), 3 * (TO_SPAWN - 1))
+            new ArrayPoint(0, 0, 0, 0),
+            new ArrayPoint(0, 3 * (TO_SPAWN - 1), 3 * (TO_SPAWN - 1), 3 * (TO_SPAWN - 1))
         );
         DataBlock<Trajectory> spawned = initialSpawn(space, TO_SPAWN);
         Set<Point> expected = new HashSet<Point>();
         for (int x=0; x<3 * TO_SPAWN; x+=3) {
             for(int y=0; y<3 * TO_SPAWN; y+=3) {
-                expected.add(new ArrayPoint(0, x, y));
+                for (int z=0; z<3 * TO_SPAWN; z+=3) {
+                    expected.add(new ArrayPoint(0, x, y, z));
+                }
             }
         }
         for (Trajectory trajectory : spawned) {

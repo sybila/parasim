@@ -43,8 +43,10 @@ public class TestOrthogonalSpaceResource {
     private OrthogonalSpaceResource resource;
 
     @BeforeMethod
-    public void initResource() {
-        resource = new OrthogonalSpaceResource(null);
+    public void initResource() throws IOException {
+        File tmpFile = File.createTempFile("parasim", "resource");
+        tmpFile.deleteOnExit();
+        resource = new OrthogonalSpaceResource(tmpFile);
     }
 
     /**

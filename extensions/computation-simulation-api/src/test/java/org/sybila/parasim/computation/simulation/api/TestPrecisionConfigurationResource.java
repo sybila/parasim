@@ -42,8 +42,10 @@ public class TestPrecisionConfigurationResource {
     private PrecisionConfigurationResource resource;
 
     @BeforeMethod
-    public void initResource() {
-        resource = new PrecisionConfigurationResource(null);
+    public void initResource() throws IOException {
+        File tmpFile = File.createTempFile("parasim", "resource");
+        tmpFile.deleteOnExit();
+        resource = new PrecisionConfigurationResource(tmpFile);
     }
 
     /**

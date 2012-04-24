@@ -42,8 +42,10 @@ public class TestInitialSamplingResource {
     private InitialSamplingResource resource;
 
     @BeforeMethod
-    public void initResource() {
-        resource = new InitialSamplingResource(null);
+    public void initResource() throws IOException {
+        File tmpFile = File.createTempFile("parasim", "resource");
+        tmpFile.deleteOnExit();
+        resource = new InitialSamplingResource(tmpFile);
     }
 
     /**
