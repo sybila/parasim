@@ -189,7 +189,9 @@ public abstract class StreamXMLResource<T extends XMLRepresentable> implements
 
             /* close stream */
             try {
-                is.close();
+                if (is != null) {
+                    is.close();
+                }
             } catch (IOException ioe) {
                 throw new XMLException("Input could not be closed", ioe);
             }

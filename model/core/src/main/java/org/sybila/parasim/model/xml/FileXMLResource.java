@@ -41,6 +41,9 @@ public abstract class FileXMLResource<T extends XMLRepresentable> extends Stream
      * @param file File used to store/load objects.
      */
     public FileXMLResource(File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("The parameter [file] is null.");
+        }
         target = file;
     }
 
