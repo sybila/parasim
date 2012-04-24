@@ -1,0 +1,9 @@
+branches:
+  only:
+    - 'master'
+    
+language: java
+
+install: "mvn clean install -Pcore,model,extensions -DskipTests"
+script: "mvn clean verify -Pcore,model,extensions"
+
