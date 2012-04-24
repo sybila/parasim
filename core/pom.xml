@@ -6,7 +6,7 @@
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
 
-    <name>core</name>
+    <name>Core Module</name>
 
     <parent>
         <groupId>org.sybila.parasim</groupId>
