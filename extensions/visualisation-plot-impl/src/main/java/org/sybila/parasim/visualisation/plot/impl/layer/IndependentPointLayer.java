@@ -14,7 +14,7 @@ import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class IndependentPointLayer extends OrthogonalBoundedPointLayer implements LayerMetaFactory, LayerFactory, Point2DLayer {
+public class IndependentPointLayer extends LayeredPointLayer implements LayerMetaFactory, LayerFactory, Point2DLayer {
 
     private VerificationResult result;
     private int xAxis, yAxis;
@@ -31,6 +31,7 @@ public class IndependentPointLayer extends OrthogonalBoundedPointLayer implement
         layer = new ArrayList<float[]>();
     }
 
+    @Override
     protected List<Layer> getLayers(int index) {
         return layers[index];
     }
@@ -56,40 +57,6 @@ public class IndependentPointLayer extends OrthogonalBoundedPointLayer implement
         this.yAxis = yAxis;
 
         return this;
-    }
-
-    @Override
-    public int ticks(int index) {
-        return getLayers(index).size();
-    }
-
-    @Override
-    public int getTicks(int index, float value) {
-        List<Layer> list = getLayers(index);
-
-        //see if it is in layer//
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).isIn(value)) {
-                return i;
-            }
-        }
-
-        //is before//
-        if (value < list.get(0).getValue()) {
-            return 0;
-        }
-
-        //is between or at the end//
-        int i = 1;
-        while ((i < list.size()) && (value < list.get(i).getValue())) {
-            i++;
-        }
-        return i - 1;
-    }
-
-    @Override
-    public float getValue(int index, int ticks) {
-        return getLayers(index).get(ticks).getValue();
     }
 
     @Override
