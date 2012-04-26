@@ -40,7 +40,7 @@ public class Block<T> {
         return data[dimension][index];
     }
 
-    public class Builder<T> {
+    public static class Builder<T> {
         private List<T>[] data;
 
         public Builder(int dimension) {
