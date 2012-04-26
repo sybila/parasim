@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core.extension.configuration.impl;
 
+import java.awt.Color;
 import org.sybila.parasim.core.extension.AbstractExtensionTest;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
@@ -30,18 +31,19 @@ import static org.testng.Assert.*;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestExtensionDescriptorMapperImpl extends AbstractExtensionTest {
-    
+
     private ConfigBean configBean;
     private ExtensionDescriptor descriptor;
     public static ExtensionDescriptorMapper mapper;
-    
+
     private class ConfigBean {
         private int intNumber;
         private float floatNumber;
         private boolean bool;
         private Integer[] intNumbers;
+        private Color color;
     }
-    
+
     @BeforeMethod
     public void prepare() {
         descriptor = new ExtensionDescriptorImpl("my-extension");
@@ -49,9 +51,10 @@ public class TestExtensionDescriptorMapperImpl extends AbstractExtensionTest {
         descriptor.setProperty("floatNumber", "20.5");
         descriptor.setProperty("bool", "true");
         descriptor.setProperty("intNumbers", new String[] {"1", "2", "3"});
+        descriptor.setProperty("color", "Black");
         configBean = new ConfigBean();
     }
-    
+
     @Test
     public void testMap() throws IllegalAccessException {
         new ExtensionDescriptorMapperImpl().map(descriptor, configBean);
@@ -59,11 +62,12 @@ public class TestExtensionDescriptorMapperImpl extends AbstractExtensionTest {
         assertEquals(configBean.intNumber, 20);
         assertEquals(configBean.floatNumber, (float) 20.5);
         assertEquals(configBean.intNumbers, new int[] {1, 2, 3});
+        assertEquals(configBean.color, Color.BLACK);
     }
-    
+
     @Test
     public void testLoaded() {
         getManager().start();
         assertNotNull(mapper);
-    }    
+    }
 }

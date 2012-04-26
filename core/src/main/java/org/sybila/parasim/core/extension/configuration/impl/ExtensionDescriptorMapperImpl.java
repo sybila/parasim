@@ -19,7 +19,10 @@
  */
 package org.sybila.parasim.core.extension.configuration.impl;
 
+import java.awt.Color;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -68,16 +71,30 @@ public class ExtensionDescriptorMapperImpl implements ExtensionDescriptorMapper 
             return type.cast(Long.valueOf(value));
         } else if (Boolean.class.equals(type)) {
             return type.cast(Boolean.valueOf(value));
-        } else {
+        } else if (URL.class.equals(type)) {
             try {
-                if (URL.class.equals(type)) {
-                    return type.cast(new URL(value));
-                } else if (URI.class.equals(type)) {
-                    return type.cast(new URI(value));
-                }
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Unable to convert value [" + value + "] to URL/URI.");
+                return type.cast(new URL(value));
+            } catch (MalformedURLException ex) {
+                throw new IllegalArgumentException("Unable to convert value [" + value + "] to URL.");
             }
+        } else if (URI.class.equals(type)) {
+            try {
+                return type.cast(new URI(value));
+            } catch (URISyntaxException ex) {
+                throw new IllegalArgumentException("Unable to convert value [" + value + "] to URI.");
+            }
+        } else if (Color.class.equals(type)) {
+            try {
+                Field field = Color.class.getDeclaredField(value.toUpperCase());
+                try {
+                    return type.cast(field.get(null));
+                } catch (Exception e) {
+                    throw new IllegalStateException("Can't acces to the value static field [" + field.getName() + "] in " + Color.class.getName());
+                }
+            } catch(NoSuchFieldException ignored) {
+                throw new IllegalArgumentException("There is no color [" + value + "] in predefined constants in " + Color.class.getName());
+            }
+        } else {
             throw new IllegalArgumentException("Unable to convert value [" + value + "] to " + type.getName() + ".");
         }
     }
