@@ -39,6 +39,11 @@ public class Coordinate {
         return Arrays.hashCode(dims);
     }
 
+    @Override
+    public String toString() {
+        return Arrays.toString(dims);
+    }
+
     public static class Builder {
 
         private int[] dims;

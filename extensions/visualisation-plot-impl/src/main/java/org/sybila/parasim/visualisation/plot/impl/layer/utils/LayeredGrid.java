@@ -24,7 +24,7 @@ public class LayeredGrid<T> extends Grid<T> {
     public Point getPoint(Coordinate coord) {
         checkDimension(coord);
         int dim = coord.getDimension();
-        float [] point = new float[dim];
+        float[] point = new float[dim];
         for (int i = 0; i < dim; i++) {
             point[i] = layers.get(dim, coord.getCoordinate(i)).getValue();
         }
@@ -35,5 +35,27 @@ public class LayeredGrid<T> extends Grid<T> {
         return getLayers().get(dimension, index).getValue();
     }
 
+    public Coordinate getCoordinate(Point point) {
+        Coordinate.Builder build = new Coordinate.Builder(getDimension());
+        for (int i = 0; i < getDimension(); i++) {
+            build.setCoordinate(i, getCoordinate(point.getValue(i), i, 0, getLayers().getSize(i)));
+        }
+        return build.create();
+    }
 
+    private int getCoordinate(float value, int dim, int begin, int end) {
+        if (begin == end) {
+            return begin;
+        }
+        int middle = (begin + end) / 2;
+        Layer midLayer = getLayers().get(dim, middle);
+        if (midLayer.isIn(value)) {
+            return middle;
+        }
+        if (value < midLayer.getValue()) {
+            return getCoordinate(value, dim, begin, middle);
+        } else {
+            return getCoordinate(value, dim, middle, end);
+        }
+    }
 }

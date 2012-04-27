@@ -16,7 +16,7 @@ public class Block<T> {
         int dim = dimensions.getDimension();
         data = (T[][]) new Object[dim][];
         for (int i = 0; i < dim; i++) {
-            data[i] = (T[]) new Object[dimensions.getCoordinate(dim)];
+            data[i] = (T[]) new Object[dimensions.getCoordinate(i)];
         }
     }
 
@@ -56,6 +56,10 @@ public class Block<T> {
             for (int i = 0; i < dim; i++) {
                 data[i] = new ArrayList<T>(Arrays.asList(source.data[i]));
             }
+        }
+
+        public Builder(List<T>[] source) {
+            data = source;
         }
 
         public Coordinate getDimensions() {
