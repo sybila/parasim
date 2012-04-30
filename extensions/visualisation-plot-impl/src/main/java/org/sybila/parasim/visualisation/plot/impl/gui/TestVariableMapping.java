@@ -21,6 +21,8 @@ package org.sybila.parasim.visualisation.plot.impl.gui;
 
 import org.sybila.parasim.visualisation.plot.impl.render.RGCirclePointRenderer;
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.List;
 import org.sybila.parasim.model.ode.DoubleMap;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -70,21 +72,32 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
         int xDim = xCoords.length;
         int yDim = yCoords.length;
         int zDim = zCoords.length;
-        int dim = xDim * yDim * zDim;
 
-        Point[] points = new Point[dim];
-        float[] robustness = new float[dim];
+        List<Point> points = new ArrayList<Point>();
+        List<Float> robustness = new ArrayList<Float>();
 
-        int p = 0;
+        final double prob = 0.9;
+
         for (int i = 0; i < xDim; i++) {
             for (int j = 0; j < yDim; j++) {
-                for (int k = 0; k < zDim; k++, p++) {
-                    points[p] = new ArrayPoint(0, xCoords[i], yCoords[j], zCoords[k]);
-                    robustness[p] = xCoords[i] + yCoords[j] + zCoords[k] - 1.5f;
+                for (int k = 0; k < zDim; k++) {
+                    if (Math.random() < prob) {
+                        points.add(new ArrayPoint(0, xCoords[i], yCoords[j], zCoords[k]));
+                        robustness.add(xCoords[i] + yCoords[j] + zCoords[k] - 1.5f);
+                    }
                 }
             }
         }
-        return new ArrayVerificationResult(dim, points, robustness);
+
+        int dim = points.size();
+        Point[] pointArray = new Point[dim];
+        points.toArray(pointArray);
+        float[] robustArray = new float[dim];
+        for (int i = 0; i < dim; i++) {
+            robustArray[i] = robustness.get(i);
+        }
+
+        return new ArrayVerificationResult(dim, pointArray, robustArray);
     }
 
     public static void main(String[] args) {

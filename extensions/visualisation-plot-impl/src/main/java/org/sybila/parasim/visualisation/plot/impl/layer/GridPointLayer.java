@@ -104,7 +104,8 @@ public class GridPointLayer extends LayeredPointLayer implements LayerMetaFactor
         return points.getLayerValue(yAxis, getYCoord(index));
     }
 
-    public float robustness(int index) { //co udělat s null values?
-        return layer[getXCoord(index)][getYCoord(index)];
+    public float robustness(int index) {
+        Float target = layer[getXCoord(index)][getYCoord(index)];
+        return (target == null) ? 0 : target;
     }
 }
