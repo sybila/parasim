@@ -19,32 +19,27 @@
  */
 package org.sybila.parasim.visualisation.plot.impl.render;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import org.sybila.parasim.visualisation.plot.impl.gui.PointRenderer;
 
 /**
- * Renders point as a circle of a color according to associated robustness.
- * Circle radius and color of valid and invalid points is specified.
+ * Renders point as a filled circle, whose radius is specified.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class CirclePointRenderer extends ColorPointRenderer {
+public class CirclePointRenderer implements PointRenderer {
 
     private float radius;
 
     /**
-     * Specify circle radius and color of valid and invalid points.
+     * Specify circle radius.
      * @param radius Circle radius.
-     * @param valid Color of valid points.
-     * @param invalid Color of invalid points.
      */
-    public CirclePointRenderer(float radius, Color valid, Color invalid) {
-        super(valid, invalid);
+    public CirclePointRenderer(float radius) {
         this.radius = radius;
     }
 
-    @Override
-    protected void drawPoint(Graphics2D canvas, float x, float y) {
+    public void drawPoint(Graphics2D canvas, float x, float y, float robustness) {
         canvas.fill(new Ellipse2D.Float(x - radius, y - radius, 2 * radius, 2 * radius));
     }
 }
