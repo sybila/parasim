@@ -21,6 +21,7 @@ package org.sybila.parasim.model.verification.result;
 
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
  * Data block with information about trajectories robustness.
@@ -34,5 +35,5 @@ public interface VerifiedDataBlock<T extends Trajectory> extends DataBlock<T> {
      * @param index Index of a trajectory.
      * @return Robustness of trajectory with given index.
      */
-    public float getRobustness(int index); //TODO něco jiného než float
+    public Robustness getRobustness(int index);
 }

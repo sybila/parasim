@@ -96,7 +96,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
 
     private Element pointToXML(Document doc, int index) {
         Point p = getPoint(index);
-        float r = getRobustness(index);
+        float r = getRobustness(index).getValue();
 
         Element target = doc.createElement(VerificationResultFactory.POINT_NAME);
         for (int i = 0; i < p.getDimension(); i++) {
@@ -125,7 +125,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
             if (!getPoint(i).equals(target.getPoint(i))) {
                 return false;
             }
-            if (Float.floatToIntBits(getRobustness(i)) != Float.floatToIntBits(target.getRobustness(i))) {
+            if (Float.floatToIntBits(getRobustness(i).getValue()) != Float.floatToIntBits(target.getRobustness(i).getValue())) {
                 return false;
             }
         }
@@ -140,7 +140,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
             result *= prime;
             result += getPoint(i).hashCode();
             result *= prime;
-            result += Float.floatToIntBits(getRobustness(i));
+            result += Float.floatToIntBits(getRobustness(i).getValue());
         }
         return result;
     }

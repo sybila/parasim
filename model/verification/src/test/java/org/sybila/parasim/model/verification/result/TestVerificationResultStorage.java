@@ -19,12 +19,14 @@
  */
 package org.sybila.parasim.model.verification.result;
 
+import org.sybila.parasim.model.verification.SimpleRobustness;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.xml.XMLException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -45,7 +47,7 @@ public class TestVerificationResultStorage {
                     new ArrayPoint(0f, 89.005f, -74.102f, 376.4f),
                     new ArrayPoint(0f, 538.01f, -35.002f, 55.12f),
                     new ArrayPoint(0f, 124.1f, 25.35f, -0.005f)},
-                new float[]{0.125f, -0.145f, -54f, 12.8f});
+                new Robustness[]{new SimpleRobustness(0.125f), new SimpleRobustness(-0.145f), new SimpleRobustness(-54f), new SimpleRobustness(12.8f)});
     }
 
     private File getTestResultFile() {

@@ -106,7 +106,7 @@ public class OverlapPointLayer extends OrthogonalBoundedPointLayer implements Po
 
     @Override
     public float robustness(int index) {
-        return src.getRobustness(index);
+        return src.getRobustness(index).getValue();
     }
 
     @Override

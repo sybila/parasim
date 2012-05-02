@@ -20,6 +20,7 @@
 package org.sybila.parasim.model.verification.result;
 
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 
 /**
@@ -47,5 +48,5 @@ public interface VerificationResult extends XMLRepresentable {
      * @param index Index of specified point.
      * @return Property robustness value in point with given index.
      */
-    public float getRobustness(int index); //postupem času přepsat na něco jiného než float
+    public Robustness getRobustness(int index);
 }

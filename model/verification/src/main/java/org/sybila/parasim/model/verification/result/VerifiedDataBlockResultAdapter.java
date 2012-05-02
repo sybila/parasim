@@ -21,6 +21,7 @@ package org.sybila.parasim.model.verification.result;
 
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
  * Adapter from {@link VerifiedDataBlock} to {@link VerificationResult}.
@@ -46,7 +47,7 @@ public class VerifiedDataBlockResultAdapter<T extends Trajectory> extends Abstra
     }
 
     @Override
-    public float getRobustness(int index) {
+    public Robustness getRobustness(int index) {
         return data.getRobustness(index);
     }
 }

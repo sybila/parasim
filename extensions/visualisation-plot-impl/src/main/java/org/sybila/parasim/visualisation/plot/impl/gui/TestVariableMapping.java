@@ -28,6 +28,8 @@ import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.ArrayVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
@@ -94,9 +96,9 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
         int dim = points.size();
         Point[] pointArray = new Point[dim];
         points.toArray(pointArray);
-        float[] robustArray = new float[dim];
+        Robustness[] robustArray = new Robustness[dim];
         for (int i = 0; i < dim; i++) {
-            robustArray[i] = robustness.get(i);
+            robustArray[i] = new SimpleRobustness(robustness.get(i));
         }
 
         return new ArrayVerificationResult(dim, pointArray, robustArray);

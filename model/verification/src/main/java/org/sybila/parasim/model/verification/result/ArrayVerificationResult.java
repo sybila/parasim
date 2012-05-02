@@ -20,6 +20,7 @@
 package org.sybila.parasim.model.verification.result;
 
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
  * Stores points and their associated robustness values in an array.
@@ -29,7 +30,7 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
 
     private int size;
     private Point[] points;
-    private float[] robustness;
+    private Robustness[] robustness;
 
     /**
      * Creates new verification result with specified contents. Note: arguments are not copied.
@@ -38,7 +39,7 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
      * @param robustness Array containing robustness values.
      * @throws IllegalArgumentException when lengths of given arrays do not match.
      */
-    public ArrayVerificationResult(int size, Point[] points, float[] robustness) {
+    public ArrayVerificationResult(int size, Point[] points, Robustness[] robustness) {
         if ((size != points.length) || (size != robustness.length)) {
             throw new IllegalArgumentException("Lengths of points and robustness arrays have to match the size argument.");
         }
@@ -53,7 +54,7 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
     }
 
     @Override
-    public float getRobustness(int index) {
+    public Robustness getRobustness(int index) {
         return robustness[index];
     }
 

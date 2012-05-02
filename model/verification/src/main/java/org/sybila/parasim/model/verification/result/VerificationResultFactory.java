@@ -21,6 +21,8 @@ package org.sybila.parasim.model.verification.result;
 
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.Node;
@@ -42,11 +44,11 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
 
         int size = children.getLength();
         if (size == 0) {
-            return new ArrayVerificationResult(0, new Point[0], new float[0]);
+            return new ArrayVerificationResult(0, new Point[0], new Robustness[0]);
         }
 
         Point[] points = new Point[size];
-        float[] robustness = new float[size];
+        Robustness[] robustness = new Robustness[size];
         int dimension = children.item(0).getChildNodes().getLength() - 1; //one of attributes is robustness
 
         for (int i = 0; i < size; i++) {
@@ -59,7 +61,7 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
                 for (int j = 0; j < dimension; j++) {
                     dims[j] = Float.valueOf(dimNodes.item(j).getFirstChild().getNodeValue());
                 }
-                robustness[i] = Float.valueOf(dimNodes.item(dimension).getFirstChild().getNodeValue());
+                robustness[i] = new SimpleRobustness(Float.valueOf(dimNodes.item(dimension).getFirstChild().getNodeValue()));
                 points[i] = new ArrayPoint(0, dims, 0, dimension);
             } catch (NumberFormatException nfe) {
                 throw new XMLFormatException("Illegible number.", nfe);

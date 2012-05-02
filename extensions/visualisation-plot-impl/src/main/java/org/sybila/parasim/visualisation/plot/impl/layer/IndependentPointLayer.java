@@ -83,7 +83,7 @@ public class IndependentPointLayer extends LayeredPointLayer implements LayerMet
                 }
             }
             if (dim == getBounds().getDimension()) {
-                layer.add(new float[]{p.getValue(xAxis), p.getValue(yAxis), result.getRobustness(i)});
+                layer.add(new float[]{p.getValue(xAxis), p.getValue(yAxis), result.getRobustness(i).getValue()});
             }
         }
 

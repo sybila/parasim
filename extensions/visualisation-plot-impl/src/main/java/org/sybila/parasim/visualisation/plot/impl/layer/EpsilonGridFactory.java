@@ -24,7 +24,7 @@ public class EpsilonGridFactory implements GridPointLayer.GridFactory {
         LayeredGrid<Float> target = new LayeredGrid<Float>(layers.create());
 
         for (int i = 0; i < result.size(); i++) {
-            target.put(target.getCoordinate(result.getPoint(i)), result.getRobustness(i));
+            target.put(target.getCoordinate(result.getPoint(i)), result.getRobustness(i).getValue());
 
         }
 
