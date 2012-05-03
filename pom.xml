@@ -65,5 +65,11 @@
                 <module>applications/parasim-cli</module>
             </modules>
         </profile>
+        <profile>
+            <id>util</id>
+            <modules>
+                <module>util</module>
+            </modules>
+        </profile>
     </profiles>
 </project>
