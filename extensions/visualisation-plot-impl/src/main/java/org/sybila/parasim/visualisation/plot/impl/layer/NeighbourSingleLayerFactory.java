@@ -75,14 +75,13 @@ public class NeighbourSingleLayerFactory implements GridPointLayer.SingleLayerFa
 
         private Float[][] target;
         private int xSize, ySize;
-        private Map<Integer, Integer> projections;
         PriorityQueue<TargetPoint> unprocessed;
 
         public Transformator(Float[][] target, int xSize, int ySize, Map<Integer, Integer> projections) {
             this.target = target;
             this.xSize = xSize;
             this.ySize = ySize;
-            this.projections = projections;
+
 
             unprocessed = new PriorityQueue<TargetPoint>(11, new NeighbourComparator()); //what initial capacity??
         }
@@ -120,7 +119,7 @@ public class NeighbourSingleLayerFactory implements GridPointLayer.SingleLayerFa
             robustness /= neighbours.size();
             target[x][y] = robustness;
 
-            //updateNeighbours(x, y);
+            updateNeighbours(x, y);
         }
 
         private void updateNeighbours(int x, int y) {
