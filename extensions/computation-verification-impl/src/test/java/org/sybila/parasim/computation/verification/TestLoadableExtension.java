@@ -17,12 +17,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification;
+package org.sybila.parasim.computation.verification;
+
+import org.sybila.parasim.computation.verification.api.STLVerifier;
+import org.sybila.parasim.core.annotations.Default;
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 /**
- * Represents some way of specifing a property of an OdeSystem.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Property {
+public class TestLoadableExtension extends AbstractVerificationTest {
+
+    @Test
+    public void testSTLVerifierIsLoaded() {
+        assertNotNull(getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext()));
+    }
+
+
 }

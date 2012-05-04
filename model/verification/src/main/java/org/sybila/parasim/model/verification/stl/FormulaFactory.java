@@ -113,7 +113,7 @@ public class FormulaFactory implements XMLRepresentableFactory<Formula> {
 
                 /* GLOBALLY */
             } else if (type.equals(FormulaType.GLOBALLY)) {
-                return new GlobalyFormula(phi, interval);
+                return new GloballyFormula(phi, interval);
 
                 /* UNTIL */
             } else {

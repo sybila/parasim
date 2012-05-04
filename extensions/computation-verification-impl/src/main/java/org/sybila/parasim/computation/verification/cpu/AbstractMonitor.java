@@ -17,12 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification;
+package org.sybila.parasim.computation.verification.cpu;
+
+import java.util.Iterator;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
- * Represents some way of specifing a property of an OdeSystem.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Property {
+public abstract class AbstractMonitor implements Monitor {
+
+    public Iterator<Robustness> iterator() {
+        return new Iterator<Robustness>() {
+            private int next = 0;
+            public boolean hasNext() {
+                return next < size();
+            }
+            public Robustness next() {
+                return getRobustness(next++);
+            }
+            public void remove() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+    }
+
 }

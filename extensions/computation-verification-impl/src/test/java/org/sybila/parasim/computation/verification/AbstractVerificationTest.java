@@ -17,12 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification;
+package org.sybila.parasim.computation.verification;
+
+import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.ManagerImpl;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 /**
- * Represents some way of specifing a property of an OdeSystem.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Property {
+public class AbstractVerificationTest {
+
+    private Manager manager;
+
+    @BeforeMethod
+    public void startManager() throws Exception {
+        manager = ManagerImpl.create();
+        manager.start();
+    }
+
+    @AfterMethod
+    public void stopManager() {
+        manager.shutdown();
+    }
+
+    protected final Manager getManager() {
+        return manager;
+    }
 }

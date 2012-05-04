@@ -5,6 +5,9 @@ package org.sybila.parasim.model.verification;
  */
 public interface Robustness {
 
+    float getTime();
+
     float getValue();
 
+    Robustness invert();
 }

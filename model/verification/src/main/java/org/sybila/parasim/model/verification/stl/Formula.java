@@ -20,6 +20,7 @@
 package org.sybila.parasim.model.verification.stl;
 
 import org.sybila.parasim.model.xml.XMLRepresentable;
+import org.sybila.parasim.model.verification.Property;
 
 /**
  * Represents an STL (Signal Temporal Logic) formula.
@@ -27,7 +28,7 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public interface Formula extends XMLRepresentable {
+public interface Formula extends XMLRepresentable, Property {
 
     /**
      * Returns the arity of this formula, that is how many subformulas it consists of.

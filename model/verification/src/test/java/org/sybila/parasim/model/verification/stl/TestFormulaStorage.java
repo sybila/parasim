@@ -115,7 +115,7 @@ public class TestFormulaStorage {
         FormulaInterval andOrFI = new TimeInterval(7.8f, 10f, CLOSED, OPEN);
         Formula andOrF = new FutureFormula(andOrFP, andOrFI);
         FormulaInterval andOrGI = new TimeInterval(0.001f, 1.002f, OPEN, OPEN);
-        Formula andOrG = new GlobalyFormula(andOrGP, andOrGI);
+        Formula andOrG = new GloballyFormula(andOrGP, andOrGI);
         Formula andOr = new OrFormula(andOrF, andOrG);
 
         FormulaInterval andNotUI = new TimeInterval(129.34f, 301.22f, CLOSED,
@@ -140,7 +140,7 @@ public class TestFormulaStorage {
 
     @BeforeMethod
     public void prepareFormulaResource() {
-        
+
     }
 
     @Test
@@ -148,7 +148,7 @@ public class TestFormulaStorage {
         // Tady jsme se dostali do zásadních problémů -- XML parser z nějakého
         // důvodu dohazuje prázdné textové elementy!
         resource = new FormulaResource(getTestFormulaFile());
-        resource.setVariableMapping(new SimpleMapping()); 
+        resource.setVariableMapping(new SimpleMapping());
         try {
             resource.load();
         } catch (XMLException xmle) {

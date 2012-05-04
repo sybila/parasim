@@ -17,12 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification;
+package org.sybila.parasim.computation.verification.cpu;
+
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
- * Represents some way of specifing a property of an OdeSystem.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Property {
+public interface Monitor extends Iterable<Robustness> {
+
+    Robustness getRobustness(int index);
+
+    int size();
 }

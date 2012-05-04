@@ -17,12 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification;
+package org.sybila.parasim.computation.verification.stl.cpu;
+
+import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.testng.annotations.Test;
 
 /**
- * Represents some way of specifing a property of an OdeSystem.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Property {
+public class TestAndMonitor extends AbstractBinaryPropositionalMonitorTest {
+
+    @Test
+    public void testAndMonitor() {
+        super.testMonitor();
+    }
+
+    @Override
+    protected Monitor createMonitor(Monitor left, Monitor right) {
+        return new AndMonitor(left, right);
+    }
+
+    @Override
+    protected float function(float left, float right) {
+        return Math.min(left, right);
+    }
+
 }

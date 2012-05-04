@@ -17,12 +17,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification;
+package org.sybila.parasim.computation.verification.stl.cpu;
+
+import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
+import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
- * Represents some way of specifing a property of an OdeSystem.
+ * Monitors the negation of a subformula. The output is a negation of the signal.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Property {
+public class NotMonitor extends AbstractMonitor {
+
+    private final Monitor subMonitor;
+
+    public NotMonitor(Monitor subMonitor) {
+        Validate.notNull(subMonitor);
+        this.subMonitor = subMonitor;
+    }
+
+    public Robustness getRobustness(int index) {
+        return subMonitor.getRobustness(index).invert();
+    }
+
+    public int size() {
+        return subMonitor.size();
+    }
 }

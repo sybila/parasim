@@ -40,7 +40,7 @@ import org.sybila.parasim.model.verification.Property;
  *
  * @author Sven Drazan <sven@mail.muni.cz>
  */
-public class Buchi extends Property {
+public class Buchi implements Property {
 
     private int stateCount;             /* number of states of automaton */
 
