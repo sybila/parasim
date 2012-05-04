@@ -11,6 +11,7 @@ import org.sybila.parasim.visualisation.plot.impl.layer.utils.LayeredGrid;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
+@Deprecated
 public class NeighbourSingleLayerFactory implements GridPointLayer.SingleLayerFactory {
 
     private static class TargetPoint {
