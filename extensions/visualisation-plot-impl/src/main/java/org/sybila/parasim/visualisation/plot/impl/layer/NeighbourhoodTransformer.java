@@ -111,7 +111,7 @@ public abstract class NeighbourhoodTransformer<T> {
     }
 
     private void updatePoint(int x, int y) {
-        if (isInRange(x, y)) {
+        if (isInRange(x, y) && (getRobustness(x, y) == null)) {
             unprocessed.remove(new Target<T>(x, y, null));
             unprocessed.add(new Target<T>(x, y, getNeighbourhood(x, y)));
         }
