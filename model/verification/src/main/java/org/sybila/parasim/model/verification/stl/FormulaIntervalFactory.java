@@ -118,7 +118,8 @@ public class FormulaIntervalFactory implements
             throws XMLFormatException {
         String target = parent.getAttributes().getNamedItem(TYPE_NAME).getNodeValue();
         if (target.equals(OPEN_NAME)) {
-            return IntervalBoundaryType.OPEN;
+            throw new XMLFormatException("Open interval boundary is not supported.");
+            //return IntervalBoundaryType.OPEN;
         } else if (target.equals(CLOSED_NAME)) {
             return IntervalBoundaryType.CLOSED;
         } else {
