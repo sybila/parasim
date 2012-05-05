@@ -26,7 +26,7 @@
 <future>
 <interval>
 <lower type="closed">7.8</lower>
-<upper type="open">10.0</upper>
+<upper type="closed">10.0</upper>
 </interval>
 <predicate>
 <variable multiplier="3.87">x</variable>
@@ -37,8 +37,8 @@
 </future>
 <globally>
 <interval>
-<lower type="open">0.001</lower>
-<upper type="open">1.002</upper>
+<lower type="closed">0.001</lower>
+<upper type="closed">1.002</upper>
 </interval>
 <predicate>
 <variable multiplier="-2.159">y</variable>
