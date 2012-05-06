@@ -57,13 +57,10 @@ public class ImmutableConfiguration implements Configuration {
             throw new IllegalArgumentException("The paremeter steps is null.");
         }
         if (odeSystem.dimension() != space.getDimension()) {
-            throw new IllegalArgumentException("The number of dimensions doesn't match with maxBounds size.");
-        }
-        if (odeSystem.dimension() != space.getDimension()) {
-            throw new IllegalArgumentException("The number of dimensions doesn't match with minBounds size.");
+            throw new IllegalArgumentException("The number of ODE system dimensions ("+odeSystem.dimension()+") doesn't match with simulation space dimension ("+space.getDimension()+")");
         }
         if (odeSystem.dimension() != steps.length) {
-            throw new IllegalArgumentException("The number of dimensions doesn't match with steps size.");
+            throw new IllegalArgumentException("The number of ODE system dimensions doesn't match with steps size.");
         }
         if (timeStep <= 0) {
             throw new IllegalArgumentException("The time step has to be a positive number.");
