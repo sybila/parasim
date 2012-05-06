@@ -22,7 +22,6 @@ package org.sybila.parasim.computation.simulation.cpu;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.Simulator;
-import org.sybila.parasim.model.trajectory.Trajectory;
 import org.testng.annotations.Test;
 import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 
@@ -35,7 +34,7 @@ public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
     public void testAbsoluteStep() {
         super.testAbsoluteStep(10);
     }
-    
+
     @Test
     public void testTimeStep() {
         super.testTimeStep(10);
@@ -44,8 +43,8 @@ public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
     @Test
     public void testMinimalNumberOfPoints() {
         super.testMinimalNumberOfPoints(10);
-    }    
-    
+    }
+
     @Test
     public void testValidNumberOfTrajectories() {
         super.testValidNumberOfTrajectories(10);
@@ -55,5 +54,5 @@ public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
     protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator(AdaptiveStepConfiguration configuaration) {
         return new Rkf45Simulator();
     }
-    
+
 }

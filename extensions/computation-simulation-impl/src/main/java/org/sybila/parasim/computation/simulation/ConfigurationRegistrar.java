@@ -24,6 +24,7 @@ import org.sybila.parasim.computation.simulation.api.Configuration;
 import org.sybila.parasim.computation.simulation.api.ImmutableAdaptiveStepConfiguraton;
 import org.sybila.parasim.computation.simulation.api.ImmutableConfiguration;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.execution.api.annotations.ComputationScope;
 import org.sybila.parasim.model.ode.OdeSystem;
@@ -37,14 +38,14 @@ public class ConfigurationRegistrar {
 
     @Provide
     public AdaptiveStepConfiguration registerAdaptiveStepConfiguration(Configuration configuration, PrecisionConfiguration precisionConfiguration) {
-       return new ImmutableAdaptiveStepConfiguraton(
+        return new ImmutableAdaptiveStepConfiguraton(
             configuration,
             precisionConfiguration
         );
     }
 
     @Provide
-    public Configuration registerConfiguration(OdeSystem odeSystem, OrthogonalSpace space) {
+    public Configuration registerConfiguration(OdeSystem odeSystem, @SimulationSpace OrthogonalSpace space) {
         return new ImmutableConfiguration(odeSystem, space);
     }
 }

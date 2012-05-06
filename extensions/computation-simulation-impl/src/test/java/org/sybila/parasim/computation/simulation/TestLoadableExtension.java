@@ -60,11 +60,6 @@ public class TestLoadableExtension {
     }
 
     @Test
-    public void testExtensionConfigurationLoaded() {
-        assertNotNull(manager.resolve(ExtensionConfiguration.class, Default.class, manager.getRootContext()));
-    }
-
-    @Test
     public void testConfigurationLoaded() {
         Context context = new AbstractContext() {
             public Class<? extends Annotation> getScope() {
