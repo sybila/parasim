@@ -105,7 +105,8 @@ public class MapInstanceStorage implements InstanceStorage {
                 }
             }
         }
-        return type.cast(instances.get(type));
+
+        throw new IllegalArgumentException("There is no available instance of <" + type.getName() + "> for qualifier <" + (Proxy.isProxyClass(qualifier) ? qualifier.getInterfaces()[0].getSimpleName() : qualifier.getSimpleName()) + ">.");
     }
 
 }
