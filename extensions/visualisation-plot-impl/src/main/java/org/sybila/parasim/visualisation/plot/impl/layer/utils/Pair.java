@@ -27,7 +27,7 @@ public class Pair<S, T> {
         if (!(obj instanceof Pair)) {
             return false;
         }
-        Pair<Object, Object> target = (Pair<Object, Object>) obj;
+        Pair<?, ?> target = (Pair<?, ?>) obj;
         return first().equals(target.first()) && second().equals(target.second());
     }
 

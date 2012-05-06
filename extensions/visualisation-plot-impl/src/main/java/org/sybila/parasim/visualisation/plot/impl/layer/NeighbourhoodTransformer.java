@@ -39,7 +39,7 @@ public abstract class NeighbourhoodTransformer<T> {
             if (!(obj instanceof Target)) {
                 return false;
             }
-            Target<T> target = (Target<T>) obj;
+            Target<?> target = (Target<?>) obj;
             if (target.getX() != getX()) {
                 return false;
             }
