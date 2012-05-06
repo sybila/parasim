@@ -20,3 +20,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<space xmlns="http://www.sybila.org/parasim/space">
+    <time min="0" max="10" />
+    <dimension min="0" max="200"/>
+    <dimension min="0" max="200"/>
+    <dimension min="0" max="200"/>
+    <dimension min="0" max="200"/>
+    <dimension min="0" max="200"/>
+</space>

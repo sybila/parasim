@@ -20,3 +20,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<precision xmlns="http://www.sybila.org/parasim/precision" maxRelativeError="0.1">
+    <dimension maxAbsoluteError="0"/>
+    <dimension maxAbsoluteError="0"/>
+    <dimension maxAbsoluteError="0"/>
+    <dimension maxAbsoluteError="0"/>
+    <dimension maxAbsoluteError="0"/>
+</precision>

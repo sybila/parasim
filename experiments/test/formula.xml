@@ -20,3 +20,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+    <future>
+        <interval>
+            <lower type="closed">0.1</lower>
+            <upper type="closed">1</upper>
+        </interval>
+        <predicate>
+            <variable multiplier="1">A</variable>
+            <greater />
+        <value>20</value>
+    </predicate>
+    </future>
+</formula>
