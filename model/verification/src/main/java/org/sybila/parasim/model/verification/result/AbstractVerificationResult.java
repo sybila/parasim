@@ -22,6 +22,7 @@ package org.sybila.parasim.model.verification.result;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Robustness;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -143,5 +144,24 @@ public abstract class AbstractVerificationResult implements VerificationResult {
             result += Float.floatToIntBits(getRobustness(i).getValue());
         }
         return result;
+    }
+
+    public VerificationResult merge(VerificationResult toMerge) {
+        if (toMerge == null) {
+            throw new IllegalArgumentException("The parameter [toMerge] is null.");
+        }
+        Robustness[] newRobustnesses = new Robustness[size() + toMerge.size()];
+        Point[] newPoints = new Point[size() + size()];
+        // copy this data
+        for (int i=0; i<size(); i++) {
+            newPoints[i] = getPoint(i);
+            newRobustnesses[i] = getRobustness(i);
+        }
+        // copy other data
+        for (int i=0; i<toMerge.size(); i++) {
+            newPoints[size() + i] = toMerge.getPoint(i);
+            newRobustnesses[size() + i] = toMerge.getRobustness(i);
+        }
+        return new ArrayVerificationResult(size() + size(), newPoints, newRobustnesses);
     }
 }

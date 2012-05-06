@@ -62,4 +62,21 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
     public int size() {
         return size;
     }
+
+    public VerificationResult merge(VerificationResult toMerge) {
+        if (toMerge == null) {
+            throw new IllegalArgumentException("The parameter [toMerge] is null.");
+        }
+        Robustness[] newRobustnesses = new Robustness[size() + toMerge.size()];
+        Point[] newPoints = new Point[size() + size()];
+        // copy this data
+        System.arraycopy(points, 0, newPoints, 0, points.length);
+        System.arraycopy(robustness, 0, newRobustnesses, 0, robustness.length);
+        // copy other data
+        for (int i=0; i<toMerge.size(); i++) {
+            newPoints[size() + i] = toMerge.getPoint(i);
+            newRobustnesses[size() + i] = toMerge.getRobustness(i);
+        }
+        return new ArrayVerificationResult(size() + size(), newPoints, newRobustnesses);
+    }
 }

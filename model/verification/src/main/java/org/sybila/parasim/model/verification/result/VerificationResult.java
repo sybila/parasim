@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification.result;
 
+import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.xml.XMLRepresentable;
@@ -27,7 +28,7 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
  * Result of a verification -- list of points with associated property robustness value.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public interface VerificationResult extends XMLRepresentable {
+public interface VerificationResult extends XMLRepresentable, Mergeable<VerificationResult> {
 
     /**
      * Return number of points with robustness values.
