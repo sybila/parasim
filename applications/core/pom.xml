@@ -46,12 +46,27 @@
         <!-- extensions -->
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-simulation-api</artifactId>
+            <artifactId>computation-simulation-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
             <artifactId>computation-density-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-verification-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-execution-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-lifecycle-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

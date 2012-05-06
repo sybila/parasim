@@ -70,12 +70,12 @@ public class ExperimentImpl implements Experiment {
         try {
             return new ExperimentImpl(
                     SBMLOdeSystemFactory.fromFile(getFileWithAbsolutePath(experiment.getProperty("sbml.file"), experimentFile.getParentFile())),
-                    new FormulaResource(new File(experiment.getProperty("stl.file"))),
+                    new FormulaResource(getFileWithAbsolutePath(experiment.getProperty("stl.file"), experimentFile.getParentFile())),
                     new OrthogonalSpaceResource(getFileWithAbsolutePath(experiment.getProperty("space.initial.file"), experimentFile.getParentFile())),
-                    new OrthogonalSpaceResource(new File(experiment.getProperty("space.simulation.file"))),
-                    new PrecisionConfigurationResource(new File(experiment.getProperty("simulation.precision.file"))),
+                    new OrthogonalSpaceResource(getFileWithAbsolutePath(experiment.getProperty("space.simulation.file"), experimentFile.getParentFile())),
+                    new PrecisionConfigurationResource(getFileWithAbsolutePath(experiment.getProperty("simulation.precision.file"), experimentFile.getParentFile())),
                     new InitialSamplingResource(getFileWithAbsolutePath(experiment.getProperty("density.sampling.file"), experimentFile.getParentFile())),
-                    new VerificationResultResource(new File(experiment.getProperty("result.output.file"))));
+                    new VerificationResultResource(getFileWithAbsolutePath(experiment.getProperty("result.output.file"), experimentFile.getParentFile())));
         } catch(XMLException e) {
             throw new IOException("Can't load data for experiment,", e);
         }
