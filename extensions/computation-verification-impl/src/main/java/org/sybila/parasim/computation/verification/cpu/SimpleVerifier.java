@@ -45,6 +45,7 @@ public class SimpleVerifier<P extends Property> implements Verifier<P> {
         int counter = 0;
         for (Trajectory trajectory: trajectories) {
             robustnesses[counter] = monitorFactory.createMonitor(trajectory, property).getRobustness(0);
+            counter++;
         }
         return new VerifiedDataBlock<Trajectory>() {
 

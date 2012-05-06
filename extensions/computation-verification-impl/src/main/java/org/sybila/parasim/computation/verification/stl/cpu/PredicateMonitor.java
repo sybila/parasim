@@ -46,7 +46,7 @@ public class PredicateMonitor extends AbstractMonitor {
     }
 
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return trajectory.getLength();
     }
 
 }
