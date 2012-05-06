@@ -103,6 +103,10 @@ public class OrthogonalSpace implements Space {
     @Override
     public Element toXML(Document doc) {
         Element space = doc.createElement(OrthogonalSpaceFactory.SPACE_NAME);
+        Element time = doc.createElement(OrthogonalSpaceFactory.TIME_NAME);
+        time.setAttribute(OrthogonalSpaceFactory.ATTRIBUTE_MIN, Float.toString(minBounds.getTime()));
+        time.setAttribute(OrthogonalSpaceFactory.ATTRIBUTE_MAX, Float.toString(maxBounds.getTime()));
+        space.appendChild(time);
         for (int dim = 0; dim < getDimension(); dim++) {
             Element dimension = doc.createElement(OrthogonalSpaceFactory.DIMENSION_NAME);
             dimension.setAttribute(OrthogonalSpaceFactory.ATTRIBUTE_MIN, Float.toString(minBounds.getValue(dim)));
@@ -136,6 +140,7 @@ public class OrthogonalSpace implements Space {
         result.append("(");
         result.append(getDimension());
         result.append(" D ");
+        result.append(", T [").append(getMinBounds().getTime()).append(", ").append(getMaxBounds().getTime()).append("]");
         for (int i = 0; i < getDimension() - 1; i++) {
             appendDimension(result, i);
             result.append(", ");

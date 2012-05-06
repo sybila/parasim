@@ -21,6 +21,7 @@
 
 -->
 <space xmlns="http://www.sybila.org/parasim/space">
+    <time min="1" max="10.11" />
     <dimension min="-0.149" max="5.931"/>
     <dimension min="129.1" max="251.9"/>
     <dimension min="-591.023" max="-0.006"/>

@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.model.space;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.xml.XMLFormatException;
@@ -31,6 +33,7 @@ public class OrthogonalSpaceFactory implements
         XMLRepresentableFactory<OrthogonalSpace> {
     public static final String SPACE_NAME = "space";
     public static final String DIMENSION_NAME = "dimension";
+    public static final String TIME_NAME = "time";
     public static final String ATTRIBUTE_MIN = "min";
     public static final String ATTRIBUTE_MAX = "max";
 
@@ -42,33 +45,55 @@ public class OrthogonalSpaceFactory implements
                             + "', received `" + source.getNodeName() + "').");
         }
         NodeList children = source.getChildNodes();
-        int dimension = children.getLength();
-        float[] min = new float[dimension];
-        float[] max = new float[dimension];
-        for (int index = 0; index < dimension; index++) {
+        float timeMin = 0;
+        float timeMax = 0;
+        List<Float> min = new ArrayList<Float>();
+        List<Float> max = new ArrayList<Float>();
+
+        for (int index = 0; index < children.getLength(); index++) {
             Node child = children.item(index);
             if (child.getNodeName().equals(DIMENSION_NAME)) {
                 NamedNodeMap attr = child.getAttributes();
                 try {
-                    min[index] = Float.valueOf(attr.getNamedItem(ATTRIBUTE_MIN)
+                    min.add(Float.valueOf(attr.getNamedItem(ATTRIBUTE_MIN)
+                            .getNodeValue()));
+                    max.add(Float.valueOf(attr.getNamedItem(ATTRIBUTE_MAX)
+                            .getNodeValue()));
+                } catch (NumberFormatException nfe) {
+                    throw new XMLFormatException("Illegible number.", nfe);
+                }
+                if (min.get(min.size() - 1) > max.get(max.size() - 1)) {
+                    throw new XMLFormatException("The min bound in dimension <"
+                            + (max.size() - 1) + "> is greater than max bound ("
+                            + min.get(min.size() - 1) + ">" + max.get(max.size() - 1) + ").");
+                }
+            } else if (child.getNodeName().equals(TIME_NAME)) {
+                NamedNodeMap attr = child.getAttributes();
+                try {
+                    timeMin = Float.valueOf(attr.getNamedItem(ATTRIBUTE_MIN)
                             .getNodeValue());
-                    max[index] = Float.valueOf(attr.getNamedItem(ATTRIBUTE_MAX)
+                    timeMax = Float.valueOf(attr.getNamedItem(ATTRIBUTE_MAX)
                             .getNodeValue());
                 } catch (NumberFormatException nfe) {
                     throw new XMLFormatException("Illegible number.", nfe);
                 }
-                if (min[index] > max[index]) {
-                    throw new XMLFormatException("The min bound in dimension <"
-                            + index + "> is greater than max bound ("
-                            + min[index] + ">" + max[index] + ").");
+                if (timeMin > timeMax) {
+                    throw new XMLFormatException("The min bound in time is greater than max bound ("
+                            + timeMin + ">" + timeMax + ").");
                 }
             } else {
                 throw new XMLFormatException("Unknown element: "
                         + child.getNodeName());
             }
         }
-        Point minBounds = new ArrayPoint(0, min, 0, dimension);
-        Point maxBounds = new ArrayPoint(0, max, 0, dimension);
+        float[] minArray = new float[min.size()];
+        float[] maxArray = new float[max.size()];
+        for (int i=0; i<min.size(); i++) {
+            minArray[i] = min.get(i);
+            maxArray[i] = max.get(i);
+        }
+        Point minBounds = new ArrayPoint(timeMin, minArray);
+        Point maxBounds = new ArrayPoint(timeMax, maxArray);
         return new OrthogonalSpace(minBounds, maxBounds);
     }
 

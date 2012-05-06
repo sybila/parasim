@@ -36,13 +36,13 @@ import static org.testng.Assert.assertEquals;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class TestOrthogonalSpaceStorage {
-    
+
     private static OrthogonalSpace getTestSpace() {
-        Point min = new ArrayPoint(0, -0.149f, 129.1f, -591.023f, -8.137f);
-        Point max = new ArrayPoint(0, 5.931f, 251.9f, -0.006f, 2.041f);
+        Point min = new ArrayPoint(1f, -0.149f, 129.1f, -591.023f, -8.137f);
+        Point max = new ArrayPoint(10.11f, 5.931f, 251.9f, -0.006f, 2.041f);
         return new OrthogonalSpace(min, max);
     }
-    
+
     private File getTestSpaceFile() {
         URL res = getClass().getClassLoader().getResource("testSpace.xml");
         try {
@@ -52,7 +52,7 @@ public class TestOrthogonalSpaceStorage {
             fail("Could not get to test formula file.");
         }
         return null;
-    } 
+    }
 
     /**
      * Tests whether resource is able to load a space from a file correctly.
@@ -70,7 +70,7 @@ public class TestOrthogonalSpaceStorage {
         }
         assertEquals(resource.getRoot(), getTestSpace(), "Space should be loaded correctly.");
     }
-    
+
     /**
      * Tests whether resource is able to store and then load a space correctly.
      */
@@ -85,7 +85,7 @@ public class TestOrthogonalSpaceStorage {
             fail("Temporary file could not be created.");
         }
         temp.deleteOnExit();
-        
+
         //store
         OrthogonalSpaceResource resource = new OrthogonalSpaceResource(temp);
         resource.setRoot(getTestSpace());
@@ -97,10 +97,10 @@ public class TestOrthogonalSpaceStorage {
             }
             fail("XML error while storing: " + xmle.getMessage());
         }
-        
+
         //reset
         resource.setRoot(null);
-        
+
         //load
         try {
             resource.load();
@@ -110,9 +110,9 @@ public class TestOrthogonalSpaceStorage {
             }
             fail("XML error while loading: " + xmle.getMessage());
         }
-        
+
         assertEquals(resource.getRoot(), getTestSpace(), "After being stored and loaded, the space should not change.");
-        
+
     }
-    
+
 }
