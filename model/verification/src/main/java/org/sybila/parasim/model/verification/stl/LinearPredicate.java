@@ -153,7 +153,7 @@ public class LinearPredicate extends Predicate {
          */
         float leftSide = getLeftSideValue(p);
         float diff = Math.abs(leftSide - constant);
-        if (isValid(leftSide, constant)) {
+        if (!isValid(leftSide, constant)) {
             diff = -diff;
         }
         return diff;
