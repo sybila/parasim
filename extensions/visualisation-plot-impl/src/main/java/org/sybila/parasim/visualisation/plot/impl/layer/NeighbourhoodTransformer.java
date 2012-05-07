@@ -3,7 +3,7 @@ package org.sybila.parasim.visualisation.plot.impl.layer;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.Pair;
+import org.sybila.parasim.util.Pair;
 
 /**
  *

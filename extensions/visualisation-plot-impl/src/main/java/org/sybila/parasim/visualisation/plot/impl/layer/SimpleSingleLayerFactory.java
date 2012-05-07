@@ -1,8 +1,7 @@
 package org.sybila.parasim.visualisation.plot.impl.layer;
 
 import java.util.Map;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.Coordinate;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.LayeredGrid;
+import org.sybila.parasim.util.Coordinate;
 
 /**
  *

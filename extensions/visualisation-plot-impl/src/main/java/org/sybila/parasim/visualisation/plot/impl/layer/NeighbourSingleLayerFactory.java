@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.LayeredGrid;
 
 /**
  *

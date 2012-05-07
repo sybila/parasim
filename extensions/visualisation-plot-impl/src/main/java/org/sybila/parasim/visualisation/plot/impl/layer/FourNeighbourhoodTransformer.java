@@ -3,8 +3,7 @@ package org.sybila.parasim.visualisation.plot.impl.layer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.LayeredGrid;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.Pair;
+import org.sybila.parasim.util.Pair;
 
 /**
  *
@@ -12,7 +11,7 @@ import org.sybila.parasim.visualisation.plot.impl.layer.utils.Pair;
  */
 public class FourNeighbourhoodTransformer extends NeighbourhoodTransformer<SingleLayerFourNeighbourhood> {
 
-    public FourNeighbourhoodTransformer(Float[][] target, int xSize, int ySize) {
+    protected FourNeighbourhoodTransformer(Float[][] target, int xSize, int ySize) {
         super(target, xSize, ySize, SingleLayerFourNeighbourhood.getComparator());
     }
 
@@ -57,6 +56,7 @@ public class FourNeighbourhoodTransformer extends NeighbourhoodTransformer<Singl
 
         private SimpleSingleLayerFactory init = new SimpleSingleLayerFactory();
 
+        @Override
         public void transform(Float[][] target, LayeredGrid<Float> source, int xAxis, int yAxis, int xSize, int ySize, Map<Integer, Integer> projections) {
             init.transform(target, source, xAxis, yAxis, xSize, ySize, projections);
             FourNeighbourhoodTransformer trans = new FourNeighbourhoodTransformer(target, xSize, ySize);

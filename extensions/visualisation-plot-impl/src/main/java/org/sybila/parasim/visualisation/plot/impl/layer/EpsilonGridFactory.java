@@ -3,8 +3,7 @@ package org.sybila.parasim.visualisation.plot.impl.layer;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.Block;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.LayeredGrid;
+import org.sybila.parasim.util.Block;
 
 /**
  *
