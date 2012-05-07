@@ -28,7 +28,7 @@ public class LayeredGrid<T> extends Grid<T> {
         int dim = coord.getDimension();
         float[] point = new float[dim];
         for (int i = 0; i < dim; i++) {
-            point[i] = layers.get(dim, coord.getCoordinate(i)).getValue();
+            point[i] = layers.get(i, coord.getCoordinate(i)).getValue();
         }
         return new ArrayPoint(0, point, 0, dim);
     }
