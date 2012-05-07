@@ -37,7 +37,7 @@ import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
 import org.sybila.parasim.visualisation.plot.impl.layer.EpsilonGridFactory;
 import org.sybila.parasim.visualisation.plot.impl.layer.GridPointLayer;
-import org.sybila.parasim.visualisation.plot.impl.layer.RobustnessFourNeighbourhoodTransformer;
+import org.sybila.parasim.visualisation.plot.impl.layer.WeightedFourNeighbourTransformer;
 import org.sybila.parasim.visualisation.plot.impl.render.CirclePointRenderer;
 import org.sybila.parasim.visualisation.plot.impl.render.ThreeColorPointRenderer;
 
@@ -80,7 +80,7 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
         List<Point> points = new ArrayList<Point>();
         List<Float> robustness = new ArrayList<Float>();
 
-        final double prob = 0.7;//0.4;
+        final double prob = 0.4;
 
         for (int i = 0; i < xDim; i++) {
             for (int j = 0; j < yDim; j++) {
@@ -111,8 +111,8 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
                 VerificationResult result = createResult();
                 OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
                 ResultPlotterConfiguration conf = new ResultPlotterConfiguration();
-                Plotter test = new ProjectionPlotter(new ResultPlotterConfiguration(), result, new TestVariableMapping(),
-                        new GridPointLayer(result, extent, EpsilonGridFactory.getCoordinateFactory(conf), RobustnessFourNeighbourhoodTransformer.getFactory()),
+                Plotter test = new ProjectionPlotter(conf, result, new TestVariableMapping(),
+                        new GridPointLayer(result, extent, EpsilonGridFactory.getCoordinateFactory(conf), WeightedFourNeighbourTransformer.getFactory()),
                         new ThreeColorPointRenderer(new CirclePointRenderer(3), conf, Color.GREEN, Color.RED, Color.BLUE));
                 test.plot();
             }
