@@ -3,8 +3,7 @@ package org.sybila.parasim.visualisation.plot.impl.layer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.LayeredGrid;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.Pair;
+import org.sybila.parasim.util.Pair;
 
 /**
  *

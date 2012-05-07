@@ -8,7 +8,6 @@ import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
-import org.sybila.parasim.visualisation.plot.impl.layer.utils.LayeredGrid;
 
 /*
  * Dostane mřížku -- někde body jsou a někde nejsou.

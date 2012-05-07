@@ -27,5 +27,10 @@
             <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim</groupId>
+            <artifactId>util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,4 +1,4 @@
-package org.sybila.parasim.visualisation.plot.impl.layer.utils;
+package org.sybila.parasim.util;
 
 import java.util.HashMap;
 import java.util.Map;

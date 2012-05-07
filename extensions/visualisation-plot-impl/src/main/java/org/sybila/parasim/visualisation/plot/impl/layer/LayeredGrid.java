@@ -1,8 +1,10 @@
-package org.sybila.parasim.visualisation.plot.impl.layer.utils;
+package org.sybila.parasim.visualisation.plot.impl.layer;
 
+import org.sybila.parasim.util.Grid;
+import org.sybila.parasim.util.Coordinate;
+import org.sybila.parasim.util.Block;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
-import org.sybila.parasim.visualisation.plot.impl.layer.Layer;
 
 /**
  *
