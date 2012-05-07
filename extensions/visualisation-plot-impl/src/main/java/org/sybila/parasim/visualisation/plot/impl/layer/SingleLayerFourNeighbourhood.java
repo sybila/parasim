@@ -57,4 +57,22 @@ public class SingleLayerFourNeighbourhood {
             }
         };
     }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        if (neigh[0]) {
+            result.append("N");
+        }
+        if (neigh[1]) {
+            result.append("E");
+        }
+        if (neigh[2]) {
+            result.append("S");
+        }
+        if (neigh[3]) {
+            result.append("W");
+        }
+        return result.toString();
+    }
 }
