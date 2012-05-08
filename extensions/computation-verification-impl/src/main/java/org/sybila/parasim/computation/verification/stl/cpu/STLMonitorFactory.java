@@ -24,6 +24,7 @@ import org.sybila.parasim.computation.verification.cpu.MonitorFactory;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.FutureFormula;
+import org.sybila.parasim.model.verification.stl.GloballyFormula;
 import org.sybila.parasim.model.verification.stl.Predicate;
 
 /**
@@ -41,7 +42,7 @@ public class STLMonitorFactory implements MonitorFactory<Formula> {
             case FUTURE:
                 return new FutureMonitor(createMonitor(trajectory, property.getSubformula(0)), ((FutureFormula) property).getInterval());
             case GLOBALLY:
-                return new GloballyMonitor(createMonitor(trajectory, property.getSubformula(0)), ((FutureFormula) property).getInterval());
+                return new GloballyMonitor(createMonitor(trajectory, property.getSubformula(0)), ((GloballyFormula) property).getInterval());
             case NOT:
                 return new NotMonitor(createMonitor(trajectory, property.getSubformula(0)));
             case OR:
