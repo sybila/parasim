@@ -20,23 +20,25 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
+import org.sybila.parasim.model.verification.stl.TimeInterval;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestNotMonitor extends AbstractMonitorTest {
+public class TestUntilMonitor extends AbstractMonitorTest {
 
     @Test
-    public void testNotMonitor() {
-        Monitor monitor = createTestMonitor(10, 1);
-        Monitor expected = createTestMonitor(10, -1);
-        Monitor notMonitor = new NotMonitor(monitor);
-        assertEquals(notMonitor.size(), expected.size());
-        for (int i=0; i<10; i++) {
-            assertEquals(notMonitor.getRobustness(i).getValue(), expected.getRobustness(i).getValue());
-            assertEquals(notMonitor.getRobustness(i).getTime(), expected.getRobustness(i).getTime());
+    public void testUntilMonitor() {
+        Monitor left = createTestMonitor(1, 2, 3, 4, 3, 2, -10);
+        Monitor right = createTestMonitor(2, 1, -10, 3, 9, 0, 0);
+        Monitor until = new UntilMonitor(left, right, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
+        Monitor expected = createTestMonitor(1, 2, 3);
+        assertEquals(until.size(), expected.size());
+        for (int i=0; i<expected.size(); i++) {
+            assertEquals(until.getRobustness(i).getValue(), expected.getRobustness(i).getValue(), "The robustness doesn't match in index <" + i + ">.");
         }
     }
 

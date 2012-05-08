@@ -1,5 +1,25 @@
+/**
+ * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * contributors by the @authors tag.
+ *
+ * This file is part of Parasim.
+ *
+ * Parasim is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sybila.parasim.computation.verification;
 
+import org.sybila.parasim.model.verification.stl.UntilFormula;
 import org.sybila.parasim.model.verification.stl.OrFormula;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,6 +109,20 @@ public class TestSTLFormulaVerification extends AbstractVerificationTest {
                 new ArrayDataBlock<Trajectory>(new Trajectory[] { createTrajectory(0, 1, 2) }),
                 formula);
         assertEquals(verified.getRobustness(0).getValue(), -1f);
+    }
+
+    @Test
+    public void testUntil() {
+        Formula formula = new UntilFormula(
+                createPredicate(createMapping(), Type.GREATER, 9),
+                createPredicate(createMapping(), Type.LESSER, 15),
+                new TimeInterval(2, 4, IntervalBoundaryType.CLOSED)
+                );
+        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext());
+        VerifiedDataBlock verified = verifier.verify(
+                new ArrayDataBlock<Trajectory>(new Trajectory[] { createTrajectory(10, 10, 16, 12, 15, 9) }),
+                formula);
+        assertEquals(verified.getRobustness(0).getValue(), 1f);
     }
 
     private Trajectory createTrajectory(float...oneDimensionPoints) {

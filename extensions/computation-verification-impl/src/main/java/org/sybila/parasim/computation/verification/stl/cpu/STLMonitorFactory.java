@@ -26,6 +26,7 @@ import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.FutureFormula;
 import org.sybila.parasim.model.verification.stl.GloballyFormula;
 import org.sybila.parasim.model.verification.stl.Predicate;
+import org.sybila.parasim.model.verification.stl.UntilFormula;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -49,6 +50,8 @@ public class STLMonitorFactory implements MonitorFactory<Formula> {
                 return new OrMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)));
             case PREDICATE:
                 return new PredicateMonitor(trajectory, (Predicate) property);
+            case UNTIL:
+                return new UntilMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)), ((UntilFormula) property).getInterval());
             default:
                 throw new UnsupportedOperationException("There is no available monitor for formula type [" + property.getType() + "].");
         }

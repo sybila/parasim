@@ -36,15 +36,11 @@ import org.sybila.parasim.util.LemireDeque;
  */
 public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
 
-    private final Monitor subMonitor;
-    private final FormulaInterval interval;
     private final List<Robustness> robustnesses;
 
     public AbstractUnaryTemporalMonitor(Monitor subMonitor, FormulaInterval interval) {
         Validate.notNull(interval);
         Validate.notNull(subMonitor);
-        this.subMonitor = subMonitor;
-        this.interval = interval;
         this.robustnesses = precomputeRobustness(subMonitor, interval);
     }
 
