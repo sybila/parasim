@@ -1,8 +1,6 @@
 package org.sybila.parasim.application.model;
 
 import org.sybila.parasim.computation.density.api.InitialSampling;
-import org.sybila.parasim.computation.density.api.LimitedDistance;
-import org.sybila.parasim.computation.density.api.PointDistanceMetric;
 import org.sybila.parasim.computation.density.api.annotations.InitialSpace;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
@@ -18,6 +16,8 @@ import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.LimitedDistance;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.result.VerifiedDataBlock;
@@ -44,7 +44,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     @Provide
     private final Formula property;
     @Provide
-    private final PointDistanceMetric pointDistanceMetric;
+    private final LimitedPointDistanceMetric pointDistanceMetric;
     @Inject
     private AdaptiveStepSimulator simulator;
     @Inject
@@ -79,7 +79,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         this.simulationSpace = simulationSpace;
         this.initialSpace = initialSpace;
         this.property = property;
-        this.pointDistanceMetric = new PointDistanceMetric() {
+        this.pointDistanceMetric = new LimitedPointDistanceMetric() {
 
             public LimitedDistance distance(float[] first, float[] second) {
                 return null;

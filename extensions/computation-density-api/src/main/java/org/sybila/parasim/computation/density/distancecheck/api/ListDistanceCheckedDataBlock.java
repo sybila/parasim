@@ -21,8 +21,8 @@ package org.sybila.parasim.computation.density.distancecheck.api;
 
 import java.util.Iterator;
 import java.util.List;
-import org.sybila.parasim.computation.density.api.LimitedDistance;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LimitedDistance;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**

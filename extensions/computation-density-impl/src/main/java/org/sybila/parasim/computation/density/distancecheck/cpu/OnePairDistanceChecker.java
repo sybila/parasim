@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.sybila.parasim.computation.density.api.Configuration;
-import org.sybila.parasim.computation.density.api.LimitedDistance;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.api.ListDistanceCheckedDataBlock;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LimitedDistance;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 

@@ -26,13 +26,13 @@ import java.util.Map;
 import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.InitialSampling;
-import org.sybila.parasim.computation.density.api.LimitedDistance;
-import org.sybila.parasim.computation.density.api.PointDistanceMetric;
 import org.sybila.parasim.computation.density.spawn.cpu.AbstractConfiguration;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LimitedDistance;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.ListTrajectory;
 import org.sybila.parasim.model.trajectory.MapTrajectoryNeighborhood;
@@ -42,7 +42,7 @@ import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 public abstract class AbstractDensityTest {
 
-    protected Configuration createConfiguration(final PointDistanceMetric pointDistanceMetric, final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood) {
+    protected Configuration createConfiguration(final LimitedPointDistanceMetric pointDistanceMetric, final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood) {
         return new AbstractConfiguration(pointDistanceMetric, initialSampling, initialSpace) {
             public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
                 return trajectoryNeighborhood;
@@ -74,8 +74,8 @@ public abstract class AbstractDensityTest {
         );
     }
 
-    protected PointDistanceMetric createPointDistanceMetric(final float expectedDistance, final int dimension) {
-        return new PointDistanceMetric() {
+    protected LimitedPointDistanceMetric createPointDistanceMetric(final float expectedDistance, final int dimension) {
+        return new LimitedPointDistanceMetric() {
             public LimitedDistance distance(float[] first, float[] second) {
                 final float[] distance = new float[first.length];
                 float maxDistance = 0;

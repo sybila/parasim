@@ -1,8 +1,8 @@
 package org.sybila.parasim.computation.density;
 
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import java.util.concurrent.ExecutionException;
 import org.sybila.parasim.computation.density.api.InitialSampling;
-import org.sybila.parasim.computation.density.api.PointDistanceMetric;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
@@ -63,13 +63,13 @@ public class TestInteractionWithComputation extends AbstractDensityTest{
 
         private OrthogonalSpace initialSpace;
         private InitialSampling initialSampling;
-        private PointDistanceMetric pointDistanceMetric;
+        private LimitedPointDistanceMetric pointDistanceMetric;
         @Inject
         private TrajectorySpawner trajectorySpawner;
         @Inject
         private DistanceChecker distanceChecker;
 
-        public TestComputation(OrthogonalSpace initialSpace, InitialSampling initialSampling, PointDistanceMetric pointDistanceMetric) {
+        public TestComputation(OrthogonalSpace initialSpace, InitialSampling initialSampling, LimitedPointDistanceMetric pointDistanceMetric) {
             this.initialSampling = initialSampling;
             this.initialSpace = initialSpace;
             this.pointDistanceMetric = pointDistanceMetric;

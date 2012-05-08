@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.InitialSampling;
-import org.sybila.parasim.computation.density.api.PointDistanceMetric;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
@@ -36,6 +35,7 @@ import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.MapTrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
@@ -96,7 +96,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
     }
 
     @Override
-    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling, PointDistanceMetric distanceMetric) {
+    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling, LimitedPointDistanceMetric distanceMetric) {
         if (space.getDimension() != initialSampling.getDimension()) {
             throw new IllegalArgumentException("The number of space dimension and length of [numOfSamples] array doesn't match.");
         }

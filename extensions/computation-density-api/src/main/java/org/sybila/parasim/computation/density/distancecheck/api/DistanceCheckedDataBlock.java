@@ -19,8 +19,8 @@
  */
 package org.sybila.parasim.computation.density.distancecheck.api;
 
-import org.sybila.parasim.computation.density.api.LimitedDistance;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LimitedDistance;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**

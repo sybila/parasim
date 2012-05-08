@@ -3,19 +3,19 @@ package org.sybila.parasim.computation.density.spawn.cpu;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.InitialSampling;
-import org.sybila.parasim.computation.density.api.PointDistanceMetric;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public abstract class AbstractConfiguration implements Configuration {
 
-    private final PointDistanceMetric distanceMetric;
+    private final LimitedPointDistanceMetric distanceMetric;
     private final InitialSampling initialSampling;
     private final OrthogonalSpace initialSpace;
 
-    public AbstractConfiguration(PointDistanceMetric distanceMetric, InitialSampling initialSampling, OrthogonalSpace initialSpace) {
+    public AbstractConfiguration(LimitedPointDistanceMetric distanceMetric, InitialSampling initialSampling, OrthogonalSpace initialSpace) {
         Validate.notNull(distanceMetric);
         Validate.notNull(initialSampling);
         Validate.notNull(initialSpace);
@@ -24,7 +24,7 @@ public abstract class AbstractConfiguration implements Configuration {
         this.initialSpace = initialSpace;
     }
 
-    public PointDistanceMetric getDistanceMetric() {
+    public LimitedPointDistanceMetric getDistanceMetric() {
         return distanceMetric;
     }
 
