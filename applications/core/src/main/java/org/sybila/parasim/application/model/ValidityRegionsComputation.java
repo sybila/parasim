@@ -10,6 +10,8 @@ import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
+import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
+import org.sybila.parasim.computation.verification.api.VerifiedDataBlockResultAdapter;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.model.computation.AbstractComputation;
@@ -17,8 +19,6 @@ import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.verification.result.VerificationResult;
-import org.sybila.parasim.model.verification.result.VerifiedDataBlock;
-import org.sybila.parasim.model.verification.result.VerifiedDataBlockResultAdapter;
 import org.sybila.parasim.model.verification.stl.Formula;
 
 /**
