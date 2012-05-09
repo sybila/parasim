@@ -19,7 +19,9 @@
  */
 package org.sybila.parasim.computation.density.spawn.cpu;
 
+import java.util.Iterator;
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.DistanceMetricDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
@@ -27,6 +29,7 @@ import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
@@ -44,14 +47,27 @@ public class TestOneTrajectorySpawner extends AbstractTrajectorySpawnerTest {
 
     @Test
     public void testSimple() {
-        DataBlock<Trajectory> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
+        final DataBlock<Trajectory> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, 4);
         Configuration configuration = createConfiguration(
-                createPointDistanceMetric(1, 4),
                 createInitialSampling(createInitialSpace(1, DIMENSION), DIMENSION),
                 createInitialSpace(1, DIMENSION),
                 neighborhood);
-        DistanceCheckedDataBlock distanceChecked = new OnePairDistanceChecker().check(configuration, dataBlock);
+        DistanceCheckedDataBlock distanceChecked = new OnePairDistanceChecker().check(configuration, new DistanceMetricDataBlock<Trajectory>() {
+            public LimitedPointDistanceMetric getDistanceMetric(int index) {
+                return distanceMetric;
+            }
+            public Trajectory getTrajectory(int index) {
+                return dataBlock.getTrajectory(index);
+            }
+            public int size() {
+                return dataBlock.size();
+            }
+            public Iterator<Trajectory> iterator() {
+                return dataBlock.iterator();
+            }
+        });
         SpawnedDataBlock spawned = new OneTrajectorySpawner().spawn(configuration, distanceChecked);
         assertEquals(1, spawned.size());
         assertEquals(2, spawned.getConfiguration().getNeighborhood().getNeighbors(spawned.getTrajectory(0)).size());

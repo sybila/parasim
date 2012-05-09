@@ -42,8 +42,8 @@ import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 public abstract class AbstractDensityTest {
 
-    protected Configuration createConfiguration(final LimitedPointDistanceMetric pointDistanceMetric, final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood) {
-        return new AbstractConfiguration(pointDistanceMetric, initialSampling, initialSpace) {
+    protected Configuration createConfiguration(final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood) {
+        return new AbstractConfiguration(initialSampling, initialSpace) {
             public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
                 return trajectoryNeighborhood;
             }

@@ -23,7 +23,6 @@ import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.model.space.OrthogonalSpace;
-import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -42,5 +41,5 @@ public interface TrajectorySpawner {
     /**
      * Creates new trajectories in the given space.
      */
-    SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling, LimitedPointDistanceMetric distanceMetric);
+    SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling);
 }

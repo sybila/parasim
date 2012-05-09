@@ -20,7 +20,7 @@
 package org.sybila.parasim.computation.density.distancecheck.api;
 
 import org.sybila.parasim.computation.density.api.Configuration;
-import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.computation.density.api.DistanceMetricDataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
@@ -36,5 +36,5 @@ public interface DistanceChecker {
      * @param trajectories
      * @return
      */
-    DistanceCheckedDataBlock check(Configuration congfiguration, DataBlock<Trajectory> trajectories);
+    DistanceCheckedDataBlock check(Configuration congfiguration, DistanceMetricDataBlock<Trajectory> trajectories);
 }

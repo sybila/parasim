@@ -111,8 +111,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         }
         return spawner.spawn(
             space,
-            new ArrayInitialSampling(toSpawn),
-            createPointDistanceMetric(1, space.getDimension())
+            new ArrayInitialSampling(toSpawn)
         );
     }
 

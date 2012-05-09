@@ -20,7 +20,6 @@
 package org.sybila.parasim.computation.density.api;
 
 import org.sybila.parasim.model.space.OrthogonalSpace;
-import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
@@ -30,11 +29,6 @@ import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Configuration {
-
-    /**
-     * @return metric used to determine whether two trajectories has valid/invalid distance
-     */
-    LimitedPointDistanceMetric getDistanceMetric();
 
     /**
      * @return information how the initial space is sampled

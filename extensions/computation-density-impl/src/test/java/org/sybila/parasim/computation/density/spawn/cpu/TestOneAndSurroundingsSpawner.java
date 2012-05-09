@@ -19,12 +19,15 @@
  */
 package org.sybila.parasim.computation.density.spawn.cpu;
 
+import java.util.Iterator;
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.DistanceMetricDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
@@ -38,16 +41,29 @@ public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest
     @Test
     public void testNumberOfTrajectoriesAfterSpawn() {
         // initial sampling
-        SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), DIMENSION), 4);
+        final SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), DIMENSION), 4);
+        final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1.5f, DIMENSION);
         // load configuration
         Configuration configuration = createConfiguration(
-                createPointDistanceMetric(1.5f, DIMENSION),
                 initSpawned.getConfiguration().getInitialSampling(),
                 initSpawned.getConfiguration().getInitialSpace(),
                 initSpawned.getConfiguration().getNeighborhood());
         // distance checking
         DistanceChecker distanceChecker = new OnePairDistanceChecker();
-        DistanceCheckedDataBlock distanceChecked = distanceChecker.check(configuration, initSpawned);
+        DistanceCheckedDataBlock distanceChecked = distanceChecker.check(configuration, new DistanceMetricDataBlock<Trajectory>() {
+            public LimitedPointDistanceMetric getDistanceMetric(int index) {
+                return distanceMetric;
+            }
+            public Trajectory getTrajectory(int index) {
+                return initSpawned.getTrajectory(index);
+            }
+            public int size() {
+                return initSpawned.size();
+            }
+            public Iterator<Trajectory> iterator() {
+                return initSpawned.iterator();
+            }
+        });
         // assertions in distances
         for (int t=0; t<distanceChecked.size(); t++) {
             Trajectory trajectory = initSpawned.getTrajectory(t);

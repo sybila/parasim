@@ -23,11 +23,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.DistanceMetricDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.api.ListDistanceCheckedDataBlock;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.LimitedDistance;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
@@ -46,7 +48,7 @@ public class OnePairDistanceChecker implements DistanceChecker {
      * @return the biggest ratio between measured and required distance
      */
     @Override
-    public DistanceCheckedDataBlock check(Configuration congfiguration, DataBlock<Trajectory> trajectories) {
+    public DistanceCheckedDataBlock check(Configuration congfiguration, DistanceMetricDataBlock<Trajectory> trajectories) {
         if (congfiguration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
@@ -62,7 +64,7 @@ public class OnePairDistanceChecker implements DistanceChecker {
             List<Integer> currentNeighborPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
             for (Trajectory trajectory : neighbors) {
-                DistanceAndPosition distanceAndPosition = checkTrajectoriesDistance(congfiguration, trajectories.getTrajectory(index), trajectory);
+                DistanceAndPosition distanceAndPosition = checkTrajectoriesDistance(trajectories, trajectories.getTrajectory(index), trajectory);
                 currentDistances.add(distanceAndPosition.distance);
                 currentTajectoryPositions.add(distanceAndPosition.trajectoryPosition);
                 currentNeighborPositions.add(distanceAndPosition.neighborPosition);
@@ -82,13 +84,13 @@ public class OnePairDistanceChecker implements DistanceChecker {
      * @param second the second trajectory
      * @return the biggest ratio between measured and required distance
      */
-    private DistanceAndPosition checkTrajectoriesDistance(Configuration configuration, Trajectory first, Trajectory second) {
+    private DistanceAndPosition checkTrajectoriesDistance(DistanceMetricDataBlock<Trajectory> trajectories, Trajectory first, Trajectory second) {
         DistanceAndPosition distance = null;
         Iterator<Point> firstIterator = first.iterator();
         Iterator<Point> secondIterator = second.iterator();
 
         while (firstIterator.hasNext() && secondIterator.hasNext()) {
-            DistanceAndPosition currentDistance = getNextDistance(configuration, firstIterator, secondIterator);
+            DistanceAndPosition currentDistance = getNextDistance(trajectories, distance == null ? 0 : distance.trajectoryPosition, firstIterator, secondIterator);
             if (currentDistance != null) {
                 if (distance != null) {
                     if (distance.distance.value() > currentDistance.distance.value()) {
@@ -104,11 +106,11 @@ public class OnePairDistanceChecker implements DistanceChecker {
         return distance;
     }
 
-    private DistanceAndPosition getNextDistance(Configuration configuration, Iterator<Point> firstIterator, Iterator<Point> secondIterator) {
+    private DistanceAndPosition getNextDistance(DistanceMetricDataBlock<Trajectory> trajectories, int originalTrajectoryPosition, Iterator<Point> firstIterator, Iterator<Point> secondIterator) {
         Point firstPoint = firstIterator.next();
         Point secondPoint = secondIterator.next();
         if (firstPoint.getTime() == secondPoint.getTime()) {
-            return new DistanceAndPosition(configuration.getDistanceMetric().distance(firstPoint, secondPoint), 0, 0);
+            return new DistanceAndPosition(trajectories.getDistanceMetric(originalTrajectoryPosition).distance(firstPoint, secondPoint), 0, 0);
         }
         int trajectoryPosition = 0;
         int neighborPosition = 0;
@@ -117,7 +119,7 @@ public class OnePairDistanceChecker implements DistanceChecker {
                 neighborPosition++;
                 Point currentPoint = secondIterator.next();
                 if (currentPoint.getTime() >= firstPoint.getTime()) {
-                    return new DistanceAndPosition(checkPointDistance(configuration, secondPoint, currentPoint, firstPoint), trajectoryPosition, neighborPosition);
+                    return new DistanceAndPosition(checkPointDistance(trajectories.getDistanceMetric(originalTrajectoryPosition + trajectoryPosition), secondPoint, currentPoint, firstPoint), trajectoryPosition, neighborPosition);
                 }
             }
         } else {
@@ -125,7 +127,7 @@ public class OnePairDistanceChecker implements DistanceChecker {
                 trajectoryPosition++;
                 Point currentPoint = firstIterator.next();
                 if (currentPoint.getTime() >= secondPoint.getTime()) {
-                    return new DistanceAndPosition(checkPointDistance(configuration, firstPoint, currentPoint, secondPoint), trajectoryPosition, neighborPosition);
+                    return new DistanceAndPosition(checkPointDistance(trajectories.getDistanceMetric(originalTrajectoryPosition + trajectoryPosition), firstPoint, currentPoint, secondPoint), trajectoryPosition, neighborPosition);
                 }
 
             }
@@ -133,15 +135,15 @@ public class OnePairDistanceChecker implements DistanceChecker {
         return null;
     }
 
-    private LimitedDistance checkPointDistance(Configuration configuration, Point beginFirstPoint, Point endFirstPoint, Point secondPoint) {
+    private LimitedDistance checkPointDistance(LimitedPointDistanceMetric distanceMetric, Point beginFirstPoint, Point endFirstPoint, Point secondPoint) {
         if (endFirstPoint.getTime() == secondPoint.getTime()) {
-            return configuration.getDistanceMetric().distance(endFirstPoint, secondPoint);
+            return distanceMetric.distance(endFirstPoint, secondPoint);
         }
         float[] firstData = new float[beginFirstPoint.getDimension()];
         for (int dim = 0; dim < firstData.length; dim++) {
             firstData[dim] = (beginFirstPoint.getValue(dim) + endFirstPoint.getValue(dim)) / 2;
         }
-        return configuration.getDistanceMetric().distance(firstData, secondPoint.toArray());
+        return distanceMetric.distance(firstData, secondPoint.toArray());
     }
 
     private class DistanceAndPosition {

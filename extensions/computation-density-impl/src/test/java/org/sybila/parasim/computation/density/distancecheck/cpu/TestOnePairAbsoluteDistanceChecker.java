@@ -19,11 +19,14 @@
  */
 package org.sybila.parasim.computation.density.distancecheck.cpu;
 
+import java.util.Iterator;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 import org.sybila.parasim.computation.density.AbstractDensityTest;
 
 import org.sybila.parasim.computation.density.api.Configuration;
+import org.sybila.parasim.computation.density.api.DistanceMetricDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -40,14 +43,29 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
 
     @Test
     public void testValidCheckedLengths() {
-        DataBlock<Trajectory> dataBlock = createValidDataBlock();
+        final DataBlock<Trajectory> dataBlock = createValidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
         Configuration configuration = createConfiguration(
-                createPointDistanceMetric(1, DIMENSION),
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
                 createInitialSpace(1, DIMENSION),
                 neighborhood);
-        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(configuration, dataBlock);
+        final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
+        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
+                configuration,
+                new DistanceMetricDataBlock<Trajectory>() {
+                    public LimitedPointDistanceMetric getDistanceMetric(int index) {
+                        return distanceMetric;
+                    }
+                    public Trajectory getTrajectory(int index) {
+                        return dataBlock.getTrajectory(index);
+                    }
+                    public int size() {
+                        return dataBlock.size();
+                    }
+                    public Iterator<Trajectory> iterator() {
+                        return dataBlock.iterator();
+                    }
+                });
         for (int t = 0; t < result.size(); t++) {
             for (int neigh = 0; neigh < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); neigh++) {
                 assertEquals(result.getTrajectoryCheckedPosition(t, neigh), LENGTH - 1);
@@ -58,14 +76,29 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
 
     @Test
     public void testInvalidDistance() {
-        DataBlock<Trajectory> dataBlock = createInvalidDataBlock();
+        final DataBlock<Trajectory> dataBlock = createInvalidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         Configuration configuration = createConfiguration(
-                createPointDistanceMetric(1, DIMENSION),
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
                 createInitialSpace(1, DIMENSION),
                 neighborhood);
-        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(configuration, dataBlock);
+        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
+                configuration,
+                new DistanceMetricDataBlock<Trajectory>() {
+                    public LimitedPointDistanceMetric getDistanceMetric(int index) {
+                        return distanceMetric;
+                    }
+                    public Trajectory getTrajectory(int index) {
+                        return dataBlock.getTrajectory(index);
+                    }
+                    public int size() {
+                        return dataBlock.size();
+                    }
+                    public Iterator<Trajectory> iterator() {
+                        return dataBlock.iterator();
+                    }
+                });
         for (int t = 0; t < result.size(); t++) {
             for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
                 assertTrue(!result.getDistance(t, dim).isValid());
@@ -75,14 +108,29 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
 
     @Test
     public void testValidDistance() {
-        DataBlock<Trajectory> dataBlock = createValidDataBlock();
+        final DataBlock<Trajectory> dataBlock = createValidDataBlock();
         TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         Configuration configuration = createConfiguration(
-                createPointDistanceMetric(1, DIMENSION),
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
                 createInitialSpace(1, DIMENSION),
                 neighborhood);
-        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(configuration, dataBlock);
+        DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
+                configuration,
+                new DistanceMetricDataBlock<Trajectory>() {
+                    public LimitedPointDistanceMetric getDistanceMetric(int index) {
+                        return distanceMetric;
+                    }
+                    public Trajectory getTrajectory(int index) {
+                        return dataBlock.getTrajectory(index);
+                    }
+                    public int size() {
+                        return dataBlock.size();
+                    }
+                    public Iterator<Trajectory> iterator() {
+                        return dataBlock.iterator();
+                    }
+                });
         for (int t = 0; t < result.size(); t++) {
             for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
                 assertTrue(result.getDistance(t, dim).isValid());

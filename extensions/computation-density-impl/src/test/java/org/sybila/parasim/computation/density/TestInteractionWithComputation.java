@@ -76,7 +76,7 @@ public class TestInteractionWithComputation extends AbstractDensityTest{
         }
 
         public MergeableInteger compute() {
-            SpawnedDataBlock spawnedDataBlock = trajectorySpawner.spawn(initialSpace, initialSampling, pointDistanceMetric);
+            SpawnedDataBlock spawnedDataBlock = trajectorySpawner.spawn(initialSpace, initialSampling);
             return new MergeableInteger(spawnedDataBlock.size() + spawnedDataBlock.getSecondaryTrajectories().size());
         }
 

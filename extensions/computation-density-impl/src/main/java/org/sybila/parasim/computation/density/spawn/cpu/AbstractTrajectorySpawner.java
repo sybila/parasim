@@ -35,7 +35,6 @@ import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
-import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.MapTrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
@@ -83,7 +82,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         spawnTearDown(configuration, trajectories);
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<Trajectory>(newTrajectories),
-                new AbstractConfiguration(configuration.getDistanceMetric(), configuration.getInitialSampling(), configuration.getInitialSpace()) {
+                new AbstractConfiguration(configuration.getInitialSampling(), configuration.getInitialSpace()) {
                     private TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood = new MapTrajectoryNeighborhood<Trajectory>(neighborhood);
                     public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
                         return trajectoryNeighborhood;
@@ -96,7 +95,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
     }
 
     @Override
-    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling, LimitedPointDistanceMetric distanceMetric) {
+    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling) {
         if (space.getDimension() != initialSampling.getDimension()) {
             throw new IllegalArgumentException("The number of space dimension and length of [numOfSamples] array doesn't match.");
         }
@@ -163,7 +162,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         // return the result
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<Trajectory>(seeds),
-                new AbstractConfiguration(distanceMetric, initialSampling, space) {
+                new AbstractConfiguration(initialSampling, space) {
                     private TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood = new MapTrajectoryNeighborhood<Trajectory>(neighborhoodDataBlocks);
                     public int getStartIndex(int index, int neighborIndex) {
                         return 0;

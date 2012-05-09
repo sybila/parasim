@@ -16,9 +16,6 @@ import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
-import org.sybila.parasim.model.trajectory.LimitedDistance;
-import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
-import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.result.VerifiedDataBlock;
 import org.sybila.parasim.model.verification.result.VerifiedDataBlockResultAdapter;
@@ -43,8 +40,6 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     private final OrthogonalSpace initialSpace;
     @Provide
     private final Formula property;
-    @Provide
-    private final LimitedPointDistanceMetric pointDistanceMetric;
     @Inject
     private AdaptiveStepSimulator simulator;
     @Inject
@@ -79,20 +74,10 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         this.simulationSpace = simulationSpace;
         this.initialSpace = initialSpace;
         this.property = property;
-        this.pointDistanceMetric = new LimitedPointDistanceMetric() {
-
-            public LimitedDistance distance(float[] first, float[] second) {
-                return null;
-            }
-
-            public LimitedDistance distance(Point first, Point second) {
-                return null;
-            }
-        };
     }
 
     public VerificationResult compute() {
-        SpawnedDataBlock spawned = spawner.spawn(initialSpace, initialSampling, pointDistanceMetric);
+        SpawnedDataBlock spawned = spawner.spawn(initialSpace, initialSampling);
         SimulatedDataBlock simulated = simulator.simulate(simulationConfiguration, spawned);
         VerifiedDataBlock verified = verifier.verify(simulated, property);
         return new VerifiedDataBlockResultAdapter(verified);
