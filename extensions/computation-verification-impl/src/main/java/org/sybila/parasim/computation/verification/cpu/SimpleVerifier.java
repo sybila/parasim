@@ -21,12 +21,13 @@ package org.sybila.parasim.computation.verification.cpu;
 
 import java.util.Iterator;
 import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.computation.verification.api.Verifier;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
-import org.sybila.parasim.model.verification.result.VerifiedDataBlock;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -48,6 +49,10 @@ public class SimpleVerifier<P extends Property> implements Verifier<P> {
             counter++;
         }
         return new VerifiedDataBlock<Trajectory>() {
+
+            public LimitedPointDistanceMetric getDistanceMetric(int index) {
+                return robustnesses[index];
+            }
 
             public Robustness getRobustness(int index) {
                 return robustnesses[index];

@@ -17,23 +17,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification.result;
+package org.sybila.parasim.computation.verification.api;
 
-import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 
 /**
- * Data block with information about trajectories robustness.
+ * Adapter from {@link VerifiedDataBlock} to {@link VerificationResult}.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public interface VerifiedDataBlock<T extends Trajectory> extends DataBlock<T> {
+public class VerifiedDataBlockResultAdapter<T extends Trajectory> extends AbstractVerificationResult {
 
-    /**
-     * Returns robustness of specified trajectory.
-     * @param index Index of a trajectory.
-     * @return Robustness of trajectory with given index.
-     */
-    public Robustness getRobustness(int index);
+    private VerifiedDataBlock<T> data;
+
+    public VerifiedDataBlockResultAdapter(VerifiedDataBlock<T> data) {
+        this.data = data;
+    }
+
+    @Override
+    public int size() {
+        return data.size();
+    }
+
+    @Override
+    public Point getPoint(int index) {
+        return data.getTrajectory(index).getFirstPoint();
+    }
+
+    @Override
+    public Robustness getRobustness(int index) {
+        return data.getRobustness(index);
+    }
 }

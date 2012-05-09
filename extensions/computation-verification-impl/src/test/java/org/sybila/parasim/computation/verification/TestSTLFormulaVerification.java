@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.verification;
 
+import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.model.verification.stl.UntilFormula;
 import org.sybila.parasim.model.verification.stl.OrFormula;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.ListTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.verification.result.VerifiedDataBlock;
 import org.sybila.parasim.model.verification.stl.AndFormula;
 import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.FutureFormula;
