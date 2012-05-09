@@ -42,9 +42,9 @@ import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 public abstract class AbstractDensityTest {
 
-    protected Configuration createConfiguration(final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood) {
+    protected Configuration createConfiguration(final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood trajectoryNeighborhood) {
         return new AbstractConfiguration(initialSampling, initialSpace) {
-            public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
+            public TrajectoryNeighborhood getNeighborhood() {
                 return trajectoryNeighborhood;
             }
             public int getStartIndex(int index, int neighborIndex) {
@@ -128,7 +128,7 @@ public abstract class AbstractDensityTest {
         return new ArrayDataBlock<Trajectory>(trajectories);
     }
 
-    protected TrajectoryNeighborhood<Trajectory> createNeighborhood(DataBlock<Trajectory> dataBlock) {
+    protected TrajectoryNeighborhood createNeighborhood(DataBlock<Trajectory> dataBlock) {
         final Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
         for (int t = 0; t < dataBlock.size(); t++) {
             List<Trajectory> trajectories = new ArrayList<Trajectory>();
@@ -138,6 +138,6 @@ public abstract class AbstractDensityTest {
             }
             neighborhood.put(dataBlock.getTrajectory(t), new ListDataBlock<Trajectory>(trajectories));
         }
-        return new MapTrajectoryNeighborhood<Trajectory>(neighborhood);
+        return new MapTrajectoryNeighborhood(neighborhood);
     }
 }

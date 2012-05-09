@@ -83,8 +83,8 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<Trajectory>(newTrajectories),
                 new AbstractConfiguration(configuration.getInitialSampling(), configuration.getInitialSpace()) {
-                    private TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood = new MapTrajectoryNeighborhood<Trajectory>(neighborhood);
-                    public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
+                    private TrajectoryNeighborhood trajectoryNeighborhood = new MapTrajectoryNeighborhood(neighborhood);
+                    public TrajectoryNeighborhood getNeighborhood() {
                         return trajectoryNeighborhood;
                     }
                     public int getStartIndex(int index, int neighborIndex) {
@@ -163,11 +163,11 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<Trajectory>(seeds),
                 new AbstractConfiguration(initialSampling, space) {
-                    private TrajectoryNeighborhood<Trajectory> trajectoryNeighborhood = new MapTrajectoryNeighborhood<Trajectory>(neighborhoodDataBlocks);
+                    private TrajectoryNeighborhood trajectoryNeighborhood = new MapTrajectoryNeighborhood(neighborhoodDataBlocks);
                     public int getStartIndex(int index, int neighborIndex) {
                         return 0;
                     }
-                    public TrajectoryNeighborhood<Trajectory> getNeighborhood() {
+                    public TrajectoryNeighborhood getNeighborhood() {
                         return trajectoryNeighborhood;
                     }
                 },

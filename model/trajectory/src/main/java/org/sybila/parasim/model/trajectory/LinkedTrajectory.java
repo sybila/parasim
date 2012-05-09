@@ -42,6 +42,12 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
         trajectories.add(trajectory);
     }
 
+    public static LinkedTrajectory createAndUpdateReference(Trajectory trajectory) {
+        LinkedTrajectory linkedTrajectory = new LinkedTrajectory(trajectory);
+        trajectory.getReference().setTrajectory(trajectory);
+        return linkedTrajectory;
+    }
+
     /**
      * Appends the given trajectory on the end of this trajectory. After calling
      * this method, the reference of the given trajectory will point to this trajectory.

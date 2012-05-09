@@ -39,6 +39,18 @@ public class LinkedCyclicTrajectory extends LinkedTrajectory implements CyclicTr
         cycle = new SimpleCycle(trajectory, cycleStartPosition, cycleEndPosition);
     }
 
+    public static LinkedCyclicTrajectory createAndUpdateReference(Trajectory trajectory) {
+        LinkedCyclicTrajectory linkedCyclicTrajectory = new LinkedCyclicTrajectory(trajectory);
+        trajectory.getReference().setTrajectory(trajectory);
+        return linkedCyclicTrajectory;
+    }
+
+    public static LinkedCyclicTrajectory createAndUpdateReference(Trajectory trajectory, int cycleStartPosition, int cycleEndPosition) {
+        LinkedCyclicTrajectory linkedCyclicTrajectory = new LinkedCyclicTrajectory(trajectory, cycleStartPosition, cycleEndPosition);
+        trajectory.getReference().setTrajectory(trajectory);
+        return linkedCyclicTrajectory;
+    }
+
     public boolean hasCycle() {
         return cycle.hasCycle();
     }

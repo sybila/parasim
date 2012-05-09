@@ -48,7 +48,7 @@ public class TestOneTrajectorySpawner extends AbstractTrajectorySpawnerTest {
     @Test
     public void testSimple() {
         final DataBlock<Trajectory> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
-        TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, 4);
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION), DIMENSION),

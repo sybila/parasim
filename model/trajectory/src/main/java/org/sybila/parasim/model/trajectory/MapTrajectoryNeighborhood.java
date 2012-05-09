@@ -20,6 +20,7 @@
 package org.sybila.parasim.model.trajectory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -28,15 +29,15 @@ import java.util.Map;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class MapTrajectoryNeighborhood<T extends Trajectory> implements TrajectoryNeighborhood<T> {
+public class MapTrajectoryNeighborhood implements TrajectoryNeighborhood {
 
-    Map<Trajectory, DataBlock<T>> neighborhoods;
+    Map<Trajectory, DataBlock<Trajectory>> neighborhoods;
 
     public MapTrajectoryNeighborhood() {
-        this(new HashMap<Trajectory, DataBlock<T>>());
+        this(new HashMap<Trajectory, DataBlock<Trajectory>>());
     }
 
-    public MapTrajectoryNeighborhood(Map<Trajectory, DataBlock<T>> neighborhoods) {
+    public MapTrajectoryNeighborhood(Map<Trajectory, DataBlock<Trajectory>> neighborhoods) {
         if (neighborhoods == null) {
             throw new IllegalArgumentException("The parameter neighborhoods is null.");
         }
@@ -44,11 +45,22 @@ public class MapTrajectoryNeighborhood<T extends Trajectory> implements Trajecto
     }
 
     @Override
-    public DataBlock<T> getNeighbors(Trajectory trajectory) {
-        return neighborhoods.get(trajectory);
+    public DataBlock<Trajectory> getNeighbors(Trajectory trajectory) {
+        final DataBlock<Trajectory> toReturn = neighborhoods.get(trajectory);
+        return new DataBlock<Trajectory>() {
+            public Trajectory getTrajectory(int index) {
+                return toReturn.getTrajectory(index).getReference().getTrajectory();
+            }
+            public int size() {
+                return toReturn.size();
+            }
+            public Iterator<Trajectory> iterator() {
+                return toReturn.iterator();
+            }
+        };
     }
 
-    public void setNeighbors(Trajectory trajectory, DataBlock<T> neighborhood) {
+    public void setNeighbors(Trajectory trajectory, DataBlock<Trajectory> neighborhood) {
         if (trajectory == null) {
             throw new IllegalArgumentException("The parameter trajectory is null.");
         }

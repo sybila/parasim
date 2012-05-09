@@ -20,7 +20,6 @@
 package org.sybila.parasim.computation.density.api;
 
 import org.sybila.parasim.model.space.OrthogonalSpace;
-import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
 
 /**
@@ -40,7 +39,7 @@ public interface Configuration {
      */
     OrthogonalSpace getInitialSpace();
 
-    TrajectoryNeighborhood<Trajectory> getNeighborhood();
+    TrajectoryNeighborhood getNeighborhood();
 
     int getStartIndex(int index, int neighborIndex);
 }

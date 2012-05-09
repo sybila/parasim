@@ -44,7 +44,7 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     @Test
     public void testValidCheckedLengths() {
         final DataBlock<Trajectory> dataBlock = createValidDataBlock();
-        TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
                 createInitialSpace(1, DIMENSION),
@@ -77,7 +77,7 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     @Test
     public void testInvalidDistance() {
         final DataBlock<Trajectory> dataBlock = createInvalidDataBlock();
-        TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
@@ -109,7 +109,7 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     @Test
     public void testValidDistance() {
         final DataBlock<Trajectory> dataBlock = createValidDataBlock();
-        TrajectoryNeighborhood<Trajectory> neighborhood = createNeighborhood(dataBlock);
+        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),

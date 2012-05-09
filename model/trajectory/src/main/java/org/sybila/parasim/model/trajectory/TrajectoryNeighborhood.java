@@ -22,7 +22,7 @@ package org.sybila.parasim.model.trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface TrajectoryNeighborhood<T extends Trajectory> {
+public interface TrajectoryNeighborhood {
 
     /**
      * Returns a trajectory neighborhood
@@ -30,6 +30,6 @@ public interface TrajectoryNeighborhood<T extends Trajectory> {
      * @param trajectory
      * @return trajectories in neighborhood
      */
-    DataBlock<T> getNeighbors(Trajectory trajectory);
+    DataBlock<Trajectory> getNeighbors(Trajectory trajectory);
 
 }
