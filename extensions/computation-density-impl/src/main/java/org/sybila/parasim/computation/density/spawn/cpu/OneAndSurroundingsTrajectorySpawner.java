@@ -20,12 +20,12 @@
 package org.sybila.parasim.computation.density.spawn.cpu;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.trajectory.DataBlock;
-import org.sybila.parasim.model.trajectory.EmptyDataBlock;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
@@ -58,7 +58,6 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         Trajectory middleTrajectory = new PointTrajectory(trajectory.getFirstPoint().getTime(), middleSeedData);
         // memory for spawned trajectories
         List<Trajectory> neighborTrajectories = new ArrayList<Trajectory>();
-        List<Trajectory> spawnedTrajectories = new ArrayList<Trajectory>();
         List<Trajectory> spawnedSecondaryTrajectories = new ArrayList<Trajectory>();
         // create neighbor trajectories which can have collision
         for (int dim = 0; dim < trajectory.getDimension(); dim++) {
@@ -79,11 +78,10 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
             }
         }
         // reorganize
-        Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>(neighborTrajectories.size() + 1);
-        neighborhood.put(middleTrajectory, new ListDataBlock<Trajectory>(neighborTrajectories));
-        for (Trajectory t : spawnedTrajectories) {
-            neighborhood.put(t, EmptyDataBlock.EMPTY_DATA_BLOCK);
-        }
-        return new SpawnedResult(neighborhood, spawnedSecondaryTrajectories);
+        Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>(neighborTrajectories.size() + 1);
+        neighborhood.put(middleTrajectory.getFirstPoint(), new ListDataBlock<Trajectory>(neighborTrajectories));
+        Collection<Trajectory> spawnedCol = new ArrayList<Trajectory>();
+        spawnedCol.add(middleTrajectory);
+        return new SpawnedResult(neighborhood, spawnedCol, spawnedSecondaryTrajectories);
     }
 }

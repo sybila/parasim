@@ -31,13 +31,13 @@ import java.util.Map;
  */
 public class MapTrajectoryNeighborhood implements TrajectoryNeighborhood {
 
-    Map<Trajectory, DataBlock<Trajectory>> neighborhoods;
+    Map<Point, DataBlock<Trajectory>> neighborhoods;
 
     public MapTrajectoryNeighborhood() {
-        this(new HashMap<Trajectory, DataBlock<Trajectory>>());
+        this(new HashMap<Point, DataBlock<Trajectory>>());
     }
 
-    public MapTrajectoryNeighborhood(Map<Trajectory, DataBlock<Trajectory>> neighborhoods) {
+    public MapTrajectoryNeighborhood(Map<Point, DataBlock<Trajectory>> neighborhoods) {
         if (neighborhoods == null) {
             throw new IllegalArgumentException("The parameter neighborhoods is null.");
         }
@@ -46,7 +46,7 @@ public class MapTrajectoryNeighborhood implements TrajectoryNeighborhood {
 
     @Override
     public DataBlock<Trajectory> getNeighbors(Trajectory trajectory) {
-        final DataBlock<Trajectory> toReturn = neighborhoods.get(trajectory);
+        final DataBlock<Trajectory> toReturn = neighborhoods.get(trajectory.getReference().getTrajectory().getFirstPoint());
         return new DataBlock<Trajectory>() {
             public Trajectory getTrajectory(int index) {
                 return toReturn.getTrajectory(index).getReference().getTrajectory();
@@ -67,6 +67,6 @@ public class MapTrajectoryNeighborhood implements TrajectoryNeighborhood {
         if (neighborhood == null) {
             throw new IllegalArgumentException("The parameter neighborhood is null.");
         }
-        neighborhoods.put(trajectory, neighborhood);
+        neighborhoods.put(trajectory.getReference().getTrajectory().getFirstPoint(), neighborhood);
     }
 }

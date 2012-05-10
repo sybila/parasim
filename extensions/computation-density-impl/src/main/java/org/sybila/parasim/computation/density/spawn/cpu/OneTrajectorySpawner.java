@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.computation.density.spawn.cpu;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.sybila.parasim.model.trajectory.Distance;
@@ -35,15 +37,18 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 public class OneTrajectorySpawner extends AbstractTrajectorySpawner {
 
     protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {
-        Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
+        Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>();
+        Trajectory spawned = spawnMiddleTrajectory(trajectory, neighbor, distance);
         neighborhood.put(
-                spawnMiddleTrajectory(trajectory, neighbor, distance),
+                spawned.getFirstPoint(),
                 new ArrayDataBlock<Trajectory>(
                 new Trajectory[]{
                     trajectory,
                     neighbor
                 }));
-        return new SpawnedResult(neighborhood, null);
+        Collection<Trajectory> spawnedCol = new ArrayList<Trajectory>(1);
+        spawnedCol.add(spawned);
+        return new SpawnedResult(neighborhood, spawnedCol, null);
     }
 
     /**

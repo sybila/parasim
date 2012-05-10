@@ -37,6 +37,7 @@ import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.MapTrajectoryNeighborhood;
+import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
@@ -59,7 +60,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         // note secondary trajectories
         List<Trajectory> newSecondaryTrajectories = new ArrayList<Trajectory>();
         // note trajectory neighborhoods
-        final Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
+        final Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>();
         // iterate through all pairs of trajectory and neighbor with invalid distance
         for (int i = 0; i < trajectories.size(); i++) {
             Trajectory trajectory = trajectories.getTrajectory(i);
@@ -155,9 +156,9 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
             }
         }
         // transform neigborhood map of lists to the map of data blocks
-        final Map<Trajectory, DataBlock<Trajectory>> neighborhoodDataBlocks = new HashMap<Trajectory, DataBlock<Trajectory>>(neighborhoodLists.size());
+        final Map<Point, DataBlock<Trajectory>> neighborhoodDataBlocks = new HashMap<Point, DataBlock<Trajectory>>(neighborhoodLists.size());
         for (Trajectory key : neighborhoodLists.keySet()) {
-            neighborhoodDataBlocks.put(key, new ListDataBlock<Trajectory>(neighborhoodLists.get(key)));
+            neighborhoodDataBlocks.put(key.getFirstPoint(), new ListDataBlock<Trajectory>(neighborhoodLists.get(key)));
         }
         // return the result
         return new SpawnedDataBlockWrapper(
@@ -207,26 +208,28 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
 
     protected static class SpawnedResult {
 
-        private Map<Trajectory, DataBlock<Trajectory>> neighborhoods;
+        private Map<Point, DataBlock<Trajectory>> neighborhoods;
         private Collection<Trajectory> secondaryTrajectories;
+        private Collection<Trajectory> primaryTrajectories;
 
         /**
          * Creates result with no trajectory spawned
          */
         public SpawnedResult() {
-            this(null, null);
+            this(null, null, null);
         }
 
-        public SpawnedResult(Map<Trajectory, DataBlock<Trajectory>> neighborhoods, Collection<Trajectory> secondaryTrajectories) {
+        public SpawnedResult(Map<Point, DataBlock<Trajectory>> neighborhoods, Collection<Trajectory> primaryTrajectories, Collection<Trajectory> secondaryTrajectories) {
             this.neighborhoods = neighborhoods;
             this.secondaryTrajectories = secondaryTrajectories;
+            this.primaryTrajectories = primaryTrajectories;
         }
 
         public boolean containsTrajectories() {
             return neighborhoods != null && !neighborhoods.isEmpty();
         }
 
-        public Map<Trajectory, DataBlock<Trajectory>> getNeighborhoods() {
+        public Map<Point, DataBlock<Trajectory>> getNeighborhoods() {
             return neighborhoods;
         }
 
@@ -235,7 +238,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         }
 
         public Collection<Trajectory> getTrajectories() {
-            return neighborhoods.keySet();
+            return primaryTrajectories;
         }
     }
 }

@@ -1,7 +1,11 @@
 package org.sybila.parasim.application.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.api.annotations.InitialSpace;
+import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
+import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
@@ -18,6 +22,7 @@ import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.LinkedTrajectory;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.stl.Formula;
 
@@ -25,6 +30,8 @@ import org.sybila.parasim.model.verification.stl.Formula;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ValidityRegionsComputation extends AbstractComputation<VerificationResult> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidityRegionsComputation.class);
 
     @Provide
     private final OdeSystem odeSystem;
@@ -48,6 +55,8 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     private TrajectorySpawner spawner;
     @Inject
     private STLVerifier verifier;
+    @Inject
+    private DistanceChecker distanceChecker;
 
     public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property) {
         if (odeSystem == null) {
@@ -78,9 +87,31 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 
     public VerificationResult compute() {
         SpawnedDataBlock spawned = spawner.spawn(initialSpace, initialSampling);
-        SimulatedDataBlock simulated = simulator.simulate(simulationConfiguration, spawned);
-        VerifiedDataBlock verified = verifier.verify(simulated, property);
-        return new VerifiedDataBlockResultAdapter(verified);
+        VerificationResult result = null;
+        while (spawned.size() != 0) {
+            LOGGER.debug("spawned: " + spawned.size());
+            LOGGER.debug("secondary spawned: " + spawned.getSecondaryTrajectories().size());
+            SimulatedDataBlock simulated = simulator.simulate(simulationConfiguration, spawned);
+            SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
+            LOGGER.debug("simulated: " + simulated.size());
+            LOGGER.debug("secondary simulated: " + simulatedSecondary.size());
+            for (int i=0; i<spawned.getSecondaryTrajectories().size(); i++) {
+                LinkedTrajectory.createAndUpdateReference(spawned.getSecondaryTrajectories().getTrajectory(i)).append(simulatedSecondary.getTrajectory(i));
+            }
+            for (int i=0; i<spawned.size(); i++) {
+                LinkedTrajectory.createAndUpdateReference(spawned.getTrajectory(i)).append(simulated.getTrajectory(i));
+            }
+            VerifiedDataBlock verified = verifier.verify(simulated, property);
+            if (result == null) {
+                result = new VerifiedDataBlockResultAdapter(verified);
+            } else {
+                result = result.merge(new VerifiedDataBlockResultAdapter(verified));
+            }
+            DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
+            spawned = spawner.spawn(spawned.getConfiguration(), distanceChecked);
+            LOGGER.debug("iteration done");
+        }
+        return result;
     }
 
     public Computation<VerificationResult> cloneComputation() {

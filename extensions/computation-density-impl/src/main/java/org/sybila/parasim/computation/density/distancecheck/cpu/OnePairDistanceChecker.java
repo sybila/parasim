@@ -64,7 +64,7 @@ public class OnePairDistanceChecker implements DistanceChecker {
             List<Integer> currentNeighborPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
             for (Trajectory trajectory : neighbors) {
-                DistanceAndPosition distanceAndPosition = checkTrajectoriesDistance(trajectories, trajectories.getTrajectory(index), trajectory);
+                DistanceAndPosition distanceAndPosition = checkTrajectoriesDistance(trajectories, trajectories.getTrajectory(index).getReference().getTrajectory(), trajectory);
                 currentDistances.add(distanceAndPosition.distance);
                 currentTajectoryPositions.add(distanceAndPosition.trajectoryPosition);
                 currentNeighborPositions.add(distanceAndPosition.neighborPosition);

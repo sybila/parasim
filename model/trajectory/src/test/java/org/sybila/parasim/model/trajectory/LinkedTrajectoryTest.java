@@ -21,15 +21,16 @@ package org.sybila.parasim.model.trajectory;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class LinkedTrajectoryTest extends AbstractTrajectoryTest<LinkedTrajectory> {
-    
+
     private LinkedTrajectory trajectory;
     private Point[] points;
-    
+
     @BeforeMethod
     public void setUp() {
         int pointIndex = 0;
@@ -45,17 +46,17 @@ public class LinkedTrajectoryTest extends AbstractTrajectoryTest<LinkedTrajector
                 points[pointIndex] = new ArrayPoint(times[p], data, p * DIMENSION, DIMENSION);
                 pointIndex++;
             }
-            
+
             if (length == 1) {
                 trajectory = new LinkedTrajectory(new ArrayTrajectory(data, times, DIMENSION));
             }
             else {
                 trajectory.append(new ArrayTrajectory(data, times, DIMENSION));
             }
-            
+
         }
     }
-    
+
     @Test
     public void testPointSequenceWithIterator() {
         super.testPointSequenceWithIterator(trajectory, points);
@@ -64,6 +65,12 @@ public class LinkedTrajectoryTest extends AbstractTrajectoryTest<LinkedTrajector
     @Test
     public void testPointSequenceWithGetMethod() {
         super.testPointSequenceWithGetMethod(trajectory, points);
-    }    
-    
+    }
+
+    @Test
+    public void testCreateAndUpdateReference() {
+        Trajectory trajectory = new PointTrajectory(0, 0.1f, 0.2f);
+        LinkedTrajectory.createAndUpdateReference(trajectory);
+        assertEquals(trajectory.getReference().getTrajectory().getClass(), LinkedTrajectory.class);
+    }
 }

@@ -129,14 +129,14 @@ public abstract class AbstractDensityTest {
     }
 
     protected TrajectoryNeighborhood createNeighborhood(DataBlock<Trajectory> dataBlock) {
-        final Map<Trajectory, DataBlock<Trajectory>> neighborhood = new HashMap<Trajectory, DataBlock<Trajectory>>();
+        final Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>();
         for (int t = 0; t < dataBlock.size(); t++) {
             List<Trajectory> trajectories = new ArrayList<Trajectory>();
             int index = 0;
             for (int i = t+1; i < dataBlock.size(); i++) {
                 trajectories.add(dataBlock.getTrajectory(i));
             }
-            neighborhood.put(dataBlock.getTrajectory(t), new ListDataBlock<Trajectory>(trajectories));
+            neighborhood.put(dataBlock.getTrajectory(t).getFirstPoint(), new ListDataBlock<Trajectory>(trajectories));
         }
         return new MapTrajectoryNeighborhood(neighborhood);
     }

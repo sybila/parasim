@@ -44,7 +44,7 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
 
     public static LinkedTrajectory createAndUpdateReference(Trajectory trajectory) {
         LinkedTrajectory linkedTrajectory = new LinkedTrajectory(trajectory);
-        trajectory.getReference().setTrajectory(trajectory);
+        trajectory.getReference().setTrajectory(linkedTrajectory);
         return linkedTrajectory;
     }
 
