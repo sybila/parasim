@@ -32,6 +32,7 @@ import org.sybila.parasim.model.verification.stl.Formula;
 public class ValidityRegionsComputation extends AbstractComputation<VerificationResult> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidityRegionsComputation.class);
+    private static final int ITERATIONS = 3; // FIXME: hardcoded
 
     @Provide
     private final OdeSystem odeSystem;
@@ -88,18 +89,21 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     public VerificationResult compute() {
         SpawnedDataBlock spawned = spawner.spawn(initialSpace, initialSampling);
         VerificationResult result = null;
-        while (spawned.size() != 0) {
+        int iteration = 0;
+        while (spawned.size() != 0 && iteration < ITERATIONS) {
             LOGGER.debug("spawned: " + spawned.size());
             LOGGER.debug("secondary spawned: " + spawned.getSecondaryTrajectories().size());
             SimulatedDataBlock simulated = simulator.simulate(simulationConfiguration, spawned);
-            SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
-            LOGGER.debug("simulated: " + simulated.size());
-            LOGGER.debug("secondary simulated: " + simulatedSecondary.size());
-            for (int i=0; i<spawned.getSecondaryTrajectories().size(); i++) {
-                LinkedTrajectory.createAndUpdateReference(spawned.getSecondaryTrajectories().getTrajectory(i)).append(simulatedSecondary.getTrajectory(i));
-            }
             for (int i=0; i<spawned.size(); i++) {
                 LinkedTrajectory.createAndUpdateReference(spawned.getTrajectory(i)).append(simulated.getTrajectory(i));
+            }
+            LOGGER.debug("simulated: " + simulated.size());
+            if (spawned.getSecondaryTrajectories().size() > 0) {
+                SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
+                LOGGER.debug("secondary simulated: " + simulatedSecondary.size());
+                for (int i=0; i<spawned.getSecondaryTrajectories().size(); i++) {
+                    LinkedTrajectory.createAndUpdateReference(spawned.getSecondaryTrajectories().getTrajectory(i)).append(simulatedSecondary.getTrajectory(i));
+                }
             }
             VerifiedDataBlock verified = verifier.verify(simulated, property);
             if (result == null) {
@@ -109,7 +113,15 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             }
             DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
             spawned = spawner.spawn(spawned.getConfiguration(), distanceChecked);
-            LOGGER.debug("iteration done");
+            LOGGER.debug("spawned to next iteration: " + spawned.size());
+            LOGGER.debug("secondary spawned to next iteration: " + spawned.size());
+            LOGGER.debug("iteration done: " + iteration);
+            iteration++;
+        }
+        if (LOGGER.isDebugEnabled()) {
+            for (int i=0; i<result.size(); i++) {
+                LOGGER.debug("robustness for " + result.getPoint(i) + " is " + result.getRobustness(i).getValue());
+            }
         }
         return result;
     }
