@@ -54,7 +54,7 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         float radius = Math.abs(trajectory.getFirstPoint().getValue(diffDimension) - neighbor.getFirstPoint().getValue(diffDimension)) / 2;
         // create middle seed, surely the middle seed hasn't been created before
         float[] middleSeedData = trajectory.getFirstPoint().toArrayCopy();
-        middleSeedData[diffDimension] = (trajectory.getFirstPoint().getValue(diffDimension) - neighbor.getFirstPoint().getValue(diffDimension)) / 2;
+        middleSeedData[diffDimension] = (trajectory.getFirstPoint().getValue(diffDimension) + neighbor.getFirstPoint().getValue(diffDimension)) / 2;
         Trajectory middleTrajectory = new PointTrajectory(trajectory.getFirstPoint().getTime(), middleSeedData);
         // memory for spawned trajectories
         List<Trajectory> neighborTrajectories = new ArrayList<Trajectory>();

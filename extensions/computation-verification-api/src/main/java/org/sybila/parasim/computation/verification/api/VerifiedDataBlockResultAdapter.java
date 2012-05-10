@@ -44,7 +44,7 @@ public class VerifiedDataBlockResultAdapter<T extends Trajectory> extends Abstra
 
     @Override
     public Point getPoint(int index) {
-        return data.getTrajectory(index).getFirstPoint();
+        return data.getTrajectory(index).getReference().getTrajectory().getFirstPoint();
     }
 
     @Override
