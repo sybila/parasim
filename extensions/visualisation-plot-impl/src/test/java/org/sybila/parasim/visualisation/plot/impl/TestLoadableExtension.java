@@ -22,6 +22,8 @@ package org.sybila.parasim.visualisation.plot.impl;
 import org.testng.annotations.Test;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
+import org.sybila.parasim.visualisation.plot.api.annotations.Filling;
+import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 import static org.testng.Assert.*;
 
 /**
@@ -32,5 +34,15 @@ public class TestLoadableExtension extends AbstractVisualisationTest {
     @Test
     public void testPlotterFactoryIsLoaded() {
         assertNotNull(getManager().resolve(PlotterFactory.class, Default.class, getManager().getRootContext()));
+    }
+
+    @Test
+    public void testStrictPlotterFactoryIsLoaded() {
+        assertNotNull(getManager().resolve(PlotterFactory.class, Strict.class, getManager().getRootContext()));
+    }
+
+    @Test
+    public void testFillingPlotterFactoryIsLoaded() {
+        assertNotNull(getManager().resolve(PlotterFactory.class, Filling.class, getManager().getRootContext()));
     }
 }

@@ -29,6 +29,8 @@ import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
+import org.sybila.parasim.visualisation.plot.api.annotations.Filling;
+import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 import org.sybila.parasim.visualisation.plot.api.event.ResultPlotterRegistered;
 
 /**
@@ -51,9 +53,27 @@ public class ResultPlotterRegistrar {
         config.set(conf);
     }
 
+    @Strict
     @Provide
-    public PlotterFactory register(ResultPlotterConfiguration config) {
+    public PlotterFactory registerStrict(ResultPlotterConfiguration config) {
+        fireEvent();
+        return new NotFillingProjectionPlotterFactory(config);
+    }
+
+    @Filling
+    @Provide
+    public PlotterFactory registerFilling(ResultPlotterConfiguration config) {
+        fireEvent();
+        return new RobustnessFillingProjectionPlotterFactory(config);
+    }
+
+    @Provide
+    public PlotterFactory registerDefault(ResultPlotterConfiguration config) {
+        fireEvent();
+        return new RobustnessFillingProjectionPlotterFactory(config);
+    }
+
+    private void fireEvent() {
         event.fire(new ResultPlotterRegistered());
-        return new ProjectionPlotterFactory(config);
     }
 }
