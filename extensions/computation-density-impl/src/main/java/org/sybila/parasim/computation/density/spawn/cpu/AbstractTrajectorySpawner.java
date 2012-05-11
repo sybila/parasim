@@ -68,7 +68,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
                 // check distance
                 if (!trajectories.getDistance(i, n).isValid()) {
                     Trajectory neighbor = configuration.getNeighborhood().getNeighbors(trajectory).getTrajectory(n);
-                    SpawnedResult spawned = spawnTrajectories(trajectory, neighbor, trajectories.getDistance(i, n));
+                    SpawnedResult spawned = spawnTrajectories(trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n));
                     if (spawned.containsTrajectories()) {
                         newTrajectories.addAll(spawned.getTrajectories());
                         neighborhood.putAll(spawned.getNeighborhoods());
