@@ -28,10 +28,11 @@ import org.sybila.parasim.application.model.ExperimentImpl;
 import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
+import org.sybila.parasim.visualisation.plot.api.annotations.Filling;
+import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -90,8 +91,10 @@ public class Main {
                 System.exit(1);
             }
             // plot result
-            PlotterFactory plotterFactory = manager.resolve(PlotterFactory.class, Default.class, manager.getRootContext());
-            plotterFactory.getPlotter(result, new OdeVariableMapping(experiment.getOdeSystem())).plot();
+            PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
+            PlotterFactory fillingPlotterFactory = manager.resolve(PlotterFactory.class, Filling.class, manager.getRootContext());
+            strictPlotterFactory.getPlotter(result, new OdeVariableMapping(experiment.getOdeSystem())).plot();
+            fillingPlotterFactory.getPlotter(result, new OdeVariableMapping(experiment.getOdeSystem())).plot();
         } catch (ParseException ex) {
             ParasimOptions.printHelp(System.out);
             System.exit(1);
