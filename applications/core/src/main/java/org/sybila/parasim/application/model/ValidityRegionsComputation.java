@@ -91,16 +91,12 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         VerificationResult result = null;
         int iteration = 0;
         while (spawned.size() != 0 && iteration < ITERATIONS) {
-            LOGGER.debug("spawned: " + spawned.size());
-            LOGGER.debug("secondary spawned: " + spawned.getSecondaryTrajectories().size());
             SimulatedDataBlock simulated = simulator.simulate(simulationConfiguration, spawned);
             for (int i=0; i<spawned.size(); i++) {
                 LinkedTrajectory.createAndUpdateReference(spawned.getTrajectory(i)).append(simulated.getTrajectory(i));
             }
-            LOGGER.debug("simulated: " + simulated.size());
             if (spawned.getSecondaryTrajectories().size() > 0) {
                 SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
-                LOGGER.debug("secondary simulated: " + simulatedSecondary.size());
                 for (int i=0; i<spawned.getSecondaryTrajectories().size(); i++) {
                     LinkedTrajectory.createAndUpdateReference(spawned.getSecondaryTrajectories().getTrajectory(i)).append(simulatedSecondary.getTrajectory(i));
                 }
@@ -113,9 +109,6 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             }
             DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
             spawned = spawner.spawn(spawned.getConfiguration(), distanceChecked);
-            LOGGER.debug("spawned to next iteration: " + spawned.size());
-            LOGGER.debug("secondary spawned to next iteration: " + spawned.size());
-            LOGGER.debug("iteration done: " + iteration);
             iteration++;
         }
         if (LOGGER.isDebugEnabled()) {
