@@ -3,6 +3,9 @@ package org.sybila.parasim.visualisation.plot.impl.layer;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.util.Coordinate;
 import org.sybila.parasim.util.Pair;
 
@@ -46,6 +49,8 @@ public class RobustnessTransformer {
      * v tomhle případě možná bude chtít mít pole s body, které tam jsou původně a u ostatních zjistit
      * nejvyšší možnou robustnost -- nebo se na to pro tyto účely možná vykašlat.
      */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RobustnessTransformer.class);
+
     private static class Circle {
 
         private int x, y;
@@ -235,16 +240,39 @@ public class RobustnessTransformer {
 
         for (int i = minX; i < maxX; i++) {
             for (int j = minY; j < maxY; j++) {
+
                 float d = (float) Math.sqrt(Math.pow(src.getLayerValue(xAxis, i) - xValue, 2) + Math.pow(src.getLayerValue(yAxis, j) - yValue, 2));
                 if (d < Math.abs(point.getRobustness())) {
-                    if (point.getRobustness() < 0) {
-                        target[i][j] = point.getRobustness() + d;
+                    if (target[i][j] == null) {
+                        if (point.getRobustness() < 0) {
+                            target[i][j] = point.getRobustness() + d;
+                        } else {
+                            target[i][j] = point.getRobustness() - d;
+                        }
                     } else {
-                        target[i][j] = point.getRobustness() - d;
+                        if (Math.signum(target[i][j]) != Math.signum(point.getRobustness())) {
+                            logOverlappingRobustness(i, j, point);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private void logOverlappingRobustness(int x, int y, Circle point) {
+        Point srcPoint = src.getPoint(current.setCoordinate(xAxis, point.getX()).setCoordinate(yAxis, point.getY()).create());
+        Point trgPoint = src.getPoint(current.setCoordinate(xAxis, x).setCoordinate(yAxis, y).create());
+
+        StringBuilder warning = new StringBuilder("Overlapping robustness: ");
+        warning.append(srcPoint.toString());
+        warning.append(", robustness: ");
+        warning.append(point.getRobustness());
+        warning.append("; ");
+        warning.append(trgPoint.toString());
+        warning.append(", robustness: ");
+        warning.append(target[x][y]);
+        warning.append(".");
+        LOGGER.warn(warning.toString());
     }
 
     public static GridPointLayer.SingleLayerFactory getFactory() {
