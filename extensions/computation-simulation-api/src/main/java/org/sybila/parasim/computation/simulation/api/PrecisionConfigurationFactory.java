@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class PrecisionConfigurationFactory implements XMLRepresentableFactory<PrecisionConfiguration> {
 
@@ -33,6 +34,7 @@ public class PrecisionConfigurationFactory implements XMLRepresentableFactory<Pr
     public static final String MAX_ABSOLUTE_ERROR_NAME = "maxAbsoluteError";
     public static final String MAX_RELATIVE_ERROR_NAME = "maxRelativeError";
     public static final String PRECISION_NAME = "precision";
+    public static final String TIME_STEP_NAME = "timeStep";
 
     public PrecisionConfiguration getObject(Node source) throws XMLFormatException {
         if (!source.getNodeName().equals(PRECISION_NAME)) {
@@ -48,6 +50,13 @@ public class PrecisionConfigurationFactory implements XMLRepresentableFactory<Pr
         } catch (NumberFormatException nfe) {
             throw new XMLFormatException("Illegible number.", nfe);
         }
+        float timeStep;
+        try {
+            timeStep = Float.parseFloat(source.getAttributes().getNamedItem(TIME_STEP_NAME).getTextContent());
+        } catch (NumberFormatException nfe) {
+            throw new XMLFormatException("Illegible number.", nfe);
+        }
+
         float[] maxAbsoluteError = new float[dimension];
         for (int index = 0; index < dimension; index++) {
             Node child = children.item(index);
@@ -61,6 +70,6 @@ public class PrecisionConfigurationFactory implements XMLRepresentableFactory<Pr
                 throw new XMLFormatException("Unknown element: " + child.getNodeName());
             }
         }
-        return new ArrayPrecisionConfiguration(maxAbsoluteError, maxRelativeError);
+        return new ArrayPrecisionConfiguration(maxAbsoluteError, maxRelativeError, timeStep);
     }
 }

@@ -24,19 +24,25 @@ import org.w3c.dom.Element;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class ArrayPrecisionConfiguration implements PrecisionConfiguration {
 
     private final float[] maxAbsoluteError;
     private final float maxRelativeError;
+    private final float timeStep;
 
-    public ArrayPrecisionConfiguration(final float[] maxAbsoluteError, final float maxRelativeError) {
+    public ArrayPrecisionConfiguration(final float[] maxAbsoluteError, final float maxRelativeError, final float timeStep) {
         if (maxAbsoluteError == null) {
             throw new IllegalArgumentException("The parameter [maxAbsoluteError] is null.");
         }
         if (maxRelativeError < 0) {
             throw new IllegalArgumentException("The parameter [maxRelativeError] has to be a positive number.");
         }
+        if (timeStep < 0) {
+            throw new IllegalArgumentException("The parameter [timeStep] has to be a positibe number.");
+        }
+        this.timeStep = timeStep;
         this.maxAbsoluteError = maxAbsoluteError;
         this.maxRelativeError = maxRelativeError;
     }
@@ -53,9 +59,14 @@ public class ArrayPrecisionConfiguration implements PrecisionConfiguration {
         return maxRelativeError;
     }
 
+    public float getTimeStep() {
+        return timeStep;
+    }
+
     public Element toXML(Document doc) {
         Element precision = doc.createElement(PrecisionConfigurationFactory.PRECISION_NAME);
         precision.setAttribute(PrecisionConfigurationFactory.MAX_RELATIVE_ERROR_NAME, Float.toString(getMaxRelativeError()));
+        precision.setAttribute(PrecisionConfigurationFactory.TIME_STEP_NAME, Float.toString(getTimeStep()));
         for (int dim=0; dim<getDimension(); dim++) {
             Element dimension = doc.createElement(PrecisionConfigurationFactory.DIMENSION_NAME);
             dimension.setAttribute(PrecisionConfigurationFactory.MAX_ABSOLUTE_ERROR_NAME, Float.toString(getMaxAbsoluteError(dim)));

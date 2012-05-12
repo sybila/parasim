@@ -31,17 +31,18 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class TestPrecisionConfigurationStorage {
-    
+
     private PrecisionConfiguration precisionConfiguration;
-    
+
     @BeforeMethod
     public void preparePrecisionConfiguration() {
         precisionConfiguration = new ArrayPrecisionConfiguration(
-            new float[] {0.01f, 0.02f, 0.03f},
-            0.1f
-        );
+                new float[]{0.01f, 0.02f, 0.03f},
+                0.1f,
+                0.001f);
     }
 
     /**
@@ -60,11 +61,12 @@ public class TestPrecisionConfigurationStorage {
         }
         assertEquals(resource.getRoot().getDimension(), precisionConfiguration.getDimension(), "Space should be loaded correctly. Dimension doesn't match.");
         assertEquals(resource.getRoot().getMaxRelativeError(), precisionConfiguration.getMaxRelativeError(), "Space should be loaded correctly. Relative error doesn't match.");
-        for (int dim=0; dim<precisionConfiguration.getDimension(); dim++) {
-           assertEquals(resource.getRoot().getMaxAbsoluteError(dim), precisionConfiguration.getMaxAbsoluteError(dim), "Space should be loaded correctly. Absolute error in dimension <"+dim+">doesn't match.");
+        assertEquals(resource.getRoot().getTimeStep(), precisionConfiguration.getTimeStep(), "Time step should be loaded correctly.");
+        for (int dim = 0; dim < precisionConfiguration.getDimension(); dim++) {
+            assertEquals(resource.getRoot().getMaxAbsoluteError(dim), precisionConfiguration.getMaxAbsoluteError(dim), "Space should be loaded correctly. Absolute error in dimension <" + dim + ">doesn't match.");
         }
-    }    
-    
+    }
+
     /**
      * Tests whether resource is able to store and then load a space correctly.
      */
@@ -79,7 +81,7 @@ public class TestPrecisionConfigurationStorage {
             fail("Temporary file could not be created.");
         }
         temp.deleteOnExit();
-        
+
         //store
         PrecisionConfigurationResource resource = new PrecisionConfigurationResource(temp);
         resource.setRoot(precisionConfiguration);
@@ -91,10 +93,10 @@ public class TestPrecisionConfigurationStorage {
             }
             fail("XML error while storing: " + xmle.getMessage());
         }
-        
+
         //reset
         resource.setRoot(null);
-        
+
         //load
         try {
             resource.load();
@@ -104,15 +106,16 @@ public class TestPrecisionConfigurationStorage {
             }
             fail("XML error while loading: " + xmle.getMessage());
         }
-        
+
         assertEquals(resource.getRoot().getDimension(), precisionConfiguration.getDimension(), "Space should be loaded correctly. Dimension doesn't match.");
         assertEquals(resource.getRoot().getMaxRelativeError(), precisionConfiguration.getMaxRelativeError(), "Space should be loaded correctly. Relative error doesn't match.");
-        for (int dim=0; dim<precisionConfiguration.getDimension(); dim++) {
-           assertEquals(resource.getRoot().getMaxAbsoluteError(dim), precisionConfiguration.getMaxAbsoluteError(dim), "Space should be loaded correctly. Absolute error in dimension <"+dim+">doesn't match.");
+        assertEquals(resource.getRoot().getTimeStep(), precisionConfiguration.getTimeStep(), "Time step should be loaded correctly.");
+        for (int dim = 0; dim < precisionConfiguration.getDimension(); dim++) {
+            assertEquals(resource.getRoot().getMaxAbsoluteError(dim), precisionConfiguration.getMaxAbsoluteError(dim), "Space should be loaded correctly. Absolute error in dimension <" + dim + ">doesn't match.");
         }
-        
-    }    
-    
+
+    }
+
     private File getTestFile() {
         URL res = getClass().getClassLoader().getResource("testPrecisionConfiguration.xml");
         try {
@@ -121,7 +124,6 @@ public class TestPrecisionConfigurationStorage {
             urise.printStackTrace();
             fail("Could not get to test formula file.");
         }
-        return null;        
+        return null;
     }
-    
 }

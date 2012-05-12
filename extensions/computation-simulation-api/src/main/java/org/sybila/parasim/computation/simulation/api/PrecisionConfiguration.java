@@ -31,4 +31,6 @@ public interface PrecisionConfiguration extends XMLRepresentable {
     float getMaxAbsoluteError(int dim);
 
     float getMaxRelativeError();
+
+    float getTimeStep();
 }

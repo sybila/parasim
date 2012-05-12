@@ -24,17 +24,18 @@
 	targetNamespace="http://www.sybila.org/parasim/precision"
 	xmlns="http://www.sybila.org/parasim/precision"
 	elementFormDefault="qualified">
-	
+
 	<xs:complexType name="dimension_error">
 		<xs:attribute name="maxAbsoluteError" type="xs:decimal" use="required"/>
 	</xs:complexType>
-	
+
 	<xs:complexType name="precision_configuration">
         <xs:sequence>
             <xs:element name="dimension" type="dimension_error" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="maxRelativeError" type="xs:decimal" use="required"/>
+        <xs:attribute name="timeStep" type="xs:decimal" use="required"/>
 	</xs:complexType>
-	
+
 	<xs:element name="precision" type="precision_configuration"/>
 </xs:schema>
