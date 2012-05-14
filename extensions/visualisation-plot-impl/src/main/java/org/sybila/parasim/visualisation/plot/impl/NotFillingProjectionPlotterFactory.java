@@ -31,7 +31,7 @@ public class NotFillingProjectionPlotterFactory implements PlotterFactory {
         if (result.getPoint(0).getDimension() < 2) {
             return new OneDimensionalPlotter();
         }
-        OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
+        OrthogonalSpace extent = new SpaceUtils(conf).provideWithPadding(AbstractVerificationResult.getEncompassingSpace(result));
         return new ProjectionPlotter(conf, result, names,
                 new GridPointLayer(result, extent, EpsilonGridFactory.getCoordinateFactory(conf), new SimpleSingleLayerFactory()),
                 new ValidityPointRenderer(conf));
