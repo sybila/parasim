@@ -20,7 +20,6 @@ public class CanvasPane extends JRootPane {
 
         public void updatePosition(float x, float y);
     }
-    private static final Color GUIDE_COLOR = Color.BLUE;
     //non-static
     private Point position;
     private Canvas contents;
@@ -28,12 +27,18 @@ public class CanvasPane extends JRootPane {
 
     private class Overlay extends JComponent {
 
+        private Color guides;
+
+        public Overlay(Color guideColor) {
+            guides = guideColor;
+        }
+
         @Override
         protected void paintComponent(Graphics g) {
             Rectangle bounds = g.getClipBounds();
 
             if (position != null) {
-                g.setColor(GUIDE_COLOR);
+                g.setColor(guides);
                 g.drawLine(position.x, bounds.y, position.x, bounds.y + bounds.height);
                 g.drawLine(bounds.x, position.y, bounds.x + bounds.width, position.y);
             }
@@ -45,7 +50,7 @@ public class CanvasPane extends JRootPane {
         update = onUpdate;
         setContentPane(canvas);
 
-        setGlassPane(new Overlay());
+        setGlassPane(new Overlay(conf.getGuidesColor()));
         getGlassPane().setVisible(conf.getShowGuides());
 
         MouseAdapter mouseActions = new MouseAdapter() {

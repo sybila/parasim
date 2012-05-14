@@ -15,6 +15,7 @@ public class ResultPlotterConfiguration {
     private int statusDecimalDigits = 3;
     private boolean showGuides = true;
     private float flatDimensionPadding = 0.1f;
+    private Color guidesColor = Color.LIGHT_GRAY;
     //RULE//
     private int ruleWidth = 45;
     private int ruleHeight = 30;
@@ -94,5 +95,9 @@ public class ResultPlotterConfiguration {
 
     public float getFlatDimensionPadding() {
         return flatDimensionPadding;
+    }
+
+    public Color getGuidesColor() {
+        return guidesColor;
     }
 }
