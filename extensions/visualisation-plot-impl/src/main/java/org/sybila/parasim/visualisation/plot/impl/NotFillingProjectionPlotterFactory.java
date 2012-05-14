@@ -10,8 +10,7 @@ import org.sybila.parasim.visualisation.plot.impl.gui.ProjectionPlotter;
 import org.sybila.parasim.visualisation.plot.impl.layer.EpsilonGridFactory;
 import org.sybila.parasim.visualisation.plot.impl.layer.GridPointLayer;
 import org.sybila.parasim.visualisation.plot.impl.layer.SimpleSingleLayerFactory;
-import org.sybila.parasim.visualisation.plot.impl.render.RGCirclePointRenderer;
-import org.sybila.parasim.visualisation.plot.impl.render.ZeroRemover;
+import org.sybila.parasim.visualisation.plot.impl.render.ValidityPointRenderer;
 
 /**
  *
@@ -35,6 +34,6 @@ public class NotFillingProjectionPlotterFactory implements PlotterFactory {
         OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
         return new ProjectionPlotter(conf, result, names,
                 new GridPointLayer(result, extent, EpsilonGridFactory.getCoordinateFactory(conf), new SimpleSingleLayerFactory()),
-                new ZeroRemover(new RGCirclePointRenderer(), conf));
+                new ValidityPointRenderer(conf));
     }
 }

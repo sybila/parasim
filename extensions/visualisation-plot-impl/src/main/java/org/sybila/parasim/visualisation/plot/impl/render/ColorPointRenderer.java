@@ -8,7 +8,7 @@ import org.sybila.parasim.visualisation.plot.impl.gui.PointRenderer;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class ColorPointRenderer extends PointRendererDecorator{
+public class ColorPointRenderer extends PointRendererDecorator{
 
     private Color valid, invalid;
 

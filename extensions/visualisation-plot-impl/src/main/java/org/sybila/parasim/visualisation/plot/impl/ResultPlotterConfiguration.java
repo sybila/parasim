@@ -1,5 +1,7 @@
 package org.sybila.parasim.visualisation.plot.impl;
 
+import java.awt.Color;
+
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
@@ -20,6 +22,10 @@ public class ResultPlotterConfiguration {
     private int ruleBigTick = 10;
     private int ruleSmalltick = 5;
     private int ruleDecimalDigits = 2;
+    //RENDERER
+    private Color pointColorValid = Color.GREEN;
+    private Color pointColorInvalid = Color.RED;
+    private float pointRadius = 3;
 
     public int getPlotterWindowHeight() {
         return plotterWindowHeight;
@@ -71,5 +77,17 @@ public class ResultPlotterConfiguration {
 
     public int getRuleTickSpacing() {
         return ruleTickSpacing;
+    }
+
+    public Color getPointColorValid() {
+        return pointColorValid;
+    }
+
+    public Color getPointColorInvalid() {
+        return pointColorInvalid;
+    }
+
+    public float getPointRadius() {
+        return pointRadius;
     }
 }
