@@ -42,8 +42,9 @@ import org.sybila.parasim.visualisation.plot.impl.render.CirclePointRenderer;
 import org.sybila.parasim.visualisation.plot.impl.render.ThreeColorPointRenderer;
 
 /**
- *
+ * Testing class. Creates a verification result and displays it.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated Used only for testing purposes.
  */
 @Deprecated
 class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMapping {
@@ -59,15 +60,6 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
         return 3;
     }
 
-    /*
-     * private static VerificationResult createResult() { Point[] points = new
-     * Point[5]; points[0] = new ArrayPoint(0, 0f, 2.3f, 0f); points[1] = new
-     * ArrayPoint(0, 3.5f, 4.3f, 0f); points[2] = new ArrayPoint(0, 5.1f, 0.6f,
-     * 0.5f); points[3] = new ArrayPoint(0, 4.1f, 1.3f, 0.8f); points[4] = new
-     * ArrayPoint(0, 1.8f, 3.8f, 1f); float[] robustness = new float[]{-2.5f,
-     * 0.8f, 3.4f, 2.9f, -5.3f}; return new ArrayVerificationResult(5, points,
-     * robustness); }
-     */
     private static VerificationResult createResult() {
         float[] xCoords = new float[]{0f, 0.1f, 0.35f, 0.42f, 0.5f, 0.68f, 0.72f, 0.9f, 1f};
         float[] yCoords = new float[]{0f, 0.12f, 0.15f, 0.3f, 0.48f, 0.61f, 0.78f, 0.92f, 1f};

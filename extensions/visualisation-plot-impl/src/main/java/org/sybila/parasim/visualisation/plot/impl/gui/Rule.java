@@ -11,16 +11,30 @@ import javax.swing.plaf.DimensionUIResource;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
 
 /**
+ * A rule displaying axis with legend in the form of ticks with associated numbers (in model coordinates).
+ * Can be either horizontal or vertical.
+ *
+ * Each rule is composed of big ticks spaced evenly along the border (plot area) and labeled
+ * by associated model coordinates. Space between big ticks is filled by small ticks (unlabeled).
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class Rule extends JPanel {
 
+    /**
+     * Rule orientation.
+     */
     public static enum Orientation {
 
+        /** Horizontal orientation */
         HORIZONTAL,
+        /** Vertical orientation */
         VERTICAL;
 
+        /**
+         * Determine whether this orientation is horizontal.
+         * @return <code>true</code> when this orientation is horizontal, <code>false</code> otherwise.
+         */
         public boolean isHorizontal() {
             return equals(Orientation.HORIZONTAL);
         }
@@ -34,6 +48,12 @@ public class Rule extends JPanel {
     private float min, max;
     private DecimalFormat format;
 
+    /**
+     * Initializes the rule and sets its orientation.
+     * There are several configurable values (see {@link ResultPlotterConfiguration}).
+     * @param conf This extension configuration.
+     * @param orientation This rule orientation.
+     */
     public Rule(ResultPlotterConfiguration conf, Orientation orientation) {
         this.conf = conf;
         orient = orientation;
@@ -53,6 +73,11 @@ public class Rule extends JPanel {
         format = new DecimalFormat(formatBuilder.toString());
     }
 
+    /**
+     * Update scale of this rule.
+     * @param min Minimum model coordinate.
+     * @param max Maximum model coordinate.
+     */
     public void update(float min, float max) {
         this.min = min;
         this.max = max;
@@ -108,23 +133,5 @@ public class Rule extends JPanel {
                 g.drawString(label, bounds.y + PADDING, coord);
             }
         }
-
-
-        /*removeAll();
-         int numBigTicks = size / conf.getRuleTickSpacing() / conf.getRuleTickRatio() + 1;
-         float perTick = (max - min) * conf.getRuleTickSpacing() * conf.getRuleTickRatio() / size;
-         JLabel[] labels = generateLabels(numBigTicks, perTick);
-         for (int i = 0; i < numBigTicks; i++) {
-         JLabel target = labels[i];
-         int span = i * conf.getRuleTickSpacing() * conf.getRuleTickRatio();
-         int coord = start;
-         if (orient.isHorizontal()) {
-         coord += span;
-         target.setLocation(coord - target.getSize().width / 2, bounds.x + conf.getRuleBigTick() + PADDING);
-         } else {
-         coord -= span;
-         target.setLocation(bounds.y + bounds.width - PADDING - target.getSize().width, coord - target.getSize().height / 2);
-         }
-         }*/
     }
 }

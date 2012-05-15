@@ -4,7 +4,7 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 
 /**
- *
+ * Utility class adjusting {@link OrthogonalSpace} for the use in this extension.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class SpaceUtils {
@@ -12,11 +12,31 @@ public class SpaceUtils {
     private float epsilon;
     private float padding;
 
+    /**
+     * Initializes inner variables according to extension configuration.
+     * @param conf This extension configuration.
+     */
     public SpaceUtils(ResultPlotterConfiguration conf) {
         epsilon = conf.getMinimumDifference();
         padding = conf.getFlatDimensionPadding();
     }
 
+    /**
+     * Finds all flat dimensions in a space and enlarges them with a padding.
+     * This is needed for flat dimensions to be displayed properly.
+     *
+     * A dimension is considered flat when all points have only one coordinate
+     * in the given dimension.
+     *
+     * Uses the following configurable values:
+     * <ul>
+     * <li>{@link ResultPlotterConfiguration#getMinimumDifference()} to find flat dimensions.</li>
+     * <li>{@link ResultPlotterConfiguration#getFlatDimensionPadding() -- width of added padding.</li>
+     * </ul>
+     *
+     * @param src Space which should be provided with padding.
+     * @return New space which is the copy of <code>src</code> with the exception of flat dimensions.
+     */
     OrthogonalSpace provideWithPadding(OrthogonalSpace src) {
         int dim = src.getDimension();
         float[] upper = new float[dim];

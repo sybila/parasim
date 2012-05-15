@@ -39,6 +39,7 @@ public class CirclePointRenderer implements PointRenderer {
         this.radius = radius;
     }
 
+    @Override
     public void drawPoint(Graphics2D canvas, float x, float y, float robustness) {
         canvas.fill(new Ellipse2D.Float(x - radius, y - radius, 2 * radius, 2 * radius));
     }

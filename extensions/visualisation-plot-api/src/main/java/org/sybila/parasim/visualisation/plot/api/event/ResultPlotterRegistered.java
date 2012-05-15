@@ -20,7 +20,7 @@
 package org.sybila.parasim.visualisation.plot.api.event;
 
 /**
- *
+ * Fired when this plotting extension is loaded.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class ResultPlotterRegistered {

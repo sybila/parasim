@@ -76,8 +76,9 @@ public class AxisSlider extends JPanel {
     }
 
     /**
-     *
-     * @return
+     * Determines whether this slider is visible and active (i.e. its axis is not projected).
+     * @return <code>true</code> when this slider is visible, <code>false</code>
+     * when it is inactive (its axis is projected).
      */
     public boolean isActive() {
         return isVisible();
@@ -98,15 +99,15 @@ public class AxisSlider extends JPanel {
      * @param value Current position.
      */
     public void update(int ticks, int value) {
-        slider.setModel(new DefaultBoundedRangeModel(value, 0, 0, ticks-1));
+        slider.setModel(new DefaultBoundedRangeModel(value, 0, 0, ticks - 1));
         //note: fourth argument is max-value, so it is number of ticks - 1
 
         slider.setMajorTickSpacing(ticks);
 
         //create labels//
-        Hashtable<Integer,JLabel> labels = new Hashtable<Integer, JLabel>();
+        Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
         labels.put(0, new JLabel(Float.toString(min)));
-        labels.put(ticks-1, new JLabel(Float.toString(max)));
+        labels.put(ticks - 1, new JLabel(Float.toString(max)));
         slider.setLabelTable(labels);
     }
 }

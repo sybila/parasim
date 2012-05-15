@@ -22,7 +22,8 @@ package org.sybila.parasim.visualisation.plot.impl;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 
 /**
- * Mockup plotter created when threre are no points in the result.
+ * Mockup plotter created when there are no points in the result.
+ * When plotting, prints a message.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */

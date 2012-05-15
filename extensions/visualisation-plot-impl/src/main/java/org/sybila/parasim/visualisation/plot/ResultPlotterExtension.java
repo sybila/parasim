@@ -24,11 +24,12 @@ import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterRegistrar;
 
 /**
- *
+ * Represents this extension as specified by {@link LoadableExtension}.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class ResultPlotterExtension implements LoadableExtension {
 
+    @Override
     public void register(ExtensionBuilder builder) {
         builder.extension(ResultPlotterRegistrar.class); //sem přijde konkrétní třída, která se registruje
     }

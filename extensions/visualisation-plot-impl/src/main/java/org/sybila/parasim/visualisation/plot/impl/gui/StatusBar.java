@@ -16,7 +16,8 @@ import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
 
 /**
- *
+ * Status bar displaying current coordinate in model. This is discerned from active
+ * {@link AxisSlider}s and {@link CanvasPane}.
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class StatusBar extends JPanel {
@@ -25,6 +26,9 @@ public class StatusBar extends JPanel {
     private static final Border border = new CompoundBorder(new BevelBorder(BevelBorder.LOWERED),
             new EmptyBorder(PADDING, PADDING, PADDING, PADDING));
 
+    /**
+     * Label displaying one coordinate.
+     */
     private class StatusLabel extends JPanel {
 
         private static final int INSET = 5;
@@ -52,6 +56,17 @@ public class StatusBar extends JPanel {
     private Font labelFont;
     private DecimalFormat format;
 
+    /**
+     * Initializes status bar. Uses the following configurable values:
+     * <ul>
+     *  <li>{@link ResultPlotterConfiguration#getStatusFontSize()} to determine labels size.</li>
+     *  <li>{@link ResultPlotterConfiguration#getStatusDecimalDigits()} to determine number of displayed decimal digits.</li>
+     * </ul>
+     *
+     * @param conf This extension configuration.
+     * @param dimension Number of result dimensions.
+     * @param names Names of model variables.
+     */
     public StatusBar(ResultPlotterConfiguration conf, int dimension, PointVariableMapping names) {
         setLayout(new BorderLayout());
         labelFont = new Font("SansSerif", Font.PLAIN, conf.getStatusFontSize());
@@ -75,6 +90,11 @@ public class StatusBar extends JPanel {
         add(filler, BorderLayout.CENTER);
     }
 
+    /**
+     * Set value displayed at given coordinate.
+     * @param index Coordinate.
+     * @float value Displayed value.
+     */
     public void setValue(int index, float value) {
         labels[index].setCaption(value);
     }

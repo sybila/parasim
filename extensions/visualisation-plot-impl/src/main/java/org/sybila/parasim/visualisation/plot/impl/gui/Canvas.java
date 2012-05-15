@@ -30,7 +30,7 @@ import javax.swing.border.LineBorder;
 import org.sybila.parasim.visualisation.plot.impl.Point2DLayer;
 
 /**
- * Draws points on a 2D canvas. Handles coordinate transformation and resizing.
+ * Plot area: draws points on a 2D canvas. Handles coordinate transformation and resizing.
  * The appearance of point is handled by {@link PointRenderer}.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
@@ -91,10 +91,20 @@ public class Canvas extends JPanel {
         repaint();
     }
 
+    /**
+     * Determine model coordinate along x axis from on-screen position.
+     * @param position On-screen position with respect to this component.
+     * @return Model coordinate along x-axis.
+     */
     public float getX(Point position) {
         return (position.x - PADDING) / xFact + points.minX();
     }
 
+    /**
+     * Determine model coordinate along y axis from on-screen position.
+     * @param position On-screen position with respect to this component.
+     * @return Model coordinate along y axis.
+     */
     public float getY(Point position) {
         return (getHeight() - position.y - PADDING) / yFact + points.minY();
     }
@@ -107,10 +117,16 @@ public class Canvas extends JPanel {
         yFact = (getHeight() - 2 * PADDING) / (points.maxY() - points.minY());
     }
 
+    /**
+     * Transforms model coordinates into on-screen coordinates.
+     */
     private float transformX(float x) {
         return (x - points.minX()) * xFact + PADDING;
     }
 
+    /**
+     * Transforms model coordinates into on-screen coordinates.
+     */
     private float transformY(float y) {
         return getHeight() - (y - points.minY()) * yFact - PADDING;
     }

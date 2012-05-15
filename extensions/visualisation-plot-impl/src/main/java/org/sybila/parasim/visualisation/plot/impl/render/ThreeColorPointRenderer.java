@@ -14,6 +14,14 @@ public class ThreeColorPointRenderer extends PointRendererDecorator {
     private Color valid, invalid, zero;
     private float epsilon;
 
+    /**
+     * Initializes underlying renderer and colors.
+     * @param renderer Underlying renderer.
+     * @param conf This extension configuration.
+     * @param valid Color for valid points.
+     * @param invalid Color for invalid points.
+     * @param zero Color for points with zero robustness.
+     */
     public ThreeColorPointRenderer(PointRenderer renderer, ResultPlotterConfiguration conf, Color valid, Color invalid, Color zero) {
         super(renderer);
         this.valid = valid;

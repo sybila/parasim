@@ -11,13 +11,23 @@ import javax.swing.JRootPane;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
 
 /**
+ * Tracks mouse motion across the plot area, sending it to designed listener.
+ * Renders guiding lines.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class CanvasPane extends JRootPane {
 
+    /**
+     * Listens to change of mouse position.
+     */
     public static interface PositionChangeListener {
 
+        /**
+         * Called when mouse position was changed.
+         * @param x X coordinate of new mouse position.
+         * @param y Y coordinate of new mouse position.
+         */
         public void updatePosition(float x, float y);
     }
     //non-static
@@ -25,6 +35,9 @@ public class CanvasPane extends JRootPane {
     private Canvas contents;
     private PositionChangeListener update;
 
+    /**
+     * Class responsible for drawing guiding lines.
+     */
     private class Overlay extends JComponent {
 
         private Color guides;
@@ -45,6 +58,17 @@ public class CanvasPane extends JRootPane {
         }
     }
 
+    /**
+     * Initiate object. Uses following configurable values:
+     * <ul>
+     *  <li>{@link ResultPlotterConfiguration#getGuidesColor()} as guiding lines color.</li>
+     *  <li>{@link ResultPlotterConfiguration#getShowGuides()} to determine whether guiding lines should be rendered.</li>
+     * </ul>
+     *
+     * @param conf This extension configuration.
+     * @param canvas Contained plot area.
+     * @param onUpdate Listener notified when mouse position is updated.
+     */
     public CanvasPane(ResultPlotterConfiguration conf, Canvas canvas, PositionChangeListener onUpdate) {
         contents = canvas;
         update = onUpdate;
@@ -75,6 +99,9 @@ public class CanvasPane extends JRootPane {
         addMouseMotionListener(mouseActions);
     }
 
+    /**
+     * Updates guides and notifies listener.
+     */
     private void moveMouse(Point position) {
         this.position = position;
         update.updatePosition(contents.getX(position), contents.getY(position));

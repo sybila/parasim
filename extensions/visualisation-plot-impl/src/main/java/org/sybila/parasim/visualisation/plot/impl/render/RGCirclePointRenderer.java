@@ -37,6 +37,7 @@ public class RGCirclePointRenderer implements PointRenderer {
     protected static final Color INVALID = Color.RED;
     protected static final int RADIUS = 3;
 
+    @Override
     public void drawPoint(Graphics2D canvas, float x, float y, float robustness) {
         if (robustness > 0) {
             canvas.setPaint(VALID);
