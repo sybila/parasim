@@ -83,6 +83,10 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 public Element toXML(Document doc) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
+
+                public float getTimeStep() {
+                    return 0.01f;
+                }
             };
 
             @Override
@@ -114,7 +118,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 }
                 return space;
             }
-            
+
             @Override
             public float[] getSteps() {
                 if (steps == null) {
