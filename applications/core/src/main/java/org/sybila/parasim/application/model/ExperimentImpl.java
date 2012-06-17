@@ -106,7 +106,7 @@ public class ExperimentImpl implements Experiment {
     }
 
     public VerificationResultResource getVerificationResultResource() {
-        return null;
+        return verificationResultResource;
     }
 
     private static File getFileWithAbsolutePath(String filename, File directory) {

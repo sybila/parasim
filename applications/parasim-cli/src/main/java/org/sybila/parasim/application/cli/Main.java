@@ -30,12 +30,15 @@ import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
+import org.sybila.parasim.model.verification.result.VerificationResultResource;
+import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.api.annotations.Filling;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class Main {
 
@@ -90,6 +93,19 @@ public class Main {
                 LOGGER.error("Can't launch the experiment.", e);
                 System.exit(1);
             }
+
+            //save result
+            VerificationResultResource output = experiment.getVerificationResultResource();
+            if (output != null) {
+                output.setRoot(result);
+                try {
+                   output.store();
+                } catch (XMLException xmle) {
+                    LOGGER.error("Unable to store result.", xmle);
+                    System.exit(1);
+                }
+            }
+
             // plot result
             PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
             PlotterFactory fillingPlotterFactory = manager.resolve(PlotterFactory.class, Filling.class, manager.getRootContext());
