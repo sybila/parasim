@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.application.cli;
 
+import java.io.File;
 import java.io.IOException;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
+import org.sybila.parasim.model.ode.PointVariableIdentity;
+import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResultResource;
 import org.sybila.parasim.model.xml.XMLException;
@@ -43,9 +46,10 @@ import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static Manager manager = null;
+    private static ParasimOptions options = null;
 
     public static void main(String[] args) throws IOException {
-        ParasimOptions options;
         try {
             // load options
             options = ParasimOptions.create(args);
@@ -59,61 +63,90 @@ public class Main {
                 ParasimOptions.printVersion(System.out);
                 System.exit(0);
             }
-            // check experiment file
-            if (options.getExperimentFile() == null) {
+
+            // check input
+            if (options.getExperimentFile() == null && options.getResultFile() == null) {
                 ParasimOptions.printHelp(System.out);
                 System.exit(1);
             }
+
             // create manager
-            Manager manager = null;
             try {
                 manager = ManagerImpl.create();
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 System.exit(1);
             }
-            // load experiment
-            Experiment experiment = null;
-            try {
-                 experiment = ExperimentImpl.fromPropertiesFile(options.getExperimentFile());
-            } catch(IOException e) {
-                LOGGER.error("Error during loading experiment file has happened.", e);
-                System.exit(1);
-            } catch(Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                System.exit(1);
-            }
-            // start manager
-            manager.start();
-            // launch experiment
-            VerificationResult result = null;
-            try {
-                result = ExperimentLauncher.launch(manager, experiment);
-            } catch (Exception e) {
-                LOGGER.error("Can't launch the experiment.", e);
-                System.exit(1);
+
+            if (options.getExperimentFile() != null) {
+                executeExperiment();
+            } else {
+                assert options.getResultFile() == null;
+                showResult(options.getResultFile());
             }
 
-            //save result
-            VerificationResultResource output = experiment.getVerificationResultResource();
-            if (output != null) {
-                output.setRoot(result);
-                try {
-                   output.store();
-                } catch (XMLException xmle) {
-                    LOGGER.error("Unable to store result.", xmle);
-                    System.exit(1);
-                }
-            }
 
-            // plot result
-            PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
-            PlotterFactory fillingPlotterFactory = manager.resolve(PlotterFactory.class, Filling.class, manager.getRootContext());
-            strictPlotterFactory.getPlotter(result, new OdeVariableMapping(experiment.getOdeSystem())).plot();
-            fillingPlotterFactory.getPlotter(result, new OdeVariableMapping(experiment.getOdeSystem())).plot();
         } catch (ParseException ex) {
             ParasimOptions.printHelp(System.out);
             System.exit(1);
         }
+    }
+
+    private static void executeExperiment() {
+        // load experiment
+        Experiment experiment = null;
+        try {
+            experiment = ExperimentImpl.fromPropertiesFile(options.getExperimentFile());
+        } catch (IOException e) {
+            LOGGER.error("Error during loading experiment file has happened.", e);
+            System.exit(1);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            System.exit(1);
+        }
+        // start manager
+        manager.start();
+        // launch experiment
+        VerificationResult result = null;
+        try {
+            result = ExperimentLauncher.launch(manager, experiment);
+        } catch (Exception e) {
+            LOGGER.error("Can't launch the experiment.", e);
+            System.exit(1);
+        }
+
+        //save result
+        VerificationResultResource output = experiment.getVerificationResultResource();
+        if (output != null) {
+            output.setRoot(result);
+            try {
+                output.store();
+            } catch (XMLException xmle) {
+                LOGGER.error("Unable to store result.", xmle);
+                System.exit(1);
+            }
+        }
+
+        // plot result
+        plotResult(result, new OdeVariableMapping(experiment.getOdeSystem()));
+    }
+
+    private static void showResult(String filename) {
+        VerificationResultResource input = new VerificationResultResource(new File(filename));
+        try {
+            input.load();
+        } catch (XMLException xmle) {
+            LOGGER.error("Unable to load result.", xmle);
+            System.exit(1);
+        }
+        manager.start();
+        plotResult(input.getRoot(), new PointVariableIdentity());
+    }
+
+    private static void plotResult(VerificationResult result, PointVariableMapping mapping) {
+        PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
+        PlotterFactory fillingPlotterFactory = manager.resolve(PlotterFactory.class, Filling.class, manager.getRootContext());
+        strictPlotterFactory.getPlotter(result, mapping).plot();
+        fillingPlotterFactory.getPlotter(result, mapping).plot();
     }
 }
