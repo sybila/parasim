@@ -65,7 +65,7 @@ public class SpaceUtils {
             lower[i] = src.getMinBounds().getValue(i);
             if (Math.abs(upper[i] - lower[i]) < epsilon) { //too close, need padding
                 upper[i] += padding;
-                lower[i] += padding;
+                lower[i] -= padding;
             }
         }
 
