@@ -39,14 +39,24 @@
 
     <repositories>
         <repository>
-            <id>sybila-maven-http</id>
-            <url>http://sybila.fi.muni.cz/public/maven</url>
+            <id>sybila-maven-snapshots-http</id>
+            <url>http://sybila.fi.muni.cz/public/maven/snapshots</url>
             <releases>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </releases>
             <snapshots>
                 <updatePolicy>daily</updatePolicy>
                 <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>sybila-maven-releases-http</id>
+            <url>http://sybila.fi.muni.cz/public/maven/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
         <repository>
