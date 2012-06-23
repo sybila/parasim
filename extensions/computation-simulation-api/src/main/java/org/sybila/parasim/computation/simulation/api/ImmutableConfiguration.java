@@ -29,24 +29,21 @@ public class ImmutableConfiguration implements Configuration {
 
     public static final int DEFAULT_MAX_NUMBER_OF_ITERATIONS = 100000;
     public static final float DEFAULT_STEP = (float) 0.1;
-    public static final float DEFAULT_TIME_STEP = (float) 0.001;
     private int maxNumberOfIterations;
     private OdeSystem odeSystem;
     private OrthogonalSpace space;
     private float[] steps;
-    private float timeStep;
 
     public ImmutableConfiguration(OdeSystem odeSystem, OrthogonalSpace space) {
         this(
             odeSystem,
             space,
             getConstantArray(odeSystem.dimension(), DEFAULT_STEP),
-            (DEFAULT_TIME_STEP > space.getMaxBounds().getTime() - space.getMinBounds().getTime() ? space.getMaxBounds().getTime() - space.getMinBounds().getTime() : DEFAULT_TIME_STEP),
             DEFAULT_MAX_NUMBER_OF_ITERATIONS
         );
     }
 
-    public ImmutableConfiguration(OdeSystem odeSystem, OrthogonalSpace space, float[] steps, float timeStep, int maxNumberOfIterations) {
+    public ImmutableConfiguration(OdeSystem odeSystem, OrthogonalSpace space, float[] steps, int maxNumberOfIterations) {
         if (odeSystem == null) {
             throw new IllegalArgumentException("The paremeter odeSystem is null.");
         }
@@ -62,19 +59,12 @@ public class ImmutableConfiguration implements Configuration {
         if (odeSystem.dimension() != steps.length) {
             throw new IllegalArgumentException("The number of ODE system dimensions doesn't match with steps size.");
         }
-        if (timeStep <= 0) {
-            throw new IllegalArgumentException("The time step has to be a positive number.");
-        }
         if (maxNumberOfIterations <= 0) {
             throw new IllegalArgumentException("The max number of iterations has to be a positive number.");
-        }
-        if (timeStep > space.getMaxBounds().getTime() - space.getMinBounds().getTime()) {
-            throw new IllegalArgumentException("The time step can't be higher than target time");
         }
         this.odeSystem = odeSystem;
         this.space = space;
         this.steps = steps;
-        this.timeStep = timeStep;
         this.maxNumberOfIterations = maxNumberOfIterations;
 
     }
@@ -97,11 +87,6 @@ public class ImmutableConfiguration implements Configuration {
     @Override
     public float[] getSteps() {
         return steps;
-    }
-
-    @Override
-    public float getTimeStep() {
-        return timeStep;
     }
 
     private static float[] getConstantArray(int size, float number) {

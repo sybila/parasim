@@ -260,7 +260,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
 
         public Rkf45Computation(AdaptiveStepConfiguration configuration) {
             this.configuration = configuration;
-            timeStep = configuration.getTimeStep();
+            timeStep = configuration.getPrecisionConfiguration().getTimeStep();
             k1 = new float[configuration.getDimension()];
             k2 = new float[configuration.getDimension()];
             k3 = new float[configuration.getDimension()];

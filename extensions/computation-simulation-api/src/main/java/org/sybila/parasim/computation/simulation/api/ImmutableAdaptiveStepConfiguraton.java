@@ -68,11 +68,6 @@ public class ImmutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurat
         return configuration.getSteps();
     }
 
-    @Override
-    public float getTimeStep() {
-        return configuration.getTimeStep();
-    }
-
     public OrthogonalSpace getSpace() {
         return configuration.getSpace();
     }

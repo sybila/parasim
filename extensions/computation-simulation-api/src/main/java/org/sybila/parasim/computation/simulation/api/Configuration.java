@@ -68,12 +68,4 @@ public interface Configuration {
      * @return maximum distance of two consecutive points
      */
     float[] getSteps();
-
-    /**
-     * Returns the maximum time distance of two two consecutive points
-     * of one trajectory.
-     *
-     * @return maximum time distance of two two consecutive points
-     */
-    float getTimeStep();
 }

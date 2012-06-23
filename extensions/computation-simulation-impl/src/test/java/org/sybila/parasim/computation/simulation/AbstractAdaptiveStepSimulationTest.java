@@ -52,6 +52,23 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
         }
     }
 
+
+
+    protected void testTimeStep(int size) {
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+        for (int s = 0; s < size; s++) {
+            Point previous = null;
+            for(Point p : result.getTrajectory(s)) {
+                if (previous == null) {
+                    previous = p;
+                    continue;
+                }
+                assertTrue(Math.abs(p.getTime() - previous.getTime()) <= getConfiguration().getPrecisionConfiguration().getTimeStep() + getConfiguration().getPrecisionConfiguration().getTimeStep() / 1000, "The time step condition doesn't hold, found time step <" + Math.abs(p.getTime() - previous.getTime()) + ">, expected time step <" + getConfiguration().getPrecisionConfiguration().getTimeStep() + ">");
+                previous = p;
+            }
+        }
+    }
+
     @Override
     protected AdaptiveStepConfiguration createConfiguration() {
         final OdeSystem odeSystem = getOdeSystem(10);
@@ -128,11 +145,6 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     }
                 }
                 return steps;
-            }
-
-            @Override
-            public float getTimeStep() {
-                return (float) 0.01;
             }
 
             public PrecisionConfiguration getPrecisionConfiguration() {

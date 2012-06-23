@@ -64,7 +64,8 @@ public class OctaveSimulator implements AdaptiveStepSimulator {
 
     private Trajectory simulateTrajectory(OctaveEngine octave, OctaveOdeSystem octaveOdeSystem, AdaptiveStepConfiguration configuration, Point initialPoint) {
         octave.eval("i = " + Arrays.toString(initialPoint.toArray()) + ";");
-        octave.eval("t = linspace(" + initialPoint.getTime() + ", " + configuration.getSpace().getMaxBounds().getTime() + ", " + Math.min(Math.round((configuration.getSpace().getMaxBounds().getTime() - initialPoint.getTime()) / configuration.getTimeStep()), configuration.getMaxNumberOfIterations()) + ");");
+        int numOfIterations = Math.min(Math.round((configuration.getSpace().getMaxBounds().getTime() - initialPoint.getTime()) / configuration.getPrecisionConfiguration().getTimeStep()), configuration.getMaxNumberOfIterations());
+        octave.eval("t = linspace(" + initialPoint.getTime() + ", " + numOfIterations * configuration.getPrecisionConfiguration().getTimeStep() + ", " + numOfIterations + ");");
 
         octave.eval("y = lsode(\"" + octaveOdeSystem.octaveName() + "\", i, t);");
         OctaveDouble y = octave.get(OctaveDouble.class, "y");
@@ -78,7 +79,7 @@ public class OctaveSimulator implements AdaptiveStepSimulator {
         float[] times = new float[loadedData.length / initialPoint.getDimension()];
         float time = initialPoint.getTime();
         for (int i = 0; i < times.length; i++) {
-            time += configuration.getTimeStep();
+            time += configuration.getPrecisionConfiguration().getTimeStep();
             times[i] = time;
         }
         return new ArrayTrajectory(data, times, initialPoint.getDimension());
