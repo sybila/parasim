@@ -23,10 +23,13 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.sybila.parasim.core.ContextEvent;
+import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Inject;
+import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.event.ManagerStopping;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Executor;
@@ -43,6 +46,8 @@ public class ExecutorRegistrar {
 
     @Inject
     private ContextEvent<ComputationContext> contextEvent;
+    @Inject
+    private Instance<java.util.concurrent.Executor> executor;
 
     @Provide
     public java.util.concurrent.Executor provideRunnableExecutor(ExecutionConfiguration configuration) {
@@ -52,6 +57,12 @@ public class ExecutorRegistrar {
                 configuration.getKeepThreadAliveTimeInSeconds(),
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue<Runnable>(configuration.getQueueSize()));
+    }
+
+    public void destroyRunnableExecutor(@Observes ManagerStopping event) {
+        if (executor.get() != null && executor.get() instanceof ThreadPoolExecutor) {
+            ((ThreadPoolExecutor) executor.get()).shutdown();
+        }
     }
 
     @Provide
