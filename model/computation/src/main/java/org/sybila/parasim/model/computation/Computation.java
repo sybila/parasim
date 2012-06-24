@@ -28,7 +28,7 @@ import java.io.Serializable;
  */
 public interface Computation<Result extends Mergeable<Result>> extends Serializable {
 
-    Result compute();
+    Result compute() throws ComputationFailedException;
 
     void destroy();
 
