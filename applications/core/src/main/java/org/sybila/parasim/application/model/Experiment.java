@@ -24,5 +24,7 @@ public interface Experiment {
 
     InitialSamplingResource getInitialSamplingResource();
 
+    long getTimeoutInMilliSeconds();
+
     VerificationResultResource getVerificationResultResource();
 }

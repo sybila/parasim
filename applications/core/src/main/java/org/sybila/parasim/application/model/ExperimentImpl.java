@@ -20,6 +20,8 @@ import org.sybila.parasim.model.xml.XMLException;
  */
 public class ExperimentImpl implements Experiment {
 
+    public static final String DEFAULT_TIMEOUT_IN_MILLISECONDS = "30000";
+
     private OdeSystem odeSystem;
     private FormulaResource stlFormulaResource;
     private OrthogonalSpaceResource initialSpaceResource;
@@ -27,8 +29,9 @@ public class ExperimentImpl implements Experiment {
     private PrecisionConfigurationResource precisionConfigurationResource;
     private InitialSamplingResource initialSamplingResource;
     private VerificationResultResource verificationResultResource;
+    private long timeoutInMilliSeconds;
 
-    public ExperimentImpl(OdeSystem odeSystem, FormulaResource stlFormulaResource, OrthogonalSpaceResource initialSpaceResource, OrthogonalSpaceResource simulationSpaceResource, PrecisionConfigurationResource precisionConfigurationResource, InitialSamplingResource initialSamplingResource, VerificationResultResource verificationResultResource) throws XMLException {
+    public ExperimentImpl(OdeSystem odeSystem, FormulaResource stlFormulaResource, OrthogonalSpaceResource initialSpaceResource, OrthogonalSpaceResource simulationSpaceResource, PrecisionConfigurationResource precisionConfigurationResource, InitialSamplingResource initialSamplingResource, VerificationResultResource verificationResultResource, long timeoutInMilliSeconds) throws XMLException {
         Validate.notNull(odeSystem);
         Validate.notNull(stlFormulaResource);
         Validate.notNull(initialSpaceResource);
@@ -45,6 +48,7 @@ public class ExperimentImpl implements Experiment {
         this.verificationResultResource = verificationResultResource;
         this.initialSamplingResource.load();
         this.initialSpaceResource.load();
+        this.timeoutInMilliSeconds = timeoutInMilliSeconds;
     }
 
     public static ExperimentImpl fromPropertiesFile(String filename) throws IOException {
@@ -75,7 +79,9 @@ public class ExperimentImpl implements Experiment {
                     new OrthogonalSpaceResource(getFileWithAbsolutePath(experiment.getProperty("space.simulation.file"), experimentFile.getParentFile())),
                     new PrecisionConfigurationResource(getFileWithAbsolutePath(experiment.getProperty("simulation.precision.file"), experimentFile.getParentFile())),
                     new InitialSamplingResource(getFileWithAbsolutePath(experiment.getProperty("density.sampling.file"), experimentFile.getParentFile())),
-                    new VerificationResultResource(getFileWithAbsolutePath(experiment.getProperty("result.output.file"), experimentFile.getParentFile())));
+                    new VerificationResultResource(getFileWithAbsolutePath(experiment.getProperty("result.output.file"), experimentFile.getParentFile())),
+                    Long.parseLong(experiment.getProperty("timeout", DEFAULT_TIMEOUT_IN_MILLISECONDS))
+            );
         } catch(XMLException e) {
             throw new IOException("Can't load data for experiment,", e);
         }
@@ -112,5 +118,10 @@ public class ExperimentImpl implements Experiment {
     private static File getFileWithAbsolutePath(String filename, File directory) {
         File file = new File(filename);
         return file.isAbsolute() ? file : new File(directory, filename);
+    }
+
+    @Override
+    public long getTimeoutInMilliSeconds() {
+        return timeoutInMilliSeconds;
     }
 }

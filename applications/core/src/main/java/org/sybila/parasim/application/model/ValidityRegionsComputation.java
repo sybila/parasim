@@ -20,9 +20,11 @@ import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.computation.ComputationFailedException;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.LinkedTrajectory;
+import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.stl.Formula;
 
@@ -86,11 +88,12 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         this.property = property;
     }
 
-    public VerificationResult compute() {
+    @Override
+    public VerificationResult compute() throws ComputationFailedException {
         SpawnedDataBlock spawned = spawner.spawn(initialSpace, initialSampling);
         VerificationResult result = null;
         int iteration = 0;
-        while (spawned.size() != 0 && iteration < ITERATIONS) {
+        while (spawned.size() != 0) {
             SimulatedDataBlock simulated = simulator.simulate(simulationConfiguration, spawned);
             for (int i=0; i<spawned.size(); i++) {
                 LinkedTrajectory.createAndUpdateReference(spawned.getTrajectory(i)).append(simulated.getTrajectory(i));
@@ -101,7 +104,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
                     LinkedTrajectory.createAndUpdateReference(spawned.getSecondaryTrajectories().getTrajectory(i)).append(simulatedSecondary.getTrajectory(i));
                 }
             }
-            VerifiedDataBlock verified = verifier.verify(simulated, property);
+            VerifiedDataBlock<Trajectory> verified = verifier.verify(simulated, property);
             if (result == null) {
                 result = new VerifiedDataBlockResultAdapter(verified);
             } else {
