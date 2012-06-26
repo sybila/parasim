@@ -71,5 +71,11 @@
                 <module>util</module>
             </modules>
         </profile>
+        <profile>
+            <id>parent</id>
+            <modules>
+                <module>parent</module>
+            </modules>
+        </profile>
     </profiles>
 </project>
