@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>computation-cycledetection-api</name>
-    
+
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
@@ -21,11 +21,6 @@
             <groupId>org.sybila.parasim.model</groupId>
             <artifactId>trajectory</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>dk.ange</groupId>
-            <artifactId>javaoctave</artifactId>
-            <version>0.6.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
