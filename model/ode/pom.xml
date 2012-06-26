@@ -28,6 +28,11 @@
             <version>${version.dk.ange.javaoctave}</version>
         </dependency>
         <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${version.commons.logging}</version>
+        </dependency>
+        <dependency>
             <groupId>org.sbml</groupId>
             <artifactId>jsbml</artifactId>
             <classifier>with-dependencies</classifier>
