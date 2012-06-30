@@ -35,7 +35,7 @@
         <site>
             <id>sybila-site-ssh</id>
             <name>Site hosted on http://sybila.fi.muni.cz</name>
-            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/parasim</url>
+            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/parasim/${project.version}</url>
         </site>
     </distributionManagement>
 
@@ -75,6 +75,18 @@
             <version>1.2.16</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <arguments>-Dbuild.all=true, -DskipTests=true</arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>

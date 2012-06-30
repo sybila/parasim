@@ -17,6 +17,11 @@
     <profiles>
         <profile>
             <id>extensions</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                </property>
+            </activation>
             <modules>
                 <module>extensions/computation-cycledetection-api</module>
                 <module>extensions/computation-cycledetection-impl</module>
@@ -37,6 +42,11 @@
         </profile>
         <profile>
             <id>model</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                </property>
+            </activation>
             <modules>
                 <module>model/computation</module>
                 <module>model/core</module>
@@ -48,18 +58,33 @@
         </profile>
         <profile>
             <id>core</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                </property>
+            </activation>
             <modules>
                 <module>core</module>
             </modules>
         </profile>
         <profile>
             <id>license</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                </property>
+            </activation>
             <modules>
                 <module>license</module>
             </modules>
         </profile>
         <profile>
             <id>applications</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                </property>
+            </activation>
             <modules>
                 <module>applications/core</module>
                 <module>applications/parasim-cli</module>
@@ -67,15 +92,40 @@
         </profile>
         <profile>
             <id>util</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                </property>
+            </activation>
             <modules>
                 <module>util</module>
             </modules>
         </profile>
         <profile>
             <id>parent</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <modules>
                 <module>parent</module>
             </modules>
         </profile>
     </profiles>
+
+    <!-- SCM and distribution management -->
+    <scm>
+        <connection>scm:git:git://github.com/sybila/parasim.git</connection>
+        <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
+        <url>https://github.com/sybila/parasim</url>
+    </scm>
+    <distributionManagement>
+        <site>
+            <id>sybila-site-ssh</id>
+            <name>Site hosted on http://sybila.fi.muni.cz</name>
+            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/parasim/${project.version}</url>
+        </site>
+    </distributionManagement>
 </project>
