@@ -4,7 +4,7 @@
 
 From the root directory:
 
-    mvn clean [deploy|install|package] -P[core|extensions|license|model]
+    mvn clean [deploy|install|package] -P[applications|core|extensions|license|model|parent|util]
 
 ## Generate License Headers
 
