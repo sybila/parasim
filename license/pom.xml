@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sybila</groupId>
@@ -10,7 +9,7 @@
 
     <groupId>org.sybila.parasim</groupId>
     <artifactId>parasim-license</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.M1</version>
     <packaging>jar</packaging>
     <name>parasim-license</name>
 
@@ -43,7 +42,8 @@
         <connection>scm:git:git://github.com/sybila/parasim.git</connection>
         <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
         <url>https://github.com/sybila/parasim</url>
-    </scm>
+      <tag>1.0.0.M1</tag>
+  </scm>
     <distributionManagement>
         <site>
             <id>sybila-site-ssh</id>
