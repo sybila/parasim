@@ -19,7 +19,7 @@
 
     <groupId>org.sybila.parasim</groupId>
     <artifactId>parasim-parent</artifactId>
-    <version>1.0.0.M1</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>parasim-parent</name>
@@ -29,7 +29,7 @@
         <connection>scm:git:git://github.com/sybila/parasim.git</connection>
         <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
         <url>https://github.com/sybila/parasim</url>
-      <tag>1.0.0.M1</tag>
+      <tag>HEAD</tag>
   </scm>
     <distributionManagement>
         <site>
