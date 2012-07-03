@@ -19,7 +19,6 @@
  */
 package org.sybila.parasim.application.cli;
 
-import java.io.File;
 import java.io.IOException;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
@@ -30,7 +29,6 @@ import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
-import org.sybila.parasim.model.ode.PointVariableIdentity;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResultResource;
@@ -48,6 +46,7 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static Manager manager = null;
     private static ParasimOptions options = null;
+    private static Experiment experiment = null;
 
     public static void main(String[] args) throws IOException {
         try {
@@ -65,7 +64,7 @@ public class Main {
             }
 
             // check input
-            if (options.getExperimentFile() == null && options.getResultFile() == null) {
+            if (options.getExperimentFile() == null) {
                 ParasimOptions.printHelp(System.out);
                 System.exit(1);
             }
@@ -77,14 +76,15 @@ public class Main {
                 LOGGER.error(e.getMessage(), e);
                 System.exit(1);
             }
+            loadExperiment();
 
-            if (options.getExperimentFile() != null) {
-                executeExperiment();
+            manager.start();
+
+            if (options.isResultOnly()) {
+                showResult();
             } else {
-                assert options.getResultFile() == null;
-                showResult(options.getResultFile());
+                executeExperiment();
             }
-
 
         } catch (ParseException ex) {
             ParasimOptions.printHelp(System.out);
@@ -92,9 +92,7 @@ public class Main {
         }
     }
 
-    private static void executeExperiment() {
-        // load experiment
-        Experiment experiment = null;
+    private static void loadExperiment() {
         try {
             experiment = ExperimentImpl.fromPropertiesFile(options.getExperimentFile());
         } catch (IOException e) {
@@ -104,8 +102,9 @@ public class Main {
             LOGGER.error(e.getMessage(), e);
             System.exit(1);
         }
-        // start manager
-        manager.start();
+    }
+
+    private static void executeExperiment() {
         // launch experiment
         VerificationResult result = null;
         try {
@@ -128,22 +127,22 @@ public class Main {
         }
 
         // plot result
-        plotResult(result, new OdeVariableMapping(experiment.getOdeSystem()));
+        plotResult(result);
     }
 
-    private static void showResult(String filename) {
-        VerificationResultResource input = new VerificationResultResource(new File(filename));
+    private static void showResult() {
+        VerificationResultResource input = experiment.getVerificationResultResource();
         try {
             input.load();
         } catch (XMLException xmle) {
             LOGGER.error("Unable to load result.", xmle);
             System.exit(1);
         }
-        manager.start();
-        plotResult(input.getRoot(), new PointVariableIdentity());
+        plotResult(input.getRoot());
     }
 
-    private static void plotResult(VerificationResult result, PointVariableMapping mapping) {
+    private static void plotResult(VerificationResult result) {
+        PointVariableMapping mapping = new OdeVariableMapping(experiment.getOdeSystem());
         PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
         PlotterFactory fillingPlotterFactory = manager.resolve(PlotterFactory.class, Filling.class, manager.getRootContext());
         strictPlotterFactory.getPlotter(result, mapping).plot();
