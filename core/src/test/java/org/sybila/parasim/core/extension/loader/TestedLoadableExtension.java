@@ -29,12 +29,15 @@ import org.sybila.parasim.core.Instance;
 import org.sybila.parasim.core.LoadableExtension;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
+import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.extension.cdi.TestServiceFactoryExtension;
 import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.impl.TestExtensionDescriptorMapperImpl;
+import org.sybila.parasim.core.extension.interceptor.TestInterceptorExtension;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
+import org.sybila.parasim.core.service.Interceptor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -60,10 +63,24 @@ public class TestedLoadableExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         try {
             builder.extension(TestedLoadableExtension.class);
+            builder.service(Interceptor.class, TestInterceptorExtension.TestInterceptor.class);
             TestExtensionLoaderExtension.extensionRegistered = System.currentTimeMillis();
             Thread.sleep(50);
         } catch (InterruptedException ex) {
             Logger.getLogger(TestedLoadableExtension.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Provide
+    public IntegerBox getIntegerBox() {
+        return new IntegerBox();
+    }
+
+    public static class IntegerBox {
+        private Integer inside = 1;
+
+        public java.lang.Integer getInside() {
+            return inside;
         }
     }
 

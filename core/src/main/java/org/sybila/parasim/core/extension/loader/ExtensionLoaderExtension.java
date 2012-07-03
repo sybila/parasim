@@ -28,6 +28,7 @@ import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 import org.sybila.parasim.core.extension.loader.api.ExtensionLoader;
 import org.sybila.parasim.core.LoadableExtension;
+import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.extension.loader.impl.SPIExtensionLoader;
 
 /**
@@ -75,6 +76,11 @@ public class ExtensionLoaderExtension {
 
             public Manager getManager() {
                 return event.getManager();
+            }
+
+            @Override
+            public <T> void service(Class<T> service, Class<? extends T> implementation) {
+                ((ManagerImpl) event.getManager()).bindService(service, implementation);
             }
         };
     }

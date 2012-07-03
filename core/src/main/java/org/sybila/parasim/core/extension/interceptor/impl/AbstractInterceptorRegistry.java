@@ -17,19 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.loader.api;
+package org.sybila.parasim.core.extension.interceptor.impl;
 
-import org.sybila.parasim.core.Manager;
+import java.lang.reflect.Modifier;
+import org.sybila.parasim.core.extension.interceptor.api.InterceptorRegistry;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ExtensionBuilder {
+public abstract class AbstractInterceptorRegistry implements InterceptorRegistry {
 
-    void extension(Class<?> extension);
 
-    Manager getManager();
-
-    <T> void service(Class<T> service, Class<? extends T> implementation);
+    @Override
+    public boolean canBeIntercepted(Object object) {
+        try {
+            return !Modifier.isFinal(object.getClass().getModifiers()) && object.getClass().getConstructor(new Class<?>[0]) != null;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
 
 }

@@ -51,6 +51,7 @@ import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.event.ManagerStopping;
 import org.sybila.parasim.core.extension.configuration.DescriptorLoaderExtension;
+import org.sybila.parasim.core.extension.interceptor.InterceptorExtension;
 import org.sybila.parasim.core.extension.loader.ExtensionLoaderExtension;
 import org.sybila.parasim.core.extension.logging.LoggingExtension;
 
@@ -73,6 +74,7 @@ public final class ManagerImpl implements Manager {
     private ApplicationContext applicationContext;
     private Map<Class<? extends Annotation>, Collection<Class<?>>> extensionsByScope;
     private Map<Context, Collection<Extension>> extensionsByContext = new ConcurrentHashMap<Context, Collection<Extension>>();
+    private ServiceStorage serviceStorage = new ServiceStorageImpl();
     private boolean running = false;
 
     private ManagerImpl(final Collection<Class<?>> extensionClasses) {
@@ -83,7 +85,7 @@ public final class ManagerImpl implements Manager {
     }
 
     public static Manager create() throws Exception {
-        return create(DescriptorLoaderExtension.class, ExtensionLoaderExtension.class, LoggingExtension.class);
+        return create(DescriptorLoaderExtension.class, ExtensionLoaderExtension.class, LoggingExtension.class, InterceptorExtension.class);
     }
 
     public static Manager create(Class<?>... extensionClasses) throws Exception {
@@ -112,9 +114,17 @@ public final class ManagerImpl implements Manager {
         }
         // fire application context created
         manager.fire(Before.of(manager.applicationContext), manager.applicationContext);
-        // add manager as a service
+        // bind manager
         manager.bind(Manager.class, Default.class, manager.applicationContext, manager);
         return manager;
+    }
+
+    public <T> void bindService(final Class<T> service, final Class<? extends T> implementation) {
+        try {
+            serviceStorage.store(service, implementation);
+        } catch (ServiceStorageException e) {
+            LOGGER.warn("There is an error during storing service ["+service.getName()+"]", e);
+        }
     }
 
     public <T> void bind(final Class<T> type, Class<? extends Annotation> qualifier, Context context, T value) {
@@ -197,6 +207,16 @@ public final class ManagerImpl implements Manager {
         return running;
     }
 
+    @Override
+    public <T> Collection<T> service(Class<T> service) {
+        try {
+            return serviceStorage.load(service);
+        } catch (ServiceStorageException e) {
+            LOGGER.warn("There is an error during loading service ["+service.getName()+"]", e);
+            return new ArrayList<>();
+        }
+    }
+
     public <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier, Context context) {
         Class<? extends Annotation> nonProxyQualifier = (Class<? extends Annotation>) (Proxy.isProxyClass(qualifier) ? qualifier.getInterfaces()[0] : qualifier);
         T result = context.resolve(type, nonProxyQualifier);
@@ -220,6 +240,7 @@ public final class ManagerImpl implements Manager {
             // destroy manager
             extensionsByContext.clear();
             extensionsByScope.clear();
+            serviceStorage = new ServiceStorageImpl();
             LOGGER.debug("manager shut down");
             running = false;
         }

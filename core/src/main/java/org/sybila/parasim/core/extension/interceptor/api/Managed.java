@@ -17,19 +17,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.loader.api;
+package org.sybila.parasim.core.extension.interceptor.api;
 
-import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.annotations.Qualifier;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Instance which aren't annotated by any qualifier has this qualifier implicitly.
+ *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ExtensionBuilder {
-
-    void extension(Class<?> extension);
-
-    Manager getManager();
-
-    <T> void service(Class<T> service, Class<? extends T> implementation);
-
-}
+@Qualifier
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Managed {}

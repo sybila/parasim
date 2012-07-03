@@ -20,7 +20,12 @@
 package org.sybila.parasim.core;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import javassist.util.proxy.MethodFilter;
 import org.sybila.parasim.core.context.Context;
+import org.sybila.parasim.core.extension.interceptor.api.InterceptionException;
+import org.sybila.parasim.core.extension.interceptor.api.InterceptorRegistry;
+import org.sybila.parasim.core.extension.interceptor.api.Managed;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -31,6 +36,12 @@ public class InstanceImpl<T> implements Instance<T> {
     private final Context context;
     private final Class<T> type;
     private final Class<? extends Annotation> qualifier;
+    private static final MethodFilter ALL_HANDLED = new MethodFilter() {
+        @Override
+        public boolean isHandled(Method method) {
+            return true;
+        }
+    };
 
     private InstanceImpl(Class<T> type, Class<? extends Annotation> qualifier, Context context, ManagerImpl manager) {
         if (type == null) {
@@ -60,7 +71,16 @@ public class InstanceImpl<T> implements Instance<T> {
     }
 
     public void set(T instance) {
-        manager.bind(type, qualifier, context, instance);
+        try {
+            InterceptorRegistry interceptorRegistry = manager.resolve(InterceptorRegistry.class, Managed.class, manager.getRootContext());
+            if (interceptorRegistry != null && interceptorRegistry.canBeIntercepted(instance)) {
+                manager.bind(type, qualifier, context, interceptorRegistry.intercepted(instance).getProxyObject());
+            } else {
+                manager.bind(type, qualifier, context, instance);
+            }
+        } catch (InterceptionException e) {
+            throw new IllegalStateException("Can't set the instance.", e);
+        }
     }
 
     public Class<? extends Annotation> qualifier() {

@@ -20,11 +20,13 @@
 package org.sybila.parasim.core;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import org.apache.commons.lang3.ArrayUtils;
+import javassist.util.proxy.MethodFilter;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
 import org.sybila.parasim.core.context.Context;
+import org.sybila.parasim.core.extension.interceptor.api.InterceptorRegistry;
+import org.sybila.parasim.core.extension.interceptor.api.Managed;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -33,16 +35,19 @@ public class ProviderImpl<I> implements Provider<I> {
 
     private final Class<? extends Annotation> qualifier;
     private final I value;
+    private static final MethodFilter ALL_HANDLED = new MethodFilter() {
+        @Override
+        public boolean isHandled(Method method) {
+            return true;
+        }
+    };
 
-    private ProviderImpl(final ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier) {
+    private ProviderImpl(final ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier, Manager manager) {
         if (providingPoint == null) {
             throw new IllegalArgumentException("The parameter [providingPoint] is null.");
         }
         if (type == null) {
             throw new IllegalArgumentException("The parameter [type] is null.");
-        }
-        if (!type.isInterface()) {
-            throw new IllegalArgumentException("The type of the provider has to be an interface, <" + type.getName() + "> given.");
         }
         if (type.isPrimitive()) {
             throw new IllegalArgumentException("The primitive type can't be provided.");
@@ -50,38 +55,52 @@ public class ProviderImpl<I> implements Provider<I> {
         if (qualifier == null) {
             throw new IllegalArgumentException("The parameter [qualifier] is null.");
         }
+        if (manager == null) {
+            throw new IllegalArgumentException("The parameter [manager] is null.");
+        }
         this.qualifier = qualifier;
-        this.value = type.cast(
-            Proxy.newProxyInstance(
-                type.getClassLoader(),
-                ArrayUtils.addAll(new Class<?>[] {type}, type.getInterfaces()),
-                new InvocationHandler() {
-
-                    private Object toDelegate;
-
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        if (providingPoint.fresh()) {
-                            if (!method.isAccessible()) {
-                                method.setAccessible(true);
+        ProxyFactory proxyFactory = new ProxyFactory();
+        if (type.isInterface()) {
+            proxyFactory.setInterfaces(new Class<?>[] { type });
+        } else {
+            proxyFactory.setSuperclass(type);
+        }
+        proxyFactory.setFilter(ALL_HANDLED);
+        try {
+            I proxyObject = type.cast(proxyFactory.create(new Class<?>[0], new Object[0], new MethodHandler() {
+                private Object toDelegate;
+                @Override
+                public Object invoke(Object target, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+                    if (providingPoint.fresh()) {
+                            if (!thisMethod.isAccessible()) {
+                                thisMethod.setAccessible(true);
                             }
-                            return method.invoke(providingPoint.value(), args);
+                            return thisMethod.invoke(providingPoint.value(), args);
                         } else {
                             if (toDelegate == null) {
                                 toDelegate = providingPoint.value();
                             }
-                            if (!method.isAccessible()) {
-                                method.setAccessible(true);
+                            if (!thisMethod.isAccessible()) {
+                                thisMethod.setAccessible(true);
                             }
-                            return method.invoke(toDelegate, args);
+                            return thisMethod.invoke(toDelegate, args);
                         }
-                    }
                 }
-            )
-        );
+            }));
+            InterceptorRegistry interceptorRegistry = manager.resolve(InterceptorRegistry.class, Managed.class, manager.getRootContext());
+            if (interceptorRegistry != null) {
+                this.value = interceptorRegistry.intercepted(proxyObject).getProxyObject();
+            } else {
+                this.value = proxyObject;
+            }
+
+        } catch (Exception e) {
+            throw new IllegalStateException("The proxy for ["+type.getName()+"] can't be created", e);
+        }
     }
 
-    public static <I> Provider<I> of(ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier) {
-        return new ProviderImpl<I>(providingPoint, type, qualifier);
+    public static <I> Provider<I> of(ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier, Manager manager) {
+        return new ProviderImpl<I>(providingPoint, type, qualifier, manager);
     }
 
     public static <I> void bind(ManagerImpl manager, Context context, ProvidingPoint providingPoint, Class<I> type, Class<? extends Annotation> qualifier) {
@@ -91,7 +110,7 @@ public class ProviderImpl<I> implements Provider<I> {
         if (context == null) {
             throw new IllegalArgumentException("The parameter [context] is null.");
         }
-        manager.bind(type, qualifier, context, of(providingPoint, type, qualifier).get());
+        manager.bind(type, qualifier, context, of(providingPoint, type, qualifier, manager).get());
     }
 
     public I get() {

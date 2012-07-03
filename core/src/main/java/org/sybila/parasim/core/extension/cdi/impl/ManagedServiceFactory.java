@@ -21,6 +21,8 @@ package org.sybila.parasim.core.extension.cdi.impl;
 
 import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.ManagerImpl;
+import org.sybila.parasim.core.ProviderImpl;
+import org.sybila.parasim.core.ProvidingPoint;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.context.Context;
 
@@ -55,7 +57,7 @@ public class ManagedServiceFactory extends AbstractServiceFactory {
     }
 
     @Override
-    protected <T> void bind(Class<T> clazz, Class<? extends Annotation> qualifier, Context context, Object value) {
-        manager.bind(clazz, qualifier, context, (T) value);
+    protected <T> void provide(Class<?> type, Context context, ProvidingPoint providingPoint) {
+        ProviderImpl.bind(manager, context, providingPoint, type, providingPoint.getQualifier());
     }
 }

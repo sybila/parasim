@@ -37,13 +37,17 @@ import static org.testng.Assert.*;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestServiceFactoryExtension extends AbstractExtensionTest {
-    
+
     @Inject
     private String toInject;
     @Inject
     private Number providedNumber;
     @Provide
-    private Integer toProvide = 10;
+    private Number2 toProvide = new Number2() {
+        public int get() {
+            return 10;
+        }
+    };
     @TestQualifier
     @Inject
     private Number toInjectWithQualifier;
@@ -56,7 +60,7 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
     };
     public static ServiceFactory serviceFactory;
     public int counter = 0;
-    
+
     @Test
     public void testServiceFactory() {
         getManager().start();
@@ -64,10 +68,10 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
         serviceFactory.provideFieldsAndMethods(this, getManager().getRootContext());
         serviceFactory.injectFields(this, getManager().getRootContext());
         assertEquals(toInject, "HELLO");
-        assertEquals(getManager().resolve(Integer.class, Default.class, getManager().getRootContext()), toProvide);
+        assertEquals(getManager().resolve(Number2.class, Default.class, getManager().getRootContext()).get(), toProvide.get());
         assertEquals(toInjectWithQualifier.get(), toProvideWithQualifier.get());
     }
-    
+
     @Test
     public void testServiceFactoryWithFreshProvider() {
         getManager().start();
@@ -91,7 +95,12 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
 }
 
 interface Number {
-    
+
+    int get();
+}
+
+interface Number2 {
+
     int get();
 }
 

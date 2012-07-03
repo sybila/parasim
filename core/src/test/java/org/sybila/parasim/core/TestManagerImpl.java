@@ -52,13 +52,13 @@ public class TestManagerImpl {
     static long managerStarted;
     static long managerStopping;
 
-    @BeforeMethod 
+    @BeforeMethod
     public void resetLifeCycle() {
         managerProcessing = 0;
         managerStarted = 0;
         managerStopping = 0;
     }
-    
+
     @Test
     public void testLifeCycle() throws Exception {
         Collection<Class<?>> extensions = new ArrayList<Class<?>>();
@@ -72,7 +72,7 @@ public class TestManagerImpl {
         assertTrue(managerProcessing < managerStarted);
         assertTrue(managerStarted < managerStopping);
     }
-    
+
     @Test
     public void testFieldProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedFieldProvidingExtension.class, TestedInjectingExtension.class);
@@ -82,17 +82,17 @@ public class TestManagerImpl {
             assertEquals(manager.resolve(Number.class, Default.class, manager.getRootContext()).get(), 0);
         }
     }
-    
+
     @Test
     public void testFreshProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedFreshProvidingExtension.class, TestedInjectingExtension.class);
         manager.start();
         assertNotNull(manager.resolve(Number.class, Default.class, manager.getRootContext()));
-        for (int i=0; i<10; i++) {   
+        for (int i=0; i<10; i++) {
             assertEquals(manager.resolve(Number.class, Default.class, manager.getRootContext()).get(), i);
         }
     }
-    
+
     @Test
     public void testStaticProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedStaticProvidingExtension.class, TestedInjectingExtension.class);
@@ -101,8 +101,8 @@ public class TestManagerImpl {
         for (int i=0; i<10; i++) {
             assertEquals(manager.resolve(Number.class, Default.class, manager.getRootContext()).get(), 0);
         }
-    }    
-    
+    }
+
     @Test
     public void testScopedStaticProvider() throws Exception {
         Manager manager = ManagerImpl.create(TestedScopedStaticProvidingExtension.class, TestedInjectingExtension.class);
@@ -115,7 +115,7 @@ public class TestManagerImpl {
             assertEquals(manager.resolve(Number.class, Default.class, testedContext).get(), 0);
         }
     }
-    
+
     @Test
     public void testAmbigousResolving() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerImpl.create();
@@ -127,7 +127,7 @@ public class TestManagerImpl {
             fail("Exception hasn't been thrown when ambigous resolving happened.");
         } catch (AmbigousException e) {}
     }
-    
+
     @Test
     public void testNonDefaultResolving() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerImpl.create();
@@ -146,7 +146,7 @@ class TestedObservingExtension {
 
     @Inject
     private Instance<String> inject;
-    
+
     public void observesProcessing(@Observes ManagerProcessing event) throws InterruptedException {
         TestManagerImpl.managerProcessing = System.currentTimeMillis();
         Thread.sleep(50);
@@ -156,12 +156,12 @@ class TestedObservingExtension {
         TestManagerImpl.managerStarted = System.currentTimeMillis();
         Thread.sleep(50);
     }
-     
+
     public void observesStopping(@Observes ManagerStopping event) throws InterruptedException {
         TestManagerImpl.managerStopping = System.currentTimeMillis();
         Thread.sleep(50);
     }
-    
+
     public void observesString(@Observes String event) {
         assertNotNull(inject);
         assertEquals(event, "FIRED");
@@ -170,23 +170,23 @@ class TestedObservingExtension {
 }
 
 class TestedInjectingExtension {
-    
+
     @Inject
     private Event<String> event;
     @Inject
     private Instance<String> inject;
-    
+
     public void observes(@Observes ManagerStarted event) {
         inject.set("INJECTED");
         this.event.fire("FIRED");
     }
-    
+
 }
 
 class TestedFreshProvidingExtension {
-    
+
     private int counter = 0;
-    
+
     @Provide(fresh=true)
     private Number getNumber() {
         final int x = counter++;
@@ -200,9 +200,9 @@ class TestedFreshProvidingExtension {
 }
 
 class TestedStaticProvidingExtension {
-    
+
     private int counter = 0;
-    
+
     @Provide
     private Number getNumber() {
         final int x = counter++;
@@ -216,7 +216,7 @@ class TestedStaticProvidingExtension {
 }
 
 class TestedFieldProvidingExtension {
-    
+
     @Provide
     private Number number = new Number() {
 
@@ -224,14 +224,14 @@ class TestedFieldProvidingExtension {
             return 0;
         }
     };
-   
+
 }
 
 @TestScope
 class TestedScopedStaticProvidingExtension {
 
     private int counter = 0;
-    
+
     @Provide
     private Number getNumber() {
         final int x = counter++;
@@ -242,7 +242,7 @@ class TestedScopedStaticProvidingExtension {
             }
         };
     }
-    
+
 }
 
 interface Number {

@@ -17,19 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.loader.api;
+package org.sybila.parasim.core.extension.interceptor.api;
 
-import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.service.Interceptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ExtensionBuilder {
+public interface Intercepted<T extends Object> {
 
-    void extension(Class<?> extension);
+    Intercepted<T> intercept(Interceptor interceptor, Class<? extends Annotation>... annotations);
 
-    Manager getManager();
+    Intercepted<T> intercept(Interceptor interceptor, Method... methods);
 
-    <T> void service(Class<T> service, Class<? extends T> implementation);
+    Intercepted<T> intercept(Interceptor interceptor);
+
+    T getProxyObject() throws InterceptionException;
 
 }

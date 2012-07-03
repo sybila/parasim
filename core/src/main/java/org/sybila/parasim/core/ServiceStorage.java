@@ -17,19 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.loader.api;
+package org.sybila.parasim.core;
 
-import org.sybila.parasim.core.Manager;
+import java.util.Collection;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ExtensionBuilder {
+public interface ServiceStorage {
 
-    void extension(Class<?> extension);
+    <T> Collection<T> load(Class<T> service) throws ServiceStorageException;
 
-    Manager getManager();
-
-    <T> void service(Class<T> service, Class<? extends T> implementation);
+    <T> void store(Class<T> service, Class<? extends T> implementation) throws ServiceStorageException;
 
 }

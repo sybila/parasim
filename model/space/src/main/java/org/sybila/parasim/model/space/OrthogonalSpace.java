@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.space;
 
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,6 +32,10 @@ public class OrthogonalSpace implements Space {
 
     private Point maxBounds;
     private Point minBounds;
+
+    public OrthogonalSpace() {
+        this(new ArrayPoint(0, 0), new ArrayPoint(0, 0));
+    }
 
     public OrthogonalSpace(Point minBounds, Point maxBounds) {
         if (minBounds == null) {

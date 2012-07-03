@@ -20,6 +20,7 @@
 package org.sybila.parasim.core;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import org.sybila.parasim.core.context.Context;
 
 /**
@@ -89,6 +90,8 @@ public interface Manager {
      * Checks whether the manager is running
      */
     boolean isRunning();
+
+    <T> Collection<T> service(Class<T> serviceClass);
 
     /**
      * Tries to resolve the instance determined by a pair of the type and qualifier.

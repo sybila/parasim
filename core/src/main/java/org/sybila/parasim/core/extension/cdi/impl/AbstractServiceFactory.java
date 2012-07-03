@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import org.sybila.parasim.core.ProviderImpl;
 import org.sybila.parasim.core.ProvidingFieldPoint;
 import org.sybila.parasim.core.ProvidingMethodPoint;
 import org.sybila.parasim.core.ProvidingPoint;
@@ -67,19 +66,19 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
             if (field.getAnnotation(Provide.class) != null) {
                 ProvidingPoint providingPoint = new ProvidingFieldPoint(target, field);
                 Class<?> type = getType(providingPoint.getType());
-                bind(type, providingPoint.getQualifier(), context, providingPoint.value());
+                provide(type, context, providingPoint);
             }
         }
         for (Method method: target.getClass().getDeclaredMethods()) {
             if (method.getAnnotation(Provide.class) != null) {
                 ProvidingPoint providingPoint = new ProvidingMethodPoint(target, method, context, method.getAnnotation(Provide.class).fresh());
                 Class<?> type = getType(providingPoint.getType());
-                bind(type, providingPoint.getQualifier(), context, ProviderImpl.of(providingPoint, type, providingPoint.getQualifier()).get());
+                provide(type, context, providingPoint);
             }
         }
     }
 
-    abstract protected <T> void bind(Class<T> clazz, Class<? extends Annotation> qualifier, Context context, Object value);
+    abstract protected <T> void provide(Class<?> type, Context context, ProvidingPoint providingPoint);
 
     private static Class<?> getType(Type type) {
         // type is not parametrized
