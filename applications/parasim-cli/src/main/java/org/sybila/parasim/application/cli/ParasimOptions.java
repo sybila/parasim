@@ -27,7 +27,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang.Validate;
 
@@ -55,18 +54,12 @@ public class ParasimOptions {
         if (options == null) {
             Option config = new Option("c", "config", true, "specify config file, it uses 'parasim.xml' if not specified");
             config.setArgName("file");
-
-            OptionGroup input = new OptionGroup();
             Option experiment = new Option("e", "experiment", true, "specify experiment properties file");
             experiment.setArgName("file");
-            input.addOption(experiment);
-            Option result = new Option("r", "result", true, "specify experiment result file");
-            result.setArgName("file");
-            input.addOption(result);
-
+            Option result = new Option("r", "result", false, "do not execute experiment, only print result");
             Option help = new Option("h", "help", false, "show help");
             Option version = new Option("v", "version", false, "show version");
-            options = new Options().addOption(config).addOptionGroup(input).addOption(help).addOption(version);
+            options = new Options().addOption(config).addOption(experiment).addOption(result).addOption(help).addOption(version);
         }
         return options;
     }
@@ -86,7 +79,7 @@ public class ParasimOptions {
         PrintWriter output = new PrintWriter(out);
         output.println();
         HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.printWrapped(output, HelpFormatter.DEFAULT_WIDTH, "Parasim CLI "+VERSION+" - tool for parallel simulation and verification ");
+        helpFormatter.printWrapped(output, HelpFormatter.DEFAULT_WIDTH, "Parasim CLI " + VERSION + " - tool for parallel simulation and verification ");
         output.flush();
     }
 
@@ -98,8 +91,13 @@ public class ParasimOptions {
         return line.getOptionValue("e");
     }
 
+    @Deprecated
     public String getResultFile() {
         return line.getOptionValue("r");
+    }
+
+    public boolean isResultOnly() {
+        return line.hasOption("r");
     }
 
     public boolean isHelp() {
