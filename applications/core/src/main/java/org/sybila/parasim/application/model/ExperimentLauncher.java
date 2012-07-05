@@ -52,7 +52,8 @@ public class ExperimentLauncher {
                 experiment.getInitialSamplingResource().getRoot(),
                 experiment.getSimulationSpaceResource().getRoot(),
                 experiment.getInitialSpaceResource().getRoot(),
-                experiment.getSTLFormulaResource().getRoot())).get(experiment.getTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS);
+                experiment.getSTLFormulaResource().getRoot(),
+                experiment.getIterationLimit())).get(experiment.getTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS);
     }
 
 }

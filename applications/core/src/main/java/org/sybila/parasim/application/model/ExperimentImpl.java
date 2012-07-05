@@ -40,6 +40,7 @@ import org.sybila.parasim.model.xml.XMLException;
 public class ExperimentImpl implements Experiment {
 
     public static final String DEFAULT_TIMEOUT_IN_MILLISECONDS = "30000";
+    public static final String DEFAULT_ITERATION_LIMIT = "0";
 
     private OdeSystem odeSystem;
     private FormulaResource stlFormulaResource;
@@ -49,8 +50,9 @@ public class ExperimentImpl implements Experiment {
     private InitialSamplingResource initialSamplingResource;
     private VerificationResultResource verificationResultResource;
     private long timeoutInMilliSeconds;
+    private int iterationLimit;
 
-    public ExperimentImpl(OdeSystem odeSystem, FormulaResource stlFormulaResource, OrthogonalSpaceResource initialSpaceResource, OrthogonalSpaceResource simulationSpaceResource, PrecisionConfigurationResource precisionConfigurationResource, InitialSamplingResource initialSamplingResource, VerificationResultResource verificationResultResource, long timeoutInMilliSeconds) throws XMLException {
+    public ExperimentImpl(OdeSystem odeSystem, FormulaResource stlFormulaResource, OrthogonalSpaceResource initialSpaceResource, OrthogonalSpaceResource simulationSpaceResource, PrecisionConfigurationResource precisionConfigurationResource, InitialSamplingResource initialSamplingResource, VerificationResultResource verificationResultResource, long timeoutInMilliSeconds, int iterationLimit) throws XMLException {
         Validate.notNull(odeSystem);
         Validate.notNull(stlFormulaResource);
         Validate.notNull(initialSpaceResource);
@@ -68,6 +70,7 @@ public class ExperimentImpl implements Experiment {
         this.initialSamplingResource.load();
         this.initialSpaceResource.load();
         this.timeoutInMilliSeconds = timeoutInMilliSeconds;
+        this.iterationLimit = iterationLimit;
     }
 
     public static ExperimentImpl fromPropertiesFile(String filename) throws IOException {
@@ -99,7 +102,8 @@ public class ExperimentImpl implements Experiment {
                     new PrecisionConfigurationResource(getFileWithAbsolutePath(experiment.getProperty("simulation.precision.file"), experimentFile.getParentFile())),
                     new InitialSamplingResource(getFileWithAbsolutePath(experiment.getProperty("density.sampling.file"), experimentFile.getParentFile())),
                     new VerificationResultResource(getFileWithAbsolutePath(experiment.getProperty("result.output.file"), experimentFile.getParentFile())),
-                    Long.parseLong(experiment.getProperty("timeout", DEFAULT_TIMEOUT_IN_MILLISECONDS))
+                    Long.parseLong(experiment.getProperty("timeout", DEFAULT_TIMEOUT_IN_MILLISECONDS)),
+                    Integer.parseInt(experiment.getProperty("iteration.limit", DEFAULT_ITERATION_LIMIT))
             );
         } catch(XMLException e) {
             throw new IOException("Can't load data for experiment,", e);
@@ -128,6 +132,11 @@ public class ExperimentImpl implements Experiment {
 
     public InitialSamplingResource getInitialSamplingResource() {
         return initialSamplingResource;
+    }
+
+    @Override
+    public int getIterationLimit() {
+        return iterationLimit;
     }
 
     public VerificationResultResource getVerificationResultResource() {

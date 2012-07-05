@@ -43,6 +43,8 @@ public interface Experiment {
 
     InitialSamplingResource getInitialSamplingResource();
 
+    int getIterationLimit();
+
     long getTimeoutInMilliSeconds();
 
     VerificationResultResource getVerificationResultResource();

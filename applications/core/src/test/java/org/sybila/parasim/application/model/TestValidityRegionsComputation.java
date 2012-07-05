@@ -66,7 +66,7 @@ public class TestValidityRegionsComputation {
 
     @Test
     public void testComputation() throws ExecutionException, InterruptedException {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f));
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f), 0);
         ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
         VerificationResult result = container.compute(computation).get();
         for (int i=0; i<result.size(); i++) {
@@ -77,7 +77,7 @@ public class TestValidityRegionsComputation {
 
     @Test
     public void testComputation2() throws ExecutionException, InterruptedException {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(2));
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(2), 0);
         ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
         VerificationResult result = container.compute(computation).get();
         for (int i=0; i<result.size(); i++) {

@@ -53,7 +53,6 @@ import org.sybila.parasim.model.verification.stl.Formula;
 public class ValidityRegionsComputation extends AbstractComputation<VerificationResult> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidityRegionsComputation.class);
-    private static final int ITERATIONS = 3; // FIXME: hardcoded
 
     @Provide
     private final OdeSystem odeSystem;
@@ -80,7 +79,9 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     @Inject
     private DistanceChecker distanceChecker;
 
-    public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property) {
+    private int iterationLimit;
+
+    public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
         if (odeSystem == null) {
             throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
@@ -105,6 +106,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         this.simulationSpace = simulationSpace;
         this.initialSpace = initialSpace;
         this.property = property;
+        this.iterationLimit = iterationLimit;
     }
 
     @Override
@@ -113,6 +115,8 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         VerificationResult result = null;
         int iteration = 0;
         while (spawned.size() != 0) {
+            iteration++;
+            LOGGER.info("iteration <" + iteration + "> started with <" + spawned.size() + "> spawned trajectories.");
             SimulatedDataBlock simulated = simulator.simulate(simulationConfiguration, spawned);
             for (int i=0; i<spawned.size(); i++) {
                 LinkedTrajectory.createAndUpdateReference(spawned.getTrajectory(i)).append(simulated.getTrajectory(i));
@@ -129,9 +133,12 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             } else {
                 result = result.merge(new VerifiedDataBlockResultAdapter(verified));
             }
+            if (iterationLimit != 0 && iteration >= iterationLimit) {
+                LOGGER.warn("iteration limit <" + iterationLimit + "> reached");
+                break;
+            }
             DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
             spawned = spawner.spawn(spawned.getConfiguration(), distanceChecked);
-            iteration++;
         }
         if (LOGGER.isDebugEnabled()) {
             for (int i=0; i<result.size(); i++) {
@@ -142,6 +149,6 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     }
 
     public Computation<VerificationResult> cloneComputation() {
-        return new ValidityRegionsComputation(odeSystem, precisionConfiguration, initialSampling, simulationSpace, initialSpace, property);
+        return new ValidityRegionsComputation(odeSystem, precisionConfiguration, initialSampling, simulationSpace, initialSpace, property, iterationLimit);
     }
 }
