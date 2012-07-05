@@ -89,6 +89,12 @@ public class Main {
         } catch (ParseException ex) {
             ParasimOptions.printHelp(System.out);
             System.exit(1);
+        } finally{
+            try {
+                manager.shutdown();
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
