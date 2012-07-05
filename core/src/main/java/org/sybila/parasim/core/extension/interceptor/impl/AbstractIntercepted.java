@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javassist.util.proxy.MethodFilter;
@@ -42,7 +43,7 @@ import org.sybila.parasim.core.service.Interceptor;
  */
 public abstract class AbstractIntercepted<T extends Object> implements Intercepted<T> {
 
-    private List<Interceptor> allMethodsInterceptors = new ArrayList<>();
+    private Collection<Interceptor> allMethodsInterceptors = new HashSet<>();
     private MethodHandler methodHandlerFromProxy;
     private T proxyObject;
     private Map<Method, Invocation> someMethodsInterceptors = new HashMap<>();
