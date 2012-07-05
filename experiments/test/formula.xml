@@ -24,12 +24,12 @@
     <future>
         <interval>
             <lower type="closed">0.1</lower>
-            <upper type="closed">1</upper>
+            <upper type="closed">10</upper>
         </interval>
         <predicate>
-            <variable multiplier="1">A</variable>
+            <variable multiplier="1">B</variable>
             <greater />
-        <value>20</value>
+        <value>30</value>
     </predicate>
     </future>
 </formula>
