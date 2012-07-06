@@ -1,0 +1,5 @@
+HOW TO CREATE DOCUMENTS USING `PARASIM' DOCUMENT CLASS
+`parasim.cls' is an article-based document class. It automatically outputs parasim header and document title (optional) at the beginning
+
+1. Use `parasim' as a document class argument (instead of article, etc.)
+2. (optional) Specify document title in the preamble using \title command
