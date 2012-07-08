@@ -72,7 +72,7 @@ public final class SimpleRobustness implements Robustness {
         final Distance distance = EUCLIDEAN_METRIC.distance(first, second);
         return new LimitedDistance() {
             public boolean isValid() {
-                return distance.value() >= Math.abs(value);
+                return distance.value() <= Math.abs(value);
             }
             public float value() {
                 return distance.value();
@@ -85,7 +85,7 @@ public final class SimpleRobustness implements Robustness {
         final Distance distance = EUCLIDEAN_METRIC.distance(first, second);
         return new LimitedDistance() {
             public boolean isValid() {
-                return distance.value() >= Math.abs(value);
+                return distance.value() <= Math.abs(value);
             }
             public float value() {
                 return distance.value();
