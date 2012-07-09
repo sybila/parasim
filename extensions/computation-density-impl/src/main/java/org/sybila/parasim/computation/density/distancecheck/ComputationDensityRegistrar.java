@@ -23,10 +23,7 @@ import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.computation.density.spawn.cpu.OneAndSurroundingsTrajectorySpawner;
-import org.sybila.parasim.core.Instance;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.event.ManagerStarted;
+import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.execution.api.annotations.ComputationScope;
 
 /**
@@ -35,13 +32,14 @@ import org.sybila.parasim.execution.api.annotations.ComputationScope;
 @ComputationScope
 public class ComputationDensityRegistrar {
 
-    @Inject
-    private Instance<DistanceChecker> distanceChecker;
-    @Inject
-    private Instance<TrajectorySpawner> spawner;
-
-    public void registerDistanceChecker(@Observes ManagerStarted event) {
-        distanceChecker.set(new OnePairDistanceChecker());
-        spawner.set(new OneAndSurroundingsTrajectorySpawner());
+    @Provide
+    public TrajectorySpawner provideSpawner() {
+        return new OneAndSurroundingsTrajectorySpawner();
     }
+
+    @Provide
+    public DistanceChecker provideDistanceChecker() {
+        return new OnePairDistanceChecker();
+    }
+
 }

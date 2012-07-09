@@ -31,8 +31,8 @@ import static org.testng.Assert.*;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestLoadableExtension {
-    
-    @Test
+
+    @Test(enabled=false)
     public void testLoad() throws Exception {
         System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/computation/density/parasim.xml");
         Manager manager = ManagerImpl.create();
@@ -40,5 +40,5 @@ public class TestLoadableExtension {
         assertNotNull(manager.resolve(TrajectorySpawner.class, Default.class, manager.getRootContext()));
         assertNotNull(manager.resolve(DistanceChecker.class, Default.class, manager.getRootContext()));
     }
-    
+
 }

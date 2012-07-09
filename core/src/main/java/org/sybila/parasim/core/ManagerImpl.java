@@ -346,7 +346,9 @@ public final class ManagerImpl implements Manager {
             extensionsByScope.get(entry.getKey()).addAll(entry.getValue());
         }
         // load extensions to application context
-        extensionsByContext.get(applicationContext).addAll(createExtensions(newExtensions, applicationContext));
+        if (newExtensionsByScope.get(ApplicationScope.class) != null) {
+            extensionsByContext.get(applicationContext).addAll(createExtensions(newExtensionsByScope.get(ApplicationScope.class), applicationContext));
+        }
     }
 
     private Map<Class<? extends Annotation>, Collection<Class<?>>> getScopedExtensions(final Collection<Class<?>> extensionClasses) {

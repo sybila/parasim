@@ -117,7 +117,7 @@ public abstract class AbstractServiceFactory implements ServiceFactory {
             service = getService(field.getType(), context);
         }
         if (service == null) {
-            throw new IllegalStateException("The service " + field.getType().getName() + " requested in " + object.getClass().getName() + " is not available.");
+            throw new IllegalStateException("The service " + field.getType().getName() + " requested in " + object.getClass().getName() + " is not available, context [" + context + "]");
         }
         field.setAccessible(true);
         try {

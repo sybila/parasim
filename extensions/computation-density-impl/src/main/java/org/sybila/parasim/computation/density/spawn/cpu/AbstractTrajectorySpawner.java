@@ -113,11 +113,11 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
             numOfSeeds *= initialSampling.getNumberOfSamples(dim);
         }
         // auxiliary structures
-        List<Trajectory> seeds = new ArrayList<Trajectory>(numOfSeeds / 2);
-        List<Trajectory> secondarySeeds = new ArrayList<Trajectory>(numOfSeeds / 2);
-        List<Trajectory> allSeeds = new ArrayList<Trajectory>(numOfSeeds);
-        Map<Trajectory, Boolean> allSeedsMap = new HashMap<Trajectory, Boolean>(numOfSeeds);
-        Map<Trajectory, List<Trajectory>> neighborhoodLists = new HashMap<Trajectory, List<Trajectory>>(numOfSeeds / 2);
+        List<Trajectory> seeds = new ArrayList<>(numOfSeeds / 2);
+        List<Trajectory> secondarySeeds = new ArrayList<>(numOfSeeds / 2);
+        List<Trajectory> allSeeds = new ArrayList<>(numOfSeeds);
+        Map<Trajectory, Boolean> allSeedsMap = new HashMap<>(numOfSeeds);
+        Map<Trajectory, List<Trajectory>> neighborhoodLists = new HashMap<>(numOfSeeds / 2);
         // minBounds is surely seed, so save it
         Trajectory minBoundsTrajectory = new PointTrajectory(space.getMinBounds());
         allSeeds.add(minBoundsTrajectory);
@@ -134,7 +134,11 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
                     // create a new seed
                     Trajectory newTrajectory = new PointTrajectory(new ArrayPoint(allSeeds.get(seed).getFirstPoint().getTime(), newPoint));
                     allSeeds.add(newTrajectory);
-                    allSeedsMap.put(newTrajectory, !allSeedsMap.get(toBeNeighbor));
+                    boolean primary = !allSeedsMap.get(toBeNeighbor);
+                    if (primary) {
+                        seeds.add(newTrajectory);
+                    }
+                    allSeedsMap.put(newTrajectory, primary);
                     neighborhoodLists.put(newTrajectory, new ArrayList<Trajectory>());
                     // mark it as a neighbor for the "to be neighbor" trajectory
                     neighborhoodLists.get(toBeNeighbor).add(newTrajectory);
@@ -145,9 +149,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         }
         // reorganize data
         for (Entry<Trajectory, Boolean> entry : allSeedsMap.entrySet()) {
-            if (entry.getValue()) {
-                seeds.add(entry.getKey());
-            } else {
+            if (!entry.getValue()) {
                 secondarySeeds.add(entry.getKey());
                 for (Trajectory master : neighborhoodLists.get(entry.getKey())) {
                     neighborhoodLists.get(master).add(entry.getKey());
