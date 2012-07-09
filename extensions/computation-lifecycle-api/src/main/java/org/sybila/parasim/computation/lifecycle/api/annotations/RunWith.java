@@ -29,7 +29,7 @@ import org.sybila.parasim.execution.api.Executor;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface RunWith {
