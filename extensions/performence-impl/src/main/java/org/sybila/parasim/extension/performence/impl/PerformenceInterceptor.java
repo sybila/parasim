@@ -20,6 +20,7 @@
 package org.sybila.parasim.extension.performence.impl;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 import org.sybila.parasim.core.extension.interceptor.api.Invocation;
 import org.sybila.parasim.core.service.Interceptor;
 import org.sybila.parasim.extension.performence.api.MethodMeasurement;
@@ -37,11 +38,12 @@ public class PerformenceInterceptor implements Interceptor {
         if (measurement != null && !measurement.enabled()) {
             return invocation.invoke(obj, method, args);
         }
-        Debug.time();
-        Debug.memory();
+        String uuid = UUID.randomUUID().toString();
+        Debug.time(uuid);
+        Debug.memory(uuid);
         Object result = invocation.invoke(obj, method, args);
-        final long memory = Debug.memory();
-        final long time = Debug.time();
+        final long memory = Debug.memory(uuid);
+        final long time = Debug.time(uuid);
         MeasurementDatabase.process(new MethodMeasurement() {
 
             @Override
