@@ -115,7 +115,7 @@ public class TestValidityRegionsComputation {
                 return 1;
             }
             public int getNumberOfSamples(int dim) {
-                return 5;
+                return 30;
             }
             public Element toXML(Document doc) {
                 throw new UnsupportedOperationException("Not supported yet.");
