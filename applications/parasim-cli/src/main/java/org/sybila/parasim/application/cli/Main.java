@@ -34,7 +34,6 @@ import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResultResource;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
-import org.sybila.parasim.visualisation.plot.api.annotations.Filling;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
@@ -150,8 +149,8 @@ public class Main {
     private static void plotResult(VerificationResult result) {
         PointVariableMapping mapping = new OdeVariableMapping(experiment.getOdeSystem());
         PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
-        PlotterFactory fillingPlotterFactory = manager.resolve(PlotterFactory.class, Filling.class, manager.getRootContext());
+//        PlotterFactory fillingPlotterFactory = manager.resolve(PlotterFactory.class, Filling.class, manager.getRootContext());
         strictPlotterFactory.getPlotter(result, mapping).plot();
-        fillingPlotterFactory.getPlotter(result, mapping).plot();
+//        fillingPlotterFactory.getPlotter(result, mapping).plot();
     }
 }
