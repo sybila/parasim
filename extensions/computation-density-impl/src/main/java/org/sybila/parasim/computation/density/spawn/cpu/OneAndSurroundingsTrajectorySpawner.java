@@ -40,6 +40,8 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
 
     @Override
     protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {
+        // mark secondary trajectory as a primary one
+        Trajectory newPrimary = neighbor;
         // find dimension which the first points of the given trajectories differ in
         int diffDimension = -1;
         for (int dim = 0; dim < trajectory.getDimension(); dim++) {
@@ -52,20 +54,13 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         }
         // compute half of their distance
         float radius = Math.abs(trajectory.getFirstPoint().getValue(diffDimension) - neighbor.getFirstPoint().getValue(diffDimension)) / 2;
-        // create middle seed, surely the middle seed hasn't been created before
-        float[] middleSeedData = trajectory.getFirstPoint().toArrayCopy();
-        middleSeedData[diffDimension] = (trajectory.getFirstPoint().getValue(diffDimension) + neighbor.getFirstPoint().getValue(diffDimension)) / 2;
-        Trajectory middleTrajectory = new PointTrajectory(trajectory.getFirstPoint().getTime(), middleSeedData);
         // memory for spawned trajectories
         List<Trajectory> neighborTrajectories = new ArrayList<Trajectory>();
         List<Trajectory> spawnedSecondaryTrajectories = new ArrayList<Trajectory>();
         // create neighbor trajectories which can have collision
         for (int dim = 0; dim < trajectory.getDimension(); dim++) {
-            if (dim == diffDimension) {
-                continue;
-            }
             for (int sign = -1; sign <= 1; sign += 2) {
-                float[] newPointData = middleTrajectory.getFirstPoint().toArrayCopy();
+                float[] newPointData = newPrimary.getFirstPoint().toArrayCopy();
                 newPointData[dim] += sign * radius;
                 Trajectory newTrajectory = new PointTrajectory(trajectory.getFirstPoint().getTime(), newPointData);
                 if (alreadySpawnedCollisionTrajectories.containsKey(newTrajectory.getFirstPoint())) {
@@ -79,9 +74,9 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         }
         // reorganize
         Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>(neighborTrajectories.size() + 1);
-        neighborhood.put(middleTrajectory.getFirstPoint(), new ListDataBlock<Trajectory>(neighborTrajectories));
+        neighborhood.put(newPrimary.getFirstPoint(), new ListDataBlock<Trajectory>(neighborTrajectories));
         Collection<Trajectory> spawnedCol = new ArrayList<Trajectory>();
-        spawnedCol.add(middleTrajectory);
+        spawnedCol.add(newPrimary);
         return new SpawnedResult(neighborhood, spawnedCol, spawnedSecondaryTrajectories);
     }
 }
