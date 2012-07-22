@@ -34,6 +34,8 @@ import org.sybila.parasim.visualisation.plot.impl.render.ValidityPointRenderer;
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated In hindsight, this approach has been proven wrong,
+ * as robustness expresses maximum distance between trajectories, not between starting points.
  */
 public class RobustnessFillingProjectionPlotterFactory implements PlotterFactory {
 
