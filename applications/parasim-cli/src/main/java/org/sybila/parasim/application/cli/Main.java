@@ -64,6 +64,7 @@ public class Main {
 
             // check input
             if (options.getExperimentFile() == null) {
+                System.err.println("Experiment file not specified.");
                 ParasimOptions.printHelp(System.out);
                 System.exit(1);
             }
