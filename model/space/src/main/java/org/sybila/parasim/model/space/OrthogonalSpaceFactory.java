@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.xml.FloatFactory;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.NamedNodeMap;
@@ -54,14 +55,9 @@ public class OrthogonalSpaceFactory implements
             Node child = children.item(index);
             if (child.getNodeName().equals(DIMENSION_NAME)) {
                 NamedNodeMap attr = child.getAttributes();
-                try {
-                    min.add(Float.valueOf(attr.getNamedItem(ATTRIBUTE_MIN)
-                            .getNodeValue()));
-                    max.add(Float.valueOf(attr.getNamedItem(ATTRIBUTE_MAX)
-                            .getNodeValue()));
-                } catch (NumberFormatException nfe) {
-                    throw new XMLFormatException("Illegible number.", nfe);
-                }
+                min.add(FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MIN)));
+                max.add(FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MAX)));
+
                 if (min.get(min.size() - 1) > max.get(max.size() - 1)) {
                     throw new XMLFormatException("The min bound in dimension <"
                             + (max.size() - 1) + "> is greater than max bound ("
@@ -69,14 +65,8 @@ public class OrthogonalSpaceFactory implements
                 }
             } else if (child.getNodeName().equals(TIME_NAME)) {
                 NamedNodeMap attr = child.getAttributes();
-                try {
-                    timeMin = Float.valueOf(attr.getNamedItem(ATTRIBUTE_MIN)
-                            .getNodeValue());
-                    timeMax = Float.valueOf(attr.getNamedItem(ATTRIBUTE_MAX)
-                            .getNodeValue());
-                } catch (NumberFormatException nfe) {
-                    throw new XMLFormatException("Illegible number.", nfe);
-                }
+                    timeMin = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MIN));
+                    timeMax = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MAX));
                 if (timeMin > timeMax) {
                     throw new XMLFormatException("The min bound in time is greater than max bound ("
                             + timeMin + ">" + timeMax + ").");

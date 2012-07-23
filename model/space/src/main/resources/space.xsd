@@ -26,8 +26,8 @@
 	elementFormDefault="qualified">
 
 	<xs:complexType name="dimension_bounds">
-		<xs:attribute name="min" type="xs:decimal" use="required"/>
-		<xs:attribute name="max" type="xs:decimal" use="required"/>
+		<xs:attribute name="min" type="xs:token" use="required"/>
+		<xs:attribute name="max" type="xs:token" use="required"/>
 	</xs:complexType>
 
 	<xs:complexType name="orthogonal_space">

@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.verification.stl;
 
@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.xml.FloatFactory;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.Node;
@@ -39,15 +40,16 @@ import org.w3c.dom.NodeList;
  */
 public class LinearPredicateFactory implements
         XMLRepresentableFactory<LinearPredicate> {
+
     public static final String PREDICATE_NAME = "predicate";
     public static final String VARIABLE_NAME = "variable";
     public static final String MULTIPLIER_ATTRIBUTE = "multiplier";
     public static final String VALUE_NAME = "value";
-
     private PointVariableMapping mapping;
 
     /**
      * Creates a new factory with designated variable name-to-index mapping.
+     *
      * @param mapping Mapping between variable names and indices.
      */
     public LinearPredicateFactory(PointVariableMapping mapping) {
@@ -73,13 +75,14 @@ public class LinearPredicateFactory implements
             Node child = children.item(index);
             String name = child.getNodeName();
 
-            /* variable and multiplier */
+            /*
+             * variable and multiplier
+             */
             if (name.equals(VARIABLE_NAME)) {
                 String varName = child.getFirstChild().getNodeValue();
                 Float multiplier;
                 try {
-                    multiplier = new Float(child.getAttributes()
-                            .getNamedItem(MULTIPLIER_ATTRIBUTE).getNodeValue());
+                    multiplier = new Float(child.getAttributes().getNamedItem(MULTIPLIER_ATTRIBUTE).getNodeValue());
                 } catch (NumberFormatException nfe) {
                     throw new XMLFormatException("Illegible number.", nfe);
                 }
@@ -92,31 +95,29 @@ public class LinearPredicateFactory implements
                 if (multipliers.get(var) != null) {
                     throw new XMLFormatException(
                             "Two occurences of a variable of the same name ("
-                                    + varName + ").");
+                            + varName + ").");
                 }
                 multipliers.put(var, multiplier);
 
-                /* value */
+                /*
+                 * value
+                 */
             } else if (name.equals(VALUE_NAME)) {
                 if (value == null) {
-                    try {
-                        value = new Float(Float.valueOf(child.getFirstChild()
-                                .getNodeValue()));
-                    } catch (NumberFormatException nfe) {
-                        throw new XMLFormatException("Illegible number.", nfe);
-                    }
+                    value = new Float(FloatFactory.getObject(child.getFirstChild()));
                 } else {
                     throw new XMLFormatException(
                             "Mulitple value nodes encountered. Expected only one.");
                 }
             } else {
 
-                /* type */
+                /*
+                 * type
+                 */
                 String typeString = child.getNodeName().toUpperCase(
                         Locale.ENGLISH);
                 try {
-                    LinearPredicate.Type childType = LinearPredicate.Type
-                            .valueOf(typeString);
+                    LinearPredicate.Type childType = LinearPredicate.Type.valueOf(typeString);
                     if (type != null) {
                         throw new XMLFormatException(
                                 "Two occurences of predicate type.");
@@ -129,7 +130,9 @@ public class LinearPredicateFactory implements
             }
         }
 
-        /* got everything? */
+        /*
+         * got everything?
+         */
         if (value == null) {
             throw new XMLFormatException(
                     "Predicate has to contain a right-side value.");

@@ -27,11 +27,11 @@
 
     <xs:complexType name="point">
         <xs:sequence>
-            <xs:element name="dim" type="xs:decimal" maxOccurs="unbounded"/>
-            <xs:element name="robustness" type="xs:decimal" maxOccurs="1"/>
+            <xs:element name="dim" type="xs:token" maxOccurs="unbounded"/>
+            <xs:element name="robustness" type="xs:token" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:element name="result">
         <xs:complexType>
             <xs:sequence>

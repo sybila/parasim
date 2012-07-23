@@ -4,21 +4,22 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.verification.stl;
 
+import org.sybila.parasim.model.xml.FloatFactory;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 import org.w3c.dom.Document;
@@ -36,13 +37,21 @@ import org.w3c.dom.NodeList;
 public class FormulaIntervalFactory implements
         XMLRepresentableFactory<FormulaInterval> {
 
-    /** Name of XML element representing FormulaInterval */
+    /**
+     * Name of XML element representing FormulaInterval
+     */
     public static final String INTERVAL_NAME = "interval";
-    /** Name of element representing lower bound */
+    /**
+     * Name of element representing lower bound
+     */
     private static final String LOWER_NAME = "lower";
-    /** Name of element representing upper bound */
+    /**
+     * Name of element representing upper bound
+     */
     private static final String UPPER_NAME = "upper";
-    /** Name of attribute representing type of boundary */
+    /**
+     * Name of attribute representing type of boundary
+     */
     private static final String TYPE_NAME = "type";
     /**
      * Value of type boundary: open -- corresponds to
@@ -57,10 +66,8 @@ public class FormulaIntervalFactory implements
 
     /**
      * @return Element corresponding to one bound.
-     * @param doc
-     *            Parent document
-     * @param name
-     *            LOWER_NAME or UPPER_NAME
+     * @param doc Parent document
+     * @param name LOWER_NAME or UPPER_NAME
      */
     private static Element getBound(Document doc, String name, float value,
             IntervalBoundaryType type) {
@@ -81,12 +88,9 @@ public class FormulaIntervalFactory implements
      * Used by {@link XMLRepresentable#toXML} method to obtain XML element
      * representing interval upper bound.
      *
-     * @param doc
-     *            Parent XML document.
-     * @param value
-     *            Bound value.
-     * @param type
-     *            Bound type.
+     * @param doc Parent XML document.
+     * @param value Bound value.
+     * @param type Bound type.
      * @return XML element representing upper bound.
      */
     public static Element getUpperBound(Document doc, float value,
@@ -98,12 +102,9 @@ public class FormulaIntervalFactory implements
      * Used by {@link XMLRepresentable#toXML} method to obtain XML element
      * representing interval lower bound.
      *
-     * @param doc
-     *            Parent XML document.
-     * @param value
-     *            Bound value.
-     * @param type
-     *            Bound type
+     * @param doc Parent XML document.
+     * @param value Bound value.
+     * @param type Bound type
      * @return XML element representing lower bound.
      */
     public static Element getLowerBound(Document doc, float value,
@@ -112,7 +113,8 @@ public class FormulaIntervalFactory implements
     }
 
     /**
-     * @return Type of <code>parent</code>'s boundary.
+     * @return Type of
+     * <code>parent</code>'s boundary.
      */
     private static IntervalBoundaryType getBoundaryType(Node parent)
             throws XMLFormatException {
@@ -139,25 +141,23 @@ public class FormulaIntervalFactory implements
 
         for (int index = 0; index < bounds.getLength(); index++) {
             Node bound = bounds.item(index);
-            /* LOWER BOUND */
+            /*
+             * LOWER BOUND
+             */
             if (bound.getNodeName().equals(LOWER_NAME)) {
-                try {
-                    lower = Float.valueOf(bound.getFirstChild().getNodeValue());
-                } catch (NumberFormatException nfe) {
-                    throw new XMLFormatException("Illegible nubmer.", nfe);
-                }
+                lower = FloatFactory.getObject(bound.getFirstChild());
                 lowerType = getBoundaryType(bound);
 
-                /* UPPER BOUND */
+                /*
+                 * UPPER BOUND
+                 */
             } else if (bound.getNodeName().equals(UPPER_NAME)) {
-                try {
-                    upper = Float.valueOf(bound.getFirstChild().getNodeValue());
-                } catch (NumberFormatException nfe) {
-                    throw new XMLFormatException("Illegible number.", nfe);
-                }
+                upper = FloatFactory.getObject(bound.getFirstChild());
                 upperType = getBoundaryType(bound);
 
-                /* UNKNOWN BOUND */
+                /*
+                 * UNKNOWN BOUND
+                 */
             } else {
                 throw new XMLFormatException("Unknown boundary: "
                         + bound.getNodeName() + " (expected \"" + UPPER_NAME
@@ -165,7 +165,9 @@ public class FormulaIntervalFactory implements
             }
         }
 
-        /* CONTROL */
+        /*
+         * CONTROL
+         */
         if (upperType == null) {
             throw new XMLFormatException("Upper boundary not set.");
         }
