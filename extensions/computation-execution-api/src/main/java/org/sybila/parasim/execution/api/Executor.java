@@ -27,6 +27,6 @@ import org.sybila.parasim.model.Mergeable;
  */
 public interface Executor {
 
-    <L extends Mergeable<L>> Execution<L> execute(Computation<L> computation);
+    <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation);
 
 }

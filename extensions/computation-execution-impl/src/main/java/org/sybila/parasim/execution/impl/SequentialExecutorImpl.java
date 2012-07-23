@@ -38,7 +38,7 @@ public class SequentialExecutorImpl extends AbstractExecutor implements Sequenti
         super(contextEvent, serviceFactory, runnableExecutor, configuration);
     }
 
-    public <L extends Mergeable<L>> Execution<L> execute(Computation<L> computation) {
+    public <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation) {
         return SequentialExecution.of(getRunnableExecutor(), computation, getServiceFactory(), getContextEvent(), 0, 0);
     }
 }

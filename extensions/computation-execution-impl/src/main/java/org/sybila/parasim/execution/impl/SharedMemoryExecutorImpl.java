@@ -38,7 +38,7 @@ public class SharedMemoryExecutorImpl extends AbstractExecutor implements Shared
         super(contextEvent, serviceFactory, runnableExecutor, configuration);
     }
 
-    public <L extends Mergeable<L>> Execution<L> execute(Computation<L> computation) {
+    public <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation) {
         return SharedMemoryExecution.of(
             getRunnableExecutor(),
             computation,

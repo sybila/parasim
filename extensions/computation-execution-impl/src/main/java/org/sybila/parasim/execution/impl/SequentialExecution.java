@@ -80,7 +80,7 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
                     serviceFactory.injectFields(computation, context);
                     try {
                         executeMethodsByAnnotation(serviceFactory, context, computation, Before.class);
-                        Result result = computation.compute();
+                        Result result = computation.call();
                         return result;
                     } finally {
                         executeMethodsByAnnotation(serviceFactory, context, computation, After.class);

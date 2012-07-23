@@ -47,7 +47,7 @@ public class TestSharedMemoryExecutorImpl extends AbstractExecutionTest {
     }
 
     protected Execution<MergeableInteger> createSharedMemoryExecution(Computation computation) {
-        return getManager().resolve(SharedMemoryExecutor.class, Default.class, getManager().getRootContext()).execute(computation);
+        return getManager().resolve(SharedMemoryExecutor.class, Default.class, getManager().getRootContext()).submit(computation);
     }
 
     protected MergeableInteger createExpectedResult() {

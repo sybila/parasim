@@ -21,14 +21,13 @@ package org.sybila.parasim.model.computation;
 
 import org.sybila.parasim.model.Mergeable;
 import java.io.Serializable;
+import java.util.concurrent.Callable;
 
 /**
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Computation<Result extends Mergeable<Result>> extends Serializable {
-
-    Result compute() throws ComputationFailedException;
+public interface Computation<Result extends Mergeable<Result>> extends Serializable, Callable<Result> {
 
     void destroy();
 

@@ -44,7 +44,6 @@ import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
 import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.computation.ComputationFailedException;
 import org.sybila.parasim.model.computation.ThreadId;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -121,7 +120,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     }
 
     @Override
-    public VerificationResult compute() throws ComputationFailedException {
+    public VerificationResult call() throws Exception {
         SpawnedDataBlock spawned = spawner.spawn(initialSpace, initialSampling);
         int batchSize = (int) Math.ceil(spawned.size() / (float) (threadId.maxId() + 1));
         int batchStart = batchSize * threadId.currentId();

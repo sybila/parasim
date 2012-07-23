@@ -110,7 +110,7 @@ public class AbstractExecutionTest {
             this.message = message;
             this.delay = delay;
         }
-        public MergeableString compute() {
+        public MergeableString call() {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException ex) {
@@ -130,7 +130,7 @@ public class AbstractExecutionTest {
         public TestIntegerComputation(long delay) {
             this.delay = delay;
         }
-        public MergeableInteger compute() {
+        public MergeableInteger call() {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException ex) {

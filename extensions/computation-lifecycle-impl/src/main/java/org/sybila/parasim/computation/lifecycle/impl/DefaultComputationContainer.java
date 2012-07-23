@@ -69,7 +69,7 @@ public class DefaultComputationContainer implements ComputationContainer {
         RunWith runWith = computation.getClass().getAnnotation(RunWith.class);
         if (runWith == null) {
             try {
-                runWith = computation.getClass().getMethod("compute").getAnnotation(RunWith.class);
+                runWith = computation.getClass().getMethod("call").getAnnotation(RunWith.class);
             } catch (NoSuchMethodException ex) {
                 Logger.getLogger(DefaultComputationContainer.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SecurityException ex) {
@@ -78,7 +78,7 @@ public class DefaultComputationContainer implements ComputationContainer {
         }
         Class<? extends Executor> executorClass = runWith == null ? Executor.class : runWith.executor();
         Executor executor = manager.resolve(executorClass, Default.class, manager.getRootContext());
-        Execution execution = executor.execute(computation);
+        Execution execution = executor.submit(computation);
         executions.put(computation, execution);
         return execution.execute();
     }

@@ -44,6 +44,6 @@ public class TestSequentialExecutorImpl extends AbstractExecutionTest {
     }
 
     protected Execution<MergeableString> createSequentialExecution(Computation computation) {
-        return getManager().resolve(SequentialExecutor.class, Default.class, getManager().getRootContext()).execute(computation);
+        return getManager().resolve(SequentialExecutor.class, Default.class, getManager().getRootContext()).submit(computation);
     }
 }
