@@ -1,6 +1,6 @@
 #!/bin/sh
 JAVA_BIN=java
-TARGET=applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-dist.jar
+TARGET=$(dirname $(readlink -f $0))/applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-dist.jar
 if [ -f $TARGET ]; then
 	$JAVA_BIN -jar $TARGET "$@"
 else
