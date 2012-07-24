@@ -45,6 +45,7 @@ import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
+import org.sybila.parasim.visualisation.plot.impl.SpaceUtils;
 
 /**
  * Plots a 2D projection of a generally n-D space in a window. Exactly two axes
@@ -86,7 +87,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     public ProjectionPlotter(ResultPlotterConfiguration conf, VerificationResult result, PointVariableMapping names, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
         dimension = result.getPoint(0).getDimension();
         this.names = names;
-        extent = AbstractVerificationResult.getEncompassingSpace(result);
+        extent = (new SpaceUtils(conf)).provideWithPadding(AbstractVerificationResult.getEncompassingSpace(result));
 
         init(conf, pointAppearance, conf.getPlotterWindowWidth(), conf.getPlotterWindowHeight());
 

@@ -56,7 +56,7 @@ public class SpaceUtils {
      * @param src Space which should be provided with padding.
      * @return New space which is the copy of <code>src</code> with the exception of flat dimensions.
      */
-    OrthogonalSpace provideWithPadding(OrthogonalSpace src) {
+    public OrthogonalSpace provideWithPadding(OrthogonalSpace src) {
         int dim = src.getDimension();
         float[] upper = new float[dim];
         float[] lower = new float[dim];
