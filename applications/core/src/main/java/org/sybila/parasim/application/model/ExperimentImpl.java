@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.application.model;
 
@@ -25,14 +25,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.api.InitialSamplingResource;
+import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfigurationResource;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.sbml.SBMLOdeSystemFactory;
+import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceResource;
+import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResultResource;
 import org.sybila.parasim.model.verification.stl.FormulaResource;
 import org.sybila.parasim.model.xml.XMLException;
+import org.sybila.parasim.model.xml.XMLResource;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -41,7 +46,6 @@ public class ExperimentImpl implements Experiment {
 
     public static final String DEFAULT_TIMEOUT_IN_MILLISECONDS = "30000";
     public static final String DEFAULT_ITERATION_LIMIT = "0";
-
     private OdeSystem odeSystem;
     private FormulaResource stlFormulaResource;
     private OrthogonalSpaceResource initialSpaceResource;
@@ -103,34 +107,39 @@ public class ExperimentImpl implements Experiment {
                     new InitialSamplingResource(getFileWithAbsolutePath(experiment.getProperty("density.sampling.file"), experimentFile.getParentFile())),
                     new VerificationResultResource(getFileWithAbsolutePath(experiment.getProperty("result.output.file"), experimentFile.getParentFile())),
                     Long.parseLong(experiment.getProperty("timeout", DEFAULT_TIMEOUT_IN_MILLISECONDS)),
-                    Integer.parseInt(experiment.getProperty("iteration.limit", DEFAULT_ITERATION_LIMIT))
-            );
-        } catch(XMLException e) {
+                    Integer.parseInt(experiment.getProperty("iteration.limit", DEFAULT_ITERATION_LIMIT)));
+        } catch (XMLException e) {
             throw new IOException("Can't load data for experiment,", e);
         }
     }
 
+    @Override
     public OdeSystem getOdeSystem() {
         return odeSystem;
     }
 
+    @Override
     public FormulaResource getSTLFormulaResource() {
         return stlFormulaResource;
     }
 
-    public OrthogonalSpaceResource getInitialSpaceResource() {
+    @Override
+    public XMLResource<OrthogonalSpace> getInitialSpaceResource() {
         return initialSpaceResource;
     }
 
-    public OrthogonalSpaceResource getSimulationSpaceResource() {
+    @Override
+    public XMLResource<OrthogonalSpace> getSimulationSpaceResource() {
         return simulationSpaceResource;
     }
 
-    public PrecisionConfigurationResource getPrecisionConfigurationResources() {
+    @Override
+    public XMLResource<PrecisionConfiguration> getPrecisionConfigurationResources() {
         return precisionConfigurationResource;
     }
 
-    public InitialSamplingResource getInitialSamplingResource() {
+    @Override
+    public XMLResource<InitialSampling> getInitialSamplingResource() {
         return initialSamplingResource;
     }
 
@@ -139,7 +148,8 @@ public class ExperimentImpl implements Experiment {
         return iterationLimit;
     }
 
-    public VerificationResultResource getVerificationResultResource() {
+    @Override
+    public XMLResource<VerificationResult> getVerificationResultResource() {
         return verificationResultResource;
     }
 

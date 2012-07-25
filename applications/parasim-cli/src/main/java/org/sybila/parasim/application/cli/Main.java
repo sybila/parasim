@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.application.cli;
 
@@ -31,8 +31,8 @@ import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
-import org.sybila.parasim.model.verification.result.VerificationResultResource;
 import org.sybila.parasim.model.xml.XMLException;
+import org.sybila.parasim.model.xml.XMLResource;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
@@ -89,10 +89,10 @@ public class Main {
         } catch (ParseException ex) {
             ParasimOptions.printHelp(System.out);
             System.exit(1);
-        } finally{
+        } finally {
             try {
                 manager.shutdown();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -121,7 +121,7 @@ public class Main {
         }
 
         //save result
-        VerificationResultResource output = experiment.getVerificationResultResource();
+        XMLResource<VerificationResult> output = experiment.getVerificationResultResource();
         if (output != null) {
             output.setRoot(result);
             try {
@@ -137,7 +137,7 @@ public class Main {
     }
 
     private static void showResult() {
-        VerificationResultResource input = experiment.getVerificationResultResource();
+        XMLResource<VerificationResult> input = experiment.getVerificationResultResource();
         try {
             input.load();
         } catch (XMLException xmle) {
