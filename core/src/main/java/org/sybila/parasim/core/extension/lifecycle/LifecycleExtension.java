@@ -17,16 +17,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.service;
+package org.sybila.parasim.core.extension.lifecycle;
 
-import java.lang.reflect.Method;
-import org.sybila.parasim.core.extension.interceptor.api.Invocation;
+import org.sybila.parasim.core.LoadableExtension;
+import org.sybila.parasim.core.extension.lifecycle.impl.LifecycleCleaner;
+import org.sybila.parasim.core.extension.lifecycle.impl.LifecycleResolver;
+import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
+import org.sybila.parasim.core.spi.DelegatedResolver;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Interceptor {
+public class LifecycleExtension implements LoadableExtension {
 
-    public Object intercept(Object obj, Method method, Object[] args, Invocation invocation) throws Throwable;
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.service(DelegatedResolver.class, LifecycleResolver.class);
+        builder.service(InstanceCleaner.class, LifecycleCleaner.class);
+        builder.extension(LifecycleManagingExtension.class);
+    }
 
 }

@@ -20,7 +20,7 @@
 package org.sybila.parasim.execution.impl;
 
 import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Executor;
@@ -32,13 +32,13 @@ import org.sybila.parasim.execution.api.Executor;
 public abstract class AbstractExecutor implements Executor {
 
     private final ContextEvent<ComputationContext> contextEvent;
-    private final ServiceFactory serviceFactory;
+    private final Enrichment enrichment;
     private final java.util.concurrent.Executor runnableExecutor;
     private final ExecutionConfiguration configuration;
 
-    public AbstractExecutor(final ContextEvent<ComputationContext> contextEvent, final ServiceFactory serviceFactory, final java.util.concurrent.Executor runnableExecutor, final ExecutionConfiguration configuration) {
+    public AbstractExecutor(final ContextEvent<ComputationContext> contextEvent, final Enrichment enrichment, final java.util.concurrent.Executor runnableExecutor, final ExecutionConfiguration configuration) {
         this.contextEvent = contextEvent;
-        this.serviceFactory = serviceFactory;
+        this.enrichment = enrichment;
         this.runnableExecutor = runnableExecutor;
         this.configuration = configuration;
     }
@@ -55,7 +55,7 @@ public abstract class AbstractExecutor implements Executor {
         return runnableExecutor;
     }
 
-    protected ServiceFactory getServiceFactory() {
-        return serviceFactory;
+    protected Enrichment getEnrichment() {
+        return enrichment;
     }
 }

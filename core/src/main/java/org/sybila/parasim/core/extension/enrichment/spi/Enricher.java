@@ -17,27 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.execution.api;
+package org.sybila.parasim.core.extension.enrichment.spi;
 
-import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.InstanceStorage;
-import org.sybila.parasim.core.context.AbstractContext;
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
+import java.lang.reflect.Method;
+import org.sybila.parasim.core.context.Context;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ComputationContext extends AbstractContext {
+public interface Enricher<T> {
 
-    public ComputationContext() {
-        super();
-    }
+    void enrich(T target, Context context);
 
-    public ComputationContext(InstanceStorage instanceStorage) {
-        super(instanceStorage);
-    }
-
-    public Class<? extends Annotation> getScope() {
-        return ComputationScope.class;
-    }
+    void resolve(Method method, Object[] args, Context context);
 }

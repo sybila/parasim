@@ -17,9 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.cdi.api.event;
+package org.sybila.parasim.core.spi;
+
+import java.lang.reflect.Method;
+import org.sybila.parasim.core.extension.interceptor.api.Invocation;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ServiceFactoryRegistered {}
+public interface Interceptor {
+
+    public Object intercept(Object obj, Method method, Object[] args, Invocation invocation) throws Throwable;
+
+}

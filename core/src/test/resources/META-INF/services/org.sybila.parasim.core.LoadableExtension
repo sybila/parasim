@@ -1,1 +1,2 @@
 org.sybila.parasim.core.extension.loader.TestedLoadableExtension
+org.sybila.parasim.core.extension.lifecycle.TestedLifecycleExtension

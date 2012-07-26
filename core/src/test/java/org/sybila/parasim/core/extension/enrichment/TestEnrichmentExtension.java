@@ -17,8 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.cdi;
+package org.sybila.parasim.core.extension.enrichment;
 
+import java.lang.reflect.Method;
+import org.sybila.parasim.core.context.Context;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,14 +32,15 @@ import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.extension.AbstractExtensionTest;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.spi.Enricher;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
+
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestServiceFactoryExtension extends AbstractExtensionTest {
+public class TestEnrichmentExtension extends AbstractExtensionTest {
 
     @Inject
     private String toInject;
@@ -58,28 +62,39 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
             return -10;
         }
     };
-    public static ServiceFactory serviceFactory;
+    public static Enrichment enrichment;
     public int counter = 0;
 
+    public static int integerEnriched = 0;
+
     @Test
-    public void testServiceFactory() {
+    public void testEnrichment() {
         getManager().start();
-        assertNotNull(serviceFactory);
-        serviceFactory.provideFieldsAndMethods(this, getManager().getRootContext());
-        serviceFactory.injectFields(this, getManager().getRootContext());
+        assertNotNull(enrichment);
+        enrichment.enrich(this, getManager().getRootContext());
         assertEquals(toInject, "HELLO");
         assertEquals(getManager().resolve(Number2.class, Default.class, getManager().getRootContext()).get(), toProvide.get());
         assertEquals(toInjectWithQualifier.get(), toProvideWithQualifier.get());
     }
 
     @Test
-    public void testServiceFactoryWithFreshProvider() {
+    public void testEnrichmentWithFreshProvider() {
         getManager().start();
-        serviceFactory.provideFieldsAndMethods(this, getManager().getRootContext());
-        serviceFactory.injectFields(this, getManager().getRootContext());
+        enrichment.enrich(this, getManager().getRootContext());
         for (int i=0; i<10; i++) {
             assertEquals(providedNumber.get(), i);
         }
+    }
+
+    @Test
+    public void testOwnEnricher() {
+        getManager().start();
+        int before = integerEnriched;
+        Enrichment enrichment = getManager().resolve(Enrichment.class, Default.class, getManager().getRootContext());
+        enrichment.addEnricher(Integer.class, new IntegerEnricher());
+        enrichment.enrich(new Integer(1), getManager().getRootContext());
+        enrichment.enrich("1", getManager().getRootContext());
+        assertEquals(integerEnriched, before+1);
     }
 
     @Provide(fresh=true)
@@ -93,7 +108,6 @@ public class TestServiceFactoryExtension extends AbstractExtensionTest {
     }
 
 }
-
 interface Number {
 
     int get();
@@ -109,3 +123,16 @@ interface Number2 {
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @interface TestQualifier {}
+
+class IntegerEnricher implements Enricher<Integer> {
+
+    @Override
+    public void enrich(Integer target, Context context) {
+        TestEnrichmentExtension.integerEnriched++;
+    }
+
+    @Override
+    public void resolve(Method method, Object[] args, Context context) {
+    }
+
+}

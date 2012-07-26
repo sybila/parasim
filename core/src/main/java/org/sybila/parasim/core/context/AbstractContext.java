@@ -23,6 +23,7 @@ import java.lang.annotation.Annotation;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.InstanceStorage;
 import org.sybila.parasim.core.MapInstanceStorage;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -58,6 +59,11 @@ public abstract class AbstractContext implements Context {
 
     public void activate() {
         activity = true;
+    }
+
+    @Override
+    public void addInstanceCleaner(InstanceCleaner cleaner) {
+        this.instanceStorage.addInstanceCleaner(cleaner);
     }
 
     public void deactivate() {

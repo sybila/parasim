@@ -36,7 +36,7 @@ import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.extension.interceptor.api.Intercepted;
 import org.sybila.parasim.core.extension.interceptor.api.InterceptionException;
 import org.sybila.parasim.core.extension.interceptor.api.Invocation;
-import org.sybila.parasim.core.service.Interceptor;
+import org.sybila.parasim.core.spi.Interceptor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>

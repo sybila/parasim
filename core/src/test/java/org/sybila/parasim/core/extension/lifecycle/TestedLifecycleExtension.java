@@ -17,23 +17,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.extension.performence.impl;
+package org.sybila.parasim.core.extension.lifecycle;
 
+import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.LoadableExtension;
+import org.sybila.parasim.core.extension.lifecycle.spi.Constructor;
+import org.sybila.parasim.core.extension.lifecycle.spi.Destructor;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
-import org.sybila.parasim.core.spi.Interceptor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class PerformenceExtension implements LoadableExtension {
+public class TestedLifecycleExtension implements LoadableExtension {
 
     @Override
     public void register(ExtensionBuilder builder) {
-        builder.service(Interceptor.class, PerformenceInterceptor.class);
-        builder.extension(MeasurementDatabase.class);
-        builder.extension(MeasurementExporter.class);
-        builder.extension(PerformenceRegistrar.class);
+        builder.service(Constructor.class, IntegerConstructor.class);
+        builder.service(Destructor.class, IntegerDestructor.class);
+    }
+
+    private static class IntegerConstructor implements Constructor<Integer, Object> {
+
+        @Override
+        public Integer create(Object configuration, Class<? extends Annotation> qualifier) {
+            return 1;
+        }
+
+        @Override
+        public int getPrecedence() {
+            return 0;
+        }
+
+    }
+
+    private static class IntegerDestructor implements Destructor<Integer> {
+
+        @Override
+        public void destroy(Integer instance) {
+            TestLifecycleExtension.destroyedCounter++;
+        }
+
+        @Override
+        public int getPrecedence() {
+            return 0;
+        }
+
     }
 
 }

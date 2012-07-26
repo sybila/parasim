@@ -54,6 +54,8 @@ import org.sybila.parasim.core.extension.configuration.DescriptorLoaderExtension
 import org.sybila.parasim.core.extension.interceptor.InterceptorExtension;
 import org.sybila.parasim.core.extension.loader.ExtensionLoaderExtension;
 import org.sybila.parasim.core.extension.logging.LoggingExtension;
+import org.sybila.parasim.core.spi.DelegatedResolver;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -105,6 +107,10 @@ public final class ManagerImpl implements Manager {
         );
         // fire manager processing
         manager.fireProcessing(manager.applicationContext);
+        // register instance cleaners
+        for (InstanceCleaner instanceCleaner: manager.service(InstanceCleaner.class)) {
+            manager.applicationContext.addInstanceCleaner(instanceCleaner);
+        }
         LOGGER.debug("loading loadable extensions");
         // load providers
         for (Extension extension: manager.extensionsByContext.get(manager.applicationContext)) {
@@ -168,6 +174,10 @@ public final class ManagerImpl implements Manager {
 
     public void initializeContext(Context context) {
         try {
+            // register instance cleaners
+            for (InstanceCleaner instanceCleaner: service(InstanceCleaner.class)) {
+                context.addInstanceCleaner(instanceCleaner);
+            }
             context.activate();
             if (!extensionsByContext.containsKey(context)) {
                 extensionsByContext.put(context, Collections.synchronizedList(new ArrayList<Extension>()));
@@ -221,6 +231,19 @@ public final class ManagerImpl implements Manager {
         Class<? extends Annotation> nonProxyQualifier = (Class<? extends Annotation>) (Proxy.isProxyClass(qualifier) ? qualifier.getInterfaces()[0] : qualifier);
         T result = context.resolve(type, nonProxyQualifier);
         LOGGER.debug("resolve [{}] [{}] as [{}] in [{}]", new Object[] {type, nonProxyQualifier.getSimpleName(), (result == null ? null : result.getClass()), context.getClass().getSimpleName()});
+        if (result == null) {
+            Collection<DelegatedResolver> resolvers = service(DelegatedResolver.class);
+            DelegatedResolver highestResolver = null;
+            for (DelegatedResolver resolver: resolvers) {
+                if (highestResolver == null || resolver.getPrecedence() > highestResolver.getPrecedence()) {
+                    highestResolver = resolver;
+                }
+            }
+            if (highestResolver != null) {
+                LOGGER.debug("invoking delegated resolver [{}] for [{}] [{}]", new Object[] {highestResolver, type, nonProxyQualifier});
+                return highestResolver.resolve(this, type, qualifier, context);
+            }
+        }
         return result;
     }
 

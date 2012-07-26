@@ -22,7 +22,7 @@ package org.sybila.parasim.extension.performence.impl;
 import java.lang.reflect.Method;
 import java.util.UUID;
 import org.sybila.parasim.core.extension.interceptor.api.Invocation;
-import org.sybila.parasim.core.service.Interceptor;
+import org.sybila.parasim.core.spi.Interceptor;
 import org.sybila.parasim.extension.performence.api.MethodMeasurement;
 import org.sybila.parasim.extension.performence.api.annotation.Measurement;
 import org.sybila.parasim.util.Debug;

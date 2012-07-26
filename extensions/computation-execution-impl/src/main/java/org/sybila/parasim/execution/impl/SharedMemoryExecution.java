@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.model.Mergeable;
@@ -40,10 +40,10 @@ public class SharedMemoryExecution<Result extends Mergeable<Result>> implements 
     private final java.util.concurrent.Executor runnableExecutor;
     private final Computation computation;
 
-    private SharedMemoryExecution(final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadIdFrom, final int threadIdTo, final int threadMaxId) {
+    private SharedMemoryExecution(final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> contextEvent, final int threadIdFrom, final int threadIdTo, final int threadMaxId) {
         Validate.notNull(runnableExecutor);
         Validate.notNull(computation);
-        Validate.notNull(serviceFactory);
+        Validate.notNull(enrichment);
         Validate.notNull(contextEvent);
         this.runnableExecutor = runnableExecutor;
         if (threadMaxId <= 0) {
@@ -52,12 +52,12 @@ public class SharedMemoryExecution<Result extends Mergeable<Result>> implements 
         executions = new Execution[threadIdTo - threadIdFrom + 1];
         this.computation = computation;
         for (int threadId=threadIdFrom; threadId<=threadIdTo; threadId++) {
-            executions[threadId-threadIdFrom] = SequentialExecution.of(runnableExecutor, computation.cloneComputation(), serviceFactory, contextEvent, threadId, threadMaxId);
+            executions[threadId-threadIdFrom] = SequentialExecution.of(runnableExecutor, computation.cloneComputation(), enrichment, contextEvent, threadId, threadMaxId);
         }
     }
 
-    public static <R extends Mergeable<R>> Execution<R> of(final java.util.concurrent.Executor runnableExecutor, final Computation<R> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadIdFrom, final int threadIdTo, final int threadMaxId) {
-        return new SharedMemoryExecution<R>(runnableExecutor, computation, serviceFactory, contextEvent, threadIdFrom, threadIdTo, threadMaxId);
+    public static <R extends Mergeable<R>> Execution<R> of(final java.util.concurrent.Executor runnableExecutor, final Computation<R> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> contextEvent, final int threadIdFrom, final int threadIdTo, final int threadMaxId) {
+        return new SharedMemoryExecution<R>(runnableExecutor, computation, enrichment, contextEvent, threadIdFrom, threadIdTo, threadMaxId);
     }
 
     public void abort() {

@@ -31,13 +31,13 @@ import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.event.ManagerStarted;
-import org.sybila.parasim.core.extension.cdi.TestServiceFactoryExtension;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.TestEnrichmentExtension;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.impl.TestExtensionDescriptorMapperImpl;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.core.extension.interceptor.TestInterceptorExtension;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
-import org.sybila.parasim.core.service.Interceptor;
+import org.sybila.parasim.core.spi.Interceptor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -52,8 +52,8 @@ public class TestedLoadableExtension implements LoadableExtension {
         toInject.set("HELLO");
     }
 
-    public void observesServiceFactory(@Observes ServiceFactory serviceFactory) {
-        TestServiceFactoryExtension.serviceFactory = serviceFactory;
+    public void observesServiceFactory(@Observes Enrichment enrichment) {
+        TestEnrichmentExtension.enrichment = enrichment;
     }
 
     public void observesExtensionDescriptorMapper(@Observes ManagerStarted event, ExtensionDescriptorMapper mapper) {

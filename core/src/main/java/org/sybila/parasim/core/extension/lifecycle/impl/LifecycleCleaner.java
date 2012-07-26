@@ -17,27 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.execution.api;
+package org.sybila.parasim.core.extension.lifecycle.impl;
 
-import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.InstanceStorage;
-import org.sybila.parasim.core.context.AbstractContext;
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
+import org.sybila.parasim.core.extension.lifecycle.LifecycleManagingExtension;
+import org.sybila.parasim.core.extension.lifecycle.api.InstanceManager;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ComputationContext extends AbstractContext {
+public class LifecycleCleaner implements InstanceCleaner{
 
-    public ComputationContext() {
-        super();
+    @Override
+    public <T> void clean(T instance) {
+        InstanceManager instanceManager = LifecycleManagingExtension.getInstanceManager();
+        if (instanceManager != null) {
+            instanceManager.destroyInstance(instance);
+        }
     }
 
-    public ComputationContext(InstanceStorage instanceStorage) {
-        super(instanceStorage);
-    }
-
-    public Class<? extends Annotation> getScope() {
-        return ComputationScope.class;
-    }
 }

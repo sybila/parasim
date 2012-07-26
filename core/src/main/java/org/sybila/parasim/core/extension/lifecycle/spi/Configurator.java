@@ -17,27 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.execution.api;
+package org.sybila.parasim.core.extension.lifecycle.spi;
 
 import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.InstanceStorage;
-import org.sybila.parasim.core.context.AbstractContext;
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
+import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.spi.Sortable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ComputationContext extends AbstractContext {
+public interface Configurator<T, C> extends Sortable {
 
-    public ComputationContext() {
-        super();
-    }
+    C configure(ParasimDescriptor descriptor, Class<? extends Annotation> qualifier);
 
-    public ComputationContext(InstanceStorage instanceStorage) {
-        super(instanceStorage);
-    }
-
-    public Class<? extends Annotation> getScope() {
-        return ComputationScope.class;
-    }
 }

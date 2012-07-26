@@ -21,6 +21,7 @@ package org.sybila.parasim.core.context;
 
 import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.InstanceStorage;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -35,6 +36,13 @@ public interface Context {
      * @see {@link org.sybila.parasim.core.Manager#resolve(java.lang.Class, java.lang.Class, org.sybila.parasim.core.context.Context) }
      */
     void activate();
+
+    /**
+     * Adds an instance cleaner which is called when the context is destroyed.
+     *
+     * @param cleaner
+     */
+    void addInstanceCleaner(InstanceCleaner cleaner);
 
     /**
      * Deactivates the context. If the context isn't active, it can't be used

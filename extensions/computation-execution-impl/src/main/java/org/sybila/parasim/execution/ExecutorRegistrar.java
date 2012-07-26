@@ -30,7 +30,7 @@ import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.event.ManagerStopping;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.execution.api.SequentialExecutor;
@@ -66,13 +66,13 @@ public class ExecutorRegistrar {
     }
 
     @Provide
-    public SequentialExecutor provideSequentialExecutor(java.util.concurrent.Executor runnableExecutor, ServiceFactory serviceFactory, ExecutionConfiguration configuration) {
-        return new SequentialExecutorImpl(contextEvent, serviceFactory, runnableExecutor, configuration);
+    public SequentialExecutor provideSequentialExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration) {
+        return new SequentialExecutorImpl(contextEvent, enrichment, runnableExecutor, configuration);
     }
 
     @Provide
-    public SharedMemoryExecutor provideSharedMemoryExecutor(java.util.concurrent.Executor runnableExecutor, ServiceFactory serviceFactory, ExecutionConfiguration configuration) {
-        return new SharedMemoryExecutorImpl(contextEvent, serviceFactory, runnableExecutor, configuration);
+    public SharedMemoryExecutor provideSharedMemoryExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration) {
+        return new SharedMemoryExecutorImpl(contextEvent, enrichment, runnableExecutor, configuration);
     }
 
     @Provide

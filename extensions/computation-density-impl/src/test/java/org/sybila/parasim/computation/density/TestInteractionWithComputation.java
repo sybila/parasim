@@ -30,7 +30,7 @@ import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.model.MergeableBox;
 import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
@@ -58,7 +58,7 @@ public class TestInteractionWithComputation extends AbstractDensityTest{
 
     @BeforeMethod(dependsOnMethods={"startManager"})
     public void injectFields() {
-        manager.resolve(ServiceFactory.class, Default.class, manager.getRootContext()).injectFields(this, manager.getRootContext());
+        manager.resolve(Enrichment.class, Default.class, manager.getRootContext()).enrich(this, manager.getRootContext());
     }
 
     @AfterMethod

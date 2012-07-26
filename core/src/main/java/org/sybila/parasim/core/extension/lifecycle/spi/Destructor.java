@@ -17,25 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.cdi.api;
+package org.sybila.parasim.core.extension.lifecycle.spi;
 
-import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.context.Context;
+import org.sybila.parasim.core.spi.Sortable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ServiceFactory {
+public interface Destructor<T> extends Sortable {
 
-    <T> T getService(Class<T> type, Context context);
+    void destroy(T instance);
 
-    <T> T getService(Class<T> type, Context context, Class<? extends Annotation> qualifier);
-
-    void injectFields(Object target, Context context);
-
-    boolean isServiceAvailable(Class<?> type, Context context);
-
-    boolean isServiceAvailable(Class<?> type, Context context, Class<? extends Annotation> qualifier);
-
-    void provideFieldsAndMethods(Object target, Context context);
 }

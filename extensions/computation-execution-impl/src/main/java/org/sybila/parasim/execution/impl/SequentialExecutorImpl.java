@@ -21,7 +21,7 @@ package org.sybila.parasim.execution.impl;
 
 import java.util.concurrent.Executor;
 import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Execution;
@@ -34,11 +34,11 @@ import org.sybila.parasim.model.Mergeable;
  */
 public class SequentialExecutorImpl extends AbstractExecutor implements SequentialExecutor {
 
-    public SequentialExecutorImpl(ContextEvent<ComputationContext> contextEvent, ServiceFactory serviceFactory, Executor runnableExecutor, ExecutionConfiguration configuration) {
-        super(contextEvent, serviceFactory, runnableExecutor, configuration);
+    public SequentialExecutorImpl(ContextEvent<ComputationContext> contextEvent, Enrichment enrichment, Executor runnableExecutor, ExecutionConfiguration configuration) {
+        super(contextEvent, enrichment, runnableExecutor, configuration);
     }
 
     public <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation) {
-        return SequentialExecution.of(getRunnableExecutor(), computation, getServiceFactory(), getContextEvent(), 0, 0);
+        return SequentialExecution.of(getRunnableExecutor(), computation, getEnrichment(), getContextEvent(), 0, 0);
     }
 }

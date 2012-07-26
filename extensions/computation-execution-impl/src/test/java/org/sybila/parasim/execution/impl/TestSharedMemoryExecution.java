@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.AbstractExecutionTest;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.Execution;
@@ -52,7 +52,7 @@ public class TestSharedMemoryExecution extends AbstractExecutionTest {
         return SharedMemoryExecution.of(
             getManager().resolve(java.util.concurrent.Executor.class, Default.class, getManager().getRootContext()),
             computation,
-            getManager().resolve(ServiceFactory.class, Default.class, getManager().getRootContext()),
+            getManager().resolve(Enrichment.class, Default.class, getManager().getRootContext()),
             new ContextEvent<ComputationContext>() {
                 public void initialize(ComputationContext context) {
                     context.setParent(getManager().getRootContext());

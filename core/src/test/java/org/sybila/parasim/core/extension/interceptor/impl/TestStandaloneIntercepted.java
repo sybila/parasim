@@ -22,7 +22,7 @@ package org.sybila.parasim.core.extension.interceptor.impl;
 import java.lang.reflect.Method;
 import org.sybila.parasim.core.extension.interceptor.api.Intercepted;
 import org.sybila.parasim.core.extension.interceptor.api.InterceptionException;
-import org.sybila.parasim.core.service.Interceptor;
+import org.sybila.parasim.core.spi.Interceptor;
 import org.sybila.parasim.core.extension.interceptor.api.Invocation;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

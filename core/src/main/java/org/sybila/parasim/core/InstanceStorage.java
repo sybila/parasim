@@ -20,6 +20,7 @@
 package org.sybila.parasim.core;
 
 import java.lang.annotation.Annotation;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 
 /**
  * The storage is used by contexts to control instances belonging to the context.
@@ -39,6 +40,13 @@ public interface InstanceStorage {
      * @return
      */
     <T> InstanceStorage add(Class<T> type, Class<? extends Annotation> qualifier, T value);
+
+    /**
+     * Adds an instance cleaner which is called when the storage is cleared.
+     *
+     * @param cleaner
+     */
+    void addInstanceCleaner(InstanceCleaner cleaner);
 
     /**
      * Clears the storage. It means that all references to instances are dropped.

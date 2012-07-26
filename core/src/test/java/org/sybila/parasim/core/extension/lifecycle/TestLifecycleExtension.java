@@ -17,27 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.execution.api;
+package org.sybila.parasim.core.extension.lifecycle;
 
-import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.InstanceStorage;
-import org.sybila.parasim.core.context.AbstractContext;
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
+import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.extension.AbstractExtensionTest;
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ComputationContext extends AbstractContext {
+public class TestLifecycleExtension extends AbstractExtensionTest {
 
-    public ComputationContext() {
-        super();
+    public static int destroyedCounter = 0;
+
+    @Test
+    public void testConstructor() {
+        getManager().start();
+        assertNotNull(getManager().resolve(Integer.class, Default.class, getManager().getRootContext()));
     }
 
-    public ComputationContext(InstanceStorage instanceStorage) {
-        super(instanceStorage);
-    }
-
-    public Class<? extends Annotation> getScope() {
-        return ComputationScope.class;
+    @Test
+    public void testDestructor() {
+        int before = destroyedCounter;
+        getManager().start();
+        assertNotNull(getManager().resolve(Integer.class, Default.class, getManager().getRootContext()));
+        getManager().shutdown();
+        assertEquals(destroyedCounter, before + 1);
     }
 }

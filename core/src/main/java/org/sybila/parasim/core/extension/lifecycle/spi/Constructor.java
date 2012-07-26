@@ -17,19 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.extension.cdi;
+package org.sybila.parasim.core.extension.lifecycle.spi;
 
-import org.sybila.parasim.core.LoadableExtension;
-import org.sybila.parasim.core.extension.cdi.impl.ServiceFactoryRegistrar;
-import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
+import java.lang.annotation.Annotation;
+import org.sybila.parasim.core.spi.Sortable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ServiceFactoryExtension implements LoadableExtension {
+public interface Constructor<T, C> extends Sortable {
 
-    public void register(ExtensionBuilder builder) {
-        builder.extension(ServiceFactoryRegistrar.class);
-    }
+    T create(C configuration, Class<? extends Annotation> qualifier);
 
 }

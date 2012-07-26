@@ -32,12 +32,11 @@ import org.sybila.parasim.core.annotations.ApplicationScope;
  */
 public class ApplicationContext extends AbstractContext {
 
-    public ApplicationContext(InstanceStorage instanceStorage) {
-        super(instanceStorage);
+    public ApplicationContext() {
     }
 
-    public ApplicationContext() {
-        super();
+    public ApplicationContext(InstanceStorage instanceStorage) {
+        super(instanceStorage);
     }
 
     public Class<? extends Annotation> getScope() {

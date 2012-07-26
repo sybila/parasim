@@ -39,6 +39,7 @@ import org.sybila.parasim.core.context.AbstractContext;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.event.ManagerStopping;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -255,7 +256,17 @@ interface Number {
 @Target(ElementType.TYPE)
 @interface TestScope {}
 
+
+
 class TestContext extends AbstractContext {
+
+    public TestContext() {
+        super();
+    }
+
+    public TestContext(InstanceStorage instanceStorage) {
+        super(instanceStorage);
+    }
 
     public Class<? extends Annotation> getScope() {
         return TestScope.class;

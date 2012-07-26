@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.core;
 
+import org.sybila.parasim.core.spi.InstanceCleaner;
+import java.util.ArrayList;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.annotations.Provide;
@@ -31,7 +33,7 @@ import static org.testng.Assert.*;
 public class TestExtensionImpl {
 
     private Extension extension;
-    
+
     private class TestedExtension {
         @Inject
         private Instance<String> name;
@@ -48,27 +50,27 @@ public class TestExtensionImpl {
             return counter;
         }
     }
-    
+
     @BeforeMethod
     public void prepareExtension() {
         extension = new ExtensionImpl(new TestedExtension(), new ApplicationContext());
     }
-    
+
     @Test
     public void testObservers() {
         assertEquals(extension.getObservers().size(), 1);
     }
-    
+
     @Test
     public void testInjectionPoints() {
         assertEquals(extension.getInjectionPoints().size(), 2);
     }
-    
+
     @Test
     public void testEventPoints() {
         assertEquals(extension.getEventPoints().size(), 1);
     }
-    
+
     @Test
     public void testProvidingPoints() {
         assertEquals(extension.getProvidingPoints().size(), 2);

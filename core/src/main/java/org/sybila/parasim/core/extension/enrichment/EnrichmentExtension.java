@@ -17,27 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.execution.api;
+package org.sybila.parasim.core.extension.enrichment;
 
-import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.InstanceStorage;
-import org.sybila.parasim.core.context.AbstractContext;
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
+import org.sybila.parasim.core.LoadableExtension;
+import org.sybila.parasim.core.extension.enrichment.impl.InjectingEnricher;
+import org.sybila.parasim.core.extension.enrichment.impl.ProvidingEnricher;
+import org.sybila.parasim.core.extension.enrichment.spi.Enricher;
+import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ComputationContext extends AbstractContext {
+public class EnrichmentExtension implements LoadableExtension {
 
-    public ComputationContext() {
-        super();
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.extension(EnrichmentRegistrar.class);
+        builder.service(Enricher.class, ProvidingEnricher.class);
+        builder.service(Enricher.class, InjectingEnricher.class);
     }
 
-    public ComputationContext(InstanceStorage instanceStorage) {
-        super(instanceStorage);
-    }
-
-    public Class<? extends Annotation> getScope() {
-        return ComputationScope.class;
-    }
 }

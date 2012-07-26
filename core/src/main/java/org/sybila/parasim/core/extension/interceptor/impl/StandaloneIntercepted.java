@@ -24,7 +24,7 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 import org.sybila.parasim.core.extension.interceptor.api.InterceptionException;
-import org.sybila.parasim.core.service.Interceptor;
+import org.sybila.parasim.core.spi.Interceptor;
 import org.sybila.parasim.core.extension.interceptor.api.Invocation;
 
 /**

@@ -29,7 +29,7 @@ import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Qualifier;
 import org.sybila.parasim.core.context.Context;
-import org.sybila.parasim.core.extension.cdi.api.ServiceFactory;
+import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.model.computation.annotations.Before;
 import org.sybila.parasim.execution.api.Execution;
@@ -48,10 +48,10 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
     private final Computation computation;
     private volatile boolean running = false;
 
-    private SequentialExecution(final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadId, final int threadMaxId) {
+    private SequentialExecution(final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> contextEvent, final int threadId, final int threadMaxId) {
         Validate.notNull(runnableExecutor);
         Validate.notNull(computation);
-        Validate.notNull(serviceFactory);
+        Validate.notNull(enrichment);
         Validate.notNull(contextEvent);
         if (threadMaxId < 0) {
             throw new IllegalArgumentException("The paramater [threadMaxId] has to be a non negative number.");
@@ -65,25 +65,25 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
                 contextEvent.initialize(context);
                 try {
                     context.getStorage().add(
-                        ThreadId.class,
-                        Default.class,
-                        new ThreadId() {
-                            public int currentId() {
-                                return threadId;
-                            }
-                            public int maxId() {
-                                return threadMaxId;
-                            }
-                        }
-                    );
-                    serviceFactory.provideFieldsAndMethods(computation, context);
-                    serviceFactory.injectFields(computation, context);
+                            ThreadId.class,
+                            Default.class,
+                            new ThreadId() {
+
+                                public int currentId() {
+                                    return threadId;
+                                }
+
+                                public int maxId() {
+                                    return threadMaxId;
+                                }
+                            });
+                    enrichment.enrich(computation, context);
                     try {
-                        executeMethodsByAnnotation(serviceFactory, context, computation, Before.class);
+                        executeMethodsByAnnotation(enrichment, context, computation, Before.class);
                         Result result = computation.call();
                         return result;
                     } finally {
-                        executeMethodsByAnnotation(serviceFactory, context, computation, After.class);
+                        executeMethodsByAnnotation(enrichment, context, computation, After.class);
                     }
                 } finally {
                     computation.destroy();
@@ -93,8 +93,8 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
         });
     }
 
-    public static <R extends Mergeable<R>> Execution<R> of(final java.util.concurrent.Executor runnableExecutor, final Computation<R> computation, final ServiceFactory serviceFactory, final ContextEvent<ComputationContext> contextEvent, final int threadId, final int threadMaxId) {
-        return new SequentialExecution<R>(runnableExecutor, computation, serviceFactory, contextEvent, threadId, threadMaxId);
+    public static <R extends Mergeable<R>> Execution<R> of(final java.util.concurrent.Executor runnableExecutor, final Computation<R> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> contextEvent, final int threadId, final int threadMaxId) {
+        return new SequentialExecution<R>(runnableExecutor, computation, enrichment, contextEvent, threadId, threadMaxId);
     }
 
     public void abort() {
@@ -112,28 +112,16 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
         return running && !task.isDone() && !task.isCancelled();
     }
 
-    protected void executeMethodsByAnnotation(final ServiceFactory serviceFactory, final Context context, final Object target, final Class<? extends Annotation> annotation) {
+    protected void executeMethodsByAnnotation(final Enrichment enrichment, final Context context, final Object target, final Class<? extends Annotation> annotation) {
         for (Method method : target.getClass().getDeclaredMethods()) {
             if (method.getAnnotation(annotation) != null) {
                 if (!method.isAccessible()) {
                     method.setAccessible(true);
                 }
-                Object[] params = new Object[method.getParameterTypes().length];
-                for (int i = 0; i < method.getParameterTypes().length; i++) {
-                    Class<? extends Annotation> qualifier = getParameterQualifier(method, i);
-                    if (qualifier != null) {
-                        params[i] = serviceFactory.getService(method.getParameterTypes()[i], context, qualifier);
-                    } else {
-                        params[i] = serviceFactory.getService(method.getParameterTypes()[i], context);
-                    }
-                    if (params[i] == null) {
-                        throw new IllegalStateException("There is no implementation instance for " + method.getParameterTypes()[i] + " which can be passed as an argument in " + target.getClass() + "#" + method.getName() + "()");
-                    }
-                    try {
-                        method.invoke(target, params);
-                    } catch (Exception ex) {
-                        throw new IllegalStateException("Can't invoke " + target.getClass() + "#" + method.getName() + "()");
-                    }
+                try {
+                    method.invoke(target, enrichment.resolve(method, context));
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Can't invoke " + target.getClass() + "#" + method.getName() + "()");
                 }
             }
         }
@@ -147,5 +135,4 @@ public class SequentialExecution<Result extends Mergeable<Result>> implements Ex
         }
         return null;
     }
-
 }

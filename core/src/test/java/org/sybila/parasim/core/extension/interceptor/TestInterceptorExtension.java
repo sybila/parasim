@@ -21,7 +21,7 @@ package org.sybila.parasim.core.extension.interceptor;
 
 import java.lang.reflect.Method;
 import org.sybila.parasim.core.extension.interceptor.api.Invocation;
-import org.sybila.parasim.core.service.Interceptor;
+import org.sybila.parasim.core.spi.Interceptor;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.extension.AbstractExtensionTest;
 import org.sybila.parasim.core.extension.interceptor.api.InterceptorRegistry;

@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.core.extension.interceptor.api;
 
-import org.sybila.parasim.core.service.Interceptor;
+import org.sybila.parasim.core.spi.Interceptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 

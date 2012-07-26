@@ -22,12 +22,15 @@ package org.sybila.parasim.core;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.sybila.parasim.core.annotations.Any;
 import org.sybila.parasim.core.annotations.Empty;
 import org.sybila.parasim.core.annotations.Qualifier;
+import org.sybila.parasim.core.spi.InstanceCleaner;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -35,10 +38,14 @@ import org.sybila.parasim.core.annotations.Qualifier;
 public class MapInstanceStorage implements InstanceStorage {
 
     private Map<Class<?>, Map<Class<? extends Annotation>, Object>> instances;
+    private Collection<InstanceCleaner> cleaners = new HashSet<>();
 
     public MapInstanceStorage(Map<Class<?>, Map<Class<? extends Annotation>,Object>> instances) {
         if (instances == null) {
             throw new IllegalArgumentException("The parameter [instances] is null.");
+        }
+        if (cleaners == null) {
+            throw new IllegalArgumentException("The parameter [cleaners] is null.");
         }
         this.instances = instances;
     }
@@ -67,7 +74,19 @@ public class MapInstanceStorage implements InstanceStorage {
         return this;
     }
 
+    @Override
+    public void addInstanceCleaner(InstanceCleaner cleaner) {
+        cleaners.add(cleaner);
+    }
+
     public InstanceStorage clear() {
+        for (Map<Class<? extends Annotation>, Object> map: instances.values()) {
+            for (Object instance: map.values()) {
+                for (InstanceCleaner cleaner: cleaners) {
+                    cleaner.clean(instance);
+                }
+            }
+        }
         instances.clear();
         return this;
     }
