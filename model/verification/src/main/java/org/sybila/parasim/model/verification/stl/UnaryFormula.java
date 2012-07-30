@@ -30,6 +30,7 @@ public abstract class UnaryFormula extends AbstractFormula {
     private Formula subFormula;
 
     public UnaryFormula(Formula phi) {
+        super(phi.getVariableIndexes());
         if (phi == null) {
             throw new IllegalArgumentException("Parameter phi is null.");
         }

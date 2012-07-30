@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.Collection;
+import java.util.Collections;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,6 +34,20 @@ import org.w3c.dom.Element;
  *
  */
 public abstract class AbstractFormula implements Formula {
+
+    private final Collection<Integer> variableIndexes;
+
+    public AbstractFormula(Collection<Integer> variableIndexes) {
+        if (variableIndexes == null) {
+            throw new IllegalArgumentException("The parameter [variableIndexes] is null.");
+        }
+        this.variableIndexes = Collections.unmodifiableCollection(variableIndexes);
+    }
+
+    @Override
+    public Collection<Integer> getVariableIndexes() {
+        return variableIndexes;
+    }
 
     @Override
     public Element toXML(Document doc) {

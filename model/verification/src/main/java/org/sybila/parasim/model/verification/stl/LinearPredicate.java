@@ -126,6 +126,7 @@ public class LinearPredicate extends Predicate {
      */
     public LinearPredicate(Map<Integer, Float> multipliers, float constant,
             Type type, PointVariableMapping variables) {
+        super(multipliers.keySet());
         if (multipliers.isEmpty()) {
             throw new IllegalArgumentException(
                     "There has to be at least one variable in the predicate.");

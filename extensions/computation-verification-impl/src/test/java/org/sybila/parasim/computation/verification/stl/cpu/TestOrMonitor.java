@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
+import java.util.ArrayList;
 import org.sybila.parasim.computation.verification.cpu.Monitor;
 import org.testng.annotations.Test;
 
@@ -34,7 +35,7 @@ public class TestOrMonitor extends AbstractBinaryPropositionalMonitorTest {
 
     @Override
     protected Monitor createMonitor(Monitor left, Monitor right) {
-        return new OrMonitor(left, right);
+        return new OrMonitor(left, right, new ArrayList<Integer>());
     }
 
     @Override

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
+import java.util.Collection;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
 import org.sybila.parasim.computation.verification.cpu.Monitor;
@@ -31,22 +32,24 @@ public abstract class AbstractBinaryPropositionalMonitor extends AbstractMonitor
 
     private final Monitor left;
     private final Monitor right;
+    private final Collection<Integer> consideredDimensions;
 
-    public AbstractBinaryPropositionalMonitor(Monitor left, Monitor right) {
+    public AbstractBinaryPropositionalMonitor(Monitor left, Monitor right, Collection<Integer> consideredDimensions) {
         Validate.notNull(left);
         Validate.notNull(right);
         this.left = left;
         this.right = right;
+        this.consideredDimensions = consideredDimensions;
     }
 
     public Robustness getRobustness(int index) {
-        return evaluate(left.getRobustness(index), right.getRobustness(index));
+        return evaluate(left.getRobustness(index), right.getRobustness(index), consideredDimensions);
     }
 
     public int size() {
         return Math.min(left.size(), right.size());
     }
 
-    protected abstract Robustness evaluate(Robustness left, Robustness right);
+    protected abstract Robustness evaluate(Robustness left, Robustness right, Collection<Integer> consideredDimensions);
 
 }

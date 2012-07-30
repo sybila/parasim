@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.Collection;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 import org.sybila.parasim.model.verification.Property;
 
@@ -65,4 +66,11 @@ public interface Formula extends XMLRepresentable, Property {
      * @return Type of formula.
      */
     FormulaType getType();
+
+    /**
+     * Returns a list used variable indexes
+     *
+     * @return used variable indexes
+     */
+    Collection<Integer> getVariableIndexes();
 }

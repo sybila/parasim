@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.Collection;
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
@@ -28,6 +29,10 @@ import org.sybila.parasim.model.trajectory.Point;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public abstract class Predicate extends AbstractFormula {
+
+    public Predicate(Collection<Integer> variableIndexes) {
+        super(variableIndexes);
+    }
 
     /**
      * Returns the boolean validity of this predicate in given point.

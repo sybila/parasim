@@ -22,6 +22,7 @@ package org.sybila.parasim.model.verification.stl;
 import java.io.File;
 import java.net.URL;
 
+import java.util.Collection;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLException;
@@ -72,6 +73,11 @@ public class FormulaResource extends FileXMLResource<Formula> {
         @Override
         public FormulaType getType() {
             throw new UnsupportedOperationException("Mockup container.");
+        }
+
+        @Override
+        public Collection<Integer> getVariableIndexes() {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 

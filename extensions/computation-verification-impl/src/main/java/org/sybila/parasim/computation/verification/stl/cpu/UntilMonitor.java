@@ -20,6 +20,7 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
 import org.sybila.parasim.computation.verification.cpu.Monitor;
@@ -34,7 +35,7 @@ public class UntilMonitor extends AbstractMonitor {
 
     private final List<Robustness> robustnesses;
 
-    public UntilMonitor(Monitor left, Monitor right, FormulaInterval interval) {
+    public UntilMonitor(Monitor left, Monitor right, FormulaInterval interval, Collection<Integer> consideredDimensions) {
         if (left == null) {
             throw new IllegalArgumentException("The parameter [left] is null.");
         }
@@ -44,7 +45,7 @@ public class UntilMonitor extends AbstractMonitor {
         if (interval == null) {
             throw new IllegalArgumentException("The parameter [interval] is null.");
         }
-        robustnesses = precompute(left, right, interval);
+        robustnesses = precompute(left, right, interval, consideredDimensions);
     }
 
     public Robustness getRobustness(int index) {
@@ -55,10 +56,10 @@ public class UntilMonitor extends AbstractMonitor {
         return robustnesses.size();
     }
 
-    private List<Robustness> precompute(Monitor left, Monitor right, FormulaInterval interval) {
+    private List<Robustness> precompute(Monitor left, Monitor right, FormulaInterval interval, Collection<Integer> consideredDimensions) {
         int current = 0;
         boolean finished = false;
-        List<Robustness> precomputed = new ArrayList<Robustness>();
+        List<Robustness> precomputed = new ArrayList<>();
         int shortestSize = Math.min(left.size(), right.size());
         while (current < shortestSize) {
             int windowEnd = current;
@@ -82,7 +83,7 @@ public class UntilMonitor extends AbstractMonitor {
             if (left.getRobustness(windowEnd).getTime() < currentTime + interval.getUpperBound() && windowEnd == shortestSize - 1) {
                 break;
             }
-            precomputed.add(new SimpleRobustness(currentRobustness, left.getRobustness(current).getTime()));
+            precomputed.add(new SimpleRobustness(currentRobustness, left.getRobustness(current).getTime(), consideredDimensions));
             current++;
         }
         return precomputed;

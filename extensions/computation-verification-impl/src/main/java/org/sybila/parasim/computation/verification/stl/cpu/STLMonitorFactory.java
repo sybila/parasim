@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
+import java.util.Collection;
 import org.sybila.parasim.computation.verification.cpu.Monitor;
 import org.sybila.parasim.computation.verification.cpu.MonitorFactory;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -33,13 +34,23 @@ import org.sybila.parasim.model.verification.stl.UntilFormula;
  */
 public class STLMonitorFactory implements MonitorFactory<Formula> {
 
+    private final boolean filterDimensions;
+
+    public STLMonitorFactory(boolean filterDimensions) {
+        this.filterDimensions = filterDimensions;
+    }
+
     public Monitor createMonitor(Trajectory trajectory, Formula property) {
         if (trajectory.getLastPoint().getTime() < property.getTimeNeeded()) {
             throw new IllegalArgumentException("The formula needs the trajectory simulated at least to time " + property.getTimeNeeded() + ", " + trajectory.getLastPoint().getTime() + " given.");
         }
+        Collection<Integer> consideredDimensions = null;
+        if (filterDimensions) {
+            consideredDimensions = property.getVariableIndexes();
+        }
         switch(property.getType()) {
             case AND:
-                return new AndMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)));
+                return new AndMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)), consideredDimensions);
             case FUTURE:
                 return new FutureMonitor(createMonitor(trajectory, property.getSubformula(0)), ((FutureFormula) property).getInterval());
             case GLOBALLY:
@@ -47,11 +58,11 @@ public class STLMonitorFactory implements MonitorFactory<Formula> {
             case NOT:
                 return new NotMonitor(createMonitor(trajectory, property.getSubformula(0)));
             case OR:
-                return new OrMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)));
+                return new OrMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)), consideredDimensions);
             case PREDICATE:
-                return new PredicateMonitor(trajectory, (Predicate) property);
+                return new PredicateMonitor(trajectory, (Predicate) property, consideredDimensions);
             case UNTIL:
-                return new UntilMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)), ((UntilFormula) property).getInterval());
+                return new UntilMonitor(createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)), ((UntilFormula) property).getInterval(), consideredDimensions);
             default:
                 throw new UnsupportedOperationException("There is no available monitor for formula type [" + property.getType() + "].");
         }

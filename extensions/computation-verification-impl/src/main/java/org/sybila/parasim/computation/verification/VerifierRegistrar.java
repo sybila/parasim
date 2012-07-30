@@ -20,9 +20,13 @@
 package org.sybila.parasim.computation.verification;
 
 import org.sybila.parasim.computation.verification.api.STLVerifier;
+import org.sybila.parasim.computation.verification.configuration.VerificationConfiguration;
 import org.sybila.parasim.computation.verification.stl.cpu.STLMonitorFactory;
 import org.sybila.parasim.computation.verification.stl.cpu.SimpleSTLVerifier;
 import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
+import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -30,8 +34,18 @@ import org.sybila.parasim.core.annotations.Provide;
 public class VerifierRegistrar {
 
     @Provide
-    public STLVerifier provideVerifier() {
-        return new SimpleSTLVerifier(new STLMonitorFactory());
+    public VerificationConfiguration provideConfiguration(ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
+        VerificationConfiguration configuration = new VerificationConfiguration();
+        ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("verification");
+        if (extensionDescriptor != null) {
+            mapper.map(extensionDescriptor, configuration);
+        }
+        return configuration;
+    }
+
+    @Provide
+    public STLVerifier provideVerifier(VerificationConfiguration configuration) {
+        return new SimpleSTLVerifier(new STLMonitorFactory(configuration.filterDimensions()));
     }
 
 }

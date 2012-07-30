@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.ArrayList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -26,14 +27,17 @@ import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.testng.annotations.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Tests equals() and hashCode() of {@link AbstractFormula}.
- * 
- * 
+ *
+ *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class TestAbstractFormula {
@@ -50,6 +54,7 @@ public class TestAbstractFormula {
         private FormulaType type;
 
         public NaryFormula(Formula[] subformulae, FormulaType type) {
+            super(computeVariableIndexes(subformulae));
             if (subformulae != null) {
                 subf = Arrays.copyOf(subformulae, subformulae.length);
             } else {
@@ -59,6 +64,7 @@ public class TestAbstractFormula {
         }
 
         public NaryFormula(Formula subformula) {
+            super(subformula.getVariableIndexes());
             subf = new Formula[1];
             subf[0] = subformula;
             type = TYPE;
@@ -132,6 +138,11 @@ public class TestAbstractFormula {
         public Element toXML(Document doc) {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public Collection<Integer> getVariableIndexes() {
+            return new ArrayList<>();
+        }
     }
 
     private class SimpleUnaryFormula implements Formula {
@@ -164,6 +175,11 @@ public class TestAbstractFormula {
         @Override
         public Element toXML(Document doc) {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Collection<Integer> getVariableIndexes() {
+            return phi.getVariableIndexes();
         }
     }
 
@@ -277,4 +293,15 @@ public class TestAbstractFormula {
         }
     }
 
+
+    private static Collection<Integer> computeVariableIndexes(Formula[] formulae) {
+        if (formulae == null) {
+            return new ArrayList<>();
+        }
+        Set<Integer> indexes = new HashSet<>();
+        for (Formula formula: formulae) {
+            indexes.addAll(formula.getVariableIndexes());
+        }
+        return indexes;
+    }
 }

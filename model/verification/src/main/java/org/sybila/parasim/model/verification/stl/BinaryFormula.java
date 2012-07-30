@@ -19,6 +19,10 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A simple abstract class representing a general binary operator.
  *
@@ -30,6 +34,7 @@ public abstract class BinaryFormula extends AbstractFormula {
     private Formula[] subFormulas;
 
     public BinaryFormula(Formula phi1, Formula phi2) {
+        super(computeVariableIndexes(phi1, phi2));
         if (phi1 == null) {
             throw new IllegalArgumentException("Parameter phi1 is null.");
         }
@@ -50,5 +55,12 @@ public abstract class BinaryFormula extends AbstractFormula {
             throw new IllegalArgumentException("Index must be 0 or 1.");
         }
         return subFormulas[index];
+    }
+
+    private static Collection<Integer> computeVariableIndexes(Formula phi1, Formula phi2) {
+        Set<Integer> indexes = new HashSet<>();
+        indexes.addAll(phi1.getVariableIndexes());
+        indexes.addAll(phi2.getVariableIndexes());
+        return indexes;
     }
 }

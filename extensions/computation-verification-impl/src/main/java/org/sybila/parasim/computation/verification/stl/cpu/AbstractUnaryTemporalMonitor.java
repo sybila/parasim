@@ -55,8 +55,8 @@ public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
     protected abstract Comparator<Robustness> createComparator();
 
     private List<Robustness> precomputeRobustness(Monitor subMonitor, FormulaInterval interval) {
-        Deque<Robustness> lemireDeque = new LemireDeque<Robustness>(createComparator());
-        List<Robustness> precomputed = new ArrayList<Robustness>();
+        Deque<Robustness> lemireDeque = new LemireDeque<>(createComparator());
+        List<Robustness> precomputed = new ArrayList<>();
         Iterator<Robustness> window = subMonitor.iterator();
         Iterator<Robustness> current = subMonitor.iterator();
         int currentIndex = 0;
