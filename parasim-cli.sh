@@ -3,7 +3,7 @@ JAVA_BIN=java
 TARGET_DIST=$(dirname $(readlink -f $0))/applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-dist.jar
 TARGET_PERF=$(dirname $(readlink -f $0))/applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-performence.jar
 if [ -f $TARGET_DIST ]; then
-	$JAVA_BIN -jar $TARGET "$@"
+	$JAVA_BIN -jar $TARGET_DIST "$@"
 else
 	if [ -f $TARGET_PERF ]; then
 		$JAVA_BIN -jar $TARGET_PERF "$@"
