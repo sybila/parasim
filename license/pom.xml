@@ -9,7 +9,7 @@
 
     <groupId>org.sybila.parasim</groupId>
     <artifactId>parasim-license</artifactId>
-    <version>1.0.0.M2</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>parasim-license</name>
 
@@ -42,7 +42,7 @@
         <connection>scm:git:git://github.com/sybila/parasim.git</connection>
         <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
         <url>https://github.com/sybila/parasim</url>
-      <tag>1.0.0.M2</tag>
+      <tag>HEAD</tag>
   </scm>
     <distributionManagement>
         <site>
