@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import org.sybila.parasim.core.context.Context;
@@ -29,7 +30,7 @@ import org.sybila.parasim.core.context.Context;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Manager {
+public interface Manager extends Serializable {
 
     /**
      * <p>Finalizes context:</p>

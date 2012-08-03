@@ -4,21 +4,22 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.core;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import javassist.util.proxy.MethodFilter;
@@ -61,41 +62,21 @@ public class ProviderImpl<I> implements Provider<I> {
         this.qualifier = qualifier;
         ProxyFactory proxyFactory = new ProxyFactory();
         if (type.isInterface()) {
-            proxyFactory.setInterfaces(new Class<?>[] { type });
+            proxyFactory.setInterfaces(new Class<?>[]{type});
         } else {
             proxyFactory.setSuperclass(type);
         }
         proxyFactory.setFilter(ALL_HANDLED);
         try {
-            I proxyObject = type.cast(proxyFactory.create(new Class<?>[0], new Object[0], new MethodHandler() {
-                private Object toDelegate;
-                @Override
-                public Object invoke(Object target, Method thisMethod, Method proceed, Object[] args) throws Throwable {
-                    if (providingPoint.fresh()) {
-                            if (!thisMethod.isAccessible()) {
-                                thisMethod.setAccessible(true);
-                            }
-                            return thisMethod.invoke(providingPoint.value(), args);
-                        } else {
-                            if (toDelegate == null) {
-                                toDelegate = providingPoint.value();
-                            }
-                            if (!thisMethod.isAccessible()) {
-                                thisMethod.setAccessible(true);
-                            }
-                            return thisMethod.invoke(toDelegate, args);
-                        }
-                }
-            }));
+            I proxyObject = type.cast(proxyFactory.create(new Class<?>[0], new Object[0], new ProvidingMethodHandler(providingPoint)));
             InterceptorRegistry interceptorRegistry = manager.resolve(InterceptorRegistry.class, Managed.class, manager.getRootContext());
             if (interceptorRegistry != null) {
                 this.value = interceptorRegistry.intercepted(proxyObject).getProxyObject();
             } else {
                 this.value = proxyObject;
             }
-
         } catch (Exception e) {
-            throw new IllegalStateException("The proxy for ["+type.getName()+"] can't be created", e);
+            throw new IllegalStateException("The proxy for [" + type.getName() + "] can't be created", e);
         }
     }
 
@@ -121,4 +102,30 @@ public class ProviderImpl<I> implements Provider<I> {
         return qualifier;
     }
 
+    private static class ProvidingMethodHandler implements MethodHandler, Serializable {
+
+        private final ProvidingPoint providingPoint;
+        private Object toDelegate;
+
+        public ProvidingMethodHandler(ProvidingPoint providingPoint) {
+            this.providingPoint = providingPoint;
+        }
+
+        public Object invoke(Object target, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+            if (providingPoint.fresh()) {
+                if (!thisMethod.isAccessible()) {
+                    thisMethod.setAccessible(true);
+                }
+                return thisMethod.invoke(providingPoint.value(), args);
+            } else {
+                if (toDelegate == null) {
+                    toDelegate = providingPoint.value();
+                }
+                if (!thisMethod.isAccessible()) {
+                    thisMethod.setAccessible(true);
+                }
+                return thisMethod.invoke(toDelegate, args);
+            }
+        }
+    }
 }

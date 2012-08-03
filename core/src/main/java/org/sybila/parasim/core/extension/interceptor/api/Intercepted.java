@@ -19,14 +19,15 @@
  */
 package org.sybila.parasim.core.extension.interceptor.api;
 
-import org.sybila.parasim.core.spi.Interceptor;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import org.sybila.parasim.core.spi.Interceptor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Intercepted<T extends Object> {
+public interface Intercepted<T extends Object> extends Serializable {
 
     Intercepted<T> intercept(Interceptor interceptor, Class<? extends Annotation>... annotations);
 

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core.context;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import org.sybila.parasim.core.InstanceStorage;
 import org.sybila.parasim.core.spi.InstanceCleaner;
@@ -26,7 +27,7 @@ import org.sybila.parasim.core.spi.InstanceCleaner;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Context {
+public interface Context extends Serializable {
 
     /**
      * Activates the context. If the context isn't active, it can't be used

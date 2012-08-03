@@ -39,6 +39,8 @@
                 <module>extensions/performence-api</module>
                 <module>extensions/performence-conf</module>
                 <module>extensions/performence-impl</module>
+                <module>extensions/remote-api</module>
+                <module>extensions/remote-impl</module>
                 <module>extensions/visualisation-plot-api</module>
                 <module>extensions/visualisation-plot-impl</module>
             </modules>

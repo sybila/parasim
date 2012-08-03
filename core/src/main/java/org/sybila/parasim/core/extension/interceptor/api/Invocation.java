@@ -19,12 +19,13 @@
  */
 package org.sybila.parasim.core.extension.interceptor.api;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Invocation {
+public interface Invocation extends Serializable {
 
     Object invoke(Object target, Method method, Object... args) throws Throwable;
 

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.core;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -27,7 +28,7 @@ import java.lang.reflect.Type;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Typed {
+public interface Typed extends Serializable {
 
     /**
      * @return qualifier of the object
