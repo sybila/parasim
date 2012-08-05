@@ -19,7 +19,9 @@
  */
 package org.sybila.parasim.core.extension.configuration.impl;
 
+import java.io.File;
 import java.awt.Color;
+import java.util.concurrent.TimeUnit;
 import org.sybila.parasim.core.extension.AbstractExtensionTest;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
@@ -42,6 +44,8 @@ public class TestExtensionDescriptorMapperImpl extends AbstractExtensionTest {
         private boolean bool;
         private Integer[] intNumbers;
         private Color color;
+        private TimeUnit unit;
+        private File file;
     }
 
     @BeforeMethod
@@ -52,6 +56,8 @@ public class TestExtensionDescriptorMapperImpl extends AbstractExtensionTest {
         descriptor.setProperty("bool", "true");
         descriptor.setProperty("intNumbers", new String[] {"1", "2", "3"});
         descriptor.setProperty("color", "Black");
+        descriptor.setProperty("unit", "hours");
+        descriptor.setProperty("file", "/tmp");
         configBean = new ConfigBean();
     }
 
@@ -63,6 +69,8 @@ public class TestExtensionDescriptorMapperImpl extends AbstractExtensionTest {
         assertEquals(configBean.floatNumber, (float) 20.5);
         assertEquals(configBean.intNumbers, new int[] {1, 2, 3});
         assertEquals(configBean.color, Color.BLACK);
+        assertEquals(configBean.unit, TimeUnit.HOURS);
+        assertEquals(configBean.file, new File("/tmp"));
     }
 
     @Test

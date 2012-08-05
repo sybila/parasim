@@ -20,11 +20,13 @@
 package org.sybila.parasim.core.extension.configuration.impl;
 
 import java.awt.Color;
+import java.io.File;
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
@@ -77,6 +79,8 @@ public class ExtensionDescriptorMapperImpl implements ExtensionDescriptorMapper 
             } catch (MalformedURLException ex) {
                 throw new IllegalArgumentException("Unable to convert value [" + value + "] to URL.");
             }
+        } else if (File.class.equals(type)) {
+            return type.cast(new File(value));
         } else if (URI.class.equals(type)) {
             try {
                 return type.cast(new URI(value));
@@ -93,6 +97,13 @@ public class ExtensionDescriptorMapperImpl implements ExtensionDescriptorMapper 
                 }
             } catch(NoSuchFieldException ignored) {
                 throw new IllegalArgumentException("There is no color [" + value + "] in predefined constants in " + Color.class.getName());
+            }
+        } else if (type.isEnum()) {
+            try {
+                Method valueOf = type.getDeclaredMethod("valueOf", String.class);
+                return type.cast(valueOf.invoke(null, value.toUpperCase()));
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Unable to convert value [" + value + "] to enum " + type.getName());
             }
         } else {
             throw new IllegalArgumentException("Unable to convert value [" + value + "] to " + type.getName() + ".");
