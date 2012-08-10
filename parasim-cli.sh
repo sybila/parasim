@@ -1,7 +1,9 @@
 #!/bin/sh
 JAVA_BIN=java
-TARGET_DIST=$(dirname $(readlink -f $0))/applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-dist.jar
-TARGET_PERF=$(dirname $(readlink -f $0))/applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-performence.jar
+SELF=`readlink -f $0`
+SELF_DIR=`dirname $SELF`
+TARGET_DIST=$SELF_DIR/applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-dist.jar
+TARGET_PERF=$SELF_DIR/applications/parasim-cli/target/parasim-cli-1.0.0-SNAPSHOT-performence.jar
 if [ -f $TARGET_DIST ]; then
 	$JAVA_BIN -jar $TARGET_DIST "$@"
 else
