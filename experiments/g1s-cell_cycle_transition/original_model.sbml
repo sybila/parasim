@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="1">
+	<model>
+		<listOfCompartments>
+			<compartment id="uVol" size="1"/>
+		</listOfCompartments>
+		<listOfSpecies>
+			<species id="pRB" compartment="uVol" initialConcentration="5"/>
+			<species id="E2F1" compartment="uVol" initialConcentration="0"/>
+		</listOfSpecies>
+		<listOfParameters>
+			<parameter id="decay_pRB" value="0.005"/>
+			<parameter id="decay_E2F1" value="0.1"/>
+			<parameter id="k1" value="1"/>
+			<parameter id="Km1" value="0.5"/>
+			<parameter id="J11" value="0.5"/>
+			<parameter id="kp" value="0"/>
+			<parameter id="k2" value="1.6"/>
+			<parameter id="a" value="0.04"/>
+			<parameter id="Km2" value="4"/>
+			<parameter id="J12" value="5"/>
+		</listOfParameters>
+		<listOfReactions>
+			<reaction id="pRB_decay" reversible="false">
+				<listOfReactants>
+					<speciesReference species="pRB"/>
+				</listOfReactants>
+				<listOfProducts/>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> pRB </ci>
+							<ci> decay_pRB </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="E2F1_decay" reversible="false">
+				<listOfReactants>
+					<speciesReference species="E2F1"/>
+				</listOfReactants>
+				<listOfProducts/>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> E2F1 </ci>
+							<ci> decay_E2F1 </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="pRB_production" reversible="false">
+				<listOfReactants/>
+				<listOfProducts>
+					<speciesReference species="pRB"/>
+				</listOfProducts>
+				<listOfModifiers>
+					<modifierSpeciesReference species="E2F1"/>
+				</listOfModifiers>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> k1 </ci>
+							<apply>
+								<divide/>
+								<ci> E2F1 </ci>
+								<apply>
+									<plus/>
+									<ci> Km1 </ci>
+									<ci> E2F1 </ci>
+								</apply>
+							</apply>
+							<apply>
+								<divide/>
+								<ci> J11 </ci>
+								<apply>
+									<plus/>
+									<ci> J11 </ci>
+									<ci> pRB </ci>
+								</apply>
+							</apply>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="E2F1_production" reversible="false">
+				<listOfReactants/>
+				<listOfProducts>
+					<speciesReference species="E2F1"/>
+				</listOfProducts>
+				<listOfModifiers>
+					<modifierSpeciesReference species="pRB"/>
+				</listOfModifiers>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<plus/>
+							<ci> kp </ci>
+							<apply>
+								<times/>
+								<ci> k2 </ci>
+								<apply>
+									<divide/>
+									<apply>
+										<plus/>
+										<apply>
+											<pow/>
+											<ci> a </ci>
+											<cn> 2 </cn>
+										</apply>
+										<apply>
+											<pow/>
+											<ci> E2F1 </ci>
+											<cn> 2 </cn>
+										</apply>
+									</apply>
+									<apply>
+										<plus/>
+										<apply>
+											<pow/>
+											<ci> Km2 </ci>
+											<cn> 2 </cn>
+										</apply>
+										<apply>
+											<pow/>
+											<ci> E2F1 </ci>
+											<cn> 2 </cn>
+										</apply>
+									</apply>
+								</apply>
+								<apply>
+									<divide/>
+									<ci> J12 </ci>
+									<apply>
+										<plus/>
+										<ci> J12 </ci>
+										<ci> E2F1 </ci>
+									</apply>
+								</apply>
+							</apply>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+		</listOfReactions>
+	</model>
+</sbml>
