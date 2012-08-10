@@ -141,7 +141,7 @@ echo >> "$BASE.$PRECISION_SUF" "</precision>"
 #INITIAL SAMPLING FILE
 cat > "$BASE.$SAMPLING_SUF" <<EOF
 $XML_HEADER
-<initial-sampling xmlns="http://www.sybilar.org/parasim/initial-sampling">
+<initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
 EOF
 for I in `seq 1 $DIMS`; do
 	echo >> "$BASE.$SAMPLING_SUF" "	<dimension sampling=\"1\"/>"
