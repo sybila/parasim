@@ -25,7 +25,6 @@
 				<listOfReactants>
 					<speciesReference species="pRB"/>
 				</listOfReactants>
-				<listOfProducts/>
 				<kineticLaw>
 					<math xmlns="http://www.w3.org/1998/Math/MathML">
 						<apply>
@@ -40,7 +39,6 @@
 				<listOfReactants>
 					<speciesReference species="E2F1"/>
 				</listOfReactants>
-				<listOfProducts/>
 				<kineticLaw>
 					<math xmlns="http://www.w3.org/1998/Math/MathML">
 						<apply>
@@ -52,12 +50,11 @@
 				</kineticLaw>
 			</reaction>
 			<reaction id="pRB_production" reversible="false">
-				<listOfReactants/>
 				<listOfProducts>
 					<speciesReference species="pRB"/>
 				</listOfProducts>
 				<listOfModifiers>
-					<modifierSpeciesReference species="E2F1"/>
+				<modifierSpeciesReference species="E2F1"/>
 				</listOfModifiers>
 				<kineticLaw>
 					<math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -87,7 +84,6 @@
 				</kineticLaw>
 			</reaction>
 			<reaction id="E2F1_production" reversible="false">
-				<listOfReactants/>
 				<listOfProducts>
 					<speciesReference species="E2F1"/>
 				</listOfProducts>
@@ -107,12 +103,12 @@
 									<apply>
 										<plus/>
 										<apply>
-											<pow/>
+											<power/>
 											<ci> a </ci>
 											<cn> 2 </cn>
 										</apply>
 										<apply>
-											<pow/>
+											<power/>
 											<ci> E2F1 </ci>
 											<cn> 2 </cn>
 										</apply>
@@ -120,12 +116,12 @@
 									<apply>
 										<plus/>
 										<apply>
-											<pow/>
+											<power/>
 											<ci> Km2 </ci>
 											<cn> 2 </cn>
 										</apply>
 										<apply>
-											<pow/>
+											<power/>
 											<ci> E2F1 </ci>
 											<cn> 2 </cn>
 										</apply>
