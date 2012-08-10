@@ -90,12 +90,14 @@ for FILE in "$BASE.$PROPERTIES_SUF" "$BASE.$PRECISION_SUF" "$BASE.$SIMULATION_SU
 	fi
 done
 
-if [ ! `$FORCE_OVERWRITE` ]; then
-	echo -n "Files $EXISTING already exist. Do you wish to overwrite (Y/n)? "
-	read AGREEMENT
-	if [ "$AGREEMENT" != "Y" ]; then
-		if [ "$AGREEMENT" != "y" ]; then
-			exit 0;
+if [ $EXISTING ]; then
+	if [ ! `$FORCE_OVERWRITE` ]; then
+		echo -n "Files $EXISTING already exist. Do you wish to overwrite (Y/n)? "
+		read AGREEMENT
+		if [ "$AGREEMENT" != "Y" ]; then
+			if [ "$AGREEMENT" != "y" ]; then
+				exit 0;
+			fi
 		fi
 	fi
 fi
