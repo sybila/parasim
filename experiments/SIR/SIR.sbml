@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="1">
+	<model>
+		<listOfCompartments>
+			<compartment id="uVol" size="1"/>
+		</listOfCompartments>
+		<listOfSpecies>
+			<species id="S" compartment="uVol" initialConcentration="95"/>
+			<species id="I" compartment="uVol" initialConcentration="5"/>
+			<species id="R" compartment="uVol" initialConcentration="0"/>
+			<species id="infectivity" compartment="uVol" initialConcentration="0.01" constant="true"/>
+			<species id="recovery_rate" compartment="uVol" initialConcentration="0.1" constant="true"/>
+		</listOfSpecies>
+		<listOfReactions>
+			<reaction id="infection" reversible="false">
+				<listOfReactants>
+					<speciesReference species="S"/>
+				</listOfReactants>
+				<listOfProducts>
+					<speciesReference species="I"/>
+				</listOfProducts>
+				<listOfModifiers>
+					<modifierSpeciesReference species="infectivity"/>
+				</listOfModifiers>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> infectivity </ci>
+							<ci> S </ci>
+							<ci> I </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="recovery" reversible="false">
+				<listOfReactants>
+					<speciesReference species="I"/>
+				</listOfReactants>
+				<listOfProducts>
+					<speciesReference species="R"/>
+				</listOfProducts>
+				<listOfModifiers>
+					<modifierSpeciesReference species="recovery_rate"/>
+				</listOfModifiers>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> I </ci>
+							<ci> recovery_rate </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+		</listOfReactions>
+	</model>
+</sbml>
