@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<space xmlns="http://www.sybila.org/parasim/space">
+	<time min="0" max="500"/>
+	<dimension min="0" max="200"/>
+	<dimension min="0" max="200"/>
+</space>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+	<globally>
+		<interval>
+			<lower type="closed">50</lower>
+			<upper type="closed">400</upper>
+		</interval>
+		<predicate>
+			<variable multiplier="1">prey</variable>
+			<lesser/>
+			<value>15</value>
+		</predicate>
+	</globally>
+</formula>

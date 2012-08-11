@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+	<predicate>
+		<variable multiplier="1">prey</variable>
+		<variable multiplier="1">predator</variable>
+		<greater/>
+		<value>50</value>
+	</predicate>
+</formula>
