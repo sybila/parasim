@@ -174,7 +174,7 @@ public class FormulaIntervalFactory implements
         if (lowerType == null) {
             throw new XMLFormatException("Lower boundary not set.");
         }
-        if (lower <= 0) {
+        if (lower < 0) {
             throw new XMLFormatException(
                     "Lower bound of an interval must be greater or equal to zero.");
         }
