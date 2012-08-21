@@ -42,7 +42,7 @@ public class OctaveSimulator implements AdaptiveStepSimulator {
 
     public SimulatedDataBlock simulate(AdaptiveStepConfiguration configuration, DataBlock<Trajectory> data) {
         OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
-        OctaveOdeSystem octaveOdeSystem = new OctaveOdeSystem(configuration.getOdeSystem().encoding());
+        OctaveOdeSystem octaveOdeSystem = new OctaveOdeSystem(configuration.getOdeSystem());
         octave.eval(octaveOdeSystem.octaveString());
         octave.eval("lsode_options(\"step limit\", " + configuration.getMaxNumberOfIterations() + ");");
         if (configuration.getPrecisionConfiguration().getMaxRelativeError() > 0) {

@@ -138,4 +138,9 @@ public final class SimpleRobustness implements Robustness {
             }
         };
     }
+
+    @Override
+    public String toString() {
+        return Float.toString(value);
+    }
 }

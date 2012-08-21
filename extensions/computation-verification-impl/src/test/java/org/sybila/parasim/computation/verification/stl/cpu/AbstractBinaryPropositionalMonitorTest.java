@@ -29,8 +29,8 @@ import static org.testng.Assert.*;
 public abstract class AbstractBinaryPropositionalMonitorTest extends AbstractMonitorTest {
 
     public void testMonitor() {
-        Monitor left = createTestMonitor(10, 1);
-        Monitor right = createTestMonitor(12, 2);
+        Monitor left = createIncreasingTestMonitor(10, 1);
+        Monitor right = createIncreasingTestMonitor(12, 2);
 
         Monitor tested = createMonitor(left, right);
         assertEquals(tested.size(), left.size());

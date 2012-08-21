@@ -96,14 +96,14 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
         System.arraycopy(pointData, 0, data, 0, pointData.length);
         // K1
         for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-            computation.k1[dim] = computation.timeStep * computation.configuration.getOdeSystem().value(data, dim);
+            computation.k1[dim] = computation.timeStep * computation.configuration.getOdeSystem().getVariable(dim).evaluate(data);
         }
         // K2
         for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
             data[dim] = data[dim] + B2 * computation.k1[dim];
         }
         for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-            computation.k2[dim] = computation.timeStep * computation.configuration.getOdeSystem().value(data, dim);
+            computation.k2[dim] = computation.timeStep * computation.configuration.getOdeSystem().getVariable(dim).evaluate(data);
         }
         System.arraycopy(pointData, 0, data, 0, pointData.length);
         // K3
@@ -111,7 +111,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
             data[dim] = data[dim] + B3 * computation.k1[dim] + C3 * computation.k2[dim];
         }
         for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-            computation.k3[dim] = computation.timeStep * computation.configuration.getOdeSystem().value(data, dim);
+            computation.k3[dim] = computation.timeStep * computation.configuration.getOdeSystem().getVariable(dim).evaluate(data);
         }
         System.arraycopy(pointData, 0, data, 0, pointData.length);
         // K4
@@ -119,7 +119,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
             data[dim] = data[dim] + B4 * computation.k1[dim] + C4 * computation.k2[dim] + D4 * computation.k3[dim];
         }
         for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-            computation.k4[dim] = computation.timeStep * computation.configuration.getOdeSystem().value(data, dim);
+            computation.k4[dim] = computation.timeStep * computation.configuration.getOdeSystem().getVariable(dim).evaluate(data);
         }
         System.arraycopy(pointData, 0, data, 0, pointData.length);
         // K5
@@ -127,7 +127,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
             data[dim] = data[dim] + B5 * computation.k1[dim] + C5 * computation.k2[dim] + D5 * computation.k3[dim] + E5 * computation.k4[dim];
         }
         for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-            computation.k5[dim] = computation.timeStep * computation.configuration.getOdeSystem().value(data, dim);
+            computation.k5[dim] = computation.timeStep * computation.configuration.getOdeSystem().getVariable(dim).evaluate(data);
         }
         System.arraycopy(pointData, 0, data, 0, pointData.length);
         // K6
@@ -135,7 +135,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
             data[dim] = data[dim] + B6 * computation.k1[dim] + C6 * computation.k2[dim] + D6 * computation.k3[dim] + E6 * computation.k4[dim] + F6 * computation.k5[dim];
         }
         for (int dim = 0; dim < computation.configuration.getDimension(); dim++) {
-            computation.k6[dim] = computation.timeStep * computation.configuration.getOdeSystem().value(data, dim);
+            computation.k6[dim] = computation.timeStep * computation.configuration.getOdeSystem().getVariable(dim).evaluate(data);
         }
     }
 
@@ -196,7 +196,7 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
 
     private Trajectory simulate(Rkf45Computation computation, Point initial) {
         Point current = initial;
-        List<Point> points = new ArrayList<Point>();
+        List<Point> points = new ArrayList<>();
         float timeStep = computation.timeStep;
         float savedTimeStep = 0;
         float  timeStepCorrection = 0;

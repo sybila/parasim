@@ -19,19 +19,41 @@
  */
 package org.sybila.parasim.model.ode;
 
+import java.util.Iterator;
+import org.sybila.parasim.model.math.Variable;
+import org.sybila.parasim.model.math.VariableRenderer;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class OctaveOdeSystem {
+public class OctaveOdeSystem implements OdeSystem {
 
-    private OdeSystemEncoding encoding;
+    private final OdeSystem odeSystem;
     private String octaveString;
 
-    public OctaveOdeSystem(OdeSystemEncoding encoding) {
-        if (encoding == null) {
-            throw new IllegalArgumentException("The parameter encoding is null.");
+    private static final VariableRenderer VARIABLE_RENDERER = new VariableRenderer() {
+
+        @Override
+        public String render(Variable variable) {
+            return "x(" + (variable.getIndex() + 1) + ")";
         }
-        this.encoding = encoding;
+    };
+
+    public OctaveOdeSystem(OdeSystem odeSystem) {
+        if (odeSystem == null) {
+            throw new IllegalArgumentException("The parameter [odeSystem] is null.");
+        }
+        this.odeSystem = odeSystem;
+    }
+
+    @Override
+    public int dimension() {
+        return odeSystem.dimension();
+    }
+
+    @Override
+    public OdeSystemVariable getVariable(int dimension) {
+        return odeSystem.getVariable(dimension);
     }
 
     public String octaveName() {
@@ -42,23 +64,18 @@ public class OctaveOdeSystem {
         if (octaveString == null) {
             StringBuilder builder = new StringBuilder();
             builder.append("function xdot = f(x, t) ");
-            builder.append("xdot = zeros(").append(encoding.countVariables()).append(", 1);");
-            for (int v = 0; v < encoding.countVariables(); v++) {
-                builder.append("xdot(").append(v + 1).append(") = ");
-                for (int c = 0; c < encoding.countCoefficients(v); c++) {
-                    if (c != 0) {
-                        builder.append(" + ");
-                    }
-                    builder.append(encoding.coefficient(v, c) >= 0 ? encoding.coefficient(v, c) : "(" + encoding.coefficient(v, c) + ")");
-                    for (int f = 0; f < encoding.countFactors(v, c); f++) {
-                        builder.append("*").append("x(").append(encoding.factor(v, c, f) + 1).append(")");
-                    }
-                }
-                builder.append("; ");
+            builder.append("xdot = zeros(").append(dimension()).append(", 1);");
+            for (OdeSystemVariable variable: odeSystem) {
+                builder.append("xdot(").append(variable.getIndex() + 1).append(") = ").append(variable.getRightSideExpression().toFormula(VARIABLE_RENDERER)).append("; ");
             }
-            builder.append("endfunction");
-            octaveString = builder.toString();
+            octaveString = builder.append("endfunction").toString();
         }
         return octaveString;
     }
+
+    @Override
+    public Iterator<OdeSystemVariable> iterator() {
+        return odeSystem.iterator();
+    }
+
 }

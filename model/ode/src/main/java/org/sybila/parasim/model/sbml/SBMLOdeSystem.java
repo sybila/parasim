@@ -21,27 +21,40 @@ package org.sybila.parasim.model.sbml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.sbml.jsbml.ASTNode.Type;
+import java.util.Set;
+import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sybila.parasim.model.ode.OdeSystemEncoding;
-import org.sybila.parasim.model.ode.AbstractOdeSystem;
-import org.sybila.parasim.model.ode.ArrayOdeSystemEncoding;
-import org.sybila.parasim.model.ode.Variable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.math.Divide;
+import org.sybila.parasim.model.math.Expression;
+import org.sybila.parasim.model.math.Minus;
+import org.sybila.parasim.model.math.Negation;
+import org.sybila.parasim.model.math.Plus;
+import org.sybila.parasim.model.math.Power;
+import org.sybila.parasim.model.math.Times;
+import org.sybila.parasim.model.math.Variable;
+import org.sybila.parasim.model.math.VariableValue;
+import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
 
 /**
  * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
  */
-public class SBMLOdeSystem extends AbstractOdeSystem {
+public class SBMLOdeSystem implements OdeSystem {
 
-    private OdeSystemEncoding encoding;
-    private Model model;
-    private List<Variable> variables;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SBMLOdeSystem.class);
+    private final Model model;
+    private List<OdeSystemVariable> odeSystemVariables = new ArrayList<>();
 
     public SBMLOdeSystem(Model model) {
         if (model == null) {
@@ -51,130 +64,131 @@ public class SBMLOdeSystem extends AbstractOdeSystem {
         setup();
     }
 
+    @Override
     public int dimension() {
-        return variables.size();
+        return odeSystemVariables.size();
     }
 
-    public Variable getVariable(int dimension) {
-        return variables.get(dimension);
+    @Override
+    public OdeSystemVariable getVariable(int dimension) {
+        return odeSystemVariables.get(dimension);
     }
 
-    public OdeSystemEncoding encoding() {
-        return encoding;
+    @Override
+    public Iterator<OdeSystemVariable> iterator() {
+        return odeSystemVariables.iterator();
+    }
+
+    private Expression createExpression(ASTNode mathml, Map<String, Variable> variables) {
+        if (mathml.isReal()) {
+            return new Constant((float) mathml.getReal());
+        }
+        if (mathml.isName()) {
+            Variable variable = variables.get(mathml.getName());
+            if (variable == null) {
+                throw new IllegalArgumentException("There is no variable called [" + mathml.getName() + "].");
+            }
+            return variable;
+        }
+        if (mathml.isOperator() || mathml.isFunction()) {
+            if (mathml.getChildCount() == 1) {
+                return createExpression(mathml.getChild(0), variables);
+            }
+            Expression[] subs = new Expression[mathml.getChildCount()];
+            for (int i=0; i<subs.length; i++) {
+                subs[i] = createExpression(mathml.getChild(i), variables);
+            }
+            switch(mathml.getType()) {
+                case TIMES:
+                    return new Times(subs);
+                case DIVIDE:
+                    return new Divide(subs);
+                case PLUS:
+                    return new Plus(subs);
+                case MINUS:
+                    return new Minus(subs);
+                case POWER:
+                    return new Power(subs[0], subs[1]);
+                case FUNCTION_POWER:
+                    return new Power(subs[0], subs[1]);
+            }
+        }
+        throw new IllegalArgumentException("Can't create an expression from [" + mathml.toFormula() + "], its type is [" + mathml.getType() + "].");
     }
 
     private void setup() {
-        // map containing all variables: name -> variable instance
-        Map<String, Variable> variablesMemory = new HashMap<String, Variable>(model.getListOfSpecies().size());
-        // map containing all parameter: name -> parameter instance
-        Map<String, Parameter> paramsMemory = new HashMap<String, Parameter>();
-        // memorize products for each reaction
-        Map<Variable, List<List<Variable>>> factors = new HashMap<Variable, List<List<Variable>>>();
-        // memorize constant coefficients for each reaction
-        Map<Variable, List<Double>> coefficients = new HashMap<Variable, List<Double>>();
-        // memorize number of coefficients at all
-        int numberOfCoefficients = 0;
-        // species ~ variables
-        variables = new ArrayList<Variable>(model.getListOfSpecies().size());
+        Map<String, Variable> variablesMemory = new HashMap<>();
+        List<VariableValue> variableValuesMemory = new ArrayList<>();
+        Map<Variable, List<Expression>> positives = new HashMap<>();
+        Map<Variable, List<Expression>> negatives = new HashMap<>();
+        List<Variable> variables = new ArrayList<>();
+        Set<String> paramNames = new HashSet<>();
         // load variables
         for (Species species : model.getListOfSpecies()) {
             Variable var = new Variable(species.getId(), variables.size());
             variablesMemory.put(species.getId(), var);
             variables.add(var);
-            factors.put(var, new ArrayList<List<Variable>>());
-            coefficients.put(var, new ArrayList<Double>());
         }
         // load paramaters
         for (Parameter p : model.getListOfParameters()) {
-            paramsMemory.put(p.getId(), p);
+            Variable var = new Variable(p.getId(), variables.size());
+            variablesMemory.put(p.getId(), var);
+            variables.add(var);
+            variableValuesMemory.add(new VariableValue(var, (float) p.getValue()));
+            paramNames.add(p.getId());
         }
         // load reaction speed
-        for (Reaction reaction : model.getListOfReactions()) {
-            double coefficient = 1;
-            List<Variable> currentProducts = new ArrayList<Variable>();
-            // if the kinetic law is real number, just take it
-            if (reaction.getKineticLaw().getMath().isReal()) {
-                coefficient = reaction.getKineticLaw().getMath().getReal();
-                // if the kinetic law is a function (only TIMES is supported), take list of products and compute coefficient
-            } else if (reaction.getKineticLaw().getMath().getType().equals(Type.TIMES)) {
-                String[] varNames = reaction.getKineticLaw().getMath().toFormula().split("\\*");
-                for (int i = 0; i < varNames.length; i++) {
-                    String varName = varNames[i].trim();
-                    if (paramsMemory.containsKey(varName)) {
-                        coefficient *= paramsMemory.get(varName).getValue();
-                    } else if (variablesMemory.containsKey(varName)) {
-                        currentProducts.add(variablesMemory.get(varName));
+        for (Reaction reaction: model.getListOfReactions()) {
+            Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory);
+            for (SpeciesReference speciesReference: reaction.getListOfReactants()) {
+                Variable variable = variablesMemory.get(speciesReference.getSpecies());
+                if (!negatives.containsKey(variable)) {
+                    negatives.put(variable, new ArrayList<Expression>());
+                }
+                negatives.get(variable).add(kineticLaw);
+            }
+            for (SpeciesReference speciesReference: reaction.getListOfProducts()) {
+                Variable variable = variablesMemory.get(speciesReference.getSpecies());
+                if (!positives.containsKey(variable)) {
+                    positives.put(variable, new ArrayList<Expression>());
+                }
+                positives.get(variable).add(kineticLaw);
+            }
+            if (reaction.isReversible()) {
+                LOGGER.warn("The reversible reactions are not fully supported.");
+            }
+        }
+        // construct right sides
+        for (Variable variable: variables) {
+            if (paramNames.contains(variable.getName())) {
+                continue;
+            }
+            List<Expression> pos = positives.get(variable);
+            List<Expression> neg = negatives.get(variable);
+            Expression rs = null;
+            if (pos != null) {
+                for (Expression e: pos) {
+                    if (rs == null) {
+                        rs = e;
                     } else {
-                        throw new IllegalArgumentException("The kinetic law can't be processed, because the uknown variable [" + varName + "].");
+                        rs = new Plus(rs, e);
                     }
                 }
-                // Not supported
-            } else {
-                throw new IllegalStateException("The kinetic law has to be a number or TIMES type.");
             }
-            // reversible reaction
-            List<Variable> currentProductsReverse = new ArrayList<Variable>();
-            if (reaction.isReversible()) {
-                currentProductsReverse.addAll(currentProducts);
-                for (int i = 0; i < reaction.getListOfProducts().size(); i++) {
-                    currentProductsReverse.add(variablesMemory.get(reaction.getListOfProducts().get(i).getSpecies()));
+            if (neg != null) {
+                for (Expression e: neg) {
+                    if (rs == null) {
+                        rs = new Negation(e);
+                    } else {
+                        rs = new Minus(rs, e);
+                    }
                 }
             }
-            for (int i = 0; i < reaction.getListOfReactants().size(); i++) {
-                currentProducts.add(variablesMemory.get(reaction.getListOfReactants().get(i).getSpecies()));
+            if (rs == null) {
+                rs = new Constant(0);
             }
-            // memorize reaction as ODE
-            for (SpeciesReference p : reaction.getListOfProducts()) {
-                Variable var = variablesMemory.get(p.getSpecies());
-                factors.get(var).add(currentProducts);
-                coefficients.get(var).add(coefficient);
-                numberOfCoefficients++;
-                if (reaction.isReversible()) {
-                    factors.get(var).add(currentProductsReverse);
-                    coefficients.get(var).add(-coefficient);
-                    numberOfCoefficients++;
-                }
-            }
-            for (SpeciesReference p : reaction.getListOfReactants()) {
-                Variable var = variablesMemory.get(p.getSpecies());
-                factors.get(var).add(currentProducts);
-                coefficients.get(var).add(-coefficient);
-                numberOfCoefficients++;
-                if (reaction.isReversible()) {
-                    factors.get(var).add(currentProductsReverse);
-                    coefficients.get(var).add(coefficient);
-                    numberOfCoefficients++;
-                }
-            }
+            odeSystemVariables.add(new OdeSystemVariable(variable, rs.substitute(variableValuesMemory)));
         }
-        // build coefficients
-        float[] coefficientsInEncoding = new float[numberOfCoefficients];
-        int[] factorIndexesInEncoding = new int[numberOfCoefficients + 1];
-        int[] coefficientIndexesInEncoding = new int[variables.size() + 1];
-        factorIndexesInEncoding[0] = 0;
-        coefficientIndexesInEncoding[0] = 0;
-        int currentCoef = 0;
-        int numberOfFactors = 0;
-        for (Variable var : variables) {
-            coefficientIndexesInEncoding[var.getIndex() + 1] += coefficientIndexesInEncoding[var.getIndex()] + coefficients.get(var).size();
-            for (int i = 0; i < coefficients.get(var).size(); i++) {
-                coefficientsInEncoding[currentCoef] = (float) (double) coefficients.get(var).get(i);
-                numberOfFactors += factors.get(var).get(i).size();
-                factorIndexesInEncoding[currentCoef + 1] = numberOfFactors;
-                currentCoef++;
-            }
-        }
-        // build factors
-        int[] factorsInEncoding = new int[numberOfFactors];
-        int currentFactor = 0;
-        for (Variable var : variables) {
-            for (List<Variable> vf : factors.get(var)) {
-                for (Variable factor : vf) {
-                    factorsInEncoding[currentFactor] = factor.getIndex();
-                    currentFactor++;
-                }
-            }
-        }
-        this.encoding = new ArrayOdeSystemEncoding(coefficientIndexesInEncoding, coefficientsInEncoding, factorIndexesInEncoding, factorsInEncoding);
     }
+
 }

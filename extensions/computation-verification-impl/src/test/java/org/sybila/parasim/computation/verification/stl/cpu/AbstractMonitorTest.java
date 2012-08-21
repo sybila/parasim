@@ -42,8 +42,24 @@ public class AbstractMonitorTest {
         };
     }
 
-    protected Monitor createTestMonitor(final int size, final float factor) {
-        final List<Robustness> robustnesses = new ArrayList<Robustness>();
+    protected Monitor createDecreasingTestMonitor(final int size, final float factor) {
+        final List<Robustness> robustnesses = new ArrayList<>();
+        for (int i=size-1; i>=0; i--) {
+            robustnesses.add(new SimpleRobustness(i == 0 ? 0 : i * factor, 9 - i));
+        }
+        return new AbstractMonitor() {
+            public Robustness getRobustness(int index) {
+                return robustnesses.get(index);
+            }
+            public int size() {
+                return size;
+            }
+
+        };
+    }
+
+    protected Monitor createIncreasingTestMonitor(final int size, final float factor) {
+        final List<Robustness> robustnesses = new ArrayList<>();
         for (int i=0; i<size; i++) {
             robustnesses.add(new SimpleRobustness(i == 0 ? 0 : i * factor, i));
         }

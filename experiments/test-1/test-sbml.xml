@@ -47,6 +47,7 @@
                             <times/>
                             <ci> k1 </ci>
                             <ci> k2 </ci>
+                            <ci> A </ci>
                         </apply>
                     </math>
                 </kineticLaw>

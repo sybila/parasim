@@ -17,17 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.configuration;
+package org.sybila.parasim.model.math;
 
 /**
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
  */
-public class VerificationConfiguration {
+public interface VariableRenderer {
 
-    private boolean filterDimensions = true;
-
-    public boolean filterDimensions() {
-        return filterDimensions;
-    }
+    String render(Variable variable);
 
 }

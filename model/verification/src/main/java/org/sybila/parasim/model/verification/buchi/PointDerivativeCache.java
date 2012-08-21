@@ -54,7 +54,7 @@ public class PointDerivativeCache implements PointDerivative {
             throw new IllegalArgumentException("The index is out of the range [0, " + (p.getDimension() - 1) + "]");
         }
         if (!computed[varIndex]) {
-            derivatives[varIndex] = ode.value(p, varIndex);
+            derivatives[varIndex] = ode.getVariable(varIndex).evaluate(p);
             computed[varIndex] = true;
         }
         return derivatives[varIndex];

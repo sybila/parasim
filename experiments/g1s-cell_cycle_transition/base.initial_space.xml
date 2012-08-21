@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <space xmlns="http://www.sybila.org/parasim/space">
-	<dimension min="5" max="5"/>
-	<dimension min="0" max="0"/>
+	<dimension min="0" max="5"/>
+	<dimension min="0" max="5"/>
 </space>

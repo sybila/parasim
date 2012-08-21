@@ -26,8 +26,7 @@
             <compartment id="uVol" size="1"/>
         </listOfCompartments>
         <listOfSpecies>
-            <species id="A" compartment="uVol" initialConcentration="16"
-                 boundaryCondition="true"/>
+            <species id="A" compartment="uVol" initialConcentration="16"/>
             <species id="B" compartment="uVol" initialConcentration="0"/>
             <species id="C" compartment="uVol" initialConcentration="14"/>
             <species id="D" compartment="uVol" initialConcentration="14"/>
@@ -45,11 +44,15 @@
                 <listOfProducts>
                     <speciesReference species="B"/>
                 </listOfProducts>
+                <listOfModifiers>
+                    <modifierSpeciesReference species="C"/>
+                </listOfModifiers>
                 <kineticLaw>
                     <math xmlns="http://www.w3.org/1998/Math/MathML">
                         <apply>
                             <times/>
                             <ci> k1 </ci>
+                            <ci> A </ci>
                             <ci> C </ci>
                         </apply>
                     </math>
@@ -68,6 +71,8 @@
                         <apply>
                             <times/>
                             <ci> k2 </ci>
+                            <ci> C </ci>
+                            <ci> D </ci>
                         </apply>
                     </math>
                 </kineticLaw>

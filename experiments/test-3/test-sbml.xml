@@ -48,6 +48,7 @@
                             <times />
                             <ci> k1 </ci>
                             <ci> k1 </ci>
+                            <ci> A </ci>
                         </apply>
                     </math>
                 </kineticLaw>
@@ -65,6 +66,7 @@
                             <times />
                             <ci> k1 </ci>
                             <ci> k2 </ci>
+                            <ci> B </ci>
                         </apply>
                     </math>
                 </kineticLaw>

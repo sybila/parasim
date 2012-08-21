@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.model.ode;
 
+import org.sybila.parasim.model.math.Variable;
+
 /**
  * {@link PointVariableMapping} which is constructed from an {@link OdeSystem}.
  *
@@ -27,7 +29,7 @@ package org.sybila.parasim.model.ode;
  */
 public class OdeVariableMapping implements PointVariableMapping {
     private int dimension;
-    private DoubleMap<Integer> mapping = new DoubleMap<Integer>();
+    private DoubleMap<Integer> mapping = new DoubleMap<>();
 
     /**
      * @param source System from which the variable names are derived.

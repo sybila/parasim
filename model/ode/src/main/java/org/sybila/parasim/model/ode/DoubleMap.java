@@ -33,8 +33,8 @@ import java.util.Map;
  *            {@link VariableMapping}).
  */
 public class DoubleMap<K> implements VariableMapping<K> {
-    private Map<K, String> keyMap = new HashMap<K, String>();
-    private Map<String, K> nameMap = new HashMap<String, K>();
+    private Map<K, String> keyMap = new HashMap<>();
+    private Map<String, K> nameMap = new HashMap<>();
 
     /**
      * Creates new empty {@link VariableMapping}.
@@ -76,7 +76,7 @@ public class DoubleMap<K> implements VariableMapping<K> {
      *         <code>false</code> otherwise (i.e. <code>key</code> or
      *         <code>name</code> is already in the mapping).
      */
-    public boolean put(K key, String name) {
+    public final boolean put(K key, String name) {
         if (containsKey(key))
             return false;
         if (containsName(name))
@@ -104,7 +104,7 @@ public class DoubleMap<K> implements VariableMapping<K> {
         return name;
     }
 
-    public void clear() {
+    public final void clear() {
         keyMap.clear();
         nameMap.clear();
     }

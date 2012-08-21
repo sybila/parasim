@@ -17,24 +17,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.ode;
+package org.sybila.parasim.model.math;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface OdeSystemEncoding {
+public final class VariableValue {
 
-    float coefficient(int variableIndex, int coefficientIndex);
+    private final Variable variable;
+    private final float value;
 
-    int countCoefficients();
+    public VariableValue(Variable variable, float value) {
+        if (variable == null) {
+            throw new IllegalArgumentException("The paramater [variable] is null.");
+        }
+        this.variable = variable;
+        this.value = value;
+    }
 
-    int countCoefficients(int variableIndex);
+    public final Variable getVariable() {
+        return variable;
+    }
 
-    int countFactors();
+    public final float getValue() {
+        return value;
+    }
 
-    int countFactors(int variableIndex, int coefficientIndex);
-
-    int countVariables();
-
-    int factor(int variableIndex, int coefficientIndex, int factorIndex);
 }

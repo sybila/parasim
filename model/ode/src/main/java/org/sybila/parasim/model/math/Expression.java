@@ -17,27 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.stl.cpu;
+package org.sybila.parasim.model.math;
 
-import org.sybila.parasim.computation.verification.cpu.Monitor;
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
+import java.util.Collection;
+import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestNotMonitor extends AbstractMonitorTest {
+public interface Expression {
 
-    @Test
-    public void testNotMonitor() {
-        Monitor monitor = createIncreasingTestMonitor(10, 1);
-        Monitor expected = createIncreasingTestMonitor(10, -1);
-        Monitor notMonitor = new NotMonitor(monitor);
-        assertEquals(notMonitor.size(), expected.size());
-        for (int i=0; i<10; i++) {
-            assertEquals(notMonitor.getRobustness(i).getValue(), expected.getRobustness(i).getValue());
-            assertEquals(notMonitor.getRobustness(i).getTime(), expected.getRobustness(i).getTime());
-        }
-    }
+    float evaluate(Point point);
+
+    float evaluate(float[] point);
+
+    Expression substitute(VariableValue... variableValues);
+
+    Expression substitute(Collection<VariableValue> variableValues);
+
+    String toFormula();
+
+    String toFormula(VariableRenderer renderer);
 
 }

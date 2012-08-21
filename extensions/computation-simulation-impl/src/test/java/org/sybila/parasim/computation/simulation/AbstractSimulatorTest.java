@@ -19,6 +19,9 @@
  */
 package org.sybila.parasim.computation.simulation;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 import org.sybila.parasim.computation.simulation.api.Status;
 import org.sybila.parasim.computation.simulation.api.Configuration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
@@ -27,9 +30,11 @@ import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import java.util.HashMap;
 import java.util.Map;
-import org.sybila.parasim.model.ode.ArrayOdeSystemEncoding;
-import org.sybila.parasim.model.ode.DefaultOdeSystem;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.math.Times;
+import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -94,26 +99,31 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
             }
             trajectories[s] = new ArrayTrajectory(data, new float[] {(float) 0}, dim);
         }
-        return new ArrayDataBlock<Trajectory>(trajectories);
+        return new ArrayDataBlock<>(trajectories);
     }
 
 
     private OdeSystem createOdeSystem(final int dim) {
-        int[] coefficientIndexes = new int[dim + 1];
-        float[] coefficients = new float[dim];
-        int[] factorIndexes = new int[dim + 1];
-        int[] factors = new int[dim];
-        for(int d = 0; d < dim; d++) {
-            coefficientIndexes[d] = d;
-            coefficients[d] = (float) dim / (float) 10;
-            factorIndexes[d] = d;
-            factors[d] = d;
+        final List<OdeSystemVariable> variables = new ArrayList<>();
+        for (int d = 0; d < dim; d++) {
+            variables.add(new OdeSystemVariable(new Variable("x"+d, d), new Times(new Constant((float) dim / (float) 10), new Variable("x"+d, d))));
         }
-        coefficientIndexes[dim] = dim;
-        factorIndexes[dim] = dim;
-        return new DefaultOdeSystem(
-            new ArrayOdeSystemEncoding(coefficientIndexes, coefficients, factorIndexes, factors)
-        );
+        return new OdeSystem() {
+            @Override
+            public int dimension() {
+                return variables.size();
+            }
+
+            @Override
+            public OdeSystemVariable getVariable(int dimension) {
+                return variables.get(dimension);
+            }
+
+            @Override
+            public Iterator<OdeSystemVariable> iterator() {
+                return variables.iterator();
+            }
+        };
     }
 
     abstract protected Conf createConfiguration();

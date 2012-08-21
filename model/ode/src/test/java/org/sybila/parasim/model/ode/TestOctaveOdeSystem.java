@@ -19,8 +19,15 @@
  */
 package org.sybila.parasim.model.ode;
 
+import java.util.Iterator;
+import java.util.List;
+import org.sybila.parasim.model.math.Variable;
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
+import java.util.ArrayList;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.math.Plus;
+import org.sybila.parasim.model.math.Times;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -30,28 +37,52 @@ import static org.testng.Assert.*;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestOctaveOdeSystem {
-    
+
     private OctaveOdeSystem system;
-    
+
     @BeforeClass
     public void prepareSystem() {
-        system = new OctaveOdeSystem(new ArrayOdeSystemEncoding(
-            new int[] {0, 2, 4},
-            new float[] {(float) 10.1, (float) -1, (float) 1, (float) -5.4},
-            new int[] {0, 1, 3, 5, 6},
-            new int[] {0, 0, 1, 0, 1, 1}            
-        ));
+        List<Variable> variables = new ArrayList<>();
+        final List<OdeSystemVariable> odeSystemVariables = new ArrayList<>();
+        for (int i=0; i<2; i++) {
+            variables.add(new Variable("y"+i, i));
+        }
+        odeSystemVariables.add(new OdeSystemVariable(variables.get(0), new Plus(
+                new Times(new Constant(10.1f), variables.get(0)),
+                new Times(new Constant(-1.0f), variables.get(0), variables.get(1))
+        )));
+        odeSystemVariables.add(new OdeSystemVariable(variables.get(1), new Plus(
+                new Times(new Constant(1.0f), variables.get(0), variables.get(1)),
+                new Times(new Constant(-5.4f), variables.get(1))
+        )));
+        system = new OctaveOdeSystem(new OdeSystem() {
+
+            @Override
+            public int dimension() {
+                return odeSystemVariables.size();
+            }
+
+            @Override
+            public OdeSystemVariable getVariable(int dimension) {
+                return odeSystemVariables.get(dimension);
+            }
+
+            @Override
+            public Iterator<OdeSystemVariable> iterator() {
+                return odeSystemVariables.iterator();
+            }
+        });
     }
-    
+
     @Test
     public void testOctaveStringSimple() {
         String octaveString = system.octaveString().trim();
         assertTrue(octaveString.startsWith("function"));
         assertTrue(octaveString.endsWith("endfunction"));
         assertTrue(octaveString.replace(" ", "").contains("xdot=f(x,t)"));
-        assertTrue(octaveString.replace(" ", "").contains("xdot=zeros(2,1);xdot(1)=10.1*x(1)+(-1.0)*x(1)*x(2);xdot(2)=1.0*x(1)*x(2)+(-5.4)*x(2);"));        
+        assertTrue(octaveString.replace(" ", "").contains("xdot=zeros(2,1);xdot(1)=((10.1)*(x(1)))+(((-1.0)*(x(1)))*(x(2)));xdot(2)=(((1.0)*(x(1)))*(x(2)))+((-5.4)*(x(2)));"));
     }
-    
+
     @Test
     public void testOctaveStringWithOctave() {
         OctaveEngine engine = null;
@@ -67,12 +98,12 @@ public class TestOctaveOdeSystem {
         }
         catch(Exception ignored) {
             throw new SkipException("The Octave is not available.");
-        }        
+        }
         finally {
             if (engine != null) {
                 engine.close();
             }
-        }        
+        }
     }
-    
+
 }

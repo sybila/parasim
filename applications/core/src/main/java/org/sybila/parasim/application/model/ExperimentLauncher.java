@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 
@@ -46,6 +47,9 @@ public class ExperimentLauncher {
         experiment.getInitialSpaceResource().load();
         experiment.getSTLFormulaResource().setVariableMapping(new OdeVariableMapping(experiment.getOdeSystem()));
         experiment.getSTLFormulaResource().load();
+        for (OdeSystemVariable variable: experiment.getOdeSystem()) {
+            LOGGER.info(variable.getName() + "' = " + variable.getRightSideExpression().toFormula());
+        }
         return container.compute(new ValidityRegionsComputation(
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfigurationResources().getRoot(),

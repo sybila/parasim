@@ -19,36 +19,30 @@
  */
 package org.sybila.parasim.model.ode;
 
+import org.sybila.parasim.model.math.Expression;
+import org.sybila.parasim.model.math.Variable;
+
 /**
- * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Variable {
+public class OdeSystemVariable extends Variable {
 
-    private int index;
+    private final Expression rightSideExpression;
 
-    private String name;
-
-    public Variable(String name, int index) {
-        if (name == null) {
-            throw new IllegalArgumentException("The parameter [name] is null.");
+    public OdeSystemVariable(String name, int index, Expression rightSideExpression) {
+        super(name, index);
+        if (rightSideExpression == null) {
+            throw new IllegalArgumentException("The parameter [rightSideExpression] is null.");
         }
-        if (index < 0) {
-            throw new IllegalArgumentException("The parameter [index] has to be a positive number.");
-        }
-        this.name = name;
-        this.index = index;
+        this.rightSideExpression = rightSideExpression;
     }
 
-    public int getIndex() {
-        return index;
+    public OdeSystemVariable(Variable variable, Expression rightSideExpression) {
+        this(variable.getName(), variable.getIndex(), rightSideExpression);
     }
 
-    public String getName() {
-        return name;
+    public final Expression getRightSideExpression() {
+        return rightSideExpression;
     }
 
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

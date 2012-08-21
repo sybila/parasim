@@ -237,4 +237,9 @@ public class LemireDeque<O> implements Deque<O> {
             deque.removeLast();
         }
     }
+
+    @Override
+    public String toString() {
+        return deque.toString();
+    }
 }

@@ -17,38 +17,50 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.ode;
+package org.sybila.parasim.model.math;
 
-import org.sybila.parasim.model.trajectory.ArrayPoint;
+import java.util.Collection;
 import org.sybila.parasim.model.trajectory.Point;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestDefaultOdeSystem {
-    
-    OdeSystem system;
-    
-    @BeforeMethod
-    public void setUp() {
-        system = new DefaultOdeSystem(
-            new ArrayOdeSystemEncoding(
-                new int[] {0, 2, 3},
-                new float[] {(float)0.1, (float) 0.2, (float) 0.3},
-                new int[] {0, 1, 3, 3},
-                new int[] {0, 1, 1}
-            )
-        );
+public final class Constant implements Expression {
+
+    private final float value;
+
+    public Constant(float value) {
+        this.value = value;
     }
-    
-    @Test
-    public void testValue() {
-        Point point = new ArrayPoint(0, 5, 10);
-        assertEquals(system.value(point, 0), (float) 20.5);
-        assertEquals(system.value(point, 1), (float) 0.3);
+
+    @Override
+    public float evaluate(Point point) {
+        return value;
     }
-    
+
+    @Override
+    public float evaluate(float[] point) {
+        return value;
+    }
+
+    @Override
+    public Expression substitute(VariableValue... constantValues) {
+        return this;
+    }
+
+    @Override
+    public Expression substitute(Collection<VariableValue> variableValues) {
+        return this;
+    }
+
+    @Override
+    public String toFormula() {
+        return Float.toString(value);
+    }
+
+    @Override
+    public String toFormula(VariableRenderer renderer) {
+        return toFormula();
+    }
+
 }
