@@ -51,6 +51,7 @@ public interface Layers {
      * Get coordinate of a point in this dimensions.
      * @return Coordinate <code>coord</code>, such that each non-zero <code>n</code> lesser than
      * the number of dimensions satisfies <code>get(n, coord.getCoordinate(n)).isIn(target.getValue(n))</code>.
+     * <code>null</code> when there is no such coordinate.
      * @see Point#getValue(int)
      * @see Coordinate#getCoordinate(int)
      */

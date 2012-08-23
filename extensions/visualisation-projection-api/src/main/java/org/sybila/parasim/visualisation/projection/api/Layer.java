@@ -1,8 +1,8 @@
 package org.sybila.parasim.visualisation.projection.api;
 
 /**
- * An interval in an number axis. Has a reference value (centre) and is
- * able to decide whether a number fits inside.
+ * An interval in an number axis. Has a reference value (centre) and is able to
+ * decide whether a number fits inside.
  *
  * An implementation of layer should satisfy the following condition:
  * <code>isIn(getValue())</code>
@@ -13,13 +13,17 @@ public interface Layer {
 
     /**
      * Decide whether a number is inside this layer.
+     *
      * @param x tested number.
-     * @return <code>true</code> when the number is in this layer, <code>false</code> otherwise.
+     * @return
+     * <code>true</code> when the number is in this layer,
+     * <code>false</code> otherwise.
      */
     public boolean isIn(float x);
 
     /**
      * Return reference value (center) of this layer.
+     *
      * @return Value on characterising this layer on the number axoi
      */
     public float getValue();
@@ -27,7 +31,16 @@ public interface Layer {
     /**
      * Compares two layers according to their reference values.
      */
-    public static class Comparator implements java.util.Comparator<Layer> {
+    public static enum Comparator implements java.util.Comparator<Layer> {
+
+        INSTANCE;
+
+        /**
+         * Get an instance of comparator.
+         */
+        public static Comparator getInstance() {
+            return INSTANCE;
+        }
 
         @Override
         public int compare(Layer t1, Layer t2) {
