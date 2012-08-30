@@ -20,22 +20,10 @@ public class ParasimRemoteServer {
         if (args.length == 0) {
             throw new IllegalArgumentException("The server has to be executed with an argument representing a target host for RMI.");
         }
-        Manager manager = null;
-        try {
-            manager = ManagerImpl.create();
-            manager.start();
-            manager.resolve(Registry.class, Default.class, manager.getRootContext()).bind(RemoteHostControl.REMOTE_MANAGER_CONTEXT, new RemoteManagerImpl(manager));
-            manager.resolve(RemoteHostActivity.class, Default.class, manager.getRootContext()).waitUntilFinished();
-        } finally {
-            if (manager != null) {
-                try {
-                    manager.shutdown();
-                } catch(Exception e) {
-                    LOGGER.warn("Can't shutdown the manager.", e);
-                }
-            }
-        }
-
+        Manager manager = ManagerImpl.create();
+        manager.start();
+        manager.resolve(Registry.class, Default.class, manager.getRootContext()).bind(RemoteHostControl.REMOTE_MANAGER_CONTEXT, new RemoteManagerImpl(manager));
+        manager.resolve(RemoteHostActivity.class, Default.class, manager.getRootContext()).waitUntilFinished();
     }
 
 }

@@ -31,7 +31,7 @@ import org.sybila.parasim.core.spi.InstanceCleaner;
 public abstract class AbstractContext implements Context {
 
     private boolean activity = false;
-    private InstanceStorage instanceStorage;
+    private final InstanceStorage instanceStorage;
     private Context parent;
 
     public AbstractContext(InstanceStorage instanceStorage) {
@@ -72,7 +72,6 @@ public abstract class AbstractContext implements Context {
 
     public void destroy() {
         instanceStorage.clear();
-        instanceStorage = null;
     }
 
     public Context getParent() {

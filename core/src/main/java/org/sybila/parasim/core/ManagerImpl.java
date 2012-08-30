@@ -278,6 +278,14 @@ public final class ManagerImpl implements Manager {
             LOGGER.debug("manager started");
         }
         running = true;
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                if (ManagerImpl.this.isRunning()) {
+                    ManagerImpl.this.shutdown();
+                }
+            }
+        });
     }
 
     private void finalizeContext(Context context, boolean remove) {

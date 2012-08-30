@@ -49,19 +49,22 @@ public class ExecutorRegistrar {
     @Inject
     private Instance<java.util.concurrent.Executor> executor;
 
+    private ThreadPoolExecutor providedRunnableExecutor;
+
     @Provide
     public java.util.concurrent.Executor provideRunnableExecutor(ExecutionConfiguration configuration) {
-        return new ThreadPoolExecutor(
+        providedRunnableExecutor = new ThreadPoolExecutor(
                 configuration.getCoreThreadPoolSize(),
                 configuration.getMaxThreadPoolSize(),
                 configuration.getKeepThreadAliveTimeInSeconds(),
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue<Runnable>(configuration.getQueueSize()));
+        return providedRunnableExecutor;
     }
 
     public void destroyRunnableExecutor(@Observes ManagerStopping event) {
-        if (executor.get() != null && executor.get() instanceof ThreadPoolExecutor) {
-            ((ThreadPoolExecutor) executor.get()).shutdown();
+        if (providedRunnableExecutor != null) {
+            providedRunnableExecutor.shutdownNow();
         }
     }
 

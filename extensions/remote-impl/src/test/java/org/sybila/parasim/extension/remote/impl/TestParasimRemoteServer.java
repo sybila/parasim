@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.util.Arrays;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.extension.remote.api.RemoteHostActivity;
 import org.sybila.parasim.extension.remote.api.RemoteHostControl;
@@ -19,30 +20,10 @@ import org.testng.annotations.Test;
  */
 public class TestParasimRemoteServer {
 
-    private static Thread mainThread;
-
     @BeforeClass
-    public static void prepare() {
-        System.setProperty("parasim.remote.timeout", "10");
-        System.setProperty("parasim.remote.time.unit", "seconds");
-        mainThread = new Thread("parasim-remote-server-thread") {
-            @Override
-            public void run() {
-                try {
-                    ParasimRemoteServer.main(new String[] {"127.0.0.1"});
-                } catch(Exception e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        };
-        mainThread.start();
-    }
-
-    @AfterClass
-    public static void clean() throws InterruptedException {
-        if (mainThread != null) {
-            mainThread.join();
-        }
+    public static void prepare() throws Exception {
+        System.setProperty("parasim.remote.timeout", "0");
+        ParasimRemoteServer.main(new String[] {"127.0.0.1"});
     }
 
     @Test

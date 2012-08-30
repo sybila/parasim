@@ -62,9 +62,7 @@ public class TestManagerImpl {
 
     @Test
     public void testLifeCycle() throws Exception {
-        Collection<Class<?>> extensions = new ArrayList<Class<?>>();
-        extensions.add(TestedObservingExtension.class);
-        Manager manager = ManagerImpl.create(extensions);
+        Manager manager = ManagerImpl.create(TestedObservingExtension.class);
         manager.start();
         manager.shutdown();
         assertNotEquals((long) 0, managerProcessing, "The manager processing time is <" + managerProcessing + ">.");
@@ -120,7 +118,7 @@ public class TestManagerImpl {
     @Test
     public void testAmbigousResolving() throws Exception {
         ManagerImpl manager = (ManagerImpl) ManagerImpl.create();
-        manager.start();;
+        manager.start();
         manager.bind(String.class, Default.class, manager.getRootContext(), "default");
         manager.bind(String.class, MyQualifier.class, manager.getRootContext(), "my-qualifier");
         try {
