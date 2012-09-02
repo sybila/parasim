@@ -28,6 +28,11 @@
             <artifactId>util</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim.model</groupId>
+            <artifactId>verification</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -34,13 +34,34 @@ public abstract class AbstractLayers implements Layers {
         return getDimensionImpl();
     }
 
+    private void checkDimension(int dimension) {
+        if (dimension < 0) {
+            throw new IllegalArgumentException("Dimension in argument is lower than zero.");
+        }
+        if (dimension >= getDimensionImpl()) {
+            throw new IllegalArgumentException("Dimension in argument exceeds Layers dimension.");
+        }
+    }
+
     @Override
     public int getSize(int dimension) {
+        checkDimension(dimension);
         return getSizeImpl(dimension);
+    }
+
+    private void checkIndex(int dimension, int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("Index in argument is lowert than zero.");
+        }
+        if (index >= getSizeImpl(dimension)) {
+            throw new IllegalArgumentException("Index in argument exceeds given dimension size.");
+        }
     }
 
     @Override
     public Layer get(int dimension, int index) {
+        checkDimension(dimension);
+        checkIndex(dimension, index);
         return getImpl(dimension, index);
     }
 
