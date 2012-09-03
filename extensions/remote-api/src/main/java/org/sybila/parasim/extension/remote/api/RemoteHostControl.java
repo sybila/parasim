@@ -1,6 +1,7 @@
 package org.sybila.parasim.extension.remote.api;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.rmi.Remote;
 import java.util.concurrent.TimeUnit;
@@ -10,15 +11,13 @@ import java.util.concurrent.TimeUnit;
  */
 public interface RemoteHostControl {
 
-    public static final String REMOTE_MANAGER_CONTEXT = "parasimRemoteManager";
-
     URI getHost();
 
     RemoteManager getManager();
 
     boolean isRunning(boolean ping);
 
-    <T extends Remote> T lookup(String name, Class<T> clazz) throws IOException;
+    <T extends Remote> T lookup(Class<T> clazz, Class<? extends Annotation> qualifier) throws IOException;
 
     void shutdown();
 

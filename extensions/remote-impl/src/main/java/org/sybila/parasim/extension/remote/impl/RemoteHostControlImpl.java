@@ -2,6 +2,7 @@ package org.sybila.parasim.extension.remote.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.extension.remote.api.RemoteHostControl;
 import org.sybila.parasim.extension.remote.api.RemoteManager;
 
@@ -69,11 +71,12 @@ public class RemoteHostControlImpl implements RemoteHostControl {
     }
 
     @Override
-    public <T extends Remote> T lookup(String name, Class<T> clazz) throws IOException {
+    public <T extends Remote> T lookup(Class<T> clazz, Class<? extends Annotation> qualifier) throws IOException {
+        String name = qualifier.getSimpleName() + "-" + clazz.getName();
         try {
             return (T) LocateRegistry.getRegistry(host.toString()).lookup(name);
         } catch(Exception e) {
-            throw new IOException("Can't lookup the service <" + clazz.getName() + "> called <" + name + ">");
+            throw new IOException("Can't lookup the service called <" + name + ">");
         }
     }
 
@@ -116,7 +119,7 @@ public class RemoteHostControlImpl implements RemoteHostControl {
 
     protected RemoteManager loadManager() {
         try {
-            return lookup(MAIN_CLASS, RemoteManager.class);
+            return lookup(RemoteManager.class, Default.class);
         } catch (IOException e) {
             LOGGER.warn("The remote manager is reachable.", e);
             return null;

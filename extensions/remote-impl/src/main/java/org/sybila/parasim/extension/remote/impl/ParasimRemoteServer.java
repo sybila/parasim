@@ -7,7 +7,7 @@ import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.extension.remote.api.RemoteHostActivity;
-import org.sybila.parasim.extension.remote.api.RemoteHostControl;
+import org.sybila.parasim.extension.remote.api.RemoteManager;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -22,7 +22,7 @@ public class ParasimRemoteServer {
         }
         Manager manager = ManagerImpl.create();
         manager.start();
-        manager.resolve(Registry.class, Default.class, manager.getRootContext()).bind(RemoteHostControl.REMOTE_MANAGER_CONTEXT, new RemoteManagerImpl(manager));
+        manager.resolve(Registry.class, Default.class, manager.getRootContext()).bind(Default.class.getSimpleName() + "-" + RemoteManager.class.getName(), new RemoteManagerImpl(manager));
         manager.resolve(RemoteHostActivity.class, Default.class, manager.getRootContext()).waitUntilFinished();
     }
 
