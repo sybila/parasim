@@ -1,65 +1,57 @@
-/**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
- * contributors by the @authors tag.
- *
- * This file is part of Parasim.
- *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package org.sybila.parasim.execution.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.ContextEvent;
+import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.computation.ComputationId;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SharedMemoryExecution<Result extends Mergeable<Result>> implements Execution {
+public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<L> {
 
-    private final Execution[] executions;
-    private volatile FutureTask<Result> task;
+    private final Collection<Execution<L>> executions;
+    private volatile FutureTask<L> task;
     private final java.util.concurrent.Executor runnableExecutor;
     private final Computation computation;
+    private final BlockingQueue<Future<L>> futures;
 
-    private SharedMemoryExecution(final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> contextEvent, final int threadIdFrom, final int threadIdTo, final int threadMaxId) {
+    public SharedMemoryExecution(final Collection<ComputationId> computationIds, final java.util.concurrent.Executor runnableExecutor, final Computation<L> computation, final Enrichment enrichment, final ContextEvent<ComputationInstanceContext> contextEvent, final Context parentContext, final BlockingQueue<Future<L>> futures) {
         Validate.notNull(runnableExecutor);
         Validate.notNull(computation);
         Validate.notNull(enrichment);
         Validate.notNull(contextEvent);
+        Validate.notNull(parentContext);
+        Validate.notNull(computationIds);
+        Validate.notNull(futures);
+
         this.runnableExecutor = runnableExecutor;
-        if (threadMaxId <= 0) {
-            throw new IllegalArgumentException("The paramater [threadMaxId] has to be a positive number.");
-        }
-        executions = new Execution[threadIdTo - threadIdFrom + 1];
         this.computation = computation;
-        for (int threadId=threadIdFrom; threadId<=threadIdTo; threadId++) {
-            executions[threadId-threadIdFrom] = SequentialExecution.of(runnableExecutor, computation.cloneComputation(), enrichment, contextEvent, threadId, threadMaxId);
+        this.futures = futures;
+
+        executions = new ArrayList<>(computationIds.size());
+
+        for (ComputationId computationId: computationIds) {
+            executions.add(new SequentialExecution<>(computationId, runnableExecutor, computation.cloneComputation(), enrichment, contextEvent, parentContext));
         }
     }
 
-    public static <R extends Mergeable<R>> Execution<R> of(final java.util.concurrent.Executor runnableExecutor, final Computation<R> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> contextEvent, final int threadIdFrom, final int threadIdTo, final int threadMaxId) {
-        return new SharedMemoryExecution<R>(runnableExecutor, computation, enrichment, contextEvent, threadIdFrom, threadIdTo, threadMaxId);
+    public static <Result extends Mergeable<Result>> Execution<Result> of(final Collection<ComputationId> computationIds, final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationInstanceContext> contextEvent, final Context parentContext, final BlockingQueue<Future<Result>> futures) {
+        return new SharedMemoryExecution<>(computationIds, runnableExecutor, computation, enrichment, contextEvent, parentContext, futures);
     }
 
+    @Override
     public void abort() {
         if (task != null) {
             task.cancel(true);
@@ -69,17 +61,18 @@ public class SharedMemoryExecution<Result extends Mergeable<Result>> implements 
         }
     }
 
-    public Future execute() {
-        task = new FutureTask<Result>(new Callable<Result>() {
-            public Result call() throws Exception {
+    @Override
+    public Future<L> execute() {
+        task = new FutureTask<>(new Callable<L>() {
+            @Override
+            public L call() throws Exception {
                 try {
-                    Future[] futures = new Future[executions.length];
-                    for (int i=0; i<executions.length; i++) {
-                        futures[i] = executions[i].execute();
+                    for (Execution execution: executions) {
+                        while (!futures.offer(execution.execute()));
                     }
-                    Result result = (Result) futures[0].get();
-                    for (int i=1; i<executions.length; i++) {
-                        result = result.merge((Result) futures[i].get());
+                    L result = futures.poll().get();
+                    while (!futures.isEmpty()) {
+                        result = result.merge(futures.poll().get());
                     }
                     return result;
                 } finally {
@@ -91,6 +84,7 @@ public class SharedMemoryExecution<Result extends Mergeable<Result>> implements 
         return task;
     }
 
+    @Override
     public boolean isRunning() {
         if (task == null) {
             return false;

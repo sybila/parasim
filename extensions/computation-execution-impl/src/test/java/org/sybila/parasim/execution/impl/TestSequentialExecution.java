@@ -25,9 +25,10 @@ import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.AbstractExecutionTest;
-import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.computation.ComputationId;
 import org.testng.annotations.Test;
 
 /**
@@ -47,21 +48,33 @@ public class TestSequentialExecution extends AbstractExecutionTest {
 
     protected Execution<MergeableString> createSequentialExecution(Computation computation) {
         return SequentialExecution.of(
-            getManager().resolve(java.util.concurrent.Executor.class, Default.class, getManager().getRootContext()),
-            computation,
-            getManager().resolve(Enrichment.class, Default.class, getManager().getRootContext()),
-            new ContextEvent<ComputationContext>() {
-                public void initialize(ComputationContext context) {
-                    context.setParent(getManager().getRootContext());
-                    getManager().initializeContext(context);
-                }
-                public void finalize(ComputationContext context) {
-                    getManager().finalizeContext(context);
-                }
-            },
-            0,
-            0
-        );
+                new ComputationId() {
+                    @Override
+                    public int currentId() {
+                        return 0;
+                    }
+
+                    @Override
+                    public int maxId() {
+                        return 0;
+                    }
+                },
+                getManager().resolve(java.util.concurrent.Executor.class, Default.class, getManager().getRootContext()),
+                computation,
+                getManager().resolve(Enrichment.class, Default.class, getManager().getRootContext()),
+                new ContextEvent<ComputationInstanceContext>() {
+                    @Override
+                    public void initialize(ComputationInstanceContext context) {
+                        context.setParent(getManager().getRootContext());
+                        getManager().initializeContext(context);
+                    }
+
+                    @Override
+                    public void finalize(ComputationInstanceContext context) {
+                        getManager().finalizeContext(context);
+                    }
+                },
+                getManager().getRootContext());
     }
 
 }

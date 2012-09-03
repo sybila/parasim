@@ -19,7 +19,6 @@
  */
 package org.sybila.parasim.computation.simulation;
 
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
 import org.sybila.parasim.core.context.Context;
 import java.lang.annotation.Annotation;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
@@ -29,6 +28,7 @@ import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.context.AbstractContext;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -63,7 +63,7 @@ public class TestLoadableExtension {
     public void testConfigurationLoaded() {
         Context context = new AbstractContext() {
             public Class<? extends Annotation> getScope() {
-                return ComputationScope.class;
+                return ComputationInstanceScope.class;
             }
         };
         manager.initializeContext(context);

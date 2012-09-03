@@ -19,16 +19,22 @@
  */
 package org.sybila.parasim.execution.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
 import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.AbstractExecutionTest;
-import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.computation.ComputationId;
 import org.testng.annotations.Test;
 
 /**
@@ -49,22 +55,39 @@ public class TestSharedMemoryExecution extends AbstractExecutionTest {
     }
 
     protected <R extends Mergeable<R>> Execution<R> createSharedMemoryExecution(Computation<R> computation) {
+        Collection<ComputationId> ids = new ArrayList<>();
+        for (int i=0; i<MAX_THREADS; i++) {
+            final int currentId = i;
+            ids.add(new ComputationId() {
+                @Override
+                public int currentId() {
+                    return currentId;
+                }
+                @Override
+                public int maxId() {
+                    return MAX_THREADS - 1;
+                }
+            });
+        }
+        BlockingQueue<Future<R>> futures = new LinkedBlockingQueue<>();
         return SharedMemoryExecution.of(
+            ids,
             getManager().resolve(java.util.concurrent.Executor.class, Default.class, getManager().getRootContext()),
             computation,
             getManager().resolve(Enrichment.class, Default.class, getManager().getRootContext()),
-            new ContextEvent<ComputationContext>() {
-                public void initialize(ComputationContext context) {
+            new ContextEvent<ComputationInstanceContext>() {
+                @Override
+                public void initialize(ComputationInstanceContext context) {
                     context.setParent(getManager().getRootContext());
                     getManager().initializeContext(context);
                 }
-                public void finalize(ComputationContext context) {
+                @Override
+                public void finalize(ComputationInstanceContext context) {
                     getManager().finalizeContext(context);
                 }
             },
-            0,
-            MAX_THREADS - 1,
-            MAX_THREADS - 1
+            getManager().getRootContext(),
+            futures
         );
     }
 

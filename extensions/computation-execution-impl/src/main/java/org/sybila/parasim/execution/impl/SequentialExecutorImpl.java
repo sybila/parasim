@@ -19,26 +19,54 @@
  */
 package org.sybila.parasim.execution.impl;
 
-import java.util.concurrent.Executor;
+import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.ContextEvent;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.SequentialExecutor;
-import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.model.Mergeable;
+import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.computation.ComputationId;
+import org.sybila.parasim.model.computation.annotations.Before;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class SequentialExecutorImpl extends AbstractExecutor implements SequentialExecutor {
 
-    public SequentialExecutorImpl(ContextEvent<ComputationContext> contextEvent, Enrichment enrichment, Executor runnableExecutor, ExecutionConfiguration configuration) {
-        super(contextEvent, enrichment, runnableExecutor, configuration);
+    private final java.util.concurrent.Executor runnableExecutor;
+
+    public SequentialExecutorImpl(ContextEvent<ComputationContext> computationContextEvent, ContextEvent<ComputationInstanceContext> computationInstanceContextEvent, Enrichment enrichment, ExecutionConfiguration configuration, java.util.concurrent.Executor runnableExecutor) {
+        super(computationContextEvent, computationInstanceContextEvent, enrichment, configuration);
+        Validate.notNull(runnableExecutor);
+        this.runnableExecutor = runnableExecutor;
     }
 
+    @Override
     public <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation) {
-        return SequentialExecution.of(getRunnableExecutor(), computation, getEnrichment(), getContextEvent(), 0, 0);
+        ComputationContext context = new ComputationContext();
+        getComputationContextEvent().initialize(context);
+        executeMethodsByAnnotation(getEnrichment(), context, computation, Before.class);
+        return new SequentialExecution<>(
+                new ComputationId() {
+                    @Override
+                    public int currentId() {
+                        return 0;
+                    }
+
+                    @Override
+                    public int maxId() {
+                        return 0;
+                    }
+                },
+                runnableExecutor,
+                computation,
+                getEnrichment(),
+                getComputationInstanceContextEvent(),
+                context
+        );
     }
 }

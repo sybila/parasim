@@ -32,12 +32,13 @@ import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.event.ManagerStopping;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.execution.api.SequentialExecutor;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
+import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.execution.impl.SequentialExecutorImpl;
 import org.sybila.parasim.execution.impl.SharedMemoryExecutorImpl;
-import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -45,7 +46,9 @@ import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 public class ExecutorRegistrar {
 
     @Inject
-    private ContextEvent<ComputationContext> contextEvent;
+    private ContextEvent<ComputationContext> computationContextEvent;
+    @Inject
+    private ContextEvent<ComputationInstanceContext> computationInstanceContextEvent;
     @Inject
     private Instance<java.util.concurrent.Executor> executor;
 
@@ -70,12 +73,12 @@ public class ExecutorRegistrar {
 
     @Provide
     public SequentialExecutor provideSequentialExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration) {
-        return new SequentialExecutorImpl(contextEvent, enrichment, runnableExecutor, configuration);
+        return new SequentialExecutorImpl(computationContextEvent, computationInstanceContextEvent, enrichment, configuration, runnableExecutor);
     }
 
     @Provide
     public SharedMemoryExecutor provideSharedMemoryExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration) {
-        return new SharedMemoryExecutorImpl(contextEvent, enrichment, runnableExecutor, configuration);
+        return new SharedMemoryExecutorImpl(computationContextEvent, computationInstanceContextEvent, enrichment, configuration, runnableExecutor);
     }
 
     @Provide

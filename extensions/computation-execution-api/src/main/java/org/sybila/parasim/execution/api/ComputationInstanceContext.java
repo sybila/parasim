@@ -17,29 +17,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.density.distancecheck;
+package org.sybila.parasim.execution.api;
 
-import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
-import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
-import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
-import org.sybila.parasim.computation.density.spawn.cpu.OneAndSurroundingsTrajectorySpawner;
-import org.sybila.parasim.core.annotations.Provide;
+import java.lang.annotation.Annotation;
+import org.sybila.parasim.core.InstanceStorage;
+import org.sybila.parasim.core.context.AbstractContext;
 import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@ComputationInstanceScope
-public class ComputationDensityRegistrar {
+public class ComputationInstanceContext extends AbstractContext {
 
-    @Provide
-    public TrajectorySpawner provideSpawner() {
-        return new OneAndSurroundingsTrajectorySpawner();
+    public ComputationInstanceContext() {
+        super();
     }
 
-    @Provide
-    public DistanceChecker provideDistanceChecker() {
-        return new OnePairDistanceChecker();
+    public ComputationInstanceContext(InstanceStorage instanceStorage) {
+        super(instanceStorage);
     }
 
+    public Class<? extends Annotation> getScope() {
+        return ComputationInstanceScope.class;
+    }
 }

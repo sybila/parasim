@@ -20,7 +20,7 @@
 package org.sybila.parasim.execution;
 
 import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.computation.ThreadId;
+import org.sybila.parasim.model.computation.ComputationId;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -105,7 +105,7 @@ public class AbstractExecutionTest {
         private String message;
         private long delay;
         @Inject
-        private ThreadId threadId;
+        private ComputationId threadId;
         public TestStringComputation(String message, long delay) {
             this.message = message;
             this.delay = delay;
@@ -126,7 +126,7 @@ public class AbstractExecutionTest {
     protected static class TestIntegerComputation extends AbstractComputation<MergeableInteger> {
         private long delay;
         @Inject
-        private ThreadId threadId;
+        private ComputationId threadId;
         public TestIntegerComputation(long delay) {
             this.delay = delay;
         }

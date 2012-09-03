@@ -26,14 +26,14 @@ import org.sybila.parasim.computation.simulation.api.ImmutableConfiguration;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace;
 import org.sybila.parasim.core.annotations.Provide;
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
+import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@ComputationScope
+@ComputationInstanceScope
 public class ConfigurationRegistrar {
 
     @Provide

@@ -19,34 +19,52 @@
  */
 package org.sybila.parasim.execution.impl;
 
-import java.util.concurrent.Executor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.ContextEvent;
+import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.execution.api.ComputationEmitter;
+import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.computation.ComputationId;
+import org.sybila.parasim.model.computation.annotations.Before;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class SharedMemoryExecutorImpl extends AbstractExecutor implements SharedMemoryExecutor {
 
-    public SharedMemoryExecutorImpl(ContextEvent<ComputationContext> contextEvent, Enrichment enrichment, Executor runnableExecutor, ExecutionConfiguration configuration) {
-        super(contextEvent, enrichment, runnableExecutor, configuration);
+    private final java.util.concurrent.Executor runnableExecutor;
+
+    public SharedMemoryExecutorImpl(ContextEvent<ComputationContext> computationContextEvent, ContextEvent<ComputationInstanceContext> computationInstanceContextEvent, Enrichment enrichment, ExecutionConfiguration configuration, java.util.concurrent.Executor runnableExecutor) {
+        super(computationContextEvent, computationInstanceContextEvent, enrichment, configuration);
+        Validate.notNull(runnableExecutor);
+        this.runnableExecutor = runnableExecutor;
     }
 
     public <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation) {
-        return SharedMemoryExecution.of(
-            getRunnableExecutor(),
-            computation,
-            getEnrichment(),
-            getContextEvent(),
-            0,
-            getConfiguration().getNumberOfThreadsInSharedMemory() - 1,
-            getConfiguration().getNumberOfThreadsInSharedMemory() - 1
-        );
+        Collection<ComputationId> ids = new ArrayList<>(getConfiguration().getNumberOfThreadsInSharedMemory());
+        AtomicInteger maxId = new AtomicInteger(getConfiguration().getNumberOfThreadsInSharedMemory()-1);
+        for (int i=0; i<getConfiguration().getNumberOfThreadsInSharedMemory(); i++) {
+            ids.add(new SharedMemoryComputationId(i, maxId));
+        }
+        ComputationContext context = new ComputationContext();
+        getComputationContextEvent().initialize(context);
+        BlockingQueue<Future<L>> futures = new ArrayBlockingQueue<>(getConfiguration().getQueueSize());
+        context.getStorage().add(ComputationEmitter.class, Default.class, new SharedMemoryComputationEmitter<>(runnableExecutor, getEnrichment(), getComputationInstanceContextEvent(), context, maxId, futures));
+        executeMethodsByAnnotation(getEnrichment(), context, computation, Before.class);
+        return new SharedMemoryExecution<>(ids,runnableExecutor,computation,getEnrichment(),getComputationInstanceContextEvent(), context, futures);
     }
+
 }

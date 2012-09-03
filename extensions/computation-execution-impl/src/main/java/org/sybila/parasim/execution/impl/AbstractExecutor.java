@@ -19,43 +19,67 @@
  */
 package org.sybila.parasim.execution.impl;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.ContextEvent;
+import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Executor;
+import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 
 /**
- *
- * @author jpapouse
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public abstract class AbstractExecutor implements Executor {
 
-    private final ContextEvent<ComputationContext> contextEvent;
+    private final ContextEvent<ComputationContext> computationContextEvent;
+    private final ContextEvent<ComputationInstanceContext> computationInstanceContextEvent;
     private final Enrichment enrichment;
-    private final java.util.concurrent.Executor runnableExecutor;
     private final ExecutionConfiguration configuration;
 
-    public AbstractExecutor(final ContextEvent<ComputationContext> contextEvent, final Enrichment enrichment, final java.util.concurrent.Executor runnableExecutor, final ExecutionConfiguration configuration) {
-        this.contextEvent = contextEvent;
+    public AbstractExecutor(final ContextEvent<ComputationContext> computationContextEvent, final ContextEvent<ComputationInstanceContext> computationInstanceContextEvent, final Enrichment enrichment, final ExecutionConfiguration configuration) {
+        Validate.notNull(computationContextEvent);
+        Validate.notNull(computationInstanceContextEvent);
+        Validate.notNull(enrichment);
+        Validate.notNull(configuration);
+        this.computationContextEvent = computationContextEvent;
+        this.computationInstanceContextEvent = computationInstanceContextEvent;
         this.enrichment = enrichment;
-        this.runnableExecutor = runnableExecutor;
         this.configuration = configuration;
     }
 
-    protected ExecutionConfiguration getConfiguration() {
+    protected final ContextEvent<ComputationContext> getComputationContextEvent() {
+        return computationContextEvent;
+    }
+
+    protected final ContextEvent<ComputationInstanceContext> getComputationInstanceContextEvent() {
+        return computationInstanceContextEvent;
+    }
+
+    protected final Enrichment getEnrichment() {
+        return enrichment;
+    }
+
+    protected final ExecutionConfiguration getConfiguration() {
         return configuration;
     }
 
-    protected ContextEvent<ComputationContext> getContextEvent() {
-        return contextEvent;
+    protected void executeMethodsByAnnotation(final Enrichment enrichment, final Context context, final Object target, final Class<? extends Annotation> annotation) {
+        for (Method method : target.getClass().getDeclaredMethods()) {
+            if (method.getAnnotation(annotation) != null) {
+                if (!method.isAccessible()) {
+                    method.setAccessible(true);
+                }
+                try {
+                    method.invoke(target, enrichment.resolve(method, context));
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Can't invoke " + target.getClass() + "#" + method.getName() + "()");
+                }
+            }
+        }
     }
 
-    protected java.util.concurrent.Executor getRunnableExecutor() {
-        return runnableExecutor;
-    }
-
-    protected Enrichment getEnrichment() {
-        return enrichment;
-    }
 }

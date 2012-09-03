@@ -19,13 +19,13 @@
  */
 package org.sybila.parasim.execution.impl;
 
-import java.util.concurrent.TimeoutException;
-import org.sybila.parasim.execution.api.SequentialExecutor;
-import org.sybila.parasim.model.computation.Computation;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.execution.AbstractExecutionTest;
 import org.sybila.parasim.execution.api.Execution;
+import org.sybila.parasim.execution.api.SequentialExecutor;
+import org.sybila.parasim.model.computation.Computation;
 import org.testng.annotations.Test;
 
 /**

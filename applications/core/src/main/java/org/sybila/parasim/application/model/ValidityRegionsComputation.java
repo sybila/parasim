@@ -44,7 +44,7 @@ import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
 import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.computation.ThreadId;
+import org.sybila.parasim.model.computation.ComputationId;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.LinkedTrajectory;
@@ -87,7 +87,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     private DistanceChecker distanceChecker;
 
     @Inject
-    private ThreadId threadId;
+    private ComputationId threadId;
 
     private int iterationLimit;
 
