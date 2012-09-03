@@ -35,6 +35,7 @@ import org.sybila.parasim.execution.api.ComputationEmitter;
 import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
+import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.computation.ComputationId;
@@ -54,9 +55,10 @@ public class SharedMemoryExecutorImpl extends AbstractExecutor implements Shared
     }
 
     public <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation) {
-        Collection<ComputationId> ids = new ArrayList<>(getConfiguration().getNumberOfThreadsInSharedMemory());
-        AtomicInteger maxId = new AtomicInteger(getConfiguration().getNumberOfThreadsInSharedMemory()-1);
-        for (int i=0; i<getConfiguration().getNumberOfThreadsInSharedMemory(); i++) {
+        int numberOfInstances = computation.getClass().getAnnotation(NumberOfInstances.class) == null ? getConfiguration().getNumberOfThreadsInSharedMemory() : computation.getClass().getAnnotation(NumberOfInstances.class).value();
+        Collection<ComputationId> ids = new ArrayList<>(numberOfInstances);
+        AtomicInteger maxId = new AtomicInteger(numberOfInstances-1);
+        for (int i=0; i<numberOfInstances; i++) {
             ids.add(new SharedMemoryComputationId(i, maxId));
         }
         ComputationContext context = new ComputationContext();

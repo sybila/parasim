@@ -48,6 +48,10 @@ public class TestSharedMemoryExecutorImpl extends AbstractExecutionTest {
         super.testExecute(createSharedMemoryExecution(new TestIntegerComputation(0)), createExpectedResult());
     }
 
+    @Test void testExecute2() throws InterruptedException, ExecutionException, TimeoutException {
+        super.testExecute(createSharedMemoryExecution(new TestIntegerCompuationLimitedInstances(0)), new MergeableInteger(0));
+    }
+
     @Test
     public void testAbort() throws InterruptedException, ExecutionException, TimeoutException {
         super.testAbort(createSharedMemoryExecution(new TestIntegerComputation(100000)));

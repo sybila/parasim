@@ -37,6 +37,7 @@ import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.MergeableBox;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -124,12 +125,13 @@ public class AbstractExecutionTest {
     }
 
     protected static class TestIntegerComputation extends AbstractComputation<MergeableInteger> {
-        private long delay;
+        private final long delay;
         @Inject
         private ComputationId threadId;
         public TestIntegerComputation(long delay) {
             this.delay = delay;
         }
+        @Override
         public MergeableInteger call() {
             try {
                 Thread.sleep(delay);
@@ -138,8 +140,36 @@ public class AbstractExecutionTest {
             }
             return new MergeableInteger(threadId.currentId());
         }
+        @Override
         public Computation<MergeableInteger> cloneComputation() {
             return new TestIntegerComputation(delay);
         }
+    }
+
+    @NumberOfInstances(1)
+    protected static class TestIntegerCompuationLimitedInstances extends AbstractComputation<MergeableInteger> {
+        private final long delay;
+        @Inject
+        private ComputationId threadId;
+
+        public TestIntegerCompuationLimitedInstances(long delay) {
+            this.delay = delay;
+        }
+
+        @Override
+        public MergeableInteger call() {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TestSequentialExecution.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return new MergeableInteger(threadId.currentId());
+        }
+
+        @Override
+        public Computation<MergeableInteger> cloneComputation() {
+            return new TestIntegerCompuationLimitedInstances(delay);
+        }
+
     }
 }
