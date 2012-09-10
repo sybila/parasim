@@ -1,10 +1,28 @@
+/**
+ * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * contributors by the @authors tag.
+ *
+ * This file is part of Parasim.
+ *
+ * Parasim is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sybila.parasim.extension.remote.impl;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URI;
-import java.rmi.RMISecurityManager;
 import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.util.Enumeration;
@@ -57,7 +75,7 @@ public class RemoteHostControlImpl implements RemoteHostControl {
     @Override
     public RemoteManager getManager() {
         if (remoteManager == null) {
-            remoteManager = loadManager();
+            remoteManager = loadManager(false);
         }
         return remoteManager;
     }
@@ -96,12 +114,6 @@ public class RemoteHostControlImpl implements RemoteHostControl {
         if (isRunning(true)) {
             throw new IllegalStateException("The remote host control is already running.");
         }
-        if (System.getSecurityManager() == null) {
-            if (System.getProperty("java.security.policy") == null) {
-                System.setProperty("java.security.policy", SECURITY_POLICY_PATH);
-            }
-            System.setSecurityManager(new RMISecurityManager());
-        }
         RemoteProcessBuilder builder;
         if (username == null) {
             builder = new RemoteProcessBuilder(host);
@@ -116,21 +128,33 @@ public class RemoteHostControlImpl implements RemoteHostControl {
                 builder = builder.command("-D" + propertyName + "=" + System.getProperty(propertyName));
             }
         }
-        builder.command(MAIN_CLASS).command(host.toString()).spawn();
+        process = builder.command(MAIN_CLASS).command(host.toString()).spawn();
+        long toTimeout = System.currentTimeMillis() + unit.toMillis(time);
+        while (!isRunning(true)) {
+            if (System.currentTimeMillis() > toTimeout) {
+                throw new IOException("Can't start remote host control for " + host);
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignored) {
+            }
+        }
         running = true;
     }
 
-    protected RemoteManager loadManager() {
+    protected RemoteManager loadManager(boolean ignoredFailure) {
         try {
             return lookup(RemoteManager.class, Default.class);
         } catch (IOException e) {
-            LOGGER.warn("The remote manager is reachable.", e);
+            if (!ignoredFailure) {
+                LOGGER.warn("The remote manager is unreachable.", e);
+            }
             return null;
         }
     }
 
     protected boolean ping() {
-        return loadManager() != null;
+        return loadManager(true) != null;
     }
 
 }

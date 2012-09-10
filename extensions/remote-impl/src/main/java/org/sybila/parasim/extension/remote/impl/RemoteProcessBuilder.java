@@ -1,6 +1,27 @@
+/**
+ * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * contributors by the @authors tag.
+ *
+ * This file is part of Parasim.
+ *
+ * Parasim is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sybila.parasim.extension.remote.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +35,7 @@ public final class RemoteProcessBuilder {
 
     private final List<String> command = new ArrayList<>();
     private final URI host;
+    private final String username;
 
     public RemoteProcessBuilder(URI host) {
         this(host, null);
@@ -29,6 +51,7 @@ public final class RemoteProcessBuilder {
         }
         this.command.add(host.toString());
         this.host = host;
+        this.username = username;
     }
 
     public RemoteProcessBuilder command(String... command) {
@@ -51,7 +74,53 @@ public final class RemoteProcessBuilder {
             @Override
             public void run() {
                 try {
-                    processHolder.process = new ProcessBuilder(command).start();
+                    final Process nativeProcess = new ProcessBuilder(command).start();
+                    // FIXME: Linux dependent
+                    processHolder.process = new Process() {
+
+                        @Override
+                        public OutputStream getOutputStream() {
+                            return nativeProcess.getOutputStream();
+                        }
+
+                        @Override
+                        public InputStream getInputStream() {
+                            return nativeProcess.getInputStream();
+                        }
+
+                        @Override
+                        public InputStream getErrorStream() {
+                            return nativeProcess.getErrorStream();
+                        }
+
+                        @Override
+                        public int waitFor() throws InterruptedException {
+                            return nativeProcess.waitFor();
+                        }
+
+                        @Override
+                        public int exitValue() {
+                            return nativeProcess.exitValue();
+                        }
+
+                        @Override
+                        public void destroy() {
+                            List<String> kill = new ArrayList<>();
+                            kill.add("ssh");
+                            kill.add("-t");
+                            if (username != null) {
+                                kill.add("-l");
+                                kill.add(username);
+                            }
+                            kill.add(host.toString());
+                            kill.add("ps -aux | grep \""+commandToString(command).replace(commandToString(kill) + " ", "") +"\" | awk '{print \"kill \"$2}' | bash");
+                            try {
+                                new ProcessBuilder(kill).start();
+                            } catch (IOException ignored) {
+                            }
+                            nativeProcess.destroy();
+                        }
+                    };
                 } catch(IOException e) {
                     processHolder.exception = e;
                     throw new IllegalArgumentException(e);
@@ -80,6 +149,10 @@ public final class RemoteProcessBuilder {
         copy.command.clear();
         copy.command.addAll(this.command);
         return copy;
+    }
+
+    private static String commandToString(List<String> command) {
+        return command.toString().replace("[", "").replace("]", "").replace(", ", " ");
     }
 
     private static class ProcessHolder {
