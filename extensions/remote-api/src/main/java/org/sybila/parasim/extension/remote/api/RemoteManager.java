@@ -26,4 +26,6 @@ public interface RemoteManager extends Remote, Serializable {
      */
     <T extends Serializable> T resolve(Class<T> type, Class<? extends Annotation> qualifier) throws RemoteException;
 
+    void forceLoad(Class<? extends Remote> type, Class<? extends Annotation> qualifier) throws RemoteException;
+
 }

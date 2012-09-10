@@ -72,6 +72,9 @@ public class RemoteHostControlImpl implements RemoteHostControl {
 
     @Override
     public <T extends Remote> T lookup(Class<T> clazz, Class<? extends Annotation> qualifier) throws IOException {
+        if (!clazz.equals(RemoteManager.class)) {
+            getManager().forceLoad(clazz, qualifier);
+        }
         String name = qualifier.getSimpleName() + "-" + clazz.getName();
         try {
             return (T) LocateRegistry.getRegistry(host.toString()).lookup(name);
