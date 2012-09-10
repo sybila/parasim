@@ -46,13 +46,13 @@ public final class Plus extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(VariableValue... variableValues) {
-        return new Plus(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(SubstitutionValue... substitutionValues) {
+        return new Plus(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<VariableValue> variableValues) {
-        return new Plus(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+        return new Plus(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override

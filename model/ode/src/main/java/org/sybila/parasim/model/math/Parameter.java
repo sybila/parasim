@@ -24,15 +24,15 @@ import java.util.Objects;
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
- * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Variable implements Expression {
+public final class Parameter implements Expression {
 
-    private final String name;
     private final int index;
-    private final VariableValue value;
+    private final String name;
+    private final SubstitutionValue<Parameter> substitution;
 
-    public Variable(String name, int index) {
+    public Parameter(String name, int index) {
         if (name == null) {
             throw new IllegalArgumentException("The paramater [name] is null.");
         }
@@ -41,62 +41,64 @@ public class Variable implements Expression {
         }
         this.name = name;
         this.index = index;
-        this.value = null;
+        this.substitution = null;
     }
 
-    private Variable(String name, int index, VariableValue value) {
+    private Parameter(String name, int index, SubstitutionValue<Parameter> substitution) {
         if (name == null) {
             throw new IllegalArgumentException("The paramater [name] is null.");
         }
         if (index < 0) {
             throw new IllegalArgumentException("The paramater [index] has to be a non negative number.");
         }
-        if (value == null) {
-            throw new IllegalArgumentException("The paramater [value] is null.");
+        if (substitution == null) {
+            throw new IllegalArgumentException("The paramater [substitution] is null.");
         }
         this.name = name;
         this.index = index;
-        this.value = value;
+        this.substitution = substitution;
     }
 
-    public final String getName() {
-        return name;
+    @Override
+    public float evaluate(Point point) {
+        if (substitution == null) {
+            throw new IllegalStateException("Can't evaliuate the parameter, because it hasn't been substituted.");
+        }
+        return substitution.getValue();
     }
 
-    public final int getIndex() {
+    @Override
+    public float evaluate(float[] point) {
+        if (substitution == null) {
+            throw new IllegalStateException("Can't evaliuate the parameter, because it hasn't been substituted.");
+        }
+        return substitution.getValue();
+    }
+
+    public int getIndex() {
         return index;
     }
 
     @Override
-    public final float evaluate(Point point) {
-        return value == null ? point.getValue(index) : value.getValue();
-    }
-
-    @Override
-    public final float evaluate(float[] point) {
-        return value == null ? point[index] : value.getValue();
-    }
-
-    @Override
-    public final Expression substitute(SubstitutionValue... substitutionValues) {
+    public Expression substitute(SubstitutionValue... substitutionValues) {
         int indexBefore = 0;
         for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof VariableValue)) {
-                if (v instanceof ParameterValue && ((ParameterValue) v).getExpression().getIndex() < index) {
+            if (!(v instanceof ParameterValue)) {
+                if (v instanceof VariableValue && ((VariableValue) v).getExpression().getIndex() < index) {
                     indexBefore++;
                 }
                 continue;
             }
-            VariableValue varValue = (VariableValue) v;
-            if (varValue.getExpression().equals(this)) {
-                return new Variable(name, index, varValue);
+            ParameterValue paramValue = (ParameterValue) v;
+            if (paramValue.getExpression().equals(this)) {
+                return new Parameter(name, index, paramValue);
             }
-            if (varValue.getExpression().getIndex() < index) {
+            if (paramValue.getExpression().getIndex() < index) {
                 indexBefore++;
             }
         }
         if (indexBefore != 0) {
-            return new Variable(name, index - indexBefore);
+            return new Parameter(name, index - indexBefore);
         } else {
             return this;
         }
@@ -106,41 +108,41 @@ public class Variable implements Expression {
     public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
         int indexBefore = 0;
         for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof VariableValue)) {
-                if (v instanceof ParameterValue && ((ParameterValue) v).getExpression().getIndex() < index) {
+            if (!(v instanceof ParameterValue)) {
+                if (v instanceof VariableValue && ((VariableValue) v).getExpression().getIndex() < index) {
                     indexBefore++;
                 }
                 continue;
             }
-            VariableValue varValue = (VariableValue) v;
-            if (varValue.getExpression().equals(this)) {
-                return new Variable(name, index, varValue);
+            ParameterValue paramValue = (ParameterValue) v;
+            if (paramValue.getExpression().equals(this)) {
+                return new Parameter(name, index, paramValue);
             }
-            if (varValue.getExpression().getIndex() < index) {
+            if (paramValue.getExpression().getIndex() < index) {
                 indexBefore++;
             }
         }
         if (indexBefore != 0) {
-            return new Variable(name, index - indexBefore);
+            return new Parameter(name, index - indexBefore);
         } else {
             return this;
         }
     }
 
     @Override
-    public final String toFormula() {
-        return value == null ? name : Float.toString(value.getValue());
+    public String toFormula() {
+        return substitution == null ? name : Float.toString(substitution.getValue());
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        return value == null ? renderer.render(this) : Float.toString(value.getValue());
+        return substitution == null ? name : Float.toString(substitution.getValue());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.name);
+        hash = 23 * hash + Objects.hashCode(this.name);
         return hash;
     }
 
@@ -152,7 +154,7 @@ public class Variable implements Expression {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Variable other = (Variable) obj;
+        final Parameter other = (Parameter) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }

@@ -20,15 +20,13 @@
 package org.sybila.parasim.model.sbml;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
@@ -39,11 +37,13 @@ import org.sybila.parasim.model.math.Divide;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Minus;
 import org.sybila.parasim.model.math.Negation;
+import org.sybila.parasim.model.math.Parameter;
+import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Plus;
 import org.sybila.parasim.model.math.Power;
+import org.sybila.parasim.model.math.SubstitutionValue;
 import org.sybila.parasim.model.math.Times;
 import org.sybila.parasim.model.math.Variable;
-import org.sybila.parasim.model.math.VariableValue;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 
@@ -53,15 +53,20 @@ import org.sybila.parasim.model.ode.OdeSystemVariable;
 public class SBMLOdeSystem implements OdeSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SBMLOdeSystem.class);
-    private final Model model;
     private List<OdeSystemVariable> odeSystemVariables = new ArrayList<>();
 
     public SBMLOdeSystem(Model model) {
         if (model == null) {
             throw new IllegalArgumentException("The parameter [model] is null.");
         }
-        this.model = model;
-        setup();
+        this.odeSystemVariables = setup(model);
+    }
+
+    private SBMLOdeSystem(List<OdeSystemVariable> odeSystemVariables) {
+        if (odeSystemVariables == null) {
+            throw new IllegalArgumentException("The parameter [odeSystemVariables] is null.");
+        }
+        this.odeSystemVariables = odeSystemVariables;
     }
 
     @Override
@@ -79,24 +84,28 @@ public class SBMLOdeSystem implements OdeSystem {
         return odeSystemVariables.iterator();
     }
 
-    private Expression createExpression(ASTNode mathml, Map<String, Variable> variables) {
+    private Expression createExpression(ASTNode mathml, Map<String, Variable> variables, Map<String, Parameter> parameters) {
         if (mathml.isReal()) {
             return new Constant((float) mathml.getReal());
         }
         if (mathml.isName()) {
             Variable variable = variables.get(mathml.getName());
             if (variable == null) {
-                throw new IllegalArgumentException("There is no variable called [" + mathml.getName() + "].");
+                Parameter parameter = parameters.get(mathml.getName());
+                if (parameter == null) {
+                    throw new IllegalArgumentException("There is no variable or parameter called [" + mathml.getName() + "].");
+                }
+                return parameter;
             }
             return variable;
         }
         if (mathml.isOperator() || mathml.isFunction()) {
             if (mathml.getChildCount() == 1) {
-                return createExpression(mathml.getChild(0), variables);
+                return createExpression(mathml.getChild(0), variables, parameters);
             }
             Expression[] subs = new Expression[mathml.getChildCount()];
             for (int i=0; i<subs.length; i++) {
-                subs[i] = createExpression(mathml.getChild(i), variables);
+                subs[i] = createExpression(mathml.getChild(i), variables, parameters);
             }
             switch(mathml.getType()) {
                 case TIMES:
@@ -116,13 +125,13 @@ public class SBMLOdeSystem implements OdeSystem {
         throw new IllegalArgumentException("Can't create an expression from [" + mathml.toFormula() + "], its type is [" + mathml.getType() + "].");
     }
 
-    private void setup() {
+    private List<OdeSystemVariable> setup(Model model) {
         Map<String, Variable> variablesMemory = new HashMap<>();
-        List<VariableValue> variableValuesMemory = new ArrayList<>();
+        Map<String, Parameter> parametersMemory = new HashMap<>();
+        List<SubstitutionValue> substitutionValues = new ArrayList<>();
         Map<Variable, List<Expression>> positives = new HashMap<>();
         Map<Variable, List<Expression>> negatives = new HashMap<>();
         List<Variable> variables = new ArrayList<>();
-        Set<String> paramNames = new HashSet<>();
         // load variables
         for (Species species : model.getListOfSpecies()) {
             Variable var = new Variable(species.getId(), variables.size());
@@ -130,16 +139,14 @@ public class SBMLOdeSystem implements OdeSystem {
             variables.add(var);
         }
         // load paramaters
-        for (Parameter p : model.getListOfParameters()) {
-            Variable var = new Variable(p.getId(), variables.size());
-            variablesMemory.put(p.getId(), var);
-            variables.add(var);
-            variableValuesMemory.add(new VariableValue(var, (float) p.getValue()));
-            paramNames.add(p.getId());
+        for (org.sbml.jsbml.Parameter p : model.getListOfParameters()) {
+            Parameter param = new Parameter(p.getId(), variables.size() + parametersMemory.size());
+            parametersMemory.put(p.getId(), param);
+            substitutionValues.add(new ParameterValue(param, (float) p.getValue()));
         }
         // load reaction speed
         for (Reaction reaction: model.getListOfReactions()) {
-            Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory);
+            Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory, parametersMemory);
             for (SpeciesReference speciesReference: reaction.getListOfReactants()) {
                 Variable variable = variablesMemory.get(speciesReference.getSpecies());
                 if (!negatives.containsKey(variable)) {
@@ -158,11 +165,9 @@ public class SBMLOdeSystem implements OdeSystem {
                 LOGGER.warn("The reversible reactions are not fully supported.");
             }
         }
+        List<OdeSystemVariable> result = new ArrayList<>();
         // construct right sides
         for (Variable variable: variables) {
-            if (paramNames.contains(variable.getName())) {
-                continue;
-            }
             List<Expression> pos = positives.get(variable);
             List<Expression> neg = negatives.get(variable);
             Expression rs = null;
@@ -187,8 +192,29 @@ public class SBMLOdeSystem implements OdeSystem {
             if (rs == null) {
                 rs = new Constant(0);
             }
-            odeSystemVariables.add(new OdeSystemVariable(variable, rs.substitute(variableValuesMemory)));
+            result.add(new OdeSystemVariable(variable, rs.substitute(substitutionValues)));
         }
+        return result;
+    }
+
+    @Override
+    public OdeSystem substitute(ParameterValue... parameterValues) {
+        List<OdeSystemVariable> newOdeSystemVariables = new ArrayList<>();
+        for (OdeSystemVariable var: newOdeSystemVariables) {
+            newOdeSystemVariables.add(new OdeSystemVariable(var.getName(), var.getIndex(), var.getRightSideExpression().substitute(parameterValues)));
+        }
+        return new SBMLOdeSystem(newOdeSystemVariables);
+    }
+
+    @Override
+    public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
+        List<OdeSystemVariable> newOdeSystemVariables = new ArrayList<>();
+        Collection<SubstitutionValue> substitution = new ArrayList<>();
+        substitution.addAll(parameterValues);
+        for (OdeSystemVariable var: newOdeSystemVariables) {
+            newOdeSystemVariables.add(new OdeSystemVariable(var.getName(), var.getIndex(), var.getRightSideExpression().substitute(substitution)));
+        }
+        return new SBMLOdeSystem(newOdeSystemVariables);
     }
 
 }

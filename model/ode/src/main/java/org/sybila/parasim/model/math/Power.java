@@ -47,13 +47,13 @@ public class Power extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(VariableValue... variableValues) {
-        return new Power(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(SubstitutionValue... substitutionValues) {
+        return new Power(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<VariableValue> variableValues) {
-        return new Power(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+        return new Power(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override

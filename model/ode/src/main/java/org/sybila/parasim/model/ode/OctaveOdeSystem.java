@@ -19,7 +19,9 @@
  */
 package org.sybila.parasim.model.ode;
 
+import java.util.Collection;
 import java.util.Iterator;
+import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.math.VariableRenderer;
 
@@ -76,6 +78,16 @@ public class OctaveOdeSystem implements OdeSystem {
     @Override
     public Iterator<OdeSystemVariable> iterator() {
         return odeSystem.iterator();
+    }
+
+    @Override
+    public OdeSystem substitute(ParameterValue... parameterValues) {
+        return new OctaveOdeSystem(odeSystem.substitute(parameterValues));
+    }
+
+    @Override
+    public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
+        return new OctaveOdeSystem(odeSystem.substitute(parameterValues));
     }
 
 }

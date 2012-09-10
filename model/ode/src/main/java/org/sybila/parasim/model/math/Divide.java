@@ -46,13 +46,13 @@ public final class Divide extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(VariableValue... variableValues) {
-        return new Divide(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(SubstitutionValue... substitutionValues) {
+        return new Divide(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<VariableValue> variableValues) {
-        return new Divide(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+        return new Divide(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override

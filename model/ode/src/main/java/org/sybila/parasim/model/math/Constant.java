@@ -44,12 +44,12 @@ public final class Constant implements Expression {
     }
 
     @Override
-    public Expression substitute(VariableValue... constantValues) {
+    public Expression substitute(SubstitutionValue... substitutionValues) {
         return this;
     }
 
     @Override
-    public Expression substitute(Collection<VariableValue> variableValues) {
+    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
         return this;
     }
 

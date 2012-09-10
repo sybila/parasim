@@ -17,22 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.ode;
-
-import java.util.Collection;
-import org.sybila.parasim.model.math.ParameterValue;
+package org.sybila.parasim.model.math;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface OdeSystem extends Iterable<OdeSystemVariable> {
+public final class ParameterValue implements SubstitutionValue<Parameter> {
 
-    int dimension();
+    private final Parameter parameter;
+    private final float value;
 
-    OdeSystemVariable getVariable(int dimension);
+    public ParameterValue(Parameter paramater, float value) {
+        if (paramater == null) {
+            throw new IllegalArgumentException("The paramater [parameter] is null.");
+        }
+        this.parameter = paramater;
+        this.value = value;
+    }
 
-    OdeSystem substitute(ParameterValue... parameterValues);
+    @Override
+    public final Parameter getExpression() {
+        return parameter;
+    }
 
-    OdeSystem substitute(Collection<ParameterValue> parameterValues);
+    @Override
+    public final float getValue() {
+        return value;
+    }
 
 }

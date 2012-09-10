@@ -22,7 +22,7 @@ package org.sybila.parasim.model.math;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class VariableValue {
+public final class VariableValue implements SubstitutionValue<Variable> {
 
     private final Variable variable;
     private final float value;
@@ -35,10 +35,12 @@ public final class VariableValue {
         this.value = value;
     }
 
-    public final Variable getVariable() {
+    @Override
+    public final Variable getExpression() {
         return variable;
     }
 
+    @Override
     public final float getValue() {
         return value;
     }

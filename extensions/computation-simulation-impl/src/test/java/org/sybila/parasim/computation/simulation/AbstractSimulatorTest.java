@@ -22,6 +22,7 @@ package org.sybila.parasim.computation.simulation;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
 import org.sybila.parasim.computation.simulation.api.Status;
 import org.sybila.parasim.computation.simulation.api.Configuration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
@@ -31,6 +32,7 @@ import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import java.util.HashMap;
 import java.util.Map;
 import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Times;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
@@ -122,6 +124,16 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
             @Override
             public Iterator<OdeSystemVariable> iterator() {
                 return variables.iterator();
+            }
+
+            @Override
+            public OdeSystem substitute(ParameterValue... parameterValues) {
+                return this;
+            }
+
+            @Override
+            public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
+                return this;
             }
         };
     }

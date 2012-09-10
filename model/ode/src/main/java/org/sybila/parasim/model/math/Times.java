@@ -46,13 +46,13 @@ public final class Times extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(VariableValue... variableValues) {
-        return new Times(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(SubstitutionValue... substitutionValues) {
+        return new Times(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<VariableValue> variableValues) {
-        return new Times(getLeft().substitute(variableValues), getRight().substitute(variableValues));
+    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+        return new Times(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override

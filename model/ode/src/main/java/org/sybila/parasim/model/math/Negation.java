@@ -51,13 +51,13 @@ public class Negation implements Expression {
     }
 
     @Override
-    public Expression substitute(VariableValue... variableValues) {
-        return new Negation(expression.substitute(variableValues));
+    public Expression substitute(SubstitutionValue... substitutionValues) {
+        return new Negation(expression.substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<VariableValue> variableValues) {
-        return new Negation(expression.substitute(variableValues));
+    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+        return new Negation(expression.substitute(substitutionValues));
     }
 
     @Override

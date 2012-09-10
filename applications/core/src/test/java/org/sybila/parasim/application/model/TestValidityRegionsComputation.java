@@ -20,6 +20,7 @@
 package org.sybila.parasim.application.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
@@ -148,6 +150,16 @@ public class TestValidityRegionsComputation {
             @Override
             public Iterator<OdeSystemVariable> iterator() {
                 return variables.iterator();
+            }
+
+            @Override
+            public OdeSystem substitute(ParameterValue... parameterValues) {
+                return this;
+            }
+
+            @Override
+            public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
+                return this;
             }
         };
     }

@@ -31,9 +31,9 @@ public interface Expression {
 
     float evaluate(float[] point);
 
-    Expression substitute(VariableValue... variableValues);
+    Expression substitute(SubstitutionValue... substitutionValues);
 
-    Expression substitute(Collection<VariableValue> variableValues);
+    Expression substitute(Collection<SubstitutionValue> substitutionValues);
 
     String toFormula();
 
