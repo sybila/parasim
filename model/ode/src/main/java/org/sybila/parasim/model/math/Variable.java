@@ -26,11 +26,12 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
  */
-public class Variable implements Expression {
+public class Variable implements Expression<Variable>, Indexable {
 
     private final String name;
     private final int index;
-    private final VariableValue value;
+    private final int originalIndex;
+    private final VariableValue substitution;
 
     public Variable(String name, int index) {
         if (name == null) {
@@ -41,87 +42,155 @@ public class Variable implements Expression {
         }
         this.name = name;
         this.index = index;
-        this.value = null;
+        this.originalIndex = index;
+        this.substitution = null;
     }
 
-    private Variable(String name, int index, VariableValue value) {
+    private Variable(String name, int index, int originalIndex) {
         if (name == null) {
             throw new IllegalArgumentException("The paramater [name] is null.");
         }
         if (index < 0) {
             throw new IllegalArgumentException("The paramater [index] has to be a non negative number.");
         }
+        if (originalIndex < 0) {
+            throw new IllegalArgumentException("The paramater [originalIndex] has to be a non negative number.");
+        }
+        this.name = name;
+        this.index = index;
+        this.originalIndex = originalIndex;
+        this.substitution = null;
+    }
+
+    private Variable(String name, int index, int originalIndex, VariableValue value) {
+        if (name == null) {
+            throw new IllegalArgumentException("The paramater [name] is null.");
+        }
+        if (index < 0) {
+            throw new IllegalArgumentException("The paramater [index] has to be a non negative number.");
+        }
+        if (originalIndex < 0) {
+            throw new IllegalArgumentException("The paramater [originalIndex] has to be a non negative number.");
+        }
         if (value == null) {
             throw new IllegalArgumentException("The paramater [value] is null.");
         }
         this.name = name;
         this.index = index;
-        this.value = value;
+        this.originalIndex = originalIndex;
+        this.substitution = value;
     }
 
     public final String getName() {
         return name;
     }
 
+    @Override
     public final int getIndex() {
         return index;
     }
 
     @Override
     public final float evaluate(Point point) {
-        return value == null ? point.getValue(index) : value.getValue();
+        return substitution == null ? point.getValue(index) : substitution.getValue();
     }
 
     @Override
     public final float evaluate(float[] point) {
-        return value == null ? point[index] : value.getValue();
+        return substitution == null ? point[index] : substitution.getValue();
+    }
+
+    public boolean isSubstituted() {
+        return substitution != null;
     }
 
     @Override
-    public final Expression substitute(SubstitutionValue... substitutionValues) {
+    public Variable release(Expression... expressions) {
         int indexBefore = 0;
-        for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof VariableValue)) {
-                if (v instanceof ParameterValue && ((ParameterValue) v).getExpression().getIndex() < index) {
+        boolean release = false;
+        for (Expression e: expressions) {
+            if (!(e instanceof Variable)) {
+                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
                     indexBefore++;
                 }
-                continue;
             }
-            VariableValue varValue = (VariableValue) v;
-            if (varValue.getExpression().equals(this)) {
-                return new Variable(name, index, varValue);
-            }
-            if (varValue.getExpression().getIndex() < index) {
-                indexBefore++;
+            if (e.equals(this)) {
+                release = true;
             }
         }
-        if (indexBefore != 0) {
-            return new Variable(name, index - indexBefore);
+        if ((release && isSubstituted()) || indexBefore != 0) {
+            return new Variable(name, index+indexBefore, originalIndex);
         } else {
             return this;
         }
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Variable release(Collection<Expression> expressions) {
+        int indexBefore = 0;
+        boolean release = false;
+        for (Expression e: expressions) {
+            if (!(e instanceof Variable)) {
+                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
+                    indexBefore++;
+                }
+            }
+            if (e.equals(this)) {
+                release = true;
+            }
+        }
+        if ((release && isSubstituted()) || indexBefore != 0) {
+            return new Variable(name, index+indexBefore, originalIndex);
+        } else {
+            return this;
+        }
+    }
+
+    @Override
+    public Variable substitute(SubstitutionValue... substitutionValues) {
         int indexBefore = 0;
         for (SubstitutionValue v: substitutionValues) {
             if (!(v instanceof VariableValue)) {
-                if (v instanceof ParameterValue && ((ParameterValue) v).getExpression().getIndex() < index) {
+                if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
                     indexBefore++;
                 }
                 continue;
             }
             VariableValue varValue = (VariableValue) v;
             if (varValue.getExpression().equals(this)) {
-                return new Variable(name, index, varValue);
+                return new Variable(name, index, originalIndex, varValue);
             }
             if (varValue.getExpression().getIndex() < index) {
                 indexBefore++;
             }
         }
         if (indexBefore != 0) {
-            return new Variable(name, index - indexBefore);
+            return new Variable(name, index - indexBefore, originalIndex);
+        } else {
+            return this;
+        }
+    }
+
+    @Override
+    public Variable substitute(Collection<SubstitutionValue> substitutionValues) {
+        int indexBefore = 0;
+        for (SubstitutionValue v: substitutionValues) {
+            if (!(v instanceof VariableValue)) {
+                if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
+                    indexBefore++;
+                }
+                continue;
+            }
+            VariableValue varValue = (VariableValue) v;
+            if (varValue.getExpression().equals(this)) {
+                return new Variable(name, index, originalIndex, varValue);
+            }
+            if (varValue.getExpression().getIndex() < index) {
+                indexBefore++;
+            }
+        }
+        if (indexBefore != 0) {
+            return new Variable(name, index - indexBefore, originalIndex);
         } else {
             return this;
         }
@@ -129,12 +198,12 @@ public class Variable implements Expression {
 
     @Override
     public final String toFormula() {
-        return value == null ? name : Float.toString(value.getValue());
+        return substitution == null ? name : Float.toString(substitution.getValue());
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        return value == null ? renderer.render(this) : Float.toString(value.getValue());
+        return substitution == null ? renderer.render(this) : Float.toString(substitution.getValue());
     }
 
     @Override
@@ -159,4 +228,8 @@ public class Variable implements Expression {
         return true;
     }
 
+    @Override
+    public <T> T traverse(TraverseFunction<T> function) {
+        return function.apply(this);
+    }
 }

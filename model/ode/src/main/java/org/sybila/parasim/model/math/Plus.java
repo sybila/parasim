@@ -25,7 +25,7 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class Plus extends BinaryOperator {
+public final class Plus extends BinaryOperator<Plus> {
 
     public Plus(Expression left, Expression right) {
         super(left, right);
@@ -46,12 +46,22 @@ public final class Plus extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
+    public Plus release(Expression... expressions) {
+        return new Plus(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Plus release(Collection<Expression> expressions) {
+        return new Plus(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Plus substitute(SubstitutionValue... substitutionValues) {
         return new Plus(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Plus substitute(Collection<SubstitutionValue> substitutionValues) {
         return new Plus(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 

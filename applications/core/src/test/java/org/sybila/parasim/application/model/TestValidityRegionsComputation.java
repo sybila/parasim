@@ -21,6 +21,7 @@ package org.sybila.parasim.application.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,11 +33,13 @@ import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.verification.result.VerificationResult;
@@ -135,33 +138,7 @@ public class TestValidityRegionsComputation {
     private OdeSystem createOdeSystem() {
         final List<OdeSystemVariable> variables = new ArrayList<>();
         variables.add(new OdeSystemVariable(new Variable("x", 0), new Variable("x", 0)));
-        return new OdeSystem() {
-
-            @Override
-            public int dimension() {
-                return variables.size();
-            }
-
-            @Override
-            public OdeSystemVariable getVariable(int dimension) {
-                return variables.get(dimension);
-            }
-
-            @Override
-            public Iterator<OdeSystemVariable> iterator() {
-                return variables.iterator();
-            }
-
-            @Override
-            public OdeSystem substitute(ParameterValue... parameterValues) {
-                return this;
-            }
-
-            @Override
-            public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
-                return this;
-            }
-        };
+        return new SimpleOdeSystem(variables);
     }
 
     private PrecisionConfiguration createPrecisionConfiguration() {

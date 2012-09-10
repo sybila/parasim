@@ -19,48 +19,11 @@
  */
 package org.sybila.parasim.model.math;
 
-import java.util.Collection;
-import org.sybila.parasim.model.trajectory.Point;
-
 /**
  * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
  */
-public final class Value implements Expression {
+public interface Indexable {
 
-    private final float value;
-
-    public Value(float value) {
-        this.value = value;
-    }
-
-    @Override
-    public float evaluate(Point point) {
-        return value;
-    }
-
-    @Override
-    public float evaluate(float[] point) {
-        return value;
-    }
-
-    @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
-        return this;
-    }
-
-    @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
-        return this;
-    }
-
-    @Override
-    public String toFormula() {
-        return Float.toString(value);
-    }
-
-    @Override
-    public String toFormula(VariableRenderer renderer) {
-        return Float.toString(value);
-    }
+    int getIndex();
 
 }

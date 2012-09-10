@@ -25,7 +25,7 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class Times extends BinaryOperator {
+public final class Times extends BinaryOperator<Times> {
 
     public Times(Expression left, Expression right) {
         super(left, right);
@@ -46,12 +46,22 @@ public final class Times extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
+    public Times release(Expression... expressions) {
+        return new Times(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Times release(Collection<Expression> expressions) {
+        return new Times(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Times substitute(SubstitutionValue... substitutionValues) {
         return new Times(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Times substitute(Collection<SubstitutionValue> substitutionValues) {
         return new Times(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 

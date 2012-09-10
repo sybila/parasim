@@ -25,18 +25,30 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Expression {
+public interface Expression<E extends Expression> {
 
     float evaluate(Point point);
 
     float evaluate(float[] point);
 
-    Expression substitute(SubstitutionValue... substitutionValues);
+    E release(Expression... expressions);
 
-    Expression substitute(Collection<SubstitutionValue> substitutionValues);
+    E release(Collection<Expression> expressions);
+
+    E substitute(SubstitutionValue... substitutionValues);
+
+    E substitute(Collection<SubstitutionValue> substitutionValues);
+
+    <T> T traverse(TraverseFunction<T> function);
 
     String toFormula();
 
     String toFormula(VariableRenderer renderer);
+
+    public static interface TraverseFunction<T> {
+
+        T apply(Expression expression, T... subs);
+
+    }
 
 }

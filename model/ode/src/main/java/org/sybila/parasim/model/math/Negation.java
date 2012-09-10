@@ -25,7 +25,7 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Negation implements Expression {
+public class Negation implements Expression<Negation> {
 
     private final Expression expression;
 
@@ -51,12 +51,22 @@ public class Negation implements Expression {
     }
 
     @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
+    public Negation release(Expression... expressions) {
+        return new Negation(expression.release(expressions));
+    }
+
+    @Override
+    public Negation release(Collection<Expression> expressions) {
+        return new Negation(expression.release(expressions));
+    }
+
+    @Override
+    public Negation substitute(SubstitutionValue... substitutionValues) {
         return new Negation(expression.substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Negation substitute(Collection<SubstitutionValue> substitutionValues) {
         return new Negation(expression.substitute(substitutionValues));
     }
 
@@ -68,6 +78,11 @@ public class Negation implements Expression {
     @Override
     public String toFormula(VariableRenderer renderer) {
         return "-(" + expression.toFormula(renderer) + ")";
+    }
+
+    @Override
+    public <T> T traverse(TraverseFunction<T> function) {
+        return function.apply(this);
     }
 
 }

@@ -20,9 +20,7 @@
 package org.sybila.parasim.model.sbml;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.sbml.jsbml.ASTNode;
@@ -44,47 +42,21 @@ import org.sybila.parasim.model.math.Power;
 import org.sybila.parasim.model.math.SubstitutionValue;
 import org.sybila.parasim.model.math.Times;
 import org.sybila.parasim.model.math.Variable;
-import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 
 /**
  * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
  */
-public class SBMLOdeSystem implements OdeSystem {
+public class SBMLOdeSystem extends SimpleOdeSystem {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SBMLOdeSystem.class);
-    private List<OdeSystemVariable> odeSystemVariables = new ArrayList<>();
 
     public SBMLOdeSystem(Model model) {
-        if (model == null) {
-            throw new IllegalArgumentException("The parameter [model] is null.");
-        }
-        this.odeSystemVariables = setup(model);
+        super(setup(model));
     }
 
-    private SBMLOdeSystem(List<OdeSystemVariable> odeSystemVariables) {
-        if (odeSystemVariables == null) {
-            throw new IllegalArgumentException("The parameter [odeSystemVariables] is null.");
-        }
-        this.odeSystemVariables = odeSystemVariables;
-    }
-
-    @Override
-    public int dimension() {
-        return odeSystemVariables.size();
-    }
-
-    @Override
-    public OdeSystemVariable getVariable(int dimension) {
-        return odeSystemVariables.get(dimension);
-    }
-
-    @Override
-    public Iterator<OdeSystemVariable> iterator() {
-        return odeSystemVariables.iterator();
-    }
-
-    private Expression createExpression(ASTNode mathml, Map<String, Variable> variables, Map<String, Parameter> parameters) {
+    private static Expression createExpression(ASTNode mathml, Map<String, Variable> variables, Map<String, Parameter> parameters) {
         if (mathml.isReal()) {
             return new Constant((float) mathml.getReal());
         }
@@ -125,13 +97,14 @@ public class SBMLOdeSystem implements OdeSystem {
         throw new IllegalArgumentException("Can't create an expression from [" + mathml.toFormula() + "], its type is [" + mathml.getType() + "].");
     }
 
-    private List<OdeSystemVariable> setup(Model model) {
+    private static List<OdeSystemVariable> setup(Model model) {
         Map<String, Variable> variablesMemory = new HashMap<>();
         Map<String, Parameter> parametersMemory = new HashMap<>();
         List<SubstitutionValue> substitutionValues = new ArrayList<>();
         Map<Variable, List<Expression>> positives = new HashMap<>();
         Map<Variable, List<Expression>> negatives = new HashMap<>();
         List<Variable> variables = new ArrayList<>();
+        List<Parameter> parameters = new ArrayList<>();
         // load variables
         for (Species species : model.getListOfSpecies()) {
             Variable var = new Variable(species.getId(), variables.size());
@@ -143,6 +116,7 @@ public class SBMLOdeSystem implements OdeSystem {
             Parameter param = new Parameter(p.getId(), variables.size() + parametersMemory.size());
             parametersMemory.put(p.getId(), param);
             substitutionValues.add(new ParameterValue(param, (float) p.getValue()));
+            parameters.add(param);
         }
         // load reaction speed
         for (Reaction reaction: model.getListOfReactions()) {
@@ -195,26 +169,6 @@ public class SBMLOdeSystem implements OdeSystem {
             result.add(new OdeSystemVariable(variable, rs.substitute(substitutionValues)));
         }
         return result;
-    }
-
-    @Override
-    public OdeSystem substitute(ParameterValue... parameterValues) {
-        List<OdeSystemVariable> newOdeSystemVariables = new ArrayList<>();
-        for (OdeSystemVariable var: newOdeSystemVariables) {
-            newOdeSystemVariables.add(new OdeSystemVariable(var.getName(), var.getIndex(), var.getRightSideExpression().substitute(parameterValues)));
-        }
-        return new SBMLOdeSystem(newOdeSystemVariables);
-    }
-
-    @Override
-    public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
-        List<OdeSystemVariable> newOdeSystemVariables = new ArrayList<>();
-        Collection<SubstitutionValue> substitution = new ArrayList<>();
-        substitution.addAll(parameterValues);
-        for (OdeSystemVariable var: newOdeSystemVariables) {
-            newOdeSystemVariables.add(new OdeSystemVariable(var.getName(), var.getIndex(), var.getRightSideExpression().substitute(substitution)));
-        }
-        return new SBMLOdeSystem(newOdeSystemVariables);
     }
 
 }

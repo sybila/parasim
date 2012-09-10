@@ -22,7 +22,7 @@ package org.sybila.parasim.model.math;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class BinaryOperator implements Expression {
+public abstract class BinaryOperator<E extends BinaryOperator> implements Expression<E> {
 
     private final Expression left;
 
@@ -62,6 +62,11 @@ public abstract class BinaryOperator implements Expression {
 
     public final Expression getRight() {
         return right;
+    }
+
+    @Override
+    public <T> T traverse(TraverseFunction<T> function) {
+        return function.apply(this, (T) getLeft().traverse(function), (T) getRight().traverse(function));
     }
 
     abstract protected BinaryOperator create(Expression left, Expression right);

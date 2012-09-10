@@ -21,6 +21,8 @@ package org.sybila.parasim.model.ode;
 
 import java.util.Collection;
 import java.util.Iterator;
+import org.sybila.parasim.model.math.Expression;
+import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.math.VariableRenderer;
@@ -54,8 +56,33 @@ public class OctaveOdeSystem implements OdeSystem {
     }
 
     @Override
+    public Parameter getParameter(int dimension) {
+        return odeSystem.getParameter(dimension);
+    }
+
+    @Override
+    public Parameter getParameter(String name) {
+        return odeSystem.getParameter(name);
+    }
+
+    @Override
     public OdeSystemVariable getVariable(int dimension) {
         return odeSystem.getVariable(dimension);
+    }
+
+    @Override
+    public OdeSystemVariable getVariable(String name) {
+        return odeSystem.getVariable(name);
+    }
+
+    @Override
+    public boolean isParamater(int dimension) {
+        return odeSystem.isParamater(dimension);
+    }
+
+    @Override
+    public boolean isVariable(int dimension) {
+        return odeSystem.isVariable(dimension);
     }
 
     public String octaveName() {
@@ -78,6 +105,16 @@ public class OctaveOdeSystem implements OdeSystem {
     @Override
     public Iterator<OdeSystemVariable> iterator() {
         return odeSystem.iterator();
+    }
+
+    @Override
+    public OdeSystem release(Expression... expressions) {
+        return odeSystem.release(expressions);
+    }
+
+    @Override
+    public OdeSystem release(Collection<Expression> expressions) {
+        return odeSystem.release(expressions);
     }
 
     @Override

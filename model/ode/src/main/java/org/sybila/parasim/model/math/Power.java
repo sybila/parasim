@@ -25,7 +25,7 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Power extends BinaryOperator {
+public class Power extends BinaryOperator<Power> {
 
     public Power(Expression left, Expression right) {
         super(left, right);
@@ -47,12 +47,22 @@ public class Power extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
+    public Power release(Expression... expressions) {
+        return new Power(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Power release(Collection<Expression> expressions) {
+        return new Power(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Power substitute(SubstitutionValue... substitutionValues) {
         return new Power(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Power substitute(Collection<SubstitutionValue> substitutionValues) {
         return new Power(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 

@@ -27,6 +27,8 @@ import dk.ange.octave.OctaveEngineFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.math.Expression;
+import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Plus;
 import org.sybila.parasim.model.math.Times;
@@ -57,33 +59,7 @@ public class TestOctaveOdeSystem {
                 new Times(new Constant(1.0f), variables.get(0), variables.get(1)),
                 new Times(new Constant(-5.4f), variables.get(1))
         )));
-        system = new OctaveOdeSystem(new OdeSystem() {
-
-            @Override
-            public int dimension() {
-                return odeSystemVariables.size();
-            }
-
-            @Override
-            public OdeSystemVariable getVariable(int dimension) {
-                return odeSystemVariables.get(dimension);
-            }
-
-            @Override
-            public Iterator<OdeSystemVariable> iterator() {
-                return odeSystemVariables.iterator();
-            }
-
-            @Override
-            public OdeSystem substitute(ParameterValue... parameterValues) {
-                return this;
-            }
-
-            @Override
-            public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
-                return this;
-            }
-        });
+        system = new OctaveOdeSystem(new SimpleOdeSystem(odeSystemVariables));
     }
 
     @Test

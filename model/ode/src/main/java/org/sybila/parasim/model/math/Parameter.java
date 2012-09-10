@@ -26,9 +26,10 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class Parameter implements Expression {
+public final class Parameter implements Expression<Parameter>, Indexable {
 
     private final int index;
+    private final int originalIndex;
     private final String name;
     private final SubstitutionValue<Parameter> substitution;
 
@@ -41,10 +42,27 @@ public final class Parameter implements Expression {
         }
         this.name = name;
         this.index = index;
+        this.originalIndex = index;
         this.substitution = null;
     }
 
-    private Parameter(String name, int index, SubstitutionValue<Parameter> substitution) {
+    private Parameter(String name, int index, int originalIndex) {
+        if (name == null) {
+            throw new IllegalArgumentException("The paramater [name] is null.");
+        }
+        if (index < 0) {
+            throw new IllegalArgumentException("The paramater [index] has to be a non negative number.");
+        }
+        if (originalIndex < 0) {
+            throw new IllegalArgumentException("The paramater [originalIndex] has to be a non negative number.");
+        }
+        this.name = name;
+        this.index = index;
+        this.originalIndex = originalIndex;
+        this.substitution = null;
+    }
+
+    private Parameter(String name, int index, int originalIndex, SubstitutionValue<Parameter> substitution) {
         if (name == null) {
             throw new IllegalArgumentException("The paramater [name] is null.");
         }
@@ -56,6 +74,7 @@ public final class Parameter implements Expression {
         }
         this.name = name;
         this.index = index;
+        this.originalIndex = originalIndex;
         this.substitution = substitution;
     }
 
@@ -75,55 +94,106 @@ public final class Parameter implements Expression {
         return substitution.getValue();
     }
 
+    @Override
     public int getIndex() {
         return index;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isSubstituted() {
+        return substitution != null;
+    }
+
     @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
+    public Parameter release(Expression... expressions) {
         int indexBefore = 0;
-        for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof ParameterValue)) {
-                if (v instanceof VariableValue && ((VariableValue) v).getExpression().getIndex() < index) {
+        boolean release = false;
+        for (Expression e: expressions) {
+            if (!(e instanceof Parameter)) {
+                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
                     indexBefore++;
                 }
-                continue;
             }
-            ParameterValue paramValue = (ParameterValue) v;
-            if (paramValue.getExpression().equals(this)) {
-                return new Parameter(name, index, paramValue);
-            }
-            if (paramValue.getExpression().getIndex() < index) {
-                indexBefore++;
+            if (e.equals(this)) {
+                release = true;
             }
         }
-        if (indexBefore != 0) {
-            return new Parameter(name, index - indexBefore);
+        if ((release && isSubstituted()) || indexBefore != 0) {
+            return new Parameter(name, index+indexBefore, originalIndex);
         } else {
             return this;
         }
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Parameter release(Collection<Expression> expressions) {
+        int indexBefore = 0;
+        boolean release = false;
+        for (Expression e: expressions) {
+            if (!(e instanceof Parameter)) {
+                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
+                    indexBefore++;
+                }
+            }
+            if (e.equals(this)) {
+                release = true;
+            }
+        }
+        if ((release && isSubstituted()) || indexBefore != 0) {
+            return new Parameter(name, index+indexBefore, originalIndex);
+        } else {
+            return this;
+        }
+    }
+
+    @Override
+    public Parameter substitute(SubstitutionValue... substitutionValues) {
         int indexBefore = 0;
         for (SubstitutionValue v: substitutionValues) {
             if (!(v instanceof ParameterValue)) {
-                if (v instanceof VariableValue && ((VariableValue) v).getExpression().getIndex() < index) {
+                if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
                     indexBefore++;
                 }
                 continue;
             }
             ParameterValue paramValue = (ParameterValue) v;
             if (paramValue.getExpression().equals(this)) {
-                return new Parameter(name, index, paramValue);
+                return new Parameter(name, index, originalIndex, paramValue);
             }
             if (paramValue.getExpression().getIndex() < index) {
                 indexBefore++;
             }
         }
         if (indexBefore != 0) {
-            return new Parameter(name, index - indexBefore);
+            return new Parameter(name, index - indexBefore, originalIndex);
+        } else {
+            return this;
+        }
+    }
+
+    @Override
+    public Parameter substitute(Collection<SubstitutionValue> substitutionValues) {
+        int indexBefore = 0;
+        for (SubstitutionValue v: substitutionValues) {
+            if (!(v instanceof ParameterValue)) {
+                if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
+                    indexBefore++;
+                }
+                continue;
+            }
+            ParameterValue paramValue = (ParameterValue) v;
+            if (paramValue.getExpression().equals(this)) {
+                return new Parameter(name, index, originalIndex, paramValue);
+            }
+            if (paramValue.getExpression().getIndex() < index) {
+                indexBefore++;
+            }
+        }
+        if (indexBefore != 0) {
+            return new Parameter(name, index - indexBefore, originalIndex);
         } else {
             return this;
         }
@@ -161,4 +231,8 @@ public final class Parameter implements Expression {
         return true;
     }
 
+    @Override
+    public <T> T traverse(TraverseFunction<T> function) {
+        return function.apply(this);
+    }
 }

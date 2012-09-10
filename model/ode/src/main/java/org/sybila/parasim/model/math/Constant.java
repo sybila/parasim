@@ -25,7 +25,7 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class Constant implements Expression {
+public final class Constant implements Expression<Constant> {
 
     private final float value;
 
@@ -44,12 +44,22 @@ public final class Constant implements Expression {
     }
 
     @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
+    public Constant release(Collection<Expression> expressions) {
         return this;
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Constant release(Expression... expressions) {
+        return this;
+    }
+
+    @Override
+    public Constant substitute(SubstitutionValue... substitutionValues) {
+        return this;
+    }
+
+    @Override
+    public Constant substitute(Collection<SubstitutionValue> substitutionValues) {
         return this;
     }
 
@@ -61,6 +71,11 @@ public final class Constant implements Expression {
     @Override
     public String toFormula(VariableRenderer renderer) {
         return toFormula();
+    }
+
+    @Override
+    public <T> T traverse(TraverseFunction<T> function) {
+        return function.apply(this);
     }
 
 }

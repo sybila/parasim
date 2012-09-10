@@ -20,6 +20,8 @@
 package org.sybila.parasim.model.ode;
 
 import java.util.Collection;
+import org.sybila.parasim.model.math.Expression;
+import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 
 /**
@@ -29,7 +31,21 @@ public interface OdeSystem extends Iterable<OdeSystemVariable> {
 
     int dimension();
 
+    Parameter getParameter(int dimension);
+
+    Parameter getParameter(String name);
+
     OdeSystemVariable getVariable(int dimension);
+
+    OdeSystemVariable getVariable(String name);
+
+    boolean isParamater(int dimension);
+
+    boolean isVariable(int dimension);
+
+    OdeSystem release(Expression... expressions);
+
+    OdeSystem release(Collection<Expression> expressions);
 
     OdeSystem substitute(ParameterValue... parameterValues);
 

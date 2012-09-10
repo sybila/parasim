@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import org.sybila.parasim.computation.simulation.api.Status;
 import org.sybila.parasim.computation.simulation.api.Configuration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
@@ -32,11 +33,13 @@ import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import java.util.HashMap;
 import java.util.Map;
 import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Times;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -110,32 +113,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         for (int d = 0; d < dim; d++) {
             variables.add(new OdeSystemVariable(new Variable("x"+d, d), new Times(new Constant((float) dim / (float) 10), new Variable("x"+d, d))));
         }
-        return new OdeSystem() {
-            @Override
-            public int dimension() {
-                return variables.size();
-            }
-
-            @Override
-            public OdeSystemVariable getVariable(int dimension) {
-                return variables.get(dimension);
-            }
-
-            @Override
-            public Iterator<OdeSystemVariable> iterator() {
-                return variables.iterator();
-            }
-
-            @Override
-            public OdeSystem substitute(ParameterValue... parameterValues) {
-                return this;
-            }
-
-            @Override
-            public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
-                return this;
-            }
-        };
+        return new SimpleOdeSystem(variables);
     }
 
     abstract protected Conf createConfiguration();

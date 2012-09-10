@@ -25,7 +25,7 @@ import org.sybila.parasim.model.trajectory.Point;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class Divide extends BinaryOperator {
+public final class Divide extends BinaryOperator<Divide> {
 
     public Divide(Expression left, Expression right) {
         super(left, right);
@@ -46,12 +46,22 @@ public final class Divide extends BinaryOperator {
     }
 
     @Override
-    public Expression substitute(SubstitutionValue... substitutionValues) {
+    public Divide release(Expression... expressions) {
+        return new Divide(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Divide release(Collection<Expression> expressions) {
+        return new Divide(getLeft().release(expressions), getRight().release(expressions));
+    }
+
+    @Override
+    public Divide substitute(SubstitutionValue... substitutionValues) {
         return new Divide(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
     @Override
-    public Expression substitute(Collection<SubstitutionValue> substitutionValues) {
+    public Divide substitute(Collection<SubstitutionValue> substitutionValues) {
         return new Divide(getLeft().substitute(substitutionValues), getRight().substitute(substitutionValues));
     }
 
