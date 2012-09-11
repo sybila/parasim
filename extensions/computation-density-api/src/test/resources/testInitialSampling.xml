@@ -21,8 +21,8 @@
 
 -->
 <initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
-    <dimension sampling="1"/>
-    <dimension sampling="2"/>
-    <dimension sampling="3"/>
-    <dimension sampling="4"/>
+    <variable name="v" sampling="1"/>
+    <variable name="x" sampling="2"/>
+    <variable name="y" sampling="3"/>
+    <variable name="z" sampling="4"/>
 </initial-sampling>

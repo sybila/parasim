@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.density.api;
 
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -28,13 +29,17 @@ import org.w3c.dom.Element;
 public class ArrayInitialSampling implements InitialSampling {
 
     private final int[] sampling;
+    private final OdeSystem odeSystem;
 
-    public ArrayInitialSampling(int... sampling) {
+    public ArrayInitialSampling(OdeSystem odeSystem, int... sampling) {
         if (sampling == null) {
             throw new IllegalArgumentException("The parameter [sampling] is null.");
         }
         if (sampling.length == 0) {
             throw new IllegalArgumentException("The dimension of sampling has to be a positive number.");
+        }
+        if (odeSystem == null) {
+            throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
         for (int dim=0; dim<sampling.length; dim++) {
             if (sampling[dim] <= 0) {
@@ -42,21 +47,43 @@ public class ArrayInitialSampling implements InitialSampling {
             }
         }
         this.sampling = sampling;
+        this.odeSystem = odeSystem;
     }
 
+    @Override
     public int getDimension() {
         return sampling.length;
     }
 
+    @Override
     public int getNumberOfSamples(int dim) {
         return sampling[dim];
     }
 
+    @Override
+    public OdeSystem getOdeSystem() {
+        return odeSystem;
+    }
+
+    @Override
     public Element toXML(Document doc) {
         Element initialSampling = doc.createElement(InitialSamplingFactory.INITIAL_SAMPLING_NAME);
-        for (int dim=0; dim<getDimension(); dim++) {
-            Element dimension = doc.createElement(InitialSamplingFactory.DIMENSION_NAME);
-            dimension.setAttribute(InitialSamplingFactory.DIMENSION_SAMPLING_NAME, Integer.toString(sampling[dim]));
+        for (int dim=0; dim<odeSystem.dimension(); dim++) {
+            String elementName;
+            String name;
+            if (odeSystem.isVariable(dim)) {
+                elementName = InitialSamplingFactory.VARIABLE_NAME;
+                name = odeSystem.getVariable(dim).getName();
+            } else {
+                elementName = InitialSamplingFactory.PARAMETER_NAME;
+                name = odeSystem.getParameter(dim).getName();
+            }
+            if (sampling[dim] == 1) {
+                continue;
+            }
+            Element dimension = doc.createElement(elementName);
+            dimension.setAttribute(InitialSamplingFactory.ATTRIBUTE_SAMPLING, Integer.toString(sampling[dim]));
+            dimension.setAttribute(InitialSamplingFactory.ATTRIBUTE_NAME, name);
             initialSampling.appendChild(dimension);
         }
         return initialSampling;

@@ -25,6 +25,13 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import org.testng.annotations.BeforeMethod;
 import static org.testng.Assert.fail;
 import static org.testng.Assert.assertEquals;
@@ -33,12 +40,12 @@ import static org.testng.Assert.assertEquals;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestInitialSamplingStorage {
-    
+
     private InitialSampling initialSampling;
-    
+
     @BeforeMethod
     public void preparePrecisionConfiguration() {
-        initialSampling = new ArrayInitialSampling(1, 2, 3, 4);
+        initialSampling = new ArrayInitialSampling(createOdeSystem(), 1, 2, 3, 4);
     }
 
     /**
@@ -46,7 +53,7 @@ public class TestInitialSamplingStorage {
      */
     @Test
     public void tryLoad() {
-        InitialSamplingResource resource = new InitialSamplingResource(getTestFile());
+        InitialSamplingResource resource = new InitialSamplingResource(getTestFile(), createOdeSystem());
         try {
             resource.load();
         } catch (XMLException xmle) {
@@ -59,8 +66,8 @@ public class TestInitialSamplingStorage {
         for (int dim=0; dim<initialSampling.getDimension(); dim++) {
            assertEquals(resource.getRoot().getNumberOfSamples(dim), initialSampling.getNumberOfSamples(dim), "Sampling should be loaded correctly. Number of samples in dimension <"+dim+"> doesn't match.");
         }
-    }    
-    
+    }
+
     /**
      * Tests whether resource is able to store and then load a space correctly.
      */
@@ -75,9 +82,9 @@ public class TestInitialSamplingStorage {
             fail("Temporary file could not be created.");
         }
         temp.deleteOnExit();
-        
+
         //store
-        InitialSamplingResource resource = new InitialSamplingResource(temp);
+        InitialSamplingResource resource = new InitialSamplingResource(temp, createOdeSystem());
         resource.setRoot(initialSampling);
         try {
             resource.store();
@@ -87,10 +94,10 @@ public class TestInitialSamplingStorage {
             }
             fail("XML error while storing: " + xmle.getMessage());
         }
-        
+
         //reset
         resource.setRoot(null);
-        
+
         //load
         try {
             resource.load();
@@ -105,8 +112,8 @@ public class TestInitialSamplingStorage {
         for (int dim=0; dim<initialSampling.getDimension(); dim++) {
            assertEquals(resource.getRoot().getNumberOfSamples(dim), initialSampling.getNumberOfSamples(dim), "Sampling should be loaded correctly. Number of samples in dimension <"+dim+"> doesn't match.");
         }
-    }    
-    
+    }
+
     private File getTestFile() {
         URL res = getClass().getClassLoader().getResource("testInitialSampling.xml");
         try {
@@ -115,7 +122,16 @@ public class TestInitialSamplingStorage {
             urise.printStackTrace();
             fail("Could not get to test formula file.");
         }
-        return null;        
+        return null;
     }
-    
+
+    private OdeSystem createOdeSystem() {
+        Collection<OdeSystemVariable> vars = new ArrayList<>();
+        int index = 0;
+        for (String name: new String[] {"v", "x", "y", "z"}) {
+            vars.add(new OdeSystemVariable(name, index, new Constant(index)));
+            index++;
+        }
+        return new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    }
 }

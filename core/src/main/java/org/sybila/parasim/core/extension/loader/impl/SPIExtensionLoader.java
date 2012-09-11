@@ -70,7 +70,7 @@ public class SPIExtensionLoader implements ExtensionLoader {
                         services.add(classLoader.loadClass(className).asSubclass(serviceClass));
                     }
                 } catch(Exception e) {
-                    LOGGER.warn("Error while loading service.", e);
+                    LOGGER.warn("Error while loading service " + resource + ".", e);
                 } finally {
                     if (reader != null) {
                         reader.close();

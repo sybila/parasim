@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.density.api;
 
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 
 /**
@@ -29,5 +30,7 @@ public interface InitialSampling extends XMLRepresentable {
     int getDimension();
 
     int getNumberOfSamples(int dim);
+
+    OdeSystem getOdeSystem();
 
 }

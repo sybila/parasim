@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
-	<dimension sampling="1"/>
-	<dimension sampling="1"/>
-	<dimension sampling="1"/>
-	<dimension sampling="10"/>
-	<dimension sampling="10"/>
+	<variable name="S" sampling="1"/>
+	<variable name="I" sampling="1"/>
+	<variable name="R" sampling="1"/>
+	<variable name="infectivity" sampling="10"/>
+	<variable name="recovery_rate" sampling="10"/>
 </initial-sampling>

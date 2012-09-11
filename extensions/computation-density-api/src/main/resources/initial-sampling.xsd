@@ -24,15 +24,17 @@
 	targetNamespace="http://www.sybila.org/parasim/initial-sampling"
 	xmlns="http://www.sybila.org/parasim/initial-sampling"
 	elementFormDefault="qualified">
-	
+
 	<xs:complexType name="dimension_sampling">
+            <xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute name="sampling" type="xs:integer" use="required"/>
 	</xs:complexType>
 	<xs:complexType name="initial_sampling">
         <xs:sequence>
-            <xs:element name="dimension" type="dimension_sampling" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="variable" type="dimension_sampling" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="parameter" type="dimension_sampling" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
 	</xs:complexType>
-	
+
 	<xs:element name="initial-sampling" type="initial_sampling"/>
 </xs:schema>

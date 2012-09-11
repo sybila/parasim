@@ -127,8 +127,8 @@ public class OrthogonalSpaceFactory implements
         }
         OdeSystem releasedOdeSystem = odeSystem.release(parametersToRelease);
 
-        float[] minArray = new float[varMin.size() + paramMin.size()];
-        float[] maxArray = new float[varMin.size() + paramMin.size()];
+        float[] minArray = new float[releasedOdeSystem.dimension()];
+        float[] maxArray = new float[releasedOdeSystem.dimension()];
         for (int dim=0; dim<releasedOdeSystem.dimension(); dim++) {
             if (odeSystem.isVariable(dim)) {
                 Variable var = releasedOdeSystem.getVariable(dim);

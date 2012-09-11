@@ -21,6 +21,7 @@ package org.sybila.parasim.computation.density.api;
 
 import java.io.File;
 import java.net.URL;
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
 
@@ -29,13 +30,19 @@ import org.sybila.parasim.model.xml.XMLRepresentableFactory;
  */
 public class InitialSamplingResource extends FileXMLResource<InitialSampling> {
 
-    public InitialSamplingResource(File file) {
+    private final OdeSystem odeSystem;
+
+    public InitialSamplingResource(File file, OdeSystem odeSystem) {
         super(file);
+        if (odeSystem == null) {
+            throw new IllegalArgumentException("The parameter [odeSystem] is null.");
+        }
+        this.odeSystem = odeSystem;
     }
 
     @Override
     protected XMLRepresentableFactory<InitialSampling> getFactory() {
-        return new InitialSamplingFactory();
+        return new InitialSamplingFactory(odeSystem);
     }
 
     @Override

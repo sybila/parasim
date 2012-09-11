@@ -107,7 +107,7 @@ public class ExperimentImpl implements Experiment {
                     initialSpaceResource,
                     new OrthogonalSpaceResource(getFileWithAbsolutePath(experiment.getProperty("space.simulation.file"), experimentFile.getParentFile()), initialSpaceResource.getRoot().getOdeSystem()),
                     new PrecisionConfigurationResource(getFileWithAbsolutePath(experiment.getProperty("simulation.precision.file"), experimentFile.getParentFile())),
-                    new InitialSamplingResource(getFileWithAbsolutePath(experiment.getProperty("density.sampling.file"), experimentFile.getParentFile())),
+                    new InitialSamplingResource(getFileWithAbsolutePath(experiment.getProperty("density.sampling.file"), experimentFile.getParentFile()), initialSpaceResource.getRoot().getOdeSystem()),
                     new VerificationResultResource(getFileWithAbsolutePath(experiment.getProperty("result.output.file"), experimentFile.getParentFile())),
                     Long.parseLong(experiment.getProperty("timeout", DEFAULT_TIMEOUT_IN_MILLISECONDS)),
                     Integer.parseInt(experiment.getProperty("iteration.limit", DEFAULT_ITERATION_LIMIT)));

@@ -61,10 +61,12 @@ public abstract class AbstractDensityTest {
 
     protected InitialSampling createInitialSampling(final OrthogonalSpace space, final int numOfSpawn) {
         int[] toSpawn = new int[space.getDimension()];
+        Collection<OdeSystemVariable> vars = new ArrayList<>();
         for (int dim=0; dim<space.getDimension(); dim++) {
             toSpawn[dim] = numOfSpawn;
+            vars.add(new OdeSystemVariable("x" + dim, dim, new Constant(dim)));
         }
-        return new ArrayInitialSampling(toSpawn);
+        return new ArrayInitialSampling(new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST), toSpawn);
     }
 
     protected OrthogonalSpace createInitialSpace(final float base, final int dimension) {

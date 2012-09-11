@@ -23,10 +23,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.SchemaFactory;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 import org.testng.annotations.BeforeMethod;
@@ -45,7 +51,13 @@ public class TestInitialSamplingResource {
     public void initResource() throws IOException {
         File tmpFile = File.createTempFile("parasim", "resource");
         tmpFile.deleteOnExit();
-        resource = new InitialSamplingResource(tmpFile);
+        Collection<OdeSystemVariable> vars = new ArrayList<>();
+        int index = 0;
+        for (String name: new String[] {"v", "x", "y", "z"}) {
+            vars.add(new OdeSystemVariable(name, index, new Constant(index)));
+            index++;
+        }
+        resource = new InitialSamplingResource(tmpFile, new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST));
     }
 
     /**

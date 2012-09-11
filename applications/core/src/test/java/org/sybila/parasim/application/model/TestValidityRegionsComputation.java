@@ -20,10 +20,8 @@
 package org.sybila.parasim.application.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -33,8 +31,6 @@ import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.model.math.Parameter;
-import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
@@ -119,13 +115,20 @@ public class TestValidityRegionsComputation {
 
     private InitialSampling createInitialSampling() {
         return new InitialSampling() {
+            @Override
             public int getDimension() {
                 return 1;
             }
+            @Override
             public int getNumberOfSamples(int dim) {
                 return 30;
             }
+            @Override
             public Element toXML(Document doc) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+            @Override
+            public OdeSystem getOdeSystem() {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
