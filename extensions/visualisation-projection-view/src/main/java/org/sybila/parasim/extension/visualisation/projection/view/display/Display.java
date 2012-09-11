@@ -13,6 +13,8 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.EnumMap;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -99,6 +101,48 @@ public class Display extends JPanel {
 
         }
     };
+    private MouseWheelListener wheelListener = new MouseWheelListener() {
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent mwe) {
+            if (mwe.isControlDown()) {
+                // zoom //
+                Actions action = null;
+                if (mwe.isAltDown()) {
+                    // zoom horizontally //
+                    if (mwe.getWheelRotation() > 0) {
+                        action = Actions.ZOOM_OUT_HORIZONTAL;
+                    } else {
+                        action = Actions.ZOOM_IN_HORIZONTAL;
+                    }
+                } else if (mwe.isShiftDown()) {
+                    // zoom vertically //
+                    if (mwe.getWheelRotation() > 0) {
+                        action = Actions.ZOOM_OUT_VERTICAL;
+                    } else {
+                        action = Actions.ZOOM_IN_VERTICAL;
+                    }
+                } else {
+                    // zoom in both direction //
+                    if (mwe.getWheelRotation() > 0) {
+                        action = Actions.ZOOM_OUT_BOTH;
+                    } else {
+                        action = Actions.ZOOM_IN_BOTH;
+                    }
+                }
+                getAction(action).actionPerformed(new ActionEvent(viewport, action.ordinal(), action.toString()));
+            } else {
+                // only move //
+                if (mwe.isAltDown()) {
+                    // move horizontally //
+                    hScroll.setValue(hScroll.getValue() + mwe.getWheelRotation() * hScroll.getUnitIncrement());
+                } else {
+                    // move vertically //
+                    vScroll.setValue(vScroll.getValue() + mwe.getWheelRotation() * vScroll.getUnitIncrement());
+                }
+            }
+        }
+    };
 
     public Display(JComponent view, ZoomBehaviour zoomBehaviour) {
         this.zoomBehaviour = zoomBehaviour;
@@ -113,6 +157,7 @@ public class Display extends JPanel {
         add(vScroll, Constraints.VSCROLL);
 
         viewport = new JViewport();
+        viewport.addMouseWheelListener(wheelListener);
         add(viewport, Constraints.VIEWPORT);
 
         viewPanel = new PaddedPanel(view);
