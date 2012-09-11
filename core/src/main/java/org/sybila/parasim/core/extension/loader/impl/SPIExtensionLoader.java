@@ -62,15 +62,16 @@ public class SPIExtensionLoader implements ExtensionLoader {
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
                 BufferedReader reader = null;
+                String className = null;
                 try {
                     reader = new BufferedReader(new InputStreamReader(resource.openStream(), "UTF-8"));
                     String line = null;
                     while ((line = reader.readLine()) != null) {
-                        String className = line.split("#")[0];
+                        className = line.split("#")[0];
                         services.add(classLoader.loadClass(className).asSubclass(serviceClass));
                     }
                 } catch(Exception e) {
-                    LOGGER.warn("Error while loading service " + resource + ".", e);
+                    LOGGER.warn("Error while loading service " + className + ".", e);
                 } finally {
                     if (reader != null) {
                         reader.close();
