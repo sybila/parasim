@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.visualisation.plot.impl;
 
-import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
@@ -45,15 +45,15 @@ public class ProjectionPlotterFactory implements PlotterFactory {
         this.conf = conf;
     }
 
-    public Plotter getPlotter(VerificationResult result, PointVariableMapping names) {
+    public Plotter getPlotter(VerificationResult result, OdeSystem odeSystem) {
         if (result.size() < 1) {
             return new EmptyPlotter();
         }
         if (result.getPoint(0).getDimension() < 2) {
             return new OneDimensionalPlotter();
         }
-        OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
-        return new ProjectionPlotter(conf, result, names,
+        OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result, odeSystem);
+        return new ProjectionPlotter(conf, result, odeSystem,
                 new GridPointLayer(result, extent, EpsilonGridFactory.getCoordinateFactory(conf), WeightedFourNeighbourTransformer.getFactory()),
                 new ZeroRemover(new RGCirclePointRenderer(), conf));
     }

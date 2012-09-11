@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.space;
 
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 
@@ -31,6 +32,11 @@ public interface Space extends XMLRepresentable {
      * @return a space dimension
      */
     int getDimension();
+
+    /**
+     * @return ODE system the space is related to
+     */
+    OdeSystem getOdeSystem();
 
     /**
      * @param dimension

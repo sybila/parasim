@@ -20,6 +20,8 @@
 package org.sybila.parasim.computation.density;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,11 @@ import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.spawn.cpu.AbstractConfiguration;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
@@ -64,13 +70,16 @@ public abstract class AbstractDensityTest {
     protected OrthogonalSpace createInitialSpace(final float base, final int dimension) {
         float[] minBounds = new float[dimension];
         float[] maxBounds = new float[dimension];
+        Collection<OdeSystemVariable> vars = new ArrayList<>();
         for (int dim=0; dim<dimension; dim++) {
             minBounds[dim] = 0;
             maxBounds[dim] = (float) ((dim+1) * base);
+            vars.add(new OdeSystemVariable("x" + dim, dim, new Constant(dim)));
         }
-        return new OrthogonalSpace(
+        return new OrthogonalSpaceImpl(
             new ArrayPoint(0, minBounds),
-            new ArrayPoint(100, maxBounds)
+            new ArrayPoint(100, maxBounds),
+            new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST)
         );
     }
 

@@ -19,7 +19,9 @@
  */
 package org.sybila.parasim.model.verification.result;
 
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.verification.Robustness;
@@ -42,8 +44,8 @@ public abstract class AbstractVerificationResult implements VerificationResult {
      *
      * @return Smallest space including all points.
      */
-    public OrthogonalSpace getEncompassingSpace() {
-       return getEncompassingSpace(this);
+    public OrthogonalSpace getEncompassingSpace(OdeSystem odeSystem) {
+       return getEncompassingSpace(this, odeSystem);
     }
 
     /**
@@ -56,10 +58,10 @@ public abstract class AbstractVerificationResult implements VerificationResult {
      *
      * @return Smallest space including all points.
      */
-    public static OrthogonalSpace getEncompassingSpace(VerificationResult result) {
+    public static OrthogonalSpace getEncompassingSpace(VerificationResult result, OdeSystem odeSystem) {
         if (result.size() == 0) {
             Point empty = new ArrayPoint(0, new float [0], 0, 0);
-            return new OrthogonalSpace(empty, empty);
+            return new OrthogonalSpaceImpl(empty, empty, odeSystem);
         }
         int dims = result.getPoint(0).getDimension();
 
@@ -82,7 +84,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
             }
         }
 
-        return new OrthogonalSpace(new ArrayPoint(0, mins, 0, dims), new ArrayPoint(0, maxs, 0, dims));
+        return new OrthogonalSpaceImpl(new ArrayPoint(0, mins, 0, dims), new ArrayPoint(0, maxs, 0, dims), odeSystem);
     }
 
     @Override

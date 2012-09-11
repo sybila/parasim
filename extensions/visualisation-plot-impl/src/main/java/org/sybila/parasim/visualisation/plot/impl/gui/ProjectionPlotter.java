@@ -37,6 +37,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
@@ -84,10 +86,10 @@ public class ProjectionPlotter extends JFrame implements Plotter {
      * rendered points.
      * @param pointAppearance Specifies point appearance.
      */
-    public ProjectionPlotter(ResultPlotterConfiguration conf, VerificationResult result, PointVariableMapping names, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
+    public ProjectionPlotter(ResultPlotterConfiguration conf, VerificationResult result, OdeSystem odeSystem, LayerMetaFactory pointSource, PointRenderer pointAppearance) {
         dimension = result.getPoint(0).getDimension();
-        this.names = names;
-        extent = (new SpaceUtils(conf)).provideWithPadding(AbstractVerificationResult.getEncompassingSpace(result));
+        this.names = new OdeVariableMapping(odeSystem);
+        extent = (new SpaceUtils(conf)).provideWithPadding(AbstractVerificationResult.getEncompassingSpace(result, odeSystem));
 
         init(conf, pointAppearance, conf.getPlotterWindowWidth(), conf.getPlotterWindowHeight());
 

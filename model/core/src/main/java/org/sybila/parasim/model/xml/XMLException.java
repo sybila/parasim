@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.model.xml;
 
+import java.io.IOException;
+
 /**
  * Exception during storing or loading of xml resource.
  *
@@ -27,7 +29,7 @@ package org.sybila.parasim.model.xml;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
  */
-public class XMLException extends Exception {
+public class XMLException extends IOException {
 
     public XMLException(String message) {
         super(message);

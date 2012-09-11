@@ -20,7 +20,7 @@
 package org.sybila.parasim.visualisation.plot.impl.layer;
 
 import java.util.Map;
-import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
@@ -46,7 +46,7 @@ public class OverlapPointLayer extends OrthogonalBoundedPointLayer implements Po
      * @param source Verification result.
      * @param bounds Bounding space.
      */
-    public OverlapPointLayer(VerificationResult source, OrthogonalSpace bounds) {
+    public OverlapPointLayer(VerificationResult source, OrthogonalSpaceImpl bounds) {
         super(bounds);
         src = source;
     }

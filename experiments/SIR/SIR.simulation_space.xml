@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <space xmlns="http://www.sybila.org/parasim/space">
 	<time min="0" max="100"/>
-	<dimension min="0" max="110"/>
-	<dimension min="0" max="110"/>
-	<dimension min="0" max="110"/>
-	<dimension min="0" max="110"/>
-	<dimension min="0" max="110"/>
+	<variable name="S" min="0" max="110"/>
+	<variable name="I" min="0" max="110"/>
+	<variable name="R" min="0" max="110"/>
+	<variable name="infectivity" min="0" max="110"/>
+	<variable name="recovery_rate" min="0" max="110"/>
 </space>

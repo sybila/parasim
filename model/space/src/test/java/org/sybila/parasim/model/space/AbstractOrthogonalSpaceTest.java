@@ -19,38 +19,31 @@
  */
 package org.sybila.parasim.model.space;
 
-import java.io.File;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.math.Variable;
+import org.sybila.parasim.model.math.VariableValue;
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 
-import org.sybila.parasim.model.xml.FileXMLResource;
-import org.sybila.parasim.model.xml.XMLRepresentableFactory;
+/**
+ *
+ * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ */
+public abstract class AbstractOrthogonalSpaceTest {
 
-public class OrthogonalSpaceResource extends FileXMLResource<OrthogonalSpace> {
-
-    private final OdeSystem odeSystem;
-
-    public OrthogonalSpaceResource(File file, OdeSystem odeSystem) {
-        super(file);
-        if (odeSystem == null) {
-            throw new IllegalArgumentException("The parameter [odeSystem] is null.");
+    protected static OdeSystem createOdeSystem() {
+        String[] names = new String[] {"v", "x", "y", "z"};
+        Collection<OdeSystemVariable> vars = new ArrayList<>();
+        int index = 0;
+        for (String name: names) {
+            vars.add(new OdeSystemVariable(name, index, new Constant(0f)));
+            index++;
         }
-        this.odeSystem = odeSystem;
-    }
-
-    @Override
-    protected XMLRepresentableFactory<OrthogonalSpace> getFactory() {
-        return new OrthogonalSpaceFactory(odeSystem);
-    }
-
-    @Override
-    protected URL getXMLSchema() {
-        return getClass().getClassLoader().getResource("space.xsd");
-    }
-
-    @Override
-    protected String getNamespace() {
-        return "http://www.sybila.org/parasim/space";
+        return new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
 }

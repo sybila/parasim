@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.visualisation.plot.impl.layer;
 
-import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 
 /**
@@ -29,7 +29,7 @@ import org.sybila.parasim.model.verification.result.VerificationResult;
  */
 public class EpsilonPointLayer extends IndependentPointLayer {
 
-    public EpsilonPointLayer(float epsilon, VerificationResult result, OrthogonalSpace bounds) {
+    public EpsilonPointLayer(float epsilon, VerificationResult result, OrthogonalSpaceImpl bounds) {
         super(result, bounds, new EpsilonLayering(epsilon));
     }
 }

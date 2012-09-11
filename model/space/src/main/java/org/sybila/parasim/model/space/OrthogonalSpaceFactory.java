@@ -20,7 +20,13 @@
 package org.sybila.parasim.model.space;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import org.sybila.parasim.model.math.Expression;
+import org.sybila.parasim.model.math.Parameter;
+import org.sybila.parasim.model.math.Variable;
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.xml.FloatFactory;
@@ -33,10 +39,21 @@ import org.w3c.dom.NodeList;
 public class OrthogonalSpaceFactory implements
         XMLRepresentableFactory<OrthogonalSpace> {
     public static final String SPACE_NAME = "space";
-    public static final String DIMENSION_NAME = "dimension";
+    public static final String VARIABLE_NAME = "variable";
     public static final String TIME_NAME = "time";
     public static final String ATTRIBUTE_MIN = "min";
     public static final String ATTRIBUTE_MAX = "max";
+    public static final String PARAMETER_NAME = "parameter";
+    public static final String ATTRIBUTE_NAME = "name";
+
+    private final OdeSystem odeSystem;
+
+    public OrthogonalSpaceFactory(OdeSystem odeSystem) {
+        if (odeSystem == null) {
+            throw new IllegalArgumentException("The parameter [odeSystem] is null.");
+        }
+        this.odeSystem = odeSystem;
+    }
 
     @Override
     public OrthogonalSpace getObject(Node source) throws XMLFormatException {
@@ -48,43 +65,94 @@ public class OrthogonalSpaceFactory implements
         NodeList children = source.getChildNodes();
         float timeMin = 0;
         float timeMax = 0;
-        List<Float> min = new ArrayList<Float>();
-        List<Float> max = new ArrayList<Float>();
+        Map<String, Float> paramMin = new HashMap<>();
+        Map<String, Float> paramMax = new HashMap<>();
+        Map<String, Float> varMin = new HashMap<>();
+        Map<String, Float> varMax = new HashMap<>();
 
         for (int index = 0; index < children.getLength(); index++) {
             Node child = children.item(index);
-            if (child.getNodeName().equals(DIMENSION_NAME)) {
-                NamedNodeMap attr = child.getAttributes();
-                min.add(FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MIN)));
-                max.add(FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MAX)));
-
-                if (min.get(min.size() - 1) > max.get(max.size() - 1)) {
-                    throw new XMLFormatException("The min bound in dimension <"
-                            + (max.size() - 1) + "> is greater than max bound ("
-                            + min.get(min.size() - 1) + ">" + max.get(max.size() - 1) + ").");
-                }
-            } else if (child.getNodeName().equals(TIME_NAME)) {
-                NamedNodeMap attr = child.getAttributes();
+            NamedNodeMap attr = child.getAttributes();
+            switch (child.getNodeName()) {
+                case VARIABLE_NAME:
+                    {
+                        String name = attr.getNamedItem(ATTRIBUTE_NAME).getNodeValue();
+                        if (varMin.containsKey(name)) {
+                            throw new XMLFormatException("The variable [" + name + "] is declared twice.");
+                        }
+                        float min = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MIN));
+                        float max = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MAX));
+                        if (min > max) {
+                            throw new XMLFormatException("The min bound in for variable ["
+                                    + name + "] is greater than max bound ("
+                                    + min + ">" + max + ").");
+                        }
+                        varMin.put(name, min);
+                        varMax.put(name, max);
+                        break;
+                    }
+                case PARAMETER_NAME:
+                    {
+                        String name = attr.getNamedItem(ATTRIBUTE_NAME).getNodeValue();
+                        if (paramMin.containsKey(name)) {
+                            throw new IllegalStateException("The variable [" + name + "] is declared twice.");
+                        }
+                        float min = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MIN));
+                        float max = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MAX));
+                        if (min > max) {
+                            throw new XMLFormatException("The min bound in for parameter ["
+                                    + name + "] is greater than max bound ("
+                                    + min + ">" + max + ").");
+                        }
+                        paramMin.put(name, min);
+                        paramMax.put(name, max);
+                        break;
+                    }
+                case TIME_NAME:
                     timeMin = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MIN));
                     timeMax = FloatFactory.getObject(attr.getNamedItem(ATTRIBUTE_MAX));
-                if (timeMin > timeMax) {
-                    throw new XMLFormatException("The min bound in time is greater than max bound ("
-                            + timeMin + ">" + timeMax + ").");
-                }
-            } else {
-                throw new XMLFormatException("Unknown element: "
-                        + child.getNodeName());
+                    if (timeMin > timeMax) {
+                        throw new XMLFormatException("The min bound in time is greater than max bound ("
+                                + timeMin + ">" + timeMax + ").");
+                    }
+                    break;
+                default:
+                    throw new XMLFormatException("Unknown element: "
+                            + child.getNodeName());
             }
         }
-        float[] minArray = new float[min.size()];
-        float[] maxArray = new float[max.size()];
-        for (int i=0; i<min.size(); i++) {
-            minArray[i] = min.get(i);
-            maxArray[i] = max.get(i);
+        Collection<Expression> parametersToRelease = new ArrayList<>(paramMax.size());
+        for (String paramName: paramMax.keySet()) {
+            parametersToRelease.add(odeSystem.getAvailableParameters().get(paramName));
+        }
+        OdeSystem releasedOdeSystem = odeSystem.release(parametersToRelease);
+
+        float[] minArray = new float[varMin.size() + paramMin.size()];
+        float[] maxArray = new float[varMin.size() + paramMin.size()];
+        for (int dim=0; dim<releasedOdeSystem.dimension(); dim++) {
+            if (odeSystem.isVariable(dim)) {
+                Variable var = releasedOdeSystem.getVariable(dim);
+                if (var == null) {
+                    minArray[var.getIndex()] = releasedOdeSystem.getInitialVariableValue(var).getValue();
+                    maxArray[var.getIndex()] = releasedOdeSystem.getInitialVariableValue(var).getValue();
+                } else {
+                    minArray[var.getIndex()] = varMin.get(var.getName());
+                    maxArray[var.getIndex()] = varMax.get(var.getName());
+                }
+            } else if (releasedOdeSystem.isParamater(dim)) {
+                Parameter param = releasedOdeSystem.getParameter(dim);
+                if (param == null) {
+                    minArray[param.getIndex()] = releasedOdeSystem.getDeclaredParamaterValue(param).getValue();
+                    maxArray[param.getIndex()] = releasedOdeSystem.getDeclaredParamaterValue(param).getValue();
+                } else {
+                    minArray[param.getIndex()] = paramMin.get(param.getName());
+                    maxArray[param.getIndex()] = paramMax.get(param.getName());
+                }
+            }
         }
         Point minBounds = new ArrayPoint(timeMin, minArray);
         Point maxBounds = new ArrayPoint(timeMax, maxArray);
-        return new OrthogonalSpace(minBounds, maxBounds);
+        return new OrthogonalSpaceImpl(minBounds, maxBounds, releasedOdeSystem);
     }
 
 }

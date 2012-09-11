@@ -22,7 +22,7 @@ package org.sybila.parasim.visualisation.plot.impl.layer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
@@ -40,7 +40,7 @@ public class IndependentPointLayer extends LayeredPointLayer implements LayerMet
     private List<float[]> layer;
     private List<Layer>[] layers;
 
-    public IndependentPointLayer(VerificationResult result, OrthogonalSpace bounds, Layering layering) {
+    public IndependentPointLayer(VerificationResult result, OrthogonalSpaceImpl bounds, Layering layering) {
         super(bounds);
         this.result = result;
         layers = layering.computeLayers(result, bounds);

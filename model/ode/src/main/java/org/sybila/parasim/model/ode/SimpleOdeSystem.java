@@ -21,6 +21,7 @@ package org.sybila.parasim.model.ode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +30,8 @@ import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.SubstitutionValue;
+import org.sybila.parasim.model.math.Variable;
+import org.sybila.parasim.model.math.VariableValue;
 
 /**
  * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
@@ -36,17 +39,29 @@ import org.sybila.parasim.model.math.SubstitutionValue;
 public class SimpleOdeSystem implements OdeSystem {
 
     private final Map<Integer, OdeSystemVariable> variables = new HashMap<>();
-    private final Map<String, OdeSystemVariable> variablesByName = new HashMap<>();
     private final Map<Integer, Parameter> parameters = new HashMap<>();
     private final Map<String, Parameter> parametersByName = new HashMap<>();
+    private final Map<Variable, VariableValue> initialVariableValues = new HashMap<>();
+    private final Map<Parameter, ParameterValue> parameterValues = new HashMap<>();
 
-    public SimpleOdeSystem(Collection<OdeSystemVariable> variables) {
+    public SimpleOdeSystem(Collection<OdeSystemVariable> variables, Collection<VariableValue> initialVariableValues, Collection<ParameterValue> parameterValues) {
         if (variables == null) {
             throw new IllegalArgumentException("The parameter [variables] is null.");
         }
+        if (initialVariableValues == null) {
+            throw new IllegalArgumentException("The parameter [initialVariableValues] is null.");
+        }
+        if (parameterValues == null) {
+            throw new IllegalArgumentException("The parameter [parameterValues] is null.");
+        }
         for(OdeSystemVariable var: variables) {
             this.variables.put(var.getIndex(), var);
-            this.variablesByName.put(var.getName(), var);
+        }
+        for (VariableValue value: initialVariableValues) {
+            this.initialVariableValues.put(value.getExpression(), value);
+        }
+        for (ParameterValue value: parameterValues) {
+            this.parameterValues.put(value.getExpression(), value);
         }
         reloadParameters();
     }
@@ -57,32 +72,47 @@ public class SimpleOdeSystem implements OdeSystem {
     }
 
     @Override
+    public Map<String, Parameter> getAvailableParameters() {
+        return Collections.unmodifiableMap(parametersByName);
+    }
+
+    @Override
+    public ParameterValue getDeclaredParamaterValue(Parameter parameter) {
+        if (parameter == null) {
+            throw new IllegalArgumentException("The parameter [parameter] is null.");
+        }
+        return parameterValues.get(parameter);
+    }
+
+    @Override
+    public VariableValue getInitialVariableValue(Variable variable) {
+        if (variable == null) {
+            throw new IllegalArgumentException("The parameter [variable] is null.");
+        }
+        return initialVariableValues.get(variable);
+    }
+
+    @Override
     public Parameter getParameter(int dimension) {
+        checkDimension(dimension);
         return parameters.get(dimension);
     }
 
     @Override
-    public Parameter getParameter(String name) {
-        return parametersByName.get(name);
-    }
-
-    @Override
     public OdeSystemVariable getVariable(int dimension) {
+        checkDimension(dimension);
         return variables.get(dimension);
     }
 
     @Override
-    public OdeSystemVariable getVariable(String name) {
-        return variablesByName.get(name);
-    }
-
-    @Override
     public boolean isParamater(int dimension) {
+        checkDimension(dimension);
         return parameters.containsKey(dimension);
     }
 
     @Override
     public boolean isVariable(int dimension) {
+        checkDimension(dimension);
         return variables.containsKey(dimension);
     }
 
@@ -92,7 +122,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.release(expressions).getIndex(), var.getRightSideExpression().release(expressions)));
         }
-        return new SimpleOdeSystem(newVars);
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), parameterValues.values());
     }
 
     @Override
@@ -101,7 +131,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.release(expressions).getIndex(), var.getRightSideExpression().release(expressions)));
         }
-        return new SimpleOdeSystem(newVars);
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), parameterValues.values());
     }
 
     @Override
@@ -110,7 +140,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.substitute(parameterValues).getIndex(), var.getRightSideExpression().substitute(parameterValues)));
         }
-        return new SimpleOdeSystem(newVars);
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), this.parameterValues.values());
     }
 
     @Override
@@ -121,7 +151,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.substitute(substitution).getIndex(), var.getRightSideExpression().substitute(substitution)));
         }
-        return new SimpleOdeSystem(newVars);
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), this.parameterValues.values());
     }
 
     @Override
@@ -135,13 +165,21 @@ public class SimpleOdeSystem implements OdeSystem {
             var.getRightSideExpression().traverse(new Expression.TraverseFunction<Object>() {
                 @Override
                 public Object apply(Expression expression, Object... subs) {
-                    if (expression instanceof Parameter && !((Parameter) expression).isSubstituted()) {
-                        parameters.put(((Parameter) expression).getIndex(), (Parameter) expression);
+                    if (expression instanceof Parameter) {
+                        if (!((Parameter) expression).isSubstituted()) {
+                            parameters.put(((Parameter) expression).getIndex(), (Parameter) expression);
+                        }
                         parametersByName.put(((Parameter) expression).getName(), (Parameter) expression);
                     }
                     return null;
                 }
             });
+        }
+    }
+
+    private void checkDimension(int dim) {
+        if (dim < 0 || dim >= dimension()) {
+            throw new IndexOutOfBoundsException("The dimension ["+dim+"] of [0, " + (dimension()-1) + "].");
         }
     }
 }

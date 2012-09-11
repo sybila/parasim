@@ -35,12 +35,12 @@ import static org.testng.Assert.assertEquals;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class TestOrthogonalSpaceStorage {
+public class TestOrthogonalSpaceStorage extends AbstractOrthogonalSpaceTest {
 
-    private static OrthogonalSpace getTestSpace() {
+    private static OrthogonalSpaceImpl getTestSpace() {
         Point min = new ArrayPoint(1f, -0.149f, 129.1f, -591.023f, -8.137f);
         Point max = new ArrayPoint(10.11f, 5.931f, 251.9f, -0.006f, 2.041f);
-        return new OrthogonalSpace(min, max);
+        return new OrthogonalSpaceImpl(min, max, createOdeSystem());
     }
 
     private File getTestSpaceFile() {
@@ -59,7 +59,7 @@ public class TestOrthogonalSpaceStorage {
      */
     @Test
     public void tryLoad() {
-        OrthogonalSpaceResource resource = new OrthogonalSpaceResource(getTestSpaceFile());
+        OrthogonalSpaceResource resource = new OrthogonalSpaceResource(getTestSpaceFile(), createOdeSystem());
         try {
             resource.load();
         } catch (XMLException xmle) {
@@ -87,7 +87,7 @@ public class TestOrthogonalSpaceStorage {
         temp.deleteOnExit();
 
         //store
-        OrthogonalSpaceResource resource = new OrthogonalSpaceResource(temp);
+        OrthogonalSpaceResource resource = new OrthogonalSpaceResource(temp, createOdeSystem());
         resource.setRoot(getTestSpace());
         try {
             resource.store();

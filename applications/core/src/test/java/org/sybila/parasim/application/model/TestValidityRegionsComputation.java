@@ -40,7 +40,7 @@ import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.ode.SimpleOdeSystem;
-import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.stl.Formula;
@@ -131,14 +131,14 @@ public class TestValidityRegionsComputation {
         };
     }
 
-    private OrthogonalSpace createInitialSpace() {
-        return new OrthogonalSpace(new ArrayPoint(0, 0), new ArrayPoint(0, 10));
+    private OrthogonalSpaceImpl createInitialSpace() {
+        return new OrthogonalSpaceImpl(new ArrayPoint(0, 0), new ArrayPoint(0, 10), createOdeSystem());
     }
 
     private OdeSystem createOdeSystem() {
         final List<OdeSystemVariable> variables = new ArrayList<>();
         variables.add(new OdeSystemVariable(new Variable("x", 0), new Variable("x", 0)));
-        return new SimpleOdeSystem(variables);
+        return new SimpleOdeSystem(variables, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     private PrecisionConfiguration createPrecisionConfiguration() {
@@ -162,8 +162,8 @@ public class TestValidityRegionsComputation {
         };
     }
 
-    private OrthogonalSpace createSimulationSpace() {
-        return new OrthogonalSpace(new ArrayPoint(0, 0), new ArrayPoint(1.5f, 10));
+    private OrthogonalSpaceImpl createSimulationSpace() {
+        return new OrthogonalSpaceImpl(new ArrayPoint(0, 0), new ArrayPoint(1.5f, 10), createOdeSystem());
     }
 
 }

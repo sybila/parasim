@@ -22,9 +22,13 @@ package org.sybila.parasim.visualisation.plot.impl.gui;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import org.sybila.parasim.model.ode.DoubleMap;
-import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.math.Constant;
+import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
@@ -47,17 +51,17 @@ import org.sybila.parasim.visualisation.plot.impl.render.ThreeColorPointRenderer
  * @deprecated Used only for testing purposes.
  */
 @Deprecated
-class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMapping {
+class TestVariableMapping {
 
-    public TestVariableMapping() {
-        put(new Integer(0), "x");
-        put(new Integer(1), "y");
-        put(new Integer(2), "z");
-    }
 
-    @Override
-    public int getDimension() {
-        return 3;
+    private static OdeSystem createOdeSystem() {
+        Collection<OdeSystemVariable> vars = new ArrayList<>();
+        int index = 0;
+        for (String name: new String[] {"x", "y", "z"}) {
+            vars.add(new OdeSystemVariable(name, index, new Constant(index)));
+            index++;
+        }
+        return new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     private static VerificationResult createResult() {
@@ -101,9 +105,9 @@ class TestVariableMapping extends DoubleMap<Integer> implements PointVariableMap
 
             public void run() {
                 VerificationResult result = createResult();
-                OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result);
+                OrthogonalSpace extent = AbstractVerificationResult.getEncompassingSpace(result, createOdeSystem());
                 ResultPlotterConfiguration conf = new ResultPlotterConfiguration();
-                Plotter test = new ProjectionPlotter(conf, result, new TestVariableMapping(),
+                Plotter test = new ProjectionPlotter(conf, result, createOdeSystem(),
                         new GridPointLayer(result, extent, EpsilonGridFactory.getCoordinateFactory(conf), RobustnessTransformer.getFactory()),
                         new ThreeColorPointRenderer(new CirclePointRenderer(3), conf, Color.GREEN, Color.RED, Color.BLUE));
                 test.plot();

@@ -20,35 +20,94 @@
 package org.sybila.parasim.model.ode;
 
 import java.util.Collection;
+import java.util.Map;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
+import org.sybila.parasim.model.math.Variable;
+import org.sybila.parasim.model.math.VariableValue;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface OdeSystem extends Iterable<OdeSystemVariable> {
 
+    /**
+     * @return dimension of the ODE system including parameters.
+     */
     int dimension();
 
+    /**
+     * @return all available parameters including substituted parameters.
+     */
+    Map<String, Parameter> getAvailableParameters();
+
+    /**
+     * @param variable
+     * @return initial value of the given variable.
+     * @throws IllegalArgumentException if the variable is null.
+     */
+    VariableValue getInitialVariableValue(Variable variable);
+
+    /**
+     * @param parameter
+     * @return declared value of the given parameter
+     * @throws IllegalArgumentException if the parameter is null.
+     */
+    ParameterValue getDeclaredParamaterValue(Parameter parameter);
+
+    /**
+     * @param dimension
+     * @return parameter on the given dimension
+     * @throws IndexOutOfBoundsException if the dimension is out of range
+     * @throws IllegalArgumentException if there is no paramater on the given dimension
+     */
     Parameter getParameter(int dimension);
 
-    Parameter getParameter(String name);
-
+    /**
+     * @param dimension
+     * @return variable on the given dimension
+     * @throws IndexOutOfBoundsException if the dimension is out of range
+     * @throws IllegalArgumentException if there is no variable on the given dimension
+     */
     OdeSystemVariable getVariable(int dimension);
 
-    OdeSystemVariable getVariable(String name);
-
+    /**
+     * @param dimension
+     * @return true if the dimension contains a parameter, false otherwise
+     * @throws IndexOutOfBoundsException if the dimension is out of range
+     */
     boolean isParamater(int dimension);
 
+    /**
+     * @param dimension
+     * @return true if the dimension contains a variable, false otherwise
+     * @throws IndexOutOfBoundsException if the dimension is out of range
+     */
     boolean isVariable(int dimension);
 
+    /**
+     * @param expressions
+     * @return releases all right sides of the ODE system
+     */
     OdeSystem release(Expression... expressions);
 
+    /**
+     * @param expressions
+     * @return releases all right sides of the ODE system
+     */
     OdeSystem release(Collection<Expression> expressions);
 
+    /**
+     * @param expressions
+     * @return substitutes all right sides of the ODE system
+     */
     OdeSystem substitute(ParameterValue... parameterValues);
 
+    /**
+     * @param expressions
+     * @return substitutes all right sides of the ODE system
+     */
     OdeSystem substitute(Collection<ParameterValue> parameterValues);
 
 }

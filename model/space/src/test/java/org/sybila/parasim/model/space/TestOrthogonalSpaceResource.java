@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class TestOrthogonalSpaceResource {
+public class TestOrthogonalSpaceResource extends AbstractOrthogonalSpaceTest {
 
     private OrthogonalSpaceResource resource;
 
@@ -46,7 +46,7 @@ public class TestOrthogonalSpaceResource {
     public void initResource() throws IOException {
         File tmpFile = File.createTempFile("parasim", "resource");
         tmpFile.deleteOnExit();
-        resource = new OrthogonalSpaceResource(tmpFile);
+        resource = new OrthogonalSpaceResource(tmpFile, createOdeSystem());
     }
 
     /**

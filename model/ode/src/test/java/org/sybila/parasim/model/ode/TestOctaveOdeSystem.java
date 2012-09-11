@@ -19,17 +19,13 @@
  */
 package org.sybila.parasim.model.ode;
 
-import java.util.Iterator;
 import java.util.List;
 import org.sybila.parasim.model.math.Variable;
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import org.sybila.parasim.model.math.Constant;
-import org.sybila.parasim.model.math.Expression;
-import org.sybila.parasim.model.math.Parameter;
-import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Plus;
 import org.sybila.parasim.model.math.Times;
 import org.testng.SkipException;
@@ -59,7 +55,7 @@ public class TestOctaveOdeSystem {
                 new Times(new Constant(1.0f), variables.get(0), variables.get(1)),
                 new Times(new Constant(-5.4f), variables.get(1))
         )));
-        system = new OctaveOdeSystem(new SimpleOdeSystem(odeSystemVariables));
+        system = new OctaveOdeSystem(new SimpleOdeSystem(odeSystemVariables, Collections.EMPTY_LIST, Collections.EMPTY_LIST));
     }
 
     @Test

@@ -20,7 +20,9 @@
 package org.sybila.parasim.model.sbml;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.sbml.jsbml.ASTNode;
@@ -42,18 +44,87 @@ import org.sybila.parasim.model.math.Power;
 import org.sybila.parasim.model.math.SubstitutionValue;
 import org.sybila.parasim.model.math.Times;
 import org.sybila.parasim.model.math.Variable;
+import org.sybila.parasim.model.math.VariableValue;
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.ode.SimpleOdeSystem;
 
 /**
  * @author <a href="mailto:jpapouse@fi.muni.cz">Jan Papousek</a>
  */
-public class SBMLOdeSystem extends SimpleOdeSystem {
+public class SBMLOdeSystem implements OdeSystem {
+
+    private final OdeSystem odeSystem;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SBMLOdeSystem.class);
 
     public SBMLOdeSystem(Model model) {
-        super(setup(model));
+        this.odeSystem = setup(model);
+    }
+
+    @Override
+    public int dimension() {
+        return odeSystem.dimension();
+    }
+
+    @Override
+    public Map<String, Parameter> getAvailableParameters() {
+        return odeSystem.getAvailableParameters();
+    }
+
+    @Override
+    public ParameterValue getDeclaredParamaterValue(Parameter parameter) {
+        return odeSystem.getDeclaredParamaterValue(parameter);
+    }
+
+    @Override
+    public VariableValue getInitialVariableValue(Variable variable) {
+        return odeSystem.getInitialVariableValue(variable);
+    }
+
+    @Override
+    public Parameter getParameter(int dimension) {
+        return odeSystem.getParameter(dimension);
+    }
+
+    @Override
+    public OdeSystemVariable getVariable(int dimension) {
+        return odeSystem.getVariable(dimension);
+    }
+
+    @Override
+    public boolean isParamater(int dimension) {
+        return odeSystem.isParamater(dimension);
+    }
+
+    @Override
+    public boolean isVariable(int dimension) {
+        return odeSystem.isVariable(dimension);
+    }
+
+    @Override
+    public Iterator<OdeSystemVariable> iterator() {
+        return odeSystem.iterator();
+    }
+
+    @Override
+    public OdeSystem release(Collection<Expression> expressions) {
+        return odeSystem.release(expressions);
+    }
+
+    @Override
+    public OdeSystem release(Expression... expressions) {
+        return odeSystem.release(expressions);
+    }
+
+    @Override
+    public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
+        return odeSystem.substitute(parameterValues);
+    }
+
+    @Override
+    public OdeSystem substitute(ParameterValue... parameterValues) {
+        return odeSystem.substitute(parameterValues);
     }
 
     private static Expression createExpression(ASTNode mathml, Map<String, Variable> variables, Map<String, Parameter> parameters) {
@@ -97,26 +168,29 @@ public class SBMLOdeSystem extends SimpleOdeSystem {
         throw new IllegalArgumentException("Can't create an expression from [" + mathml.toFormula() + "], its type is [" + mathml.getType() + "].");
     }
 
-    private static List<OdeSystemVariable> setup(Model model) {
+    private static OdeSystem setup(Model model) {
         Map<String, Variable> variablesMemory = new HashMap<>();
         Map<String, Parameter> parametersMemory = new HashMap<>();
         List<SubstitutionValue> substitutionValues = new ArrayList<>();
         Map<Variable, List<Expression>> positives = new HashMap<>();
         Map<Variable, List<Expression>> negatives = new HashMap<>();
         List<Variable> variables = new ArrayList<>();
-        List<Parameter> parameters = new ArrayList<>();
+        List<VariableValue> variableValues = new ArrayList<>();
+        List<ParameterValue> parameterValues = new ArrayList<>();
         // load variables
         for (Species species : model.getListOfSpecies()) {
             Variable var = new Variable(species.getId(), variables.size());
             variablesMemory.put(species.getId(), var);
             variables.add(var);
+            variableValues.add(new VariableValue(var, (float) species.getInitialConcentration()));
         }
         // load paramaters
         for (org.sbml.jsbml.Parameter p : model.getListOfParameters()) {
             Parameter param = new Parameter(p.getId(), variables.size() + parametersMemory.size());
             parametersMemory.put(p.getId(), param);
-            substitutionValues.add(new ParameterValue(param, (float) p.getValue()));
-            parameters.add(param);
+            ParameterValue pv = new ParameterValue(param, (float) p.getValue());
+            substitutionValues.add(pv);
+            parameterValues.add(pv);
         }
         // load reaction speed
         for (Reaction reaction: model.getListOfReactions()) {
@@ -168,7 +242,7 @@ public class SBMLOdeSystem extends SimpleOdeSystem {
             }
             result.add(new OdeSystemVariable(variable, rs.substitute(substitutionValues)));
         }
-        return result;
+        return new SimpleOdeSystem(result, variableValues, parameterValues);
     }
 
 }

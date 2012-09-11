@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.visualisation.plot.impl.layer;
 
-import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
 
@@ -29,7 +29,7 @@ import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
  */
 public class CoordinatePointLayer extends EpsilonPointLayer {
 
-    public CoordinatePointLayer(ResultPlotterConfiguration conf, VerificationResult result, OrthogonalSpace bounds) {
+    public CoordinatePointLayer(ResultPlotterConfiguration conf, VerificationResult result, OrthogonalSpaceImpl bounds) {
         super(conf.getMinimumDifference(), result, bounds);
     }
 }

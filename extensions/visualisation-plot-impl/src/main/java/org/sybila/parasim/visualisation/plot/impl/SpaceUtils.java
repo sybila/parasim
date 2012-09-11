@@ -20,6 +20,7 @@
 package org.sybila.parasim.visualisation.plot.impl;
 
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 
 /**
@@ -69,6 +70,6 @@ public class SpaceUtils {
             }
         }
 
-        return new OrthogonalSpace(new ArrayPoint(0, lower, 0, dim), new ArrayPoint(0, upper, 0, dim));
+        return new OrthogonalSpaceImpl(new ArrayPoint(0, lower, 0, dim), new ArrayPoint(0, upper, 0, dim), src.getOdeSystem());
     }
 }

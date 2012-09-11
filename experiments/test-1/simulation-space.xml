@@ -22,6 +22,6 @@
 -->
 <space xmlns="http://www.sybila.org/parasim/space">
     <time min="0" max="10" />
-    <dimension min="0" max="200"/>
-    <dimension min="0" max="200"/>
+    <variable name="A" min="0" max="200"/>
+    <variable name="B" min="0" max="200"/>
 </space>

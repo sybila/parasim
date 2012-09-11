@@ -24,6 +24,7 @@ import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import static org.testng.Assert.*;
@@ -75,7 +76,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
         return new AdaptiveStepConfiguration() {
 
             private float[] maxAbsoluteError;
-            private OrthogonalSpace space;
+            private OrthogonalSpaceImpl space;
             private float[] steps;
             private PrecisionConfiguration precisionConfiguration = new PrecisionConfiguration() {
 
@@ -131,7 +132,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     for (int dim = 0; dim < getDimension(); dim++) {
                         maxBounds[dim] = (dim + 1) * 10000;
                     }
-                    space = new OrthogonalSpace(new ArrayPoint(0, minBounds), new ArrayPoint((float) 100, maxBounds));
+                    space = new OrthogonalSpaceImpl(new ArrayPoint(0, minBounds), new ArrayPoint((float) 100, maxBounds), getOdeSystem());
                 }
                 return space;
             }

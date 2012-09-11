@@ -113,7 +113,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         for (int d = 0; d < dim; d++) {
             variables.add(new OdeSystemVariable(new Variable("x"+d, d), new Times(new Constant((float) dim / (float) 10), new Variable("x"+d, d))));
         }
-        return new SimpleOdeSystem(variables);
+        return new SimpleOdeSystem(variables, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     abstract protected Conf createConfiguration();
