@@ -16,6 +16,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.EnumMap;
+import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultBoundedRangeModel;
@@ -34,8 +35,10 @@ public class Display extends JPanel {
     private static final double ZOOM_IN_FACTOR = 1 + ZOOM_FACTOR;
     private static final double ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR;
     //
+    private static ResourceBundle STRINGS = ResourceBundle.getBundle(Display.class.getName());
     private static final String ZOOM_IN_STRING = "Zoom in";
     private static final String ZOOM_OUT_STRING = "Zoom out";
+    private static final String ZOOM_FILL_STRING = "Fill view";
 
     public static enum Actions {
 
@@ -44,7 +47,8 @@ public class Display extends JPanel {
         ZOOM_IN_BOTH,
         ZOOM_OUT_VERTICAL,
         ZOOM_OUT_HORIZONTAL,
-        ZOOM_OUT_BOTH;
+        ZOOM_OUT_BOTH,
+        ZOOM_FILL;
     }
 
     private static final class Constraints {
@@ -81,10 +85,7 @@ public class Display extends JPanel {
         @Override
         public void componentResized(ComponentEvent e) {
             if (zoom == null) {
-                // initialize for full screen //
-                Dimension extent = getViewportSize();
-                zoom = new SimpleZoom(new Dimension(extent.width, extent.height), new Point(extent.width / 2, extent.height / 2));
-                updateZoom();
+                getAction(Actions.ZOOM_FILL).actionPerformed(new ActionEvent(Display.this, Actions.ZOOM_FILL.ordinal(), Actions.ZOOM_FILL.toString()));
             } else {
                 zoom = zoomBehaviour.resize(zoom, getViewportSize());
                 updateZoom();
@@ -164,7 +165,7 @@ public class Display extends JPanel {
         viewport.setView(viewPanel);
 
         addComponentListener(resizeListener);
-        actions.put(Actions.ZOOM_IN_HORIZONTAL, new AbstractAction(ZOOM_IN_STRING) {
+        actions.put(Actions.ZOOM_IN_HORIZONTAL, new AbstractAction(STRINGS.getString(Actions.ZOOM_IN_HORIZONTAL.toString())) {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -172,7 +173,7 @@ public class Display extends JPanel {
                 updateZoom();
             }
         });
-        actions.put(Actions.ZOOM_IN_VERTICAL, new AbstractAction(ZOOM_IN_STRING) {
+        actions.put(Actions.ZOOM_IN_VERTICAL, new AbstractAction(STRINGS.getString(Actions.ZOOM_IN_VERTICAL.toString())) {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -180,7 +181,7 @@ public class Display extends JPanel {
                 updateZoom();
             }
         });
-        actions.put(Actions.ZOOM_IN_BOTH, new AbstractAction(ZOOM_IN_STRING) {
+        actions.put(Actions.ZOOM_IN_BOTH, new AbstractAction(STRINGS.getString(Actions.ZOOM_IN_BOTH.toString())) {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -188,7 +189,7 @@ public class Display extends JPanel {
                 updateZoom();
             }
         });
-        actions.put(Actions.ZOOM_OUT_HORIZONTAL, new AbstractAction(ZOOM_OUT_STRING) {
+        actions.put(Actions.ZOOM_OUT_HORIZONTAL, new AbstractAction(STRINGS.getString(Actions.ZOOM_OUT_HORIZONTAL.toString())) {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -196,7 +197,7 @@ public class Display extends JPanel {
                 updateZoom();
             }
         });
-        actions.put(Actions.ZOOM_OUT_VERTICAL, new AbstractAction(ZOOM_OUT_STRING) {
+        actions.put(Actions.ZOOM_OUT_VERTICAL, new AbstractAction(STRINGS.getString(Actions.ZOOM_OUT_VERTICAL.toString())) {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -204,11 +205,20 @@ public class Display extends JPanel {
                 updateZoom();
             }
         });
-        actions.put(Actions.ZOOM_OUT_BOTH, new AbstractAction(ZOOM_OUT_STRING) {
+        actions.put(Actions.ZOOM_OUT_BOTH, new AbstractAction(STRINGS.getString(Actions.ZOOM_OUT_BOTH.toString())) {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 zoom = Display.this.zoomBehaviour.verticalZoom(zoom, ZOOM_OUT_FACTOR, getViewportSize());
+                updateZoom();
+            }
+        });
+        actions.put(Actions.ZOOM_FILL, new AbstractAction(STRINGS.getString(Actions.ZOOM_FILL.toString())) {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                Dimension extent = getViewportSize();
+                zoom = new SimpleZoom(new Dimension(extent.width, extent.height), new Point(extent.width / 2, extent.height / 2));
                 updateZoom();
             }
         });

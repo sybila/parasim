@@ -69,7 +69,7 @@ public class DisplayTest extends JFrame {
 
         // set up menus //
         setJMenuBar(new JMenuBar());
-        JMenu zoom;
+        JMenu zoom, submenu;
         JMenuItem item;
         //zoom
         zoom = new JMenu("Zoom");
@@ -78,22 +78,27 @@ public class DisplayTest extends JFrame {
         zoom.add(item);
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_OUT_BOTH));
         zoom.add(item);
-        getJMenuBar().add(zoom);
+        item = new JMenuItem(display.getAction(Display.Actions.ZOOM_FILL));
+        zoom.add(item);
+        zoom.addSeparator();
         // horizontal zoom //
-        zoom = new JMenu("Horizontal Zoom");
-        zoom.setMnemonic(KeyEvent.VK_H);
+        submenu = new JMenu("Horizontal Zoom");
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_IN_HORIZONTAL));
-        zoom.add(item);
+        item.setText("Zoom In");
+        submenu.add(item);
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_OUT_HORIZONTAL));
-        zoom.add(item);
-        getJMenuBar().add(zoom);
+        item.setText("Zoom out");
+        submenu.add(item);
+        zoom.add(submenu);
         // vertical zoom //
-        zoom = new JMenu("Vertical Zoom");
-        zoom.setMnemonic(KeyEvent.VK_V);
+        submenu = new JMenu("Vertical Zoom");
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_IN_VERTICAL));
-        zoom.add(item);
+        item.setText("Zoom in");
+        submenu.add(item);
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_OUT_VERTICAL));
-        zoom.add(item);
+        item.setText("Zoom out");
+        submenu.add(item);
+        zoom.add(submenu);
         getJMenuBar().add(zoom);
         updateStatus();
     }
