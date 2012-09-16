@@ -28,6 +28,16 @@ public class PaddedPanel extends JPanel {
         setBorder(padding);
     }
 
+    public void setExtraSpace(int horizontal, int vertical) {
+        int left = horizontal / 2;
+        int right = (horizontal % 2 == 0) ? left : left + 1;
+        int top = vertical / 2;
+        int bottom = (vertical % 2 == 0) ? top : top + 1;
+        padding = new EmptyBorder(top, left, bottom, right);
+        setBorder(padding);
+        updateLayout();
+    }
+
     private void updateLayout() {
         revalidate();
         setSize(getPreferredSize());
@@ -35,16 +45,6 @@ public class PaddedPanel extends JPanel {
 
     public void setCentralSize(Dimension size) {
         view.setPreferredSize(size);
-        updateLayout();
-    }
-
-    public void setHPadding(int extent) {
-        setPadding(extent, padding.getBorderInsets().top);
-        updateLayout();
-    }
-
-    public void setVPadding(int extent) {
-        setPadding(padding.getBorderInsets().left, extent);
         updateLayout();
     }
 }

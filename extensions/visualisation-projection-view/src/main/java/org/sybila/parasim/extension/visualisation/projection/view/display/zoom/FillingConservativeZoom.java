@@ -21,13 +21,15 @@ public enum FillingConservativeZoom implements ZoomBehaviour {
             throw new IllegalArgumentException("Graph size is expected to be greater than viewport size.");
         }
         if (position < viewportSize / 2) {
+            //System.out.println("too low a position: " + position + " < " + viewportSize / 2);
             return viewportSize / 2;
         }
-        if (graphSize - position < viewportSize / 2) {
+        if (position > graphSize - viewportSize / 2) {
+            //System.out.println("too high a position: " + position + " > " + (graphSize - viewportSize / 2));
             return graphSize - viewportSize / 2;
         }
         return position;
-
+        //tady je někde chyba
     }
 
     @Override

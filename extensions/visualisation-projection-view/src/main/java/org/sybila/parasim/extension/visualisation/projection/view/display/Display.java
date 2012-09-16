@@ -24,6 +24,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JViewport;
+import org.sybila.parasim.extension.visualisation.projection.view.display.util.DimensionFunctional;
 
 /**
  *
@@ -36,9 +37,6 @@ public class Display extends JPanel {
     private static final double ZOOM_OUT_FACTOR = 1 / ZOOM_IN_FACTOR;
     //
     private static ResourceBundle STRINGS = ResourceBundle.getBundle(Display.class.getName());
-    private static final String ZOOM_IN_STRING = "Zoom in";
-    private static final String ZOOM_OUT_STRING = "Zoom out";
-    private static final String ZOOM_FILL_STRING = "Fill view";
 
     public static enum Actions {
 
@@ -96,10 +94,12 @@ public class Display extends JPanel {
 
         @Override
         public void adjustmentValueChanged(AdjustmentEvent ae) {
-            Point viewPosition = new Point(hScroll.getValue(), vScroll.getValue());
-            zoom = new SimpleZoom(zoom.getGraphSize(), viewPosition);
-            viewport.setViewPosition(viewPosition);
-
+            int viewX = hScroll.getValue();
+            int viewY = vScroll.getValue();
+            viewport.setViewPosition(new Point(viewX, viewY));
+            viewX += getViewportSize().width / 2;
+            viewY += getViewportSize().height / 2;
+            zoom = new SimpleZoom(zoom.getGraphSize(), new Point(viewX, viewY));
         }
     };
     private MouseWheelListener wheelListener = new MouseWheelListener() {
@@ -209,7 +209,7 @@ public class Display extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                zoom = Display.this.zoomBehaviour.verticalZoom(zoom, ZOOM_OUT_FACTOR, getViewportSize());
+                zoom = Display.this.zoomBehaviour.zoom(zoom, ZOOM_OUT_FACTOR, getViewportSize());
                 updateZoom();
             }
         });
@@ -222,29 +222,46 @@ public class Display extends JPanel {
                 updateZoom();
             }
         });
+
+        System.out.println("graph    viewport   viewpanel    position   actual");
     }
 
     private Dimension getViewportSize() {
         return viewport.getExtentSize();
     }
 
+    private int checkPosition(int position, DimensionFunctional dimension) {
+        int viewPanelDim = dimension.get(viewPanel.getSize());
+        int viewportDim = dimension.get(viewport.getSize());
+        if (viewPanelDim < viewportDim) {
+            throw new IllegalStateException(dimension.getDimensionString() + " of viewPanel is smaller than " + dimension.getDimensionString() + " of viewport.");
+        } else if (viewPanelDim == viewportDim) {
+            return 0;
+        } else {
+            if (position < 0) {
+                return 0;
+            } else if (position > viewPanelDim - viewportDim) {
+                return viewPanelDim - viewportDim;
+            } else {
+                return position;
+            }
+        }
+    }
+
     private void updateZoom() {
         viewPanel.setCentralSize(zoom.getGraphSize());
         Dimension extent = getViewportSize();
-        int dWidth = extent.width - zoom.getGraphSize().width;
-        if (dWidth > 0) {
-            viewPanel.setHPadding(dWidth / 2);
-        }
-        int dHeight = extent.height - zoom.getGraphSize().height;
-        if (dHeight > 0) {
-            viewPanel.setVPadding(dHeight / 2);
-        }
-        Point viewPosition = new Point(zoom.getViewPosition().x - extent.width / 2, zoom.getViewPosition().y - extent.height / 2);
-        viewport.setViewPosition(viewPosition);
+        int hPad = Math.max(extent.width - zoom.getGraphSize().width, 0);
+        int vPad = Math.max(extent.height - zoom.getGraphSize().height, 0);
+        viewPanel.setExtraSpace(hPad, vPad);
+
+        int viewX = checkPosition(zoom.getViewPosition().x - (extent.width / 2 - hPad / 2), DimensionFunctional.X);
+        int viewY = checkPosition(zoom.getViewPosition().y - (extent.height / 2 - vPad / 2), DimensionFunctional.Y);
+        viewport.setViewPosition(new Point(viewX, viewY));
 
         // scroll bars //
-        hScroll.setModel(new DefaultBoundedRangeModel(viewPosition.x, extent.width, 0, zoom.getGraphSize().width));
-        vScroll.setModel(new DefaultBoundedRangeModel(viewPosition.y, extent.height, 0, zoom.getGraphSize().height));
+        hScroll.setModel(new DefaultBoundedRangeModel(viewX, extent.width, 0, viewPanel.getWidth()));
+        vScroll.setModel(new DefaultBoundedRangeModel(viewY, extent.height, 0, viewPanel.getHeight()));
     }
 
     public Action getAction(Actions type) {

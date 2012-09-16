@@ -6,14 +6,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
 /**
@@ -22,9 +23,7 @@ import javax.swing.border.LineBorder;
  */
 public class DisplayTest extends JFrame {
 
-    //private Display display;
-    private JLabel status;
-    private double zoomFactor = 1;
+    private Display display;
 
     public DisplayTest() {
         setTitle("Test Display");
@@ -33,9 +32,6 @@ public class DisplayTest extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         getContentPane().setLayout(new BorderLayout());
-
-        status = new JLabel();
-        getContentPane().add(status, BorderLayout.PAGE_END);
 
         // set up display //
         JPanel view = new JPanel() {
@@ -60,11 +56,11 @@ public class DisplayTest extends JFrame {
             @Override
             public void paint(Graphics g) {
                 g.clearRect(0, 0, getWidth(), getHeight());
-                halveRectangle(g, getBounds(), 10, 10);
+                halveRectangle(g, new Rectangle(new Point(), getSize()), 10, 10);
             }
         };
         view.setBorder(new LineBorder(Color.BLACK));
-        Display display = new Display(view, FillingConservativeZoom.getInstance());
+        display = new Display(view, FillingConservativeZoom.getInstance());
         add(display);
 
         // set up menus //
@@ -75,8 +71,10 @@ public class DisplayTest extends JFrame {
         zoom = new JMenu("Zoom");
         zoom.setMnemonic(KeyEvent.VK_Z);
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_IN_BOTH));
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, KeyEvent.CTRL_DOWN_MASK));
         zoom.add(item);
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_OUT_BOTH));
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
         zoom.add(item);
         item = new JMenuItem(display.getAction(Display.Actions.ZOOM_FILL));
         zoom.add(item);
@@ -100,22 +98,6 @@ public class DisplayTest extends JFrame {
         submenu.add(item);
         zoom.add(submenu);
         getJMenuBar().add(zoom);
-        updateStatus();
-    }
-
-    private void updateZoom() {
-        //display.setZoomFactor(zoomFactor);
-        updateStatus();
-    }
-
-    private void updateStatus() {
-        StringBuilder stat = new StringBuilder();
-        // zoom //
-        stat.append("Zoom: ");
-        stat.append(zoomFactor * 100);
-        stat.append(" %");
-
-        status.setText(stat.toString());
     }
 
     public static void main(String[] args) {
