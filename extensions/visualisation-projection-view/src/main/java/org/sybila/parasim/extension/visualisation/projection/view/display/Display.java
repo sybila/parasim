@@ -74,7 +74,7 @@ public class Display extends JPanel {
     }
     private JScrollBar hScroll, vScroll;
     private JViewport viewport;
-    private PaddedPanel viewPanel;
+    private PaddedPane viewPanel;
     private Zoom zoom = null;
     private ZoomBehaviour zoomBehaviour;
     private EnumMap<Actions, Action> actions = new EnumMap(Actions.class);
@@ -161,7 +161,7 @@ public class Display extends JPanel {
         viewport.addMouseWheelListener(wheelListener);
         add(viewport, Constraints.VIEWPORT);
 
-        viewPanel = new PaddedPanel(view);
+        viewPanel = new PaddedPane(view);
         viewport.setView(viewPanel);
 
         addComponentListener(resizeListener);
@@ -222,8 +222,6 @@ public class Display extends JPanel {
                 updateZoom();
             }
         });
-
-        System.out.println("graph    viewport   viewpanel    position   actual");
     }
 
     private Dimension getViewportSize() {
