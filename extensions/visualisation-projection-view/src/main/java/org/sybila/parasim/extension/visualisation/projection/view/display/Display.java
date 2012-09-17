@@ -159,7 +159,9 @@ public class Display extends JPanel {
 
         viewport = new JViewport();
         viewport.addMouseWheelListener(wheelListener);
-        add(viewport, Constraints.VIEWPORT);
+        GuidinglinePane guidingPane = new GuidinglinePane(viewport);
+        guidingPane.setView(view);
+        add(guidingPane, Constraints.VIEWPORT);
 
         viewPanel = new PaddedPane(view);
         viewport.setView(viewPanel);
