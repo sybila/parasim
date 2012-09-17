@@ -39,10 +39,12 @@ public abstract class AbstractPoint implements Point {
         this.time = time;
     }
 
+    @Override
     public int getDimension() {
         return dimension;
     }
 
+    @Override
     public float getTime() {
         return time;
     }
@@ -56,9 +58,22 @@ public abstract class AbstractPoint implements Point {
     }
 
     @Override
+    public float[] toArray(int numOfDimensions) {
+        return toArrayCopy(numOfDimensions);
+    }
+
+    @Override
     public float[] toArrayCopy() {
-        float[] temp = new float[dimension];
-        for (int dim = 0; dim < dimension; dim++) {
+        return toArrayCopy(getDimension());
+    }
+
+    @Override
+    public float[] toArrayCopy(int numOfDimensions) {
+        if (numOfDimensions > getDimension()) {
+            throw new IllegalArgumentException("The number of dimensions has to be at most the same as the dimension of the point. Requested <" + numOfDimensions + ">, dimension <" + getDimension() + ">.");
+        }
+        float[] temp = new float[numOfDimensions];
+        for (int dim = 0; dim < numOfDimensions; dim++) {
             temp[dim] = getValue(dim);
         }
         return temp;

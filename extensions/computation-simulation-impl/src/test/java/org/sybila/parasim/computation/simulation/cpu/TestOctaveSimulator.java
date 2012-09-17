@@ -37,28 +37,36 @@ public class TestOctaveSimulator extends AbstractAdaptiveStepSimulationTest {
         if (!OctaveSimulator.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
-        super.testTimeStep(10);
+        super.testTimeStep(10, 10);
     }
-    
+
     @Test
     public void testMinimalNumberOfPoints() {
         if (!OctaveSimulator.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
-        super.testMinimalNumberOfPoints(10);
+        super.testMinimalNumberOfPoints(10, 10);
     }
-    
+
     @Test
     public void testValidNumberOfTrajectories() {
         if (!OctaveSimulator.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
-        super.testValidNumberOfTrajectories(10);
+        super.testValidNumberOfTrajectories(10, 10);
+    }
+
+    @Test
+    public void testParameters() {
+        if (!OctaveSimulator.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
+        super.testParameters(2);
     }
 
     @Override
-    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator(AdaptiveStepConfiguration configuaration) {
+    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator() {
         return new OctaveSimulator();
     }
-    
+
 }

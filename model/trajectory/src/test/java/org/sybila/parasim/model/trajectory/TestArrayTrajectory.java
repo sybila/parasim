@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import junit.framework.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -26,10 +27,10 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestArrayTrajectory extends AbstractTrajectoryTest<ArrayTrajectory> {
-    
+
     private Point[] points;
     private Trajectory trajectory;
-    
+
     @BeforeTest
     public void setUp() {
         points = new Point[LENGTH];
@@ -44,7 +45,7 @@ public class TestArrayTrajectory extends AbstractTrajectoryTest<ArrayTrajectory>
         }
         trajectory = new ArrayTrajectory(data, times, DIMENSION);
     }
-    
+
     @Test
     public void testPointSequenceWithIterator() {
         super.testPointSequenceWithIterator(trajectory, points);
@@ -53,6 +54,19 @@ public class TestArrayTrajectory extends AbstractTrajectoryTest<ArrayTrajectory>
     @Test
     public void testPointSequenceWithGetMethod() {
         super.testPointSequenceWithGetMethod(trajectory, points);
-    }    
-    
+    }
+
+    @Test
+    public void testParentPoint() {
+        Point parent = new ArrayPoint(0, 100, 200, 300, 400);
+        float[] data = new float[] { 1, 2, 3, 4 };
+        float[] times = new float[] { 1, 2 };
+        Trajectory trajectory = new ArrayTrajectory(parent, data, times, 2);
+        Assert.assertEquals(2, trajectory.getLength());
+        for (Point p: trajectory) {
+            for (int dim=2; dim < parent.getDimension(); dim++) {
+                Assert.assertEquals(parent.getValue(dim), p.getValue(dim));
+            }
+        }
+    }
 }

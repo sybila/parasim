@@ -49,6 +49,7 @@ public class PointDerivativeCache implements PointDerivative {
      * @param varIndex Index of the variable who's derivative to return.
      * @return Value of the derivative.
      */
+    @Override
     public float getDerivative(int varIndex) {
         if (varIndex < 0 || varIndex >= p.getDimension()) {
             throw new IllegalArgumentException("The index is out of the range [0, " + (p.getDimension() - 1) + "]");
@@ -63,6 +64,7 @@ public class PointDerivativeCache implements PointDerivative {
     /**
      * @return Number of dimensions of given point.
      */
+    @Override
     public int getDimension() {
         return p.getDimension();
     }
@@ -70,6 +72,7 @@ public class PointDerivativeCache implements PointDerivative {
     /**
      * @return time of the point
      */
+    @Override
     public float getTime() {
         return p.getTime();
     }
@@ -78,6 +81,7 @@ public class PointDerivativeCache implements PointDerivative {
      * @param index The dimension of who's value to return.
      * @return Value of given dimension.
      */
+    @Override
     public float getValue(int index) {
         return p.getValue(index);
     }
@@ -85,6 +89,7 @@ public class PointDerivativeCache implements PointDerivative {
     /**
      * @return Values of all dimensions as an array without time
      */
+    @Override
     public float[] toArray() {
         return p.toArray();
     }
@@ -94,7 +99,18 @@ public class PointDerivativeCache implements PointDerivative {
         return null; /* I think that points should not be iterable, only trajectories! */
     }
 
+    @Override
     public float[] toArrayCopy() {
         return p.toArrayCopy();
+    }
+
+    @Override
+    public float[] toArray(int numOfDimensions) {
+        return p.toArray(numOfDimensions);
+    }
+
+    @Override
+    public float[] toArrayCopy(int numOfDimensions) {
+        return p.toArrayCopy(numOfDimensions);
     }
 }

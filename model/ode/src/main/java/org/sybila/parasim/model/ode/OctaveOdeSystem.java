@@ -83,6 +83,11 @@ public class OctaveOdeSystem implements OdeSystem {
     }
 
     @Override
+    public Collection<OdeSystemVariable> getVariables() {
+        return odeSystem.getVariables();
+    }
+
+    @Override
     public boolean isParamater(int dimension) {
         return odeSystem.isParamater(dimension);
     }

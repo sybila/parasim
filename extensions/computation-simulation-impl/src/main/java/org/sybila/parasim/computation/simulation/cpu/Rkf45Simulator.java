@@ -36,6 +36,7 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
+@Deprecated
 public class Rkf45Simulator implements AdaptiveStepSimulator {
     /**
      * Minimal time step using during simulation

@@ -50,10 +50,14 @@ public interface Point extends Iterable<Float> {
      */
     float[] toArray();
 
+    float[] toArray(int numOfDimensions);
+
     /**
      * This method always returns a new instance of array (in opposite to {@link Point#toArray()}).
      *
      * @return Values of all dimension as an array without time
      */
     float[] toArrayCopy();
+
+    float[] toArrayCopy(int numOfDimensions);
 }

@@ -105,6 +105,11 @@ public class SimpleOdeSystem implements OdeSystem {
     }
 
     @Override
+    public Collection<OdeSystemVariable> getVariables() {
+        return Collections.unmodifiableCollection(variables.values());
+    }
+
+    @Override
     public boolean isParamater(int dimension) {
         checkDimension(dimension);
         return parameters.containsKey(dimension);

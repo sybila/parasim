@@ -36,8 +36,8 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulatorTest<AdaptiveStepConfiguration, SimulatedDataBlock> {
 
-    protected void testAbsoluteStep(int size) {
-        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+    protected void testAbsoluteStep(int dimension, int size) {
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         for (int s = 0; s < size; s++) {
             Point previous = null;
             for (Point p : result.getTrajectory(s)) {
@@ -46,7 +46,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     continue;
                 }
                 for(int dim=0; dim<p.getDimension(); dim++) {
-                    assertTrue(Math.abs(previous.getValue(dim) - p.getValue(dim)) < getConfiguration().getSteps()[dim], "The absolute step condition in dimension <" + dim + "> doesn't hold. Found absolute step is <" + Math.abs(previous.getValue(dim) - p.getValue(dim)) + ">, expected <" + getConfiguration().getSteps()[dim] + ">");
+                    assertTrue(Math.abs(previous.getValue(dim) - p.getValue(dim)) < getConfiguration(dimension).getSteps()[dim], "The absolute step condition in dimension <" + dim + "> doesn't hold. Found absolute step is <" + Math.abs(previous.getValue(dim) - p.getValue(dim)) + ">, expected <" + getConfiguration(dimension).getSteps()[dim] + ">");
                 }
                 previous = p;
             }
@@ -55,8 +55,8 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
 
 
 
-    protected void testTimeStep(int size) {
-        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+    protected void testTimeStep(int dimension, int size) {
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         for (int s = 0; s < size; s++) {
             Point previous = null;
             for(Point p : result.getTrajectory(s)) {
@@ -64,15 +64,14 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     previous = p;
                     continue;
                 }
-                assertTrue(Math.abs(p.getTime() - previous.getTime()) <= getConfiguration().getPrecisionConfiguration().getTimeStep() + getConfiguration().getPrecisionConfiguration().getTimeStep() / 1000, "The time step condition doesn't hold, found time step <" + Math.abs(p.getTime() - previous.getTime()) + ">, expected time step <" + getConfiguration().getPrecisionConfiguration().getTimeStep() + ">");
+                assertTrue(Math.abs(p.getTime() - previous.getTime()) <= getConfiguration(dimension).getPrecisionConfiguration().getTimeStep() + getConfiguration(dimension).getPrecisionConfiguration().getTimeStep() / 1000, "The time step condition doesn't hold, found time step <" + Math.abs(p.getTime() - previous.getTime()) + ">, expected time step <" + getConfiguration(dimension).getPrecisionConfiguration().getTimeStep() + ">");
                 previous = p;
             }
         }
     }
 
     @Override
-    protected AdaptiveStepConfiguration createConfiguration() {
-        final OdeSystem odeSystem = getOdeSystem(10);
+    protected AdaptiveStepConfiguration createConfiguration(final OdeSystem odeSystem) {
         return new AdaptiveStepConfiguration() {
 
             private float[] maxAbsoluteError;
@@ -81,7 +80,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             private PrecisionConfiguration precisionConfiguration = new PrecisionConfiguration() {
 
                 public int getDimension() {
-                    return 10;
+                    return odeSystem.getVariables().size();
                 }
 
                 public float getMaxAbsoluteError(int dim) {

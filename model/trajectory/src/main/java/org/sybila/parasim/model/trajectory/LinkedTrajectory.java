@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
  */
 public class LinkedTrajectory extends AbstractTrajectory implements MutableTrajectory {
 
-    private List<Trajectory> trajectories = new ArrayList<Trajectory>();
+    private List<Trajectory> trajectories = new ArrayList<>();
     private int truncateCounter = 0;
 
     public LinkedTrajectory(Trajectory trajectory) {
@@ -54,6 +54,7 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
      *
      * @param trajectory the trajectory which will be appended
      */
+    @Override
     public void append(Trajectory trajectory) {
         if (trajectory == null) {
             throw new IllegalArgumentException("The parameter [trajectory] is NULL.");

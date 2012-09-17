@@ -32,26 +32,26 @@ public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
 
     @Test
     public void testAbsoluteStep() {
-        super.testAbsoluteStep(10);
+        super.testAbsoluteStep(10, 10);
     }
 
     @Test
     public void testTimeStep() {
-        super.testTimeStep(10);
+        super.testTimeStep(10, 10);
     }
 
     @Test
     public void testMinimalNumberOfPoints() {
-        super.testMinimalNumberOfPoints(10);
+        super.testMinimalNumberOfPoints(10, 10);
     }
 
     @Test
     public void testValidNumberOfTrajectories() {
-        super.testValidNumberOfTrajectories(10);
+        super.testValidNumberOfTrajectories(10, 10);
     }
 
     @Override
-    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator(AdaptiveStepConfiguration configuaration) {
+    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator() {
         return new Rkf45Simulator();
     }
 

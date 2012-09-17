@@ -72,6 +72,8 @@ public interface OdeSystem extends Iterable<OdeSystemVariable> {
      */
     OdeSystemVariable getVariable(int dimension);
 
+    Collection<OdeSystemVariable> getVariables();
+
     /**
      * @param dimension
      * @return true if the dimension contains a parameter, false otherwise

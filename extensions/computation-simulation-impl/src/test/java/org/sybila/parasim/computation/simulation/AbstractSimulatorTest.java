@@ -19,10 +19,9 @@
  */
 package org.sybila.parasim.computation.simulation;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import org.sybila.parasim.computation.simulation.api.Status;
 import org.sybila.parasim.computation.simulation.api.Configuration;
@@ -34,14 +33,15 @@ import java.util.HashMap;
 import java.util.Map;
 import org.sybila.parasim.model.math.Constant;
 import org.sybila.parasim.model.math.Parameter;
-import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Times;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
+import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import static org.testng.Assert.*;
 
@@ -52,13 +52,18 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
 
     private Conf configuration;
     private Map<Integer, OdeSystem> odeSystems = new HashMap<Integer, OdeSystem>();
+    private Map<OdeSystem, Conf> confs = new HashMap<>();
     private Simulator<Conf, Out> simulator;
 
-    protected Conf getConfiguration() {
-        if (configuration == null) {
-            configuration = createConfiguration();
+    protected Conf getConfiguration(OdeSystem odeSystem) {
+        if (confs.get(odeSystem) == null) {
+            confs.put(odeSystem, createConfiguration(odeSystem));
         }
-        return configuration;
+        return confs.get(odeSystem);
+    }
+
+    protected Conf getConfiguration(int dimension) {
+        return getConfiguration(getOdeSystem(dimension));
     }
 
     protected OdeSystem getOdeSystem(int dim) {
@@ -70,28 +75,45 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
 
     protected Simulator<Conf, Out> getSimulator() {
         if (simulator == null) {
-            simulator = createSimulator(getConfiguration());
+            simulator = createSimulator();
         }
         return simulator;
     }
 
-    protected void testMinimalNumberOfPoints(int size) {
-        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+    protected void testMinimalNumberOfPoints(int dimension, int size) {
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         for(int s = 0; s < size; s++) {
             for(Point p : result.getTrajectory(s)) {
             }
-            assertTrue(result.getTrajectory(s).getLength() > 10, "The minimal number of point doesn't match.");
+            assertTrue(result.getTrajectory(s).getLength() > 10, "The minimal number of point doesn't match. Expected at least <10>, was <" + result.getTrajectory(s).getLength() + ">.");
         }
     }
 
-    protected void testValidNumberOfTrajectories(int size) {
-        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(), createDataBlock(getConfiguration().getDimension(), size));
+    protected void testValidNumberOfTrajectories(int dimension, int size) {
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         assertEquals(size, result.size());
         for(int s = 0; s < size; s++) {
             for(Point p : result.getTrajectory(s)) {
             }
             assertTrue(result.getTrajectory(s).getLength() > 0);
             assertEquals(Status.TIMEOUT, result.getStatus(s));
+        }
+    }
+
+    protected void testParameters(int dimension) {
+        float[] data = new float[dimension*2];
+        for (int dim = 0; dim < dimension * 2; dim++) {
+            data[dim] = dim;
+        }
+        Trajectory toSimulate = new PointTrajectory(0, data);
+        SimulatedDataBlock result = getSimulator().simulate(getConfiguration(createParametrizedOdeSystem(dimension)), new ListDataBlock<>(Arrays.asList(toSimulate)));
+        assertEquals(1, result.size());
+        Trajectory resultTrajectory = result.getTrajectory(0);
+        for (int dim = 1; dim < dimension; dim++) {
+            assertEquals(data[dim - 1] + 1, resultTrajectory.getFirstPoint().getValue(dim), 0.01f);
+        }
+        for (int dim = dimension; dim < dimension; dim++) {
+            assertEquals(data[dim], resultTrajectory.getFirstPoint().getValue(dim));
         }
     }
 
@@ -116,8 +138,16 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         return new SimpleOdeSystem(variables, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
-    abstract protected Conf createConfiguration();
+    private OdeSystem createParametrizedOdeSystem(final int dim) {
+        final List<OdeSystemVariable> variables = new ArrayList<>();
+        for (int d = 0; d < dim; d++) {
+            variables.add(new OdeSystemVariable(new Variable("x"+d, d), new Parameter("p" + d, dim + d)));
+        }
+        return new SimpleOdeSystem(variables, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    }
 
-    abstract protected Simulator<Conf, Out> createSimulator(Conf configuaration);
+    abstract protected Conf createConfiguration(OdeSystem odeSystem);
+
+    abstract protected Simulator<Conf, Out> createSimulator();
 
 }

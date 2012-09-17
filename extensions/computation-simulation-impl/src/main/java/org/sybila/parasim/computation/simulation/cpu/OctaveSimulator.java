@@ -22,13 +22,18 @@ package org.sybila.parasim.computation.simulation.cpu;
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.ArraySimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.Status;
+import org.sybila.parasim.model.math.Parameter;
+import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
+import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.DataBlock;
@@ -40,10 +45,10 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public class OctaveSimulator implements AdaptiveStepSimulator {
 
+    @Override
     public SimulatedDataBlock simulate(AdaptiveStepConfiguration configuration, DataBlock<Trajectory> data) {
         OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
-        OctaveOdeSystem octaveOdeSystem = new OctaveOdeSystem(configuration.getOdeSystem());
-        octave.eval(octaveOdeSystem.octaveString());
+        List<ParameterValue> parameters = new ArrayList<>();
         octave.eval("lsode_options(\"step limit\", " + configuration.getMaxNumberOfIterations() + ");");
         if (configuration.getPrecisionConfiguration().getMaxRelativeError() > 0) {
             octave.eval("lsode_options(\"relative tolerance\", " + configuration.getPrecisionConfiguration().getMaxRelativeError() + ");");
@@ -51,7 +56,7 @@ public class OctaveSimulator implements AdaptiveStepSimulator {
         Trajectory[] trajectories = new Trajectory[data.size()];
         Status[] statuses = new Status[data.size()];
         for (int i = 0; i < data.size(); i++) {
-            trajectories[i] = simulateTrajectory(octave, octaveOdeSystem, configuration, data.getTrajectory(i).getLastPoint());
+            trajectories[i] = simulateTrajectory(octave, configuration.getOdeSystem(), configuration, data.getTrajectory(i).getLastPoint());
             if (trajectories[i].getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
                 statuses[i] = Status.TIMEOUT;
             } else {
@@ -62,27 +67,38 @@ public class OctaveSimulator implements AdaptiveStepSimulator {
         return new ArraySimulatedDataBlock(new ArrayDataBlock(trajectories), statuses);
     }
 
-    private Trajectory simulateTrajectory(OctaveEngine octave, OctaveOdeSystem octaveOdeSystem, AdaptiveStepConfiguration configuration, Point initialPoint) {
-        octave.eval("i = " + Arrays.toString(initialPoint.toArray()) + ";");
+    private Trajectory simulateTrajectory(OctaveEngine octave, OdeSystem odeSystem, AdaptiveStepConfiguration configuration, Point initialPoint) {
+        List<ParameterValue> paramValues = new ArrayList<>();
+        for (Parameter param: odeSystem.getAvailableParameters().values()) {
+            if (!param.isSubstituted()) {
+                paramValues.add(new ParameterValue(param, initialPoint.getValue(param.getIndex())));
+            }
+        }
+        OctaveOdeSystem octaveOdeSystem = paramValues.isEmpty() ? new OctaveOdeSystem(odeSystem) : new OctaveOdeSystem(odeSystem.substitute(paramValues));
+        octave.eval(octaveOdeSystem.octaveString());
+        octave.eval("i = " + Arrays.toString(initialPoint.toArray(octaveOdeSystem.dimension())) + ";");
         int numOfIterations = Math.min(Math.round((configuration.getSpace().getMaxBounds().getTime() - initialPoint.getTime()) / configuration.getPrecisionConfiguration().getTimeStep()), configuration.getMaxNumberOfIterations());
         octave.eval("t = linspace(" + initialPoint.getTime() + ", " + numOfIterations * configuration.getPrecisionConfiguration().getTimeStep() + ", " + numOfIterations + ");");
-
         octave.eval("y = lsode(\"" + octaveOdeSystem.octaveName() + "\", i, t);");
         OctaveDouble y = octave.get(OctaveDouble.class, "y");
         double[] loadedData = y.getData();
         float[] data = new float[loadedData.length];
-        for (int dim = 0; dim < initialPoint.getDimension(); dim++) {
-            for (int i = 0; i < loadedData.length / initialPoint.getDimension(); i++) {
-                data[dim + i * initialPoint.getDimension()] = (float) loadedData[dim * (loadedData.length / initialPoint.getDimension()) + i];
+        for (int dim = 0; dim < octaveOdeSystem.dimension(); dim++) {
+            for (int i = 0; i < loadedData.length / octaveOdeSystem.dimension(); i++) {
+                data[dim + i * octaveOdeSystem.dimension()] = (float) loadedData[dim * (loadedData.length / octaveOdeSystem.dimension()) + i];
             }
         }
-        float[] times = new float[loadedData.length / initialPoint.getDimension()];
+        float[] times = new float[loadedData.length / octaveOdeSystem.dimension()];
         float time = initialPoint.getTime();
         for (int i = 0; i < times.length; i++) {
             time += configuration.getPrecisionConfiguration().getTimeStep();
             times[i] = time;
         }
-        return new ArrayTrajectory(data, times, initialPoint.getDimension());
+        if (paramValues.isEmpty()) {
+            return new ArrayTrajectory(data, times, initialPoint.getDimension());
+        } else {
+            return new ArrayTrajectory(initialPoint, data, times, octaveOdeSystem.dimension());
+        }
     }
 
     public static boolean isAvailable() {
