@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+\begin{document}
+We want to display analysis results using both logarithmic and linear scale (and maybe some other scales).
+This document discusses the implementations of \texttt{LinearScale} and \texttt{LogarithmicScale}.
+
+So far, zoom is implemented in the way that it changes the size of container (\texttt{JComponent}) containing
+graph (of either verification result or time course). The scale should adjust acordingly. Furthermore,
+we know dimension of given model value (including time).
+
+Therefore, scale is a~transformation between intervals $[b_m,t_m]$ (domain of model value) and $[b_v=0,t_v]$ (size of contaier),
+i.e. a~function $f$ and its inverse, such that $f(b_m)=0$ and $f(t_m)=t_v$.
+
+\section{Linear Scale}
+In the case of linear scale $f$ is linear. As the inverse is linear too, it is easier to consider $f^{-1}(x)=ax+b$.
+Hence $b_m=f^{-1}(0)=b$, and $t_m=f^{-1}(t_v)=at_v+b_m$, implying $a=\frac{t_m-v_m}{t_v}$.
+
+\section{Logarithmic Scale}
+In logarithmic scale $f$ is an logarithm of a~certain base. However, we want $f(b_m)=0$. If $f=\log_a$, this condition holds
+only if $b_m=1$. Therefore, we have to identify $b_m$ with one. This is done by putting $f(x)=\log_a(x-b_m+1)$ (division is not
+possible since it would not work for negative $b_m$).
+
+$$\log_a(t_m-b_m+1)=t_v \quad\implies\quad \frac{\ln (t_m-b_m+1)}{\ln a}=t_v \quad\implies\quad \ln a=\frac{\ln(t_m-b_m+1)}{t_v}$$
+
+$$f:x\to\frac{\ln(x-b_m+1)}{\ln a}$$
+$$f^{-1}:x\to e^{x\ln a}-1+b_m$$
+
+Since java does not implement general logarithm, \texttt{LogarithmicScale} stores the value of $\ln a$. Furthermore, for additional precision,
+functions $\operatorname{log1p}(x)=\ln(x+1)$ and $\operatorname{expm1}(x)=e^x-1$ are used when possible.
+\end{document}

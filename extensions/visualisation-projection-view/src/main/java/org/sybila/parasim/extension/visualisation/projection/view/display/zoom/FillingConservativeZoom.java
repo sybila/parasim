@@ -29,7 +29,6 @@ public enum FillingConservativeZoom implements ZoomBehaviour {
             return graphSize - viewportSize / 2;
         }
         return position;
-        //tady je někde chyba
     }
 
     @Override
