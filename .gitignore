@@ -3,3 +3,5 @@ jsbml.log
 release.properties
 package-info.java
 nbactions.xml
+octave-core
+experiments/*/*result.xml

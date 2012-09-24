@@ -72,7 +72,7 @@ public interface OdeSystem extends Iterable<OdeSystemVariable> {
      */
     OdeSystemVariable getVariable(int dimension);
 
-    Collection<OdeSystemVariable> getVariables();
+    Map<String, OdeSystemVariable> getVariables();
 
     /**
      * @param dimension

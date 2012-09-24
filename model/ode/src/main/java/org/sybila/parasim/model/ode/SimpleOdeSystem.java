@@ -39,6 +39,7 @@ import org.sybila.parasim.model.math.VariableValue;
 public class SimpleOdeSystem implements OdeSystem {
 
     private final Map<Integer, OdeSystemVariable> variables = new HashMap<>();
+    private final Map<String, OdeSystemVariable> variablesByName = new HashMap<>();
     private final Map<Integer, Parameter> parameters = new HashMap<>();
     private final Map<String, Parameter> parametersByName = new HashMap<>();
     private final Map<Variable, VariableValue> initialVariableValues = new HashMap<>();
@@ -56,6 +57,7 @@ public class SimpleOdeSystem implements OdeSystem {
         }
         for(OdeSystemVariable var: variables) {
             this.variables.put(var.getIndex(), var);
+            this.variablesByName.put(var.getName(), var);
         }
         for (VariableValue value: initialVariableValues) {
             this.initialVariableValues.put(value.getExpression(), value);
@@ -105,8 +107,8 @@ public class SimpleOdeSystem implements OdeSystem {
     }
 
     @Override
-    public Collection<OdeSystemVariable> getVariables() {
-        return Collections.unmodifiableCollection(variables.values());
+    public Map<String, OdeSystemVariable> getVariables() {
+        return Collections.unmodifiableMap(variablesByName);
     }
 
     @Override

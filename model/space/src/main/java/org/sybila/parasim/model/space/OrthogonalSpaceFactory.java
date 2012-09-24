@@ -130,7 +130,7 @@ public class OrthogonalSpaceFactory implements
         float[] minArray = new float[releasedOdeSystem.dimension()];
         float[] maxArray = new float[releasedOdeSystem.dimension()];
         for (int dim=0; dim<releasedOdeSystem.dimension(); dim++) {
-            if (odeSystem.isVariable(dim)) {
+            if (releasedOdeSystem.isVariable(dim)) {
                 Variable var = releasedOdeSystem.getVariable(dim);
                 if (var == null) {
                     minArray[var.getIndex()] = releasedOdeSystem.getInitialVariableValue(var).getValue();

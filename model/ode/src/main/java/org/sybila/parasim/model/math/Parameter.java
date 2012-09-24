@@ -232,6 +232,11 @@ public final class Parameter implements Expression<Parameter>, Indexable {
     }
 
     @Override
+    public String toString() {
+        return toFormula();
+    }
+
+    @Override
     public <T> T traverse(TraverseFunction<T> function) {
         return function.apply(this);
     }

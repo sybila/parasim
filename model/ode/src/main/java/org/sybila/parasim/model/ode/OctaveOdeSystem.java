@@ -83,7 +83,7 @@ public class OctaveOdeSystem implements OdeSystem {
     }
 
     @Override
-    public Collection<OdeSystemVariable> getVariables() {
+    public Map<String, OdeSystemVariable> getVariables() {
         return odeSystem.getVariables();
     }
 
