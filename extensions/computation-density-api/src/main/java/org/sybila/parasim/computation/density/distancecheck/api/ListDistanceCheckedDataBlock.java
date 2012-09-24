@@ -65,7 +65,14 @@ public class ListDistanceCheckedDataBlock implements DistanceCheckedDataBlock {
 
     @Override
     public LimitedDistance getDistance(int index, int neighborIndex) {
-        return distances.get(index).get(neighborIndex);
+        if (index < 0 || index >= distances.size()) {
+            throw new IndexOutOfBoundsException("The trajectory index is out range [0, " + (distances.size() - 1) + "].");
+        }
+        List<LimitedDistance> found = distances.get(index);
+        if (neighborIndex < 0 || neighborIndex >= found.size()) {
+            throw new IndexOutOfBoundsException("The neighbor index is out range [0, " + (found.size() - 1) + "].");
+        }
+        return found.get(neighborIndex);
     }
 
     @Override

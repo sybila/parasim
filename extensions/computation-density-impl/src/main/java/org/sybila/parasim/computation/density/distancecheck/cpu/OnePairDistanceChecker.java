@@ -55,13 +55,13 @@ public class OnePairDistanceChecker implements DistanceChecker {
         if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
-        List<List<LimitedDistance>> distances = new ArrayList<List<LimitedDistance>>(trajectories.size());
-        List<List<Integer>> trajectoryPosition = new ArrayList<List<Integer>>(trajectories.size());
-        List<List<Integer>> neighborPosition = new ArrayList<List<Integer>>(trajectories.size());
+        List<List<LimitedDistance>> distances = new ArrayList<>(trajectories.size());
+        List<List<Integer>> trajectoryPosition = new ArrayList<>(trajectories.size());
+        List<List<Integer>> neighborPosition = new ArrayList<>(trajectories.size());
         for (int index = 0; index < trajectories.size(); index++) {
-            List<LimitedDistance> currentDistances = new ArrayList<LimitedDistance>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
-            List<Integer> currentTajectoryPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
-            List<Integer> currentNeighborPositions = new ArrayList<Integer>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
+            List<LimitedDistance> currentDistances = new ArrayList<>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
+            List<Integer> currentTajectoryPositions = new ArrayList<>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
+            List<Integer> currentNeighborPositions = new ArrayList<>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
             DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
             for (Trajectory trajectory : neighbors) {
                 LimitedPointDistanceMetric distanceMetric = trajectories.getDistanceMetric(index);

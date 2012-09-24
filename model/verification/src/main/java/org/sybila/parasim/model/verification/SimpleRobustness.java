@@ -57,14 +57,17 @@ public final class SimpleRobustness implements Robustness {
         this.considiredDimensions = consideredDimensions;
     }
 
+    @Override
     public float getTime() {
         return time;
     }
 
+    @Override
     public float getValue() {
         return this.value;
     }
 
+    @Override
     public Robustness invert() {
         if (value == 0) {
             return this;
@@ -79,7 +82,7 @@ public final class SimpleRobustness implements Robustness {
     public LimitedDistance distance(float[] first, float[] second) {
         Distance distance = null;
         if (considiredDimensions == null) {
-            EUCLIDEAN_METRIC.distance(first, second);
+            distance = EUCLIDEAN_METRIC.distance(first, second);
         } else {
             if (first == null) {
                 throw new IllegalArgumentException("The first point is null.");
@@ -98,9 +101,11 @@ public final class SimpleRobustness implements Robustness {
         }
         final Distance finalDistance = distance;
         return new LimitedDistance() {
+            @Override
             public boolean isValid() {
                 return finalDistance.value() <= Math.abs(value);
             }
+            @Override
             public float value() {
                 return finalDistance.value();
             }
@@ -109,7 +114,7 @@ public final class SimpleRobustness implements Robustness {
 
     @Override
     public LimitedDistance distance(Point first, Point second) {
-        Distance distance = null;
+        Distance distance;
         if (considiredDimensions == null) {
             distance = EUCLIDEAN_METRIC.distance(first, second);
         } else {
@@ -130,9 +135,11 @@ public final class SimpleRobustness implements Robustness {
         }
         final Distance finalDistance = distance;
         return new LimitedDistance() {
+            @Override
             public boolean isValid() {
                 return finalDistance.value() <= Math.abs(value);
             }
+            @Override
             public float value() {
                 return finalDistance.value();
             }

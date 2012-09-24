@@ -76,7 +76,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
 
     protected void testNumberOfTrajectoriesAfterInitialSpawn() {
         SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
-        assertEquals(spawned.size() + spawned.getSecondaryTrajectories().size(), (int) Math.pow(TO_SPAWN, DIMENSION));
+        assertEquals(spawned.size(), (int) Math.pow(TO_SPAWN, DIMENSION));
     }
 
     protected void testDistanceOfTrajectoriesAfterInitialSpawn()     {
@@ -85,13 +85,13 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
             for (Trajectory neighbor: spawned.getConfiguration().getNeighborhood().getNeighbors(trajectory)) {
                 boolean distanceMatches = false;
                 for(int dim=0; dim<trajectory.getDimension(); dim++) {
-                    if ((float) Math.abs(trajectory.getFirstPoint().getValue(dim) - neighbor.getFirstPoint().getValue(dim)) == (dim + 1) * 4.0f) {
+                    if ((float) Math.abs(trajectory.getFirstPoint().getValue(dim) - neighbor.getFirstPoint().getValue(dim)) == (dim + 1) * 2.0f) {
                         distanceMatches = true;
                     }
                 }
                 assertTrue(
                     distanceMatches,
-                    "Distance of seed " + trajectory.getFirstPoint() + " and its neighbor " + neighbor.getFirstPoint() + " doesn't match."
+                    "Distance of seed " + trajectory.getFirstPoint() + " and its neighbor " + neighbor.getFirstPoint() + " doesn't match,"
                 );
             }
         }

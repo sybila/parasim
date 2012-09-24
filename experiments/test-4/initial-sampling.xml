@@ -23,5 +23,5 @@
 <initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
     <variable name="A" sampling="10"/>
     <variable name="B" sampling="10"/>
-    <parameter name="k" sampling="2" />
+    <parameter name="k" sampling="10" />
 </initial-sampling>

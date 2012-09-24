@@ -31,7 +31,6 @@
         </listOfSpecies>
         <listOfParameters>
             <parameter id="k1" name="0_100000000_" value="1"/>
-            <parameter id="k2" name="0_10sfdv0000_" value="1"/>
         </listOfParameters>
         <listOfReactions>
             <reaction id="R1" reversible="false">
@@ -46,7 +45,6 @@
                         <apply>
                             <times/>
                             <ci> k1 </ci>
-                            <ci> k2 </ci>
                             <ci> A </ci>
                         </apply>
                     </math>
