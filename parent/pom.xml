@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.sybila</groupId>
         <artifactId>sybila-parent</artifactId>
-        <version>4</version>
+        <version>5-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -32,18 +32,11 @@
         <url>https://github.com/sybila/parasim</url>
         <tag>HEAD</tag>
     </scm>
-    <distributionManagement>
-        <site>
-            <id>sybila-site-ssh</id>
-            <name>Site hosted on http://sybila.fi.muni.cz</name>
-            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/parasim/${project.version}</url>
-        </site>
-    </distributionManagement>
 
     <repositories>
         <repository>
-            <id>sybila-maven-snapshots-http</id>
-            <url>http://sybila.fi.muni.cz/public/maven/snapshots</url>
+            <id>sybila-snapshots</id>
+            <url>http://repository-sybila.forge.cloudbees.com/snapshot/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -53,8 +46,8 @@
             </snapshots>
         </repository>
         <repository>
-            <id>sybila-maven-releases-http</id>
-            <url>http://sybila.fi.muni.cz/public/maven/releases</url>
+            <id>sybila-releases</id>
+            <url>http://repository-sybila.forge.cloudbees.com/release</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
