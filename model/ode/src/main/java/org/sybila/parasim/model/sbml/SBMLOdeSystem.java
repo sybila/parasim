@@ -184,6 +184,10 @@ public class SBMLOdeSystem implements OdeSystem {
         List<ParameterValue> parameterValues = new ArrayList<>();
         // load variables
         for (Species species : model.getListOfSpecies()) {
+            if (species.getId() == null || species.getId().isEmpty()) {
+                LOGGER.warn("skipping species with undefined id");
+                continue;
+            }
             Variable var = new Variable(species.getId(), variables.size());
             variablesMemory.put(species.getId(), var);
             variables.add(var);
@@ -191,6 +195,13 @@ public class SBMLOdeSystem implements OdeSystem {
         }
         // load paramaters
         for (org.sbml.jsbml.Parameter p : model.getListOfParameters()) {
+            if (p.getId() == null || p.getId().isEmpty()) {
+                LOGGER.warn("skipping parameter with undefined id");
+                continue;
+            }
+            if (new Double(p.getValue()).equals(Double.NaN)) {
+                throw new IllegalStateException("The values of parameter '" + p.getId() + "' is not defined.");
+            }
             Parameter param = new Parameter(p.getId(), variables.size() + parametersMemory.size());
             parametersMemory.put(p.getId(), param);
             ParameterValue pv = new ParameterValue(param, (float) p.getValue());
@@ -201,6 +212,10 @@ public class SBMLOdeSystem implements OdeSystem {
         for (Reaction reaction: model.getListOfReactions()) {
             Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory, parametersMemory);
             for (SpeciesReference speciesReference: reaction.getListOfReactants()) {
+                if (speciesReference.getSpecies() == null || speciesReference.getSpecies().isEmpty()) {
+                    LOGGER.warn("skipping species reference with undefined species");
+                    continue;
+                }
                 Variable variable = variablesMemory.get(speciesReference.getSpecies());
                 if (!negatives.containsKey(variable)) {
                     negatives.put(variable, new ArrayList<Expression>());
@@ -208,6 +223,10 @@ public class SBMLOdeSystem implements OdeSystem {
                 negatives.get(variable).add(kineticLaw);
             }
             for (SpeciesReference speciesReference: reaction.getListOfProducts()) {
+                if (speciesReference.getSpecies() == null || speciesReference.getSpecies().isEmpty()) {
+                    LOGGER.warn("skipping species reference with undefined species");
+                    continue;
+                }
                 Variable variable = variablesMemory.get(speciesReference.getSpecies());
                 if (!positives.containsKey(variable)) {
                     positives.put(variable, new ArrayList<Expression>());
@@ -215,7 +234,7 @@ public class SBMLOdeSystem implements OdeSystem {
                 positives.get(variable).add(kineticLaw);
             }
             if (reaction.isReversible()) {
-                LOGGER.warn("The reversible reactions are not fully supported.");
+                LOGGER.warn("The reversible reactions are not supported.");
             }
         }
         List<OdeSystemVariable> result = new ArrayList<>();
