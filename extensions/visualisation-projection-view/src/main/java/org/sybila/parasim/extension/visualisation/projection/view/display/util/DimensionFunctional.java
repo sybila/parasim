@@ -12,24 +12,34 @@ public enum DimensionFunctional {
     X("width", "x") {
 
         @Override
-        public int get(Dimension d) {
-            return d.width;
+        public <T> T get(T x, T y) {
+            return x;
         }
 
         @Override
-        public int get(Point p) {
-            return p.x;
+        public Dimension composeDimension(int thisDimensionValue, int otherValue) {
+            return new Dimension(thisDimensionValue, otherValue);
+        }
+
+        @Override
+        public Point composePoint(int thisDimensionValue, int otherValue) {
+            return new Point(thisDimensionValue, otherValue);
         }
     }, Y("height", "y") {
 
         @Override
-        public int get(Dimension d) {
-            return d.height;
+        public <T> T get(T x, T y) {
+            return y;
         }
 
         @Override
-        public int get(Point p) {
-            return p.x;
+        public Dimension composeDimension(int thisDimensionValue, int otherValue) {
+            return new Dimension(otherValue, thisDimensionValue);
+        }
+
+        @Override
+        public Point composePoint(int thisDimensionValue, int otherValue) {
+            return new Point(otherValue, thisDimensionValue);
         }
     };
     private String dimString, pointString;
@@ -39,9 +49,20 @@ public enum DimensionFunctional {
         this.pointString = pointString;
     }
 
-    public abstract int get(Dimension d);
+    public abstract <T> T get(T x, T y);
 
-    public abstract int get(Point p);
+    //public int get(int x, int y)
+    public int get(Dimension d) {
+        return get(d.width, d.height);
+    }
+
+    public int get(Point p) {
+        return get(p.x, p.y);
+    }
+
+    public abstract Point composePoint(int thisDimensionValue, int otherValue);
+
+    public abstract Dimension composeDimension(int thisDimensionValue, int otherValue);
 
     public String getDimensionString() {
         return dimString;

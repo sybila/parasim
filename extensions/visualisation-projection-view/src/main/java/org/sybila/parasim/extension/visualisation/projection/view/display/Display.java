@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JViewport;
 import org.sybila.parasim.extension.visualisation.projection.view.display.util.DimensionFunctional;
+import org.sybila.parasim.extension.visualisation.projection.view.display.util.Orientation;
 
 /**
  *
@@ -73,6 +74,7 @@ public class Display extends JPanel {
         }
     }
     private JScrollBar hScroll, vScroll;
+    private SlidingRule hRule, vRule;
     private JViewport viewport;
     private PaddedPane viewPanel;
     private Zoom zoom = null;
@@ -97,6 +99,8 @@ public class Display extends JPanel {
             int viewX = hScroll.getValue();
             int viewY = vScroll.getValue();
             viewport.setViewPosition(new Point(viewX, viewY));
+            hRule.updateView(viewX);
+            vRule.updateView(viewY);
             viewX += getViewportSize().width / 2;
             viewY += getViewportSize().height / 2;
             zoom = new SimpleZoom(zoom.getGraphSize(), new Point(viewX, viewY));
@@ -136,7 +140,7 @@ public class Display extends JPanel {
                 // only move //
                 if (mwe.isAltDown()) {
                     // move horizontally //
-                    hScroll.setValue(hScroll.getValue() + mwe.getWheelRotation() * hScroll.getUnitIncrement());
+                    hScroll.setValue(hScroll.getValue() - mwe.getWheelRotation() * hScroll.getUnitIncrement());
                 } else {
                     // move vertically //
                     vScroll.setValue(vScroll.getValue() + mwe.getWheelRotation() * vScroll.getUnitIncrement());
@@ -145,7 +149,7 @@ public class Display extends JPanel {
         }
     };
 
-    public Display(JComponent view, ZoomBehaviour zoomBehaviour) {
+    public Display(JComponent view, ZoomBehaviour zoomBehaviour, ScaleSource scaleSource) {
         this.zoomBehaviour = zoomBehaviour;
         setLayout(new GridBagLayout());
 
@@ -157,10 +161,20 @@ public class Display extends JPanel {
         vScroll.addAdjustmentListener(scrollListener);
         add(vScroll, Constraints.VSCROLL);
 
+        hRule = new SlidingRule(Orientation.HORIZONTAL, scaleSource);
+        hRule.setOpaque(true);
+        add(hRule, Constraints.HRULE);
+
+        vRule = new SlidingRule(Orientation.VERTICAL, scaleSource);
+        vRule.setOpaque(true);
+        add(vRule, Constraints.VRULE);
+
         viewport = new JViewport();
         viewport.addMouseWheelListener(wheelListener);
         GuidinglinePane guidingPane = new GuidinglinePane(viewport);
         guidingPane.setView(view);
+        guidingPane.addPositionChangeListener(hRule);
+        guidingPane.addPositionChangeListener(vRule);
         add(guidingPane, Constraints.VIEWPORT);
 
         viewPanel = new PaddedPane(view);
@@ -262,6 +276,10 @@ public class Display extends JPanel {
         // scroll bars //
         hScroll.setModel(new DefaultBoundedRangeModel(viewX, extent.width, 0, viewPanel.getWidth()));
         vScroll.setModel(new DefaultBoundedRangeModel(viewY, extent.height, 0, viewPanel.getHeight()));
+
+        // rules //
+        hRule.updateSize(zoom.getGraphSize().width, viewX);
+        vRule.updateSize(zoom.getGraphSize().height, viewY);
     }
 
     public Action getAction(Actions type) {

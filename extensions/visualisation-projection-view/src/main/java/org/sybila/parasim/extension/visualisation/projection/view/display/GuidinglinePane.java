@@ -8,6 +8,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
+import javax.swing.event.EventListenerList;
+import org.sybila.parasim.extension.visualisation.projection.view.display.util.PositionChangeListener;
 
 /**
  *
@@ -19,6 +21,7 @@ public class GuidinglinePane extends JRootPane {
     private JComponent view = null;
     private Point position = null;
     private MouseAdapter mouseTracker;
+    private EventListenerList listeners = new EventListenerList();
 
     public GuidinglinePane(JComponent content) {
         setContentPane(content);
@@ -57,6 +60,9 @@ public class GuidinglinePane extends JRootPane {
     private void setPosition(Point p) {
         position = p;
         getGlassPane().repaint();
+        for (PositionChangeListener listener : listeners.getListeners(PositionChangeListener.class)) {
+            listener.positionChanged(position);
+        }
     }
 
     private void moveMouse(MouseEvent me) {
@@ -79,5 +85,17 @@ public class GuidinglinePane extends JRootPane {
         view = newView;
         view.addMouseListener(mouseTracker);
         view.addMouseMotionListener(mouseTracker);
+    }
+
+    public void addPositionChangeListener(PositionChangeListener listener) {
+        listeners.add(PositionChangeListener.class, listener);
+    }
+
+    public void removePositionChangeListener(PositionChangeListener listener) {
+        listeners.remove(PositionChangeListener.class, listener);
+    }
+
+    public PositionChangeListener[] getPositionChangeListeners() {
+        return listeners.getListeners(PositionChangeListener.class);
     }
 }
