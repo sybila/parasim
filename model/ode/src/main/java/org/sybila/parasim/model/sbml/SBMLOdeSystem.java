@@ -132,16 +132,17 @@ public class SBMLOdeSystem implements OdeSystem {
         return odeSystem.substitute(parameterValues);
     }
 
-    private static Expression createExpression(ASTNode mathml, Map<String, Variable> variables, Map<String, Parameter> parameters) {
+    private static Expression createExpression(ASTNode mathml, Map<String, Variable> variables, Map<String, Parameter> parameters, Map<String, Parameter> localParameters) {
         if (mathml.isReal()) {
             return new Constant((float) mathml.getReal());
         }
         if (mathml.isName()) {
             Variable variable = variables.get(mathml.getName());
             if (variable == null) {
-                Parameter parameter = parameters.get(mathml.getName());
+                Parameter parameter = localParameters.get(mathml.getName());
                 if (parameter == null) {
-                    throw new IllegalArgumentException("There is no variable or parameter called [" + mathml.getName() + "].");
+                    parameter = parameters.get(mathml.getName());
+                    LOGGER.warn("There is no variable or parameter called [" + mathml.getName() + "].");
                 }
                 return parameter;
             }
@@ -149,12 +150,17 @@ public class SBMLOdeSystem implements OdeSystem {
         }
         if (mathml.isOperator() || mathml.isFunction()) {
             if (mathml.getChildCount() == 1) {
-                return createExpression(mathml.getChild(0), variables, parameters);
+                return createExpression(mathml.getChild(0), variables, parameters, localParameters);
             }
-            Expression[] subs = new Expression[mathml.getChildCount()];
-            for (int i=0; i<subs.length; i++) {
-                subs[i] = createExpression(mathml.getChild(i), variables, parameters);
+            List<Expression> subsList = new ArrayList<>();
+            for (int i=0; i<mathml.getChildCount(); i++) {
+                Expression exp = createExpression(mathml.getChild(i), variables, parameters, localParameters);
+                if (exp != null) {
+                    subsList.add(exp);
+                }
             }
+            Expression[] subs = new Expression[subsList.size()];
+            subsList.toArray(subs);
             switch(mathml.getType()) {
                 case TIMES:
                     return new Times(subs);
@@ -188,7 +194,7 @@ public class SBMLOdeSystem implements OdeSystem {
                 LOGGER.warn("skipping species with undefined id");
                 continue;
             }
-            Variable var = new Variable(species.getId(), variables.size());
+            Variable var = new Variable(species.getName() == null || species.getName().isEmpty() ? species.getId() : species.getName(), variables.size());
             variablesMemory.put(species.getId(), var);
             variables.add(var);
             variableValues.add(new VariableValue(var, (float) species.getInitialConcentration()));
@@ -202,7 +208,7 @@ public class SBMLOdeSystem implements OdeSystem {
             if (new Double(p.getValue()).equals(Double.NaN)) {
                 throw new IllegalStateException("The values of parameter '" + p.getId() + "' is not defined.");
             }
-            Parameter param = new Parameter(p.getId(), variables.size() + parametersMemory.size());
+            Parameter param = new Parameter(p.getName() == null || p.getName().isEmpty() ? p.getId() : p.getName(), variables.size() + parametersMemory.size());
             parametersMemory.put(p.getId(), param);
             ParameterValue pv = new ParameterValue(param, (float) p.getValue());
             substitutionValues.add(pv);
@@ -210,7 +216,32 @@ public class SBMLOdeSystem implements OdeSystem {
         }
         // load reaction speed
         for (Reaction reaction: model.getListOfReactions()) {
-            Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory, parametersMemory);
+            String reactionName = reaction.getName() == null || reaction.getName().isEmpty() ? reaction.getId() : reaction.getName();
+            Map<String, Parameter> localParameters = new HashMap<>();
+            for (org.sbml.jsbml.LocalParameter p : reaction.getKineticLaw().getListOfLocalParameters()) {
+                if (p.getId() == null || p.getId().isEmpty()) {
+                    LOGGER.warn("skipping local parameter with undefined id");
+                }
+                String paramLocalName = p.getName() == null || p.getName().isEmpty() ? p.getId() : p.getName();
+                String paramGloabalName = reactionName + ":" + paramLocalName;
+                if (new Double(p.getValue()).equals(Double.NaN)) {
+                    throw new IllegalStateException("The value of local paramater '" + paramLocalName + "' in reaction '" + reactionName + "' is not defined.");
+                }
+                if (parametersMemory.containsKey(paramGloabalName)) {
+                    throw new IllegalStateException("Can't load local paramater '" + paramLocalName + "' in reaction '" + reactionName + "', because there is already defined parameter '" + paramGloabalName + "'");
+                }
+                Parameter parameter = new Parameter(paramGloabalName, variables.size() + parametersMemory.size());
+                ParameterValue pv = new ParameterValue(parameter, (float) p.getValue());
+                parameterValues.add(pv);
+                substitutionValues.add(pv);
+                localParameters.put(paramLocalName, parameter);
+                parametersMemory.put(paramGloabalName, parameter);
+
+            }
+            Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory, parametersMemory, localParameters);
+            if (kineticLaw == null) {
+                throw new IllegalStateException("Can't parse a kinetic law.");
+            }
             for (SpeciesReference speciesReference: reaction.getListOfReactants()) {
                 if (speciesReference.getSpecies() == null || speciesReference.getSpecies().isEmpty()) {
                     LOGGER.warn("skipping species reference with undefined species");
