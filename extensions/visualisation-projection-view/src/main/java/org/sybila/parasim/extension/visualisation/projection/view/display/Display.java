@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -77,6 +78,8 @@ public class Display extends JPanel {
     private SlidingRule hRule, vRule;
     private JViewport viewport;
     private PaddedPane viewPanel;
+    private GuidinglinePane guidingPane;
+    //
     private Zoom zoom = null;
     private ZoomBehaviour zoomBehaviour;
     private EnumMap<Actions, Action> actions = new EnumMap(Actions.class);
@@ -148,6 +151,14 @@ public class Display extends JPanel {
             }
         }
     };
+    private GuidinglinePane.ZoomTarget zoomTarget = new GuidinglinePane.ZoomTarget() {
+
+        @Override
+        public void zoomToRectangle(Rectangle target) {
+            zoom = zoomBehaviour.zoomToRectangle(zoom, target, getViewportSize());
+            updateZoom();
+        }
+    };
 
     public Display(JComponent view, ZoomBehaviour zoomBehaviour, ScaleSource scaleSource) {
         this.zoomBehaviour = zoomBehaviour;
@@ -171,10 +182,11 @@ public class Display extends JPanel {
 
         viewport = new JViewport();
         viewport.addMouseWheelListener(wheelListener);
-        GuidinglinePane guidingPane = new GuidinglinePane(viewport);
+        guidingPane = new GuidinglinePane(viewport, zoomTarget);
         guidingPane.setView(view);
         guidingPane.addPositionChangeListener(hRule);
         guidingPane.addPositionChangeListener(vRule);
+        guidingPane.setZoomToRectangleActive(false);
         add(guidingPane, Constraints.VIEWPORT);
 
         viewPanel = new PaddedPane(view);
@@ -284,5 +296,13 @@ public class Display extends JPanel {
 
     public Action getAction(Actions type) {
         return actions.get(type);
+    }
+
+    public void setZoomToRectangleActive(boolean activity) {
+        guidingPane.setZoomToRectangleActive(activity);
+    }
+
+    public boolean getZoomToRectangleActive() {
+        return guidingPane.getZoomToRectangleActive();
     }
 }
