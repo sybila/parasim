@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -30,7 +31,7 @@ public class DisplayTest extends JFrame {
 
     private static class ViewPanel extends JPanel implements ScaleSource {
 
-        private static final Rectangle MODEL_BOUNDS = new Rectangle(-20, -20, 100, 100);
+        private static final Rectangle2D MODEL_BOUNDS = new Rectangle2D.Float(1e-5f, 1e-5f, 100f, 100f);
 
         private void halveRectangle(Graphics g, Rectangle rect, int depth, int baseDepth) {
             if (depth > 0) {
@@ -59,7 +60,10 @@ public class DisplayTest extends JFrame {
         @Override
         public Scale getScale(Orientation orientation) {
             DimensionFunctional dim = orientation.getDimensionFunctional();
-            Scale result = ScaleType.LINEAR.getFromSizes(dim.get(MODEL_BOUNDS.getLocation()), dim.get(MODEL_BOUNDS.getSize()), dim.get(getSize()));
+            Scale result = ScaleType.LOGARITHMIC.getFromSizes(
+                    Double.valueOf(dim.get(MODEL_BOUNDS.getX(), MODEL_BOUNDS.getY())).floatValue(),
+                    Double.valueOf(dim.get(MODEL_BOUNDS.getWidth(), MODEL_BOUNDS.getHeight())).floatValue(),
+                    dim.get(getSize()));
             if (orientation == Orientation.HORIZONTAL) {
                 return result;
             } else {

@@ -29,4 +29,10 @@ $$f^{-1}:x\to e^{x\ln a}-1+b_m$$
 
 Since java does not implement general logarithm, \texttt{LogarithmicScale} stores the value of $\ln a$. Furthermore, for additional precision,
 functions $\operatorname{log1p}(x)=\ln(x+1)$ and $\operatorname{expm1}(x)=e^x-1$ are used when possible.
+
+\textbf{In practise, however, this kind of scale does not work (or, closely resembles linear scale).}
+
+\subsection{Adjusted Logarithmic Scale}
+First, we assume, $b_m$ and $t_m$ both being positive (if both are negative, the $-\log(-x)$ function can be used).
+Then we construct the logarithmic scale in the manner similar to linear scale, only $t'_m=\log_{10} t_m$ and $b'_m=\log_{10} b_m$.
 \end{document}

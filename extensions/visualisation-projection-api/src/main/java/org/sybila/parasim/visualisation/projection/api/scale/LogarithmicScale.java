@@ -4,6 +4,7 @@ package org.sybila.parasim.visualisation.projection.api.scale;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
+@Deprecated //this kind of logarithmic scale is wrong
 public class LogarithmicScale implements Scale {
 
     private double logBase, min;

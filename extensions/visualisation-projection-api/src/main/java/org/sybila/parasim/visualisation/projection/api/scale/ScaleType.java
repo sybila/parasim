@@ -17,7 +17,7 @@ public enum ScaleType {
 
         @Override
         public Scale getFromSizes(float min, float max, int size) {
-            return LogarithmicScale.getFromSizes(min, max, size);
+            return NaturalLogScale.getFromSizes(min, max, size);
         }
     };
 

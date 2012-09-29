@@ -39,7 +39,7 @@ public class SlidingRule extends JRootPane implements PositionChangeListener {
     private JViewport content = new JViewport();
     private ScaleSource scaleSource;
     private Iterable<TickModel> ticks;
-    private ScaleFormat scaleFormat = new NaturalScaleFormat();
+    private ScaleFormat scaleFormat = NaturalScaleFormat.getInstance();
 
     public SlidingRule(Orientation orientation, ScaleSource scaleSource) {
         if (orientation != Orientation.HORIZONTAL && orientation != Orientation.VERTICAL) {
