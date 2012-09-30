@@ -33,13 +33,11 @@ import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Distance;
-import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
-import org.sybila.parasim.model.trajectory.MapTrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 /**
  * It iterates through all trajectories and their neighbors with invalid distance. For each
@@ -55,22 +53,19 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
     public SpawnedDataBlock spawn(Configuration configuration, DistanceCheckedDataBlock trajectories) {
         spawnSetup(configuration, trajectories);
         // note spawned trajectories
-        List<Trajectory> newTrajectories = new ArrayList<>();
+        List<TrajectoryWithNeighborhood> newTrajectories = new ArrayList<>();
         // note secondary trajectories
         List<Trajectory> newSecondaryTrajectories = new ArrayList<>();
-        // note trajectory neighborhoods
-        final Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<>();
         // iterate through all pairs of trajectory and neighbor with invalid distance
         for (int i = 0; i < trajectories.size(); i++) {
-            Trajectory trajectory = trajectories.getTrajectory(i);
-            for (int n = 0; n < configuration.getNeighborhood().getNeighbors(trajectory).size(); n++) {
+            TrajectoryWithNeighborhood trajectory = trajectories.getTrajectory(i);
+            for (int n = 0; n < trajectory.getNeighbors().size(); n++) {
                 // check distance
                 if (!trajectories.getDistance(i, n).isValid()) {
-                    Trajectory neighbor = configuration.getNeighborhood().getNeighbors(trajectory).getTrajectory(n);
+                    Trajectory neighbor = trajectory.getNeighbors().getTrajectory(n);
                     SpawnedResult spawned = spawnTrajectories(trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n));
                     if (spawned.containsTrajectories()) {
                         newTrajectories.addAll(spawned.getTrajectories());
-                        neighborhood.putAll(spawned.getNeighborhoods());
                         if (spawned.getSecondaryTrajectories() != null) {
                             newSecondaryTrajectories.addAll(spawned.getSecondaryTrajectories());
                         }
@@ -83,11 +78,6 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<>(newTrajectories),
                 new AbstractConfiguration(configuration.getInitialSampling(), configuration.getInitialSpace()) {
-                    private TrajectoryNeighborhood trajectoryNeighborhood = new MapTrajectoryNeighborhood(neighborhood);
-                    @Override
-                    public TrajectoryNeighborhood getNeighborhood() {
-                        return trajectoryNeighborhood;
-                    }
                     @Override
                     public int getStartIndex(int index, int neighborIndex) {
                         return 0;
@@ -107,38 +97,38 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
                 sampleDistances[dim] = -1;
             }
         }
-        List<Trajectory> primaryTrajectories = new ArrayList<>();
-        primaryTrajectories.add(new PointTrajectory(space.getMinBounds()));
+        List<Point> primarySeeds = new ArrayList<>();
+        primarySeeds.add(space.getMinBounds());
         // compute primary trajectories
         for (int dim=0; dim<sampleDistances.length; dim++) {
             if (sampleDistances[dim] == -1) {
                 continue;
             }
-            int numOfOldSeeds = primaryTrajectories.size();
+            int numOfOldSeeds = primarySeeds.size();
             for (int seed = 0; seed < numOfOldSeeds; seed++) {
                 for (int sample = 1; sample < initialSampling.getNumberOfSamples(dim); sample++) {
-                    float[] newPoint = primaryTrajectories.get(seed).getFirstPoint().toArrayCopy();
+                    float[] newPoint = primarySeeds.get(seed).toArrayCopy();
                     newPoint[dim] += sample * sampleDistances[dim];
-                    Trajectory newTrajectory = new PointTrajectory(new ArrayPoint(primaryTrajectories.get(seed).getFirstPoint().getTime(), newPoint));
-                    primaryTrajectories.add(newTrajectory);
+                    Point newSeed = new ArrayPoint(primarySeeds.get(seed).getTime(), newPoint);
+                    primarySeeds.add(newSeed);
                 }
             }
         }
         // compute secondary trajectories
-        final Map<Point, DataBlock<Trajectory>> neighborhoods = new HashMap<>();
+        final List<TrajectoryWithNeighborhood> primaryTrajectories = new ArrayList<>(primarySeeds.size());
         Map<Point, Trajectory> cache = new HashMap<>();
-        for (Trajectory t: primaryTrajectories) {
+        for (Point p: primarySeeds) {
             List<Trajectory> neighborhood = new ArrayList<>();
             for (int dim=0; dim<sampleDistances.length; dim++) {
                 if (sampleDistances[dim] == -1) {
                     continue;
                 }
-                float[] positiveNeighborArray = t.getFirstPoint().toArrayCopy();
-                float[] negativeNeighborArray = t.getFirstPoint().toArrayCopy();
+                float[] positiveNeighborArray = p.toArrayCopy();
+                float[] negativeNeighborArray = p.toArrayCopy();
                 positiveNeighborArray[dim] += sampleDistances[dim] / 2;
                 negativeNeighborArray[dim] -= sampleDistances[dim] / 2;
-                Point positiveNeighbor = new ArrayPoint(t.getFirstPoint().getTime(), positiveNeighborArray);
-                Point negativeNeighbor = new ArrayPoint(t.getFirstPoint().getTime(), negativeNeighborArray);
+                Point positiveNeighbor = new ArrayPoint(p.getTime(), positiveNeighborArray);
+                Point negativeNeighbor = new ArrayPoint(p.getTime(), negativeNeighborArray);
                 if (!cache.containsKey(positiveNeighbor)) {
                     cache.put(positiveNeighbor, new PointTrajectory(positiveNeighbor));
                 }
@@ -148,19 +138,13 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
                 neighborhood.add(cache.get(positiveNeighbor));
                 neighborhood.add(cache.get(negativeNeighbor));
             }
-            neighborhoods.put(t.getFirstPoint(), new ListDataBlock<>(neighborhood));
+            primaryTrajectories.add(new PointTrajectory(new ListDataBlock<>(neighborhood), p));
         }
         List<Trajectory> secondaryTrajectories = new ArrayList<>(cache.values());
 
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<>(primaryTrajectories),
                 new AbstractConfiguration(initialSampling, space) {
-                    private final TrajectoryNeighborhood trajectoryNeighborhood = new MapTrajectoryNeighborhood(neighborhoods);
-
-                    @Override
-                    public TrajectoryNeighborhood getNeighborhood() {
-                        return trajectoryNeighborhood;
-                    }
                     @Override
                     public int getStartIndex(int index, int neighborIndex) {
                         return 0;
@@ -202,36 +186,30 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
 
     protected static class SpawnedResult {
 
-        private Map<Point, DataBlock<Trajectory>> neighborhoods;
         private Collection<Trajectory> secondaryTrajectories;
-        private Collection<Trajectory> primaryTrajectories;
+        private Collection<TrajectoryWithNeighborhood> primaryTrajectories;
 
         /**
          * Creates result with no trajectory spawned
          */
         public SpawnedResult() {
-            this(null, null, null);
+            this(null, null);
         }
 
-        public SpawnedResult(Map<Point, DataBlock<Trajectory>> neighborhoods, Collection<Trajectory> primaryTrajectories, Collection<Trajectory> secondaryTrajectories) {
-            this.neighborhoods = neighborhoods;
+        public SpawnedResult(Collection<TrajectoryWithNeighborhood> primaryTrajectories, Collection<Trajectory> secondaryTrajectories) {
             this.secondaryTrajectories = secondaryTrajectories;
             this.primaryTrajectories = primaryTrajectories;
         }
 
         public boolean containsTrajectories() {
-            return neighborhoods != null && !neighborhoods.isEmpty();
-        }
-
-        public Map<Point, DataBlock<Trajectory>> getNeighborhoods() {
-            return neighborhoods;
+            return primaryTrajectories != null && !primaryTrajectories.isEmpty();
         }
 
         public Collection<Trajectory> getSecondaryTrajectories() {
             return secondaryTrajectories;
         }
 
-        public Collection<Trajectory> getTrajectories() {
+        public Collection<TrajectoryWithNeighborhood> getTrajectories() {
             return primaryTrajectories;
         }
     }

@@ -21,12 +21,12 @@ package org.sybila.parasim.computation.density.distancecheck.api;
 
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.LimitedDistance;
-import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface DistanceCheckedDataBlock extends DataBlock<Trajectory> {
+public interface DistanceCheckedDataBlock extends DataBlock<TrajectoryWithNeighborhood> {
 
     LimitedDistance getDistance(int index, int neighborIndex);
 

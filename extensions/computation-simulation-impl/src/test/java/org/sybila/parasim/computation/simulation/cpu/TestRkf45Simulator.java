@@ -20,7 +20,6 @@
 package org.sybila.parasim.computation.simulation.cpu;
 
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
-import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.Simulator;
 import org.testng.annotations.Test;
 import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
@@ -51,7 +50,7 @@ public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
     }
 
     @Override
-    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator() {
+    protected Simulator<AdaptiveStepConfiguration> createSimulator() {
         return new Rkf45Simulator();
     }
 

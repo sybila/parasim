@@ -22,8 +22,9 @@ package org.sybila.parasim.computation.density.spawn.api;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
-public interface SpawnedDataBlock extends DataBlock<Trajectory> {
+public interface SpawnedDataBlock extends DataBlock<TrajectoryWithNeighborhood> {
 
     Configuration getConfiguration();
 

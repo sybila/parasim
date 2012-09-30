@@ -19,17 +19,8 @@
  */
 package org.sybila.parasim.model.trajectory;
 
-/**
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- */
-public interface TrajectoryNeighborhood {
+public interface TrajectoryWithNeighborhood extends Trajectory {
 
-    /**
-     * Returns a trajectory neighborhood
-     *
-     * @param trajectory
-     * @return trajectories in neighborhood
-     */
-    DataBlock<Trajectory> getNeighbors(Trajectory trajectory);
+    DataBlock<Trajectory> getNeighbors();
 
 }

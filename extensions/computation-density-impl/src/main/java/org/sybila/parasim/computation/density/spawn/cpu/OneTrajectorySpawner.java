@@ -21,34 +21,24 @@ package org.sybila.parasim.computation.density.spawn.cpu;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
-import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class OneTrajectorySpawner extends AbstractTrajectorySpawner {
 
+    @Override
     protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {
-        Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>();
-        Trajectory spawned = spawnMiddleTrajectory(trajectory, neighbor, distance);
-        neighborhood.put(
-                spawned.getFirstPoint(),
-                new ArrayDataBlock<Trajectory>(
-                new Trajectory[]{
-                    trajectory,
-                    neighbor
-                }));
-        Collection<Trajectory> spawnedCol = new ArrayList<Trajectory>(1);
-        spawnedCol.add(spawned);
-        return new SpawnedResult(neighborhood, spawnedCol, null);
+        Collection<TrajectoryWithNeighborhood> spawnedCol = new ArrayList<>(1);
+        spawnedCol.add(spawnMiddleTrajectory(trajectory, neighbor, distance));
+        return new SpawnedResult(spawnedCol, null);
     }
 
     /**
@@ -60,8 +50,8 @@ public class OneTrajectorySpawner extends AbstractTrajectorySpawner {
      * @param distance
      * @return a new trajectory
      */
-    protected Trajectory spawnMiddleTrajectory(Trajectory trajectory, Trajectory neighbor, Distance distance) {
-        return new PointTrajectory(spawnMiddleInitPoint(trajectory, neighbor, distance));
+    protected TrajectoryWithNeighborhood spawnMiddleTrajectory(Trajectory trajectory, Trajectory neighbor, Distance distance) {
+        return new PointTrajectory(new ArrayDataBlock<>(new Trajectory[] {trajectory, neighbor}), spawnMiddleInitPoint(trajectory, neighbor, distance));
     }
 
     /**

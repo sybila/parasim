@@ -34,11 +34,13 @@ import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
 import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.LinkedTrajectory;
+import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -46,25 +48,28 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 public class OctaveSimulator implements AdaptiveStepSimulator {
 
     @Override
-    public SimulatedDataBlock simulate(AdaptiveStepConfiguration configuration, DataBlock<Trajectory> data) {
+    public <T extends Trajectory> SimulatedDataBlock<T> simulate(final AdaptiveStepConfiguration configuration, DataBlock<T> data) {
         OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
         List<ParameterValue> parameters = new ArrayList<>();
         octave.eval("lsode_options(\"step limit\", " + configuration.getMaxNumberOfIterations() + ");");
         if (configuration.getPrecisionConfiguration().getMaxRelativeError() > 0) {
             octave.eval("lsode_options(\"relative tolerance\", " + configuration.getPrecisionConfiguration().getMaxRelativeError() + ");");
         }
-        Trajectory[] trajectories = new Trajectory[data.size()];
+        List<T> trajectories = new ArrayList<>(data.size());
         Status[] statuses = new Status[data.size()];
         for (int i = 0; i < data.size(); i++) {
-            trajectories[i] = simulateTrajectory(octave, configuration.getOdeSystem(), configuration, data.getTrajectory(i).getLastPoint());
-            if (trajectories[i].getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
+            Trajectory simulated = simulateTrajectory(octave, configuration.getOdeSystem(), configuration, data.getTrajectory(i).getLastPoint());
+            LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
+            trajectory.append(simulated);
+            trajectories.add((T) trajectory);
+            if (simulated.getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
                 statuses[i] = Status.TIMEOUT;
             } else {
                 statuses[i] = Status.OK;
             }
         }
         octave.close();
-        return new ArraySimulatedDataBlock(new ArrayDataBlock(trajectories), statuses);
+        return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
     }
 
     private Trajectory simulateTrajectory(OctaveEngine octave, OdeSystem odeSystem, AdaptiveStepConfiguration configuration, Point initialPoint) {

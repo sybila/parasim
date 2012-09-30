@@ -32,6 +32,7 @@ import org.sybila.parasim.model.trajectory.LimitedDistance;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -48,7 +49,7 @@ public class OnePairDistanceChecker implements DistanceChecker {
      * @return the biggest ratio between measured and required distance
      */
     @Override
-    public DistanceCheckedDataBlock check(Configuration congfiguration, DistanceMetricDataBlock<Trajectory> trajectories) {
+    public DistanceCheckedDataBlock check(Configuration congfiguration, DistanceMetricDataBlock<TrajectoryWithNeighborhood> trajectories) {
         if (congfiguration == null) {
             throw new IllegalArgumentException("The parameter configuration is null.");
         }
@@ -59,10 +60,10 @@ public class OnePairDistanceChecker implements DistanceChecker {
         List<List<Integer>> trajectoryPosition = new ArrayList<>(trajectories.size());
         List<List<Integer>> neighborPosition = new ArrayList<>(trajectories.size());
         for (int index = 0; index < trajectories.size(); index++) {
-            List<LimitedDistance> currentDistances = new ArrayList<>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
-            List<Integer> currentTajectoryPositions = new ArrayList<>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
-            List<Integer> currentNeighborPositions = new ArrayList<>(congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index)).size());
-            DataBlock<Trajectory> neighbors = congfiguration.getNeighborhood().getNeighbors(trajectories.getTrajectory(index));
+            List<LimitedDistance> currentDistances = new ArrayList<>(trajectories.getTrajectory(index).getNeighbors().size());
+            List<Integer> currentTajectoryPositions = new ArrayList<>(trajectories.getTrajectory(index).getNeighbors().size());
+            List<Integer> currentNeighborPositions = new ArrayList<>(trajectories.getTrajectory(index).getNeighbors().size());
+            DataBlock<Trajectory> neighbors = trajectories.getTrajectory(index).getNeighbors();
             for (Trajectory trajectory : neighbors) {
                 LimitedPointDistanceMetric distanceMetric = trajectories.getDistanceMetric(index);
                 DistanceAndPosition distanceAndPosition = checkTrajectoriesDistance(distanceMetric, trajectories.getTrajectory(index).getReference().getTrajectory(), trajectory);

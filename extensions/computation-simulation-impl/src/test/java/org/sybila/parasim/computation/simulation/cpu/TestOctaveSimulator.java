@@ -65,7 +65,7 @@ public class TestOctaveSimulator extends AbstractAdaptiveStepSimulationTest {
     }
 
     @Override
-    protected Simulator<AdaptiveStepConfiguration, SimulatedDataBlock> createSimulator() {
+    protected Simulator<AdaptiveStepConfiguration> createSimulator() {
         return new OctaveSimulator();
     }
 

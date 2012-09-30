@@ -22,18 +22,26 @@ package org.sybila.parasim.model.trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class PointTrajectory extends AbstractTrajectory {
+public class PointTrajectory extends AbstractTrajectory implements TrajectoryWithNeighborhood {
 
     /** First point of the trajectory. */
-    private Point initialPoint;
+    private final Point initialPoint;
 
     public PointTrajectory(Point initialPoint) {
-        super(initialPoint.getDimension(), 1);
-        this.initialPoint = initialPoint;
+        this(DataBlock.EMPTY_DATABLOCK, initialPoint);
     }
 
     public PointTrajectory(float time, float... data) {
         this(new ArrayPoint(time, data));
+    }
+
+    public PointTrajectory(DataBlock<Trajectory> neighborhood, Point initialPoint) {
+        super(neighborhood, initialPoint.getDimension(), 1);
+        this.initialPoint = initialPoint;
+    }
+
+    public PointTrajectory(DataBlock<Trajectory> neighborhood, float time, float... data) {
+        this(neighborhood, new ArrayPoint(time, data));
     }
 
     @Override
@@ -48,4 +56,5 @@ public class PointTrajectory extends AbstractTrajectory {
     public String toString() {
         return "[" + initialPoint + "]";
     }
+
 }

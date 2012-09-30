@@ -27,12 +27,12 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ArraySimulatedDataBlock implements SimulatedDataBlock {
+public class ArraySimulatedDataBlock<T extends Trajectory> implements SimulatedDataBlock<T> {
 
-    private DataBlock<Trajectory> dataBlock;
+    private DataBlock<T> dataBlock;
     private Status[] statuses;
 
-    public ArraySimulatedDataBlock(DataBlock<Trajectory> dataBlock, Status[] statuses) {
+    public ArraySimulatedDataBlock(DataBlock<T> dataBlock, Status[] statuses) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }
@@ -52,12 +52,12 @@ public class ArraySimulatedDataBlock implements SimulatedDataBlock {
     }
 
     @Override
-    public Trajectory getTrajectory(int index) {
+    public T getTrajectory(int index) {
         return dataBlock.getTrajectory(index);
     }
 
     @Override
-    public Iterator<Trajectory> iterator() {
+    public Iterator<T> iterator() {
         return dataBlock.iterator();
     }
 

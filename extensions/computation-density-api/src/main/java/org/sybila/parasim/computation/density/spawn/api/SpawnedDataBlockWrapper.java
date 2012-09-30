@@ -24,14 +24,15 @@ import java.util.Iterator;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
 
     private Configuration configuration;
     private DataBlock<Trajectory> secondaryTrajectories;
-    private DataBlock<Trajectory> trajectories;
+    private DataBlock<TrajectoryWithNeighborhood> trajectories;
 
-    public SpawnedDataBlockWrapper(DataBlock<Trajectory> trajectories, Configuration configuration, DataBlock<Trajectory> secondaryTrajectories) {
+    public SpawnedDataBlockWrapper(DataBlock<TrajectoryWithNeighborhood> trajectories, Configuration configuration, DataBlock<Trajectory> secondaryTrajectories) {
         if (trajectories == null) {
             throw new IllegalArgumentException("The parameter trajectories is null.");
         }
@@ -52,7 +53,7 @@ public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
     }
 
     @Override
-    public Trajectory getTrajectory(int index) {
+    public TrajectoryWithNeighborhood getTrajectory(int index) {
         return trajectories.getTrajectory(index);
     }
 
@@ -67,7 +68,7 @@ public class SpawnedDataBlockWrapper implements SpawnedDataBlock {
     }
 
     @Override
-    public Iterator<Trajectory> iterator() {
+    public Iterator<TrajectoryWithNeighborhood> iterator() {
         return trajectories.iterator();
     }
 }

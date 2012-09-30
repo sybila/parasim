@@ -23,19 +23,19 @@ import java.util.Iterator;
 import java.util.List;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.LimitedDistance;
-import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ListDistanceCheckedDataBlock implements DistanceCheckedDataBlock {
 
-    private DataBlock<Trajectory> dataBlock;
+    private DataBlock<TrajectoryWithNeighborhood> dataBlock;
     private List<List<LimitedDistance>> distances;
     private List<List<Integer>> neighborCheckedPositions;
     private List<List<Integer>> trajectoryCheckedPositions;
 
-    public ListDistanceCheckedDataBlock(DataBlock<Trajectory> dataBlock, List<List<LimitedDistance>> distances, List<List<Integer>> trajectoryCheckedPositions, List<List<Integer>> neighborCheckedPositions) {
+    public ListDistanceCheckedDataBlock(DataBlock<TrajectoryWithNeighborhood> dataBlock, List<List<LimitedDistance>> distances, List<List<Integer>> trajectoryCheckedPositions, List<List<Integer>> neighborCheckedPositions) {
         if (dataBlock == null) {
             throw new IllegalArgumentException("The parameter dataBlock is null.");
         }
@@ -76,7 +76,7 @@ public class ListDistanceCheckedDataBlock implements DistanceCheckedDataBlock {
     }
 
     @Override
-    public Trajectory getTrajectory(int index) {
+    public TrajectoryWithNeighborhood getTrajectory(int index) {
         return dataBlock.getTrajectory(index);
     }
 
@@ -86,7 +86,7 @@ public class ListDistanceCheckedDataBlock implements DistanceCheckedDataBlock {
     }
 
     @Override
-    public Iterator<Trajectory> iterator() {
+    public Iterator<TrajectoryWithNeighborhood> iterator() {
         return dataBlock.iterator();
     }
 

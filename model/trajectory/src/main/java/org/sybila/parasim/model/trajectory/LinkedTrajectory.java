@@ -37,9 +37,20 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
     private List<Trajectory> trajectories = new ArrayList<>();
     private int truncateCounter = 0;
 
-    public LinkedTrajectory(Trajectory trajectory) {
+    protected LinkedTrajectory(TrajectoryWithNeighborhood trajectory) {
+        super(trajectory.getNeighbors(), trajectory.getDimension(), trajectory.getLength());
+        trajectories.add(trajectory);
+    }
+
+    protected LinkedTrajectory(Trajectory trajectory) {
         super(trajectory.getDimension(), trajectory.getLength());
         trajectories.add(trajectory);
+    }
+
+    public static LinkedTrajectory createAndUpdateReferenceWithNeighborhood(TrajectoryWithNeighborhood trajectory) {
+        LinkedTrajectory linkedTrajectory = new LinkedTrajectory(trajectory);
+        trajectory.getReference().setTrajectory(linkedTrajectory);
+        return linkedTrajectory;
     }
 
     public static LinkedTrajectory createAndUpdateReference(Trajectory trajectory) {

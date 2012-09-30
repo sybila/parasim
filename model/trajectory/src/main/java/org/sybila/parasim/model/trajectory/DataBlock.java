@@ -19,6 +19,9 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import java.io.Serializable;
+import java.util.Iterator;
+
 /**
  * Data block is a set of trajectories which can be extended by other information.
  *
@@ -26,7 +29,9 @@ package org.sybila.parasim.model.trajectory;
  *
  * @param <T> type of trajectories which are placed in data block
  */
-public interface DataBlock<T extends Trajectory> extends Iterable<T> {
+public interface DataBlock<T extends Trajectory> extends Iterable<T>, Serializable {
+
+    public static DataBlock EMPTY_DATABLOCK = new EmptyDatablock();
 
     /**
      * Returns the trajectory at the specified position in this data block.
@@ -45,4 +50,39 @@ public interface DataBlock<T extends Trajectory> extends Iterable<T> {
      * @return the number of trajectories in this data block
      */
     int size();
+
+    final class EmptyDatablock<T extends Trajectory> implements DataBlock<T> {
+
+        private EmptyDatablock() {
+        }
+
+        @Override
+        public T getTrajectory(int index) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+                @Override
+                public T next() {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+            };
+        }
+
+    }
 }

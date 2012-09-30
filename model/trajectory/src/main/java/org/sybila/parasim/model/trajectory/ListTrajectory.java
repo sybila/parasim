@@ -38,6 +38,11 @@ public class ListTrajectory extends AbstractTrajectory {
         this.points = points;
     }
 
+    public ListTrajectory(DataBlock<Trajectory> neighborhood, List<Point> points) {
+        super(neighborhood, points.get(0).getDimension(), points.size());
+        this.points = points;
+    }
+
     @Override
     public Point getPoint(int index) {
         return points.get(index);

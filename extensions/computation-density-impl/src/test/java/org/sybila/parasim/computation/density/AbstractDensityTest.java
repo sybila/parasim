@@ -22,9 +22,7 @@ package org.sybila.parasim.computation.density;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.InitialSampling;
@@ -41,18 +39,16 @@ import org.sybila.parasim.model.trajectory.LimitedDistance;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.ListTrajectory;
-import org.sybila.parasim.model.trajectory.MapTrajectoryNeighborhood;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhoodWrapper;
 
 public abstract class AbstractDensityTest {
 
-    protected Configuration createConfiguration(final InitialSampling initialSampling, final OrthogonalSpace initialSpace, final TrajectoryNeighborhood trajectoryNeighborhood) {
+    protected Configuration createConfiguration(final InitialSampling initialSampling, final OrthogonalSpace initialSpace) {
         return new AbstractConfiguration(initialSampling, initialSpace) {
-            public TrajectoryNeighborhood getNeighborhood() {
-                return trajectoryNeighborhood;
-            }
+            @Override
             public int getStartIndex(int index, int neighborIndex) {
                 return 0;
             }
@@ -87,6 +83,7 @@ public abstract class AbstractDensityTest {
 
     protected LimitedPointDistanceMetric createPointDistanceMetric(final float expectedDistance, final int dimension) {
         return new LimitedPointDistanceMetric() {
+            @Override
             public LimitedDistance distance(float[] first, float[] second) {
                 final float[] distance = new float[first.length];
                 float maxDistance = 0;
@@ -99,6 +96,7 @@ public abstract class AbstractDensityTest {
                 final float maxDistanceFinal = maxDistance;
                 return new LimitedDistance() {
 
+                    @Override
                     public boolean isValid() {
                         return value() < expectedDistance;
                     }
@@ -107,6 +105,7 @@ public abstract class AbstractDensityTest {
                         return value(dimensionIndex) < expectedDistance;
                     }
 
+                    @Override
                     public float value() {
                         return maxDistanceFinal;
                     }
@@ -117,16 +116,18 @@ public abstract class AbstractDensityTest {
                 };
             }
 
+            @Override
             public LimitedDistance distance(Point first, Point second) {
                 return distance(first.toArray(), second.toArray());
             }
         };
     }
 
-    protected DataBlock<Trajectory> createDataBlock(int size, int length, int dimension, float x, float y, float z) {
+    protected DataBlock<TrajectoryWithNeighborhood> createDataBlock(int size, int length, int dimension, float x, float y, float z) {
+        // TODO: create also neighbors
         Trajectory[] trajectories = new Trajectory[size];
         for (int t = 0; t < size; t++) {
-            List<Point> points = new ArrayList<Point>(length);
+            List<Point> points = new ArrayList<>(length);
             for (int p = 0; p < length; p++) {
                 float[] values = new float[dimension];
                 for (int dim = 0; dim < dimension; dim++) {
@@ -136,19 +137,16 @@ public abstract class AbstractDensityTest {
             }
             trajectories[t] = new ListTrajectory(points);
         }
-        return new ArrayDataBlock<Trajectory>(trajectories);
-    }
-
-    protected TrajectoryNeighborhood createNeighborhood(DataBlock<Trajectory> dataBlock) {
-        final Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>();
+        TrajectoryWithNeighborhood[] result = new TrajectoryWithNeighborhood[size];
+        DataBlock<Trajectory> dataBlock =  new ArrayDataBlock<>(trajectories);
         for (int t = 0; t < dataBlock.size(); t++) {
-            List<Trajectory> trajectories = new ArrayList<Trajectory>();
+            List<Trajectory> neighbors = new ArrayList<>();
             int index = 0;
             for (int i = t+1; i < dataBlock.size(); i++) {
-                trajectories.add(dataBlock.getTrajectory(i));
+                neighbors.add(dataBlock.getTrajectory(i));
             }
-            neighborhood.put(dataBlock.getTrajectory(t).getFirstPoint(), new ListDataBlock<Trajectory>(trajectories));
+            result[t] = TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(dataBlock.getTrajectory(t), new ListDataBlock<>(neighbors));
         }
-        return new MapTrajectoryNeighborhood(neighborhood);
+        return new ArrayDataBlock<>(result);
     }
 }

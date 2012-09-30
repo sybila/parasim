@@ -28,6 +28,6 @@ import org.sybila.parasim.model.verification.Property;
  */
 public interface Verifier<P extends Property> {
 
-    VerifiedDataBlock<Trajectory> verify(DataBlock<Trajectory> trajectories, P property);
+    <T extends Trajectory> VerifiedDataBlock<T> verify(DataBlock<T> trajectories, P property);
 
 }

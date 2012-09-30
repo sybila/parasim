@@ -48,12 +48,12 @@ import static org.testng.Assert.*;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class AbstractSimulatorTest<Conf extends Configuration, Out extends SimulatedDataBlock> {
+public abstract class AbstractSimulatorTest<Conf extends Configuration> {
 
     private Conf configuration;
     private Map<Integer, OdeSystem> odeSystems = new HashMap<Integer, OdeSystem>();
     private Map<OdeSystem, Conf> confs = new HashMap<>();
-    private Simulator<Conf, Out> simulator;
+    private Simulator<Conf> simulator;
 
     protected Conf getConfiguration(OdeSystem odeSystem) {
         if (confs.get(odeSystem) == null) {
@@ -73,7 +73,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
         return odeSystems.get(dim);
     }
 
-    protected Simulator<Conf, Out> getSimulator() {
+    protected Simulator<Conf> getSimulator() {
         if (simulator == null) {
             simulator = createSimulator();
         }
@@ -148,6 +148,6 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration, Out exte
 
     abstract protected Conf createConfiguration(OdeSystem odeSystem);
 
-    abstract protected Simulator<Conf, Out> createSimulator();
+    abstract protected Simulator<Conf> createSimulator();
 
 }

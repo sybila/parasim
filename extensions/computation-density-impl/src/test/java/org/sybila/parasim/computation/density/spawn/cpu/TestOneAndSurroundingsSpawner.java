@@ -28,7 +28,7 @@ import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceC
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
-import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -46,28 +46,31 @@ public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest
         // load configuration
         Configuration configuration = createConfiguration(
                 initSpawned.getConfiguration().getInitialSampling(),
-                initSpawned.getConfiguration().getInitialSpace(),
-                initSpawned.getConfiguration().getNeighborhood());
+                initSpawned.getConfiguration().getInitialSpace());
         // distance checking
         DistanceChecker distanceChecker = new OnePairDistanceChecker();
-        DistanceCheckedDataBlock distanceChecked = distanceChecker.check(configuration, new DistanceMetricDataBlock<Trajectory>() {
+        DistanceCheckedDataBlock distanceChecked = distanceChecker.check(configuration, new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {
+            @Override
             public LimitedPointDistanceMetric getDistanceMetric(int index) {
                 return distanceMetric;
             }
-            public Trajectory getTrajectory(int index) {
+            @Override
+            public TrajectoryWithNeighborhood getTrajectory(int index) {
                 return initSpawned.getTrajectory(index);
             }
+            @Override
             public int size() {
                 return initSpawned.size();
             }
-            public Iterator<Trajectory> iterator() {
+            @Override
+            public Iterator<TrajectoryWithNeighborhood> iterator() {
                 return initSpawned.iterator();
             }
         });
         // assertions in distances
         for (int t=0; t<distanceChecked.size(); t++) {
-            Trajectory trajectory = initSpawned.getTrajectory(t);
-            for (int n=0; n<initSpawned.getConfiguration().getNeighborhood().getNeighbors(trajectory).size(); n++) {
+            TrajectoryWithNeighborhood trajectory = initSpawned.getTrajectory(t);
+            for (int n=0; n<trajectory.getNeighbors().size(); n++) {
                 assertFalse(distanceChecked.getDistance(t, n).isValid(), "Validity of distance of trajectories [" + t + ", " + n + "] doesn't match. Distance is [" + distanceChecked.getDistance(t, n).value() + "].");
             }
         }
@@ -77,8 +80,8 @@ public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest
         SpawnedDataBlock nextSpawned = spawner.spawn(configuration, distanceChecked);
         // assertion
         int expectedSpawned = 0;
-        for (Trajectory trajectory: initSpawned) {
-            expectedSpawned += initSpawned.getConfiguration().getNeighborhood().getNeighbors(trajectory).size();
+        for (TrajectoryWithNeighborhood trajectory: initSpawned) {
+            expectedSpawned += trajectory.getNeighbors().size();
         }
         assertEquals(nextSpawned.size(), expectedSpawned);
     }

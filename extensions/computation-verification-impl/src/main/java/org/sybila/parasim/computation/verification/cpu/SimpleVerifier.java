@@ -41,32 +41,38 @@ public class SimpleVerifier<P extends Property> implements Verifier<P> {
         this.monitorFactory = monitorFactory;
     }
 
-    public VerifiedDataBlock<Trajectory> verify(final DataBlock<Trajectory> trajectories, P property) {
+    @Override
+    public <T extends Trajectory> VerifiedDataBlock<T> verify(final DataBlock<T> trajectories, P property) {
         final Robustness[] robustnesses = new Robustness[trajectories.size()];
         int counter = 0;
         for (Trajectory trajectory: trajectories) {
             robustnesses[counter] = monitorFactory.createMonitor(trajectory.getReference().getTrajectory(), property).getRobustness(0);
             counter++;
         }
-        return new VerifiedDataBlock<Trajectory>() {
+        return new VerifiedDataBlock<T>() {
 
+            @Override
             public LimitedPointDistanceMetric getDistanceMetric(int index) {
                 return robustnesses[index];
             }
 
+            @Override
             public Robustness getRobustness(int index) {
                 return robustnesses[index];
             }
 
-            public Trajectory getTrajectory(int index) {
-                return trajectories.getTrajectory(index).getReference().getTrajectory();
+            @Override
+            public T getTrajectory(int index) {
+                return (T) trajectories.getTrajectory(index).getReference().getTrajectory();
             }
 
+            @Override
             public int size() {
                 return trajectories.size();
             }
 
-            public Iterator<Trajectory> iterator() {
+            @Override
+            public Iterator<T> iterator() {
                 return trajectories.iterator();
             }
         };

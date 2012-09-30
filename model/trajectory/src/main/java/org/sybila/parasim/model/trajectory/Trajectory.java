@@ -19,13 +19,15 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import java.io.Serializable;
+
 /**
  * Stores points of one trajectory.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Trajectory extends Iterable<Point> {
+public interface Trajectory extends Iterable<Point>, Serializable {
 
     /**
      * Returns number of dimensions of each point of the trajectory

@@ -25,18 +25,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.sybila.parasim.model.trajectory.Distance;
-import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhoodWrapper;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawner {
 
-    private Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<Point, Trajectory>();
+    private Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<>();
 
     @Override
     protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {
@@ -55,8 +56,8 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         // compute half of their distance
         float radius = Math.abs(trajectory.getFirstPoint().getValue(diffDimension) - neighbor.getFirstPoint().getValue(diffDimension)) / 2;
         // memory for spawned trajectories
-        List<Trajectory> neighborTrajectories = new ArrayList<Trajectory>();
-        List<Trajectory> spawnedSecondaryTrajectories = new ArrayList<Trajectory>();
+        List<Trajectory> neighborTrajectories = new ArrayList<>();
+        List<Trajectory> spawnedSecondaryTrajectories = new ArrayList<>();
         // create neighbor trajectories which can have collision
         for (int dim = 0; dim < trajectory.getDimension(); dim++) {
             for (int sign = -1; sign <= 1; sign += 2) {
@@ -73,10 +74,9 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
             }
         }
         // reorganize
-        Map<Point, DataBlock<Trajectory>> neighborhood = new HashMap<Point, DataBlock<Trajectory>>(neighborTrajectories.size() + 1);
-        neighborhood.put(newPrimary.getFirstPoint(), new ListDataBlock<Trajectory>(neighborTrajectories));
-        Collection<Trajectory> spawnedCol = new ArrayList<Trajectory>();
-        spawnedCol.add(newPrimary);
-        return new SpawnedResult(neighborhood, spawnedCol, spawnedSecondaryTrajectories);
+
+        Collection<TrajectoryWithNeighborhood> spawnedCol = new ArrayList<>();
+        spawnedCol.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(newPrimary, new ListDataBlock<>(neighborTrajectories)));
+        return new SpawnedResult(spawnedCol, spawnedSecondaryTrajectories);
     }
 }

@@ -19,13 +19,15 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import java.io.Serializable;
+
 /**
  * Represents a single simulated point in time and space.
  *
  * @author <a href="mailto:xdrazan@fi.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Point extends Iterable<Float> {
+public interface Point extends Iterable<Float>, Serializable {
 
     /**
      * @return Number of dimensions of given point.

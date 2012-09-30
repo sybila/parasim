@@ -21,14 +21,12 @@
 package org.sybila.parasim.computation.density.spawn.cpu;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import org.sybila.parasim.model.trajectory.Point;
 import java.util.Set;
 import java.util.HashSet;
 import org.sybila.parasim.computation.density.AbstractDensityTest;
-import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.model.math.Constant;
@@ -38,6 +36,7 @@ import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 import static org.testng.Assert.*;
 
 /**
@@ -60,7 +59,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
             new ArrayPoint(0, 3 * (TO_SPAWN - 1), 3 * (TO_SPAWN - 1), 3 * (TO_SPAWN - 1)),
             new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST)
         );
-        DataBlock<Trajectory> spawned = initialSpawn(space, TO_SPAWN);
+        DataBlock<TrajectoryWithNeighborhood> spawned = initialSpawn(space, TO_SPAWN);
         Set<Point> expected = new HashSet<Point>();
         for (int x=0; x<3 * TO_SPAWN; x+=3) {
             for(int y=0; y<3 * TO_SPAWN; y+=3) {
@@ -81,8 +80,8 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
 
     protected void testDistanceOfTrajectoriesAfterInitialSpawn()     {
         SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((TO_SPAWN - 1) * 4.0f, DIMENSION), TO_SPAWN);
-        for (Trajectory trajectory: spawned) {
-            for (Trajectory neighbor: spawned.getConfiguration().getNeighborhood().getNeighbors(trajectory)) {
+        for (TrajectoryWithNeighborhood trajectory: spawned) {
+            for (Trajectory neighbor: trajectory.getNeighbors()) {
                 boolean distanceMatches = false;
                 for(int dim=0; dim<trajectory.getDimension(); dim++) {
                     if ((float) Math.abs(trajectory.getFirstPoint().getValue(dim) - neighbor.getFirstPoint().getValue(dim)) == (dim + 1) * 2.0f) {
@@ -99,8 +98,8 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
 
     protected void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn() {
         SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
-        for (Trajectory trajectory : spawned) {
-            assertTrue(spawned.getConfiguration().getNeighborhood().getNeighbors(trajectory).size() <= 2 * DIMENSION, "The number of trajectories in neigborhood has to be lower or equal to 2 * dimension <" + DIMENSION +">, but it is <" + spawned.getConfiguration().getNeighborhood().getNeighbors(trajectory).size() +">.");
+        for (TrajectoryWithNeighborhood trajectory : spawned) {
+            assertTrue(trajectory.getNeighbors().size() <= 2 * DIMENSION, "The number of trajectories in neigborhood has to be lower or equal to 2 * dimension <" + DIMENSION +">, but it is <" + trajectory.getNeighbors().size() +">.");
         }
     }
 

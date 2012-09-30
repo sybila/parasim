@@ -26,9 +26,9 @@ import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.ArraySimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.Status;
-import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.ListTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -81,15 +81,15 @@ public class Rkf45Simulator implements AdaptiveStepSimulator {
      * @return simulated data
      */
     @Override
-    public SimulatedDataBlock simulate(final AdaptiveStepConfiguration configuration, DataBlock<Trajectory> data) {
-        Trajectory[] trajectories = new Trajectory[data.size()];
+    public <T extends Trajectory> SimulatedDataBlock<T> simulate(final AdaptiveStepConfiguration configuration, DataBlock<T> data) {
+        List<T> trajectories = new ArrayList<>(data.size());
         Status[] statuses = new Status[data.size()];
         for (int i = 0; i < data.size(); i++) {
             Rkf45Computation computation = new Rkf45Computation(configuration);
-            trajectories[i] = simulate(computation, data.getTrajectory(i).getLastPoint());
+            trajectories.add((T) simulate(computation, data.getTrajectory(i).getLastPoint()));
             statuses[i] = computation.status;
         }
-        return new ArraySimulatedDataBlock(new ArrayDataBlock(trajectories), statuses);
+        return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
     }
 
     private void prepareCoefficents(Rkf45Computation computation, float[] pointData) {

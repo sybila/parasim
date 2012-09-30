@@ -30,8 +30,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
-import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 
 /**
@@ -47,30 +46,32 @@ public class TestOneTrajectorySpawner extends AbstractTrajectorySpawnerTest {
 
     @Test
     public void testSimple() {
-        final DataBlock<Trajectory> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
-        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
+        final DataBlock<TrajectoryWithNeighborhood> dataBlock = createDataBlock(2, 4, 4, 2, (float) 0.1, (float) 0.01);
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, 4);
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION), DIMENSION),
-                createInitialSpace(1, DIMENSION),
-                neighborhood);
-        DistanceCheckedDataBlock distanceChecked = new OnePairDistanceChecker().check(configuration, new DistanceMetricDataBlock<Trajectory>() {
+                createInitialSpace(1, DIMENSION));
+        DistanceCheckedDataBlock distanceChecked = new OnePairDistanceChecker().check(configuration, new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {
+            @Override
             public LimitedPointDistanceMetric getDistanceMetric(int index) {
                 return distanceMetric;
             }
-            public Trajectory getTrajectory(int index) {
+            @Override
+            public TrajectoryWithNeighborhood getTrajectory(int index) {
                 return dataBlock.getTrajectory(index);
             }
+            @Override
             public int size() {
                 return dataBlock.size();
             }
-            public Iterator<Trajectory> iterator() {
+            @Override
+            public Iterator<TrajectoryWithNeighborhood> iterator() {
                 return dataBlock.iterator();
             }
         });
         SpawnedDataBlock spawned = new OneTrajectorySpawner().spawn(configuration, distanceChecked);
         assertEquals(1, spawned.size());
-        assertEquals(2, spawned.getConfiguration().getNeighborhood().getNeighbors(spawned.getTrajectory(0)).size());
+        assertEquals(2, spawned.getTrajectory(0).getNeighbors().size());
     }
 
     @Test

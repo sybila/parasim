@@ -22,21 +22,30 @@ package org.sybila.parasim.model.trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-abstract public class AbstractTrajectory implements Trajectory {
+abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
 
-    private int dimension;
+    private final int dimension;
     private int length;
     private TrajectoryReference reference;
+    private final DataBlock<Trajectory> neighborhood;
 
     public AbstractTrajectory(int dimension, int length) {
+        this(DataBlock.EMPTY_DATABLOCK, dimension, length);
+    }
+
+    public AbstractTrajectory(DataBlock<Trajectory> neighborhood, int dimension, int length) {
         if (dimension <= 0) {
             throw new IllegalArgumentException("The dimension has to be a positive number.");
         }
         if (length <= 0) {
             throw new IllegalArgumentException("The length has to be a positive number.");
         }
+        if (neighborhood == null) {
+            throw new IllegalArgumentException("The neighborhood is null.");
+        }
         this.dimension = dimension;
         this.length = length;
+        this.neighborhood = neighborhood;
     }
 
     @Override
@@ -62,6 +71,10 @@ abstract public class AbstractTrajectory implements Trajectory {
     @Override
     public int getLength() {
         return length;
+    }
+
+    public DataBlock<Trajectory> getNeighbors() {
+        return neighborhood;
     }
 
     @Override

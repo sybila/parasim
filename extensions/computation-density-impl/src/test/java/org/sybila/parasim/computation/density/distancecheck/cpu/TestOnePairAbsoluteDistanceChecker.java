@@ -29,8 +29,7 @@ import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.api.DistanceMetricDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.model.trajectory.DataBlock;
-import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.trajectory.TrajectoryNeighborhood;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -43,31 +42,33 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
 
     @Test
     public void testValidCheckedLengths() {
-        final DataBlock<Trajectory> dataBlock = createValidDataBlock();
-        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
+        final DataBlock<TrajectoryWithNeighborhood> dataBlock = createValidDataBlock();
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
-                createInitialSpace(1, DIMENSION),
-                neighborhood);
+                createInitialSpace(1, DIMENSION));
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
                 configuration,
-                new DistanceMetricDataBlock<Trajectory>() {
+                new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {
+                    @Override
                     public LimitedPointDistanceMetric getDistanceMetric(int index) {
                         return distanceMetric;
                     }
-                    public Trajectory getTrajectory(int index) {
+                    @Override
+                    public TrajectoryWithNeighborhood getTrajectory(int index) {
                         return dataBlock.getTrajectory(index);
                     }
+                    @Override
                     public int size() {
                         return dataBlock.size();
                     }
-                    public Iterator<Trajectory> iterator() {
+                    @Override
+                    public Iterator<TrajectoryWithNeighborhood> iterator() {
                         return dataBlock.iterator();
                     }
                 });
         for (int t = 0; t < result.size(); t++) {
-            for (int neigh = 0; neigh < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); neigh++) {
+            for (int neigh = 0; neigh < dataBlock.getTrajectory(t).getNeighbors().size(); neigh++) {
                 assertEquals(result.getTrajectoryCheckedPosition(t, neigh), LENGTH - 1);
                 assertEquals(result.getNeighborCheckedPosition(t, neigh), LENGTH - 1);
             }
@@ -76,31 +77,33 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
 
     @Test
     public void testInvalidDistance() {
-        final DataBlock<Trajectory> dataBlock = createInvalidDataBlock();
-        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
+        final DataBlock<TrajectoryWithNeighborhood> dataBlock = createInvalidDataBlock();
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
-                createInitialSpace(1, DIMENSION),
-                neighborhood);
+                createInitialSpace(1, DIMENSION));
         DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
                 configuration,
-                new DistanceMetricDataBlock<Trajectory>() {
+                new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {
+                    @Override
                     public LimitedPointDistanceMetric getDistanceMetric(int index) {
                         return distanceMetric;
                     }
-                    public Trajectory getTrajectory(int index) {
+                    @Override
+                    public TrajectoryWithNeighborhood getTrajectory(int index) {
                         return dataBlock.getTrajectory(index);
                     }
+                    @Override
                     public int size() {
                         return dataBlock.size();
                     }
-                    public Iterator<Trajectory> iterator() {
+                    @Override
+                    public Iterator<TrajectoryWithNeighborhood> iterator() {
                         return dataBlock.iterator();
                     }
                 });
         for (int t = 0; t < result.size(); t++) {
-            for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
+            for (int dim = 0; dim < dataBlock.getTrajectory(t).getNeighbors().size(); dim++) {
                 assertTrue(!result.getDistance(t, dim).isValid());
             }
         }
@@ -108,41 +111,43 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
 
     @Test
     public void testValidDistance() {
-        final DataBlock<Trajectory> dataBlock = createValidDataBlock();
-        TrajectoryNeighborhood neighborhood = createNeighborhood(dataBlock);
+        final DataBlock<TrajectoryWithNeighborhood> dataBlock = createValidDataBlock();
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         Configuration configuration = createConfiguration(
                 createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
-                createInitialSpace(1, DIMENSION),
-                neighborhood);
+                createInitialSpace(1, DIMENSION));
         DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
                 configuration,
-                new DistanceMetricDataBlock<Trajectory>() {
+                new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {
+                    @Override
                     public LimitedPointDistanceMetric getDistanceMetric(int index) {
                         return distanceMetric;
                     }
-                    public Trajectory getTrajectory(int index) {
+                    @Override
+                    public TrajectoryWithNeighborhood getTrajectory(int index) {
                         return dataBlock.getTrajectory(index);
                     }
+                    @Override
                     public int size() {
                         return dataBlock.size();
                     }
-                    public Iterator<Trajectory> iterator() {
+                    @Override
+                    public Iterator<TrajectoryWithNeighborhood> iterator() {
                         return dataBlock.iterator();
                     }
                 });
         for (int t = 0; t < result.size(); t++) {
-            for (int dim = 0; dim < neighborhood.getNeighbors(dataBlock.getTrajectory(t)).size(); dim++) {
+            for (int dim = 0; dim < dataBlock.getTrajectory(t).getNeighbors().size(); dim++) {
                 assertTrue(result.getDistance(t, dim).isValid());
             }
         }
     }
 
-    private DataBlock<Trajectory> createInvalidDataBlock() {
+    private DataBlock<TrajectoryWithNeighborhood> createInvalidDataBlock() {
         return createDataBlock(SIZE, LENGTH, DIMENSION, 2, (float) 0.1, (float) 0.01);
     }
 
-    private DataBlock<Trajectory> createValidDataBlock() {
+    private DataBlock<TrajectoryWithNeighborhood> createValidDataBlock() {
         return createDataBlock(SIZE, LENGTH, DIMENSION, (float) 0.1, (float) 0.01, (float) 0.001);
     }
 }
