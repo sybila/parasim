@@ -89,9 +89,16 @@ public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<
                     for (Execution execution: executions) {
                         while (!futures.offer(execution.execute()));
                     }
-                    L result = futures.poll().get();
+                    L result = null;
                     while (!futures.isEmpty()) {
-                        result = result.merge(futures.poll().get());
+                        L current = futures.poll().get();
+                        if (current != null) {
+                            if (result == null) {
+                                result = current;
+                            } else {
+                                result = result.merge(current);
+                            }
+                        }
                     }
                     return result;
                 } finally {

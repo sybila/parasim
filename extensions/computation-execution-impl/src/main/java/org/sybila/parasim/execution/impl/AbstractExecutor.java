@@ -76,7 +76,7 @@ public abstract class AbstractExecutor implements Executor {
                 try {
                     method.invoke(target, enrichment.resolve(method, context));
                 } catch (Exception ex) {
-                    throw new IllegalStateException("Can't invoke " + target.getClass() + "#" + method.getName() + "()");
+                    throw new IllegalStateException("Can't invoke " + target.getClass().getName() + "#" + method.getName() + "()", ex);
                 }
             }
         }

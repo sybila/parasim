@@ -41,7 +41,9 @@ import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlockResultAdapter;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.execution.api.ComputationEmitter;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
+import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.computation.ComputationId;
@@ -56,6 +58,7 @@ import org.sybila.parasim.model.verification.stl.Formula;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
+@NumberOfInstances(1)
 @RunWith(executor=SharedMemoryExecutor.class)
 public class ValidityRegionsComputation extends AbstractComputation<VerificationResult> {
 
@@ -85,11 +88,15 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     private STLVerifier verifier;
     @Inject
     private DistanceChecker distanceChecker;
+    @Inject
+    private ComputationEmitter emitter;
 
     @Inject
     private ComputationId threadId;
 
     private int iterationLimit;
+    private int currentIteration = 0;
+    private SpawnedDataBlock spawned;
 
     public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
         if (odeSystem == null) {
@@ -121,24 +128,15 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 
     @Override
     public VerificationResult call() throws Exception {
-        SpawnedDataBlock spawned = spawner.spawn(initialSpace, initialSampling);
-        int batchSize = (int) Math.ceil(spawned.size() / (float) (threadId.maxId() + 1));
-        int batchStart = batchSize * threadId.currentId();
-        int batchEnd = Math.min(batchSize * (threadId.currentId() + 1), spawned.size());
-        List<TrajectoryWithNeighborhood> localSpawned = new ArrayList<>(batchSize);
-        List<Trajectory> localSecondarySpawned = new ArrayList<>();
-        for (int i=batchStart; i<batchEnd; i++) {
-            localSpawned.add(spawned.getTrajectory(i));
-            for (Trajectory secondary: spawned.getTrajectory(i).getNeighbors()) {
-                localSecondarySpawned.add(secondary);
-            }
+        if (threadId.currentId() == 0) {
+            spawned = emit(spawner.spawn(initialSpace, initialSampling));
         }
-        spawned = new SpawnedDataBlockWrapper(new ListDataBlock<>(localSpawned), spawned.getConfiguration(), new ListDataBlock<>(localSecondarySpawned));
+
         VerificationResult result = null;
-        int iteration = 0;
-        while (spawned.size() != 0) {
-            iteration++;
-            LOGGER.info("["+threadId.currentId()+"] iteration <" + iteration + "> started with <" + spawned.size() + "> spawned trajectories.");
+
+        while (spawned != null) {
+            currentIteration++;
+            LOGGER.info("["+threadId.currentId()+"] iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned trajectories.");
             SimulatedDataBlock<TrajectoryWithNeighborhood> simulated = simulator.simulate(simulationConfiguration, spawned);
             if (spawned.getSecondaryTrajectories().size() > 0) {
                 SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
@@ -149,18 +147,51 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             } else {
                 result = result.merge(new VerifiedDataBlockResultAdapter(verified));
             }
-            if (iterationLimit != 0 && iteration == iterationLimit) {
+            if (iterationLimit != 0 && currentIteration == iterationLimit) {
                 LOGGER.warn("["+threadId.currentId()+"] iteration limit <" + iterationLimit + "> reached");
                 break;
+            } else {
+                DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
+                spawned = emit(spawner.spawn(spawned.getConfiguration(), distanceChecked));
             }
-            DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
-            spawned = spawner.spawn(spawned.getConfiguration(), distanceChecked);
         }
         return result;
     }
 
     @Override
     public Computation<VerificationResult> cloneComputation() {
-        return new ValidityRegionsComputation(odeSystem, precisionConfiguration, initialSampling, simulationSpace, initialSpace, property, iterationLimit);
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, initialSampling, simulationSpace, initialSpace, property, iterationLimit);
+        computation.currentIteration = this.currentIteration;
+        computation.spawned = this.spawned;
+        return computation;
+    }
+
+    protected SpawnedDataBlock emit(SpawnedDataBlock spawned) {
+        if (spawned.size() == 0) {
+            return null;
+        }
+        SpawnedDataBlock result = null;
+        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 20), Runtime.getRuntime().availableProcessors());
+        int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
+        for (int i=0; i<toSpawn; i++) {
+            int batchStart = batchSize * i;
+            int batchEnd = Math.min(batchSize * (i + 1), spawned.size());
+            List<TrajectoryWithNeighborhood> localSpawned = new ArrayList<>(batchSize);
+            List<Trajectory> localSecondarySpawned = new ArrayList<>();
+            for (int j=batchStart; j<batchEnd; j++) {
+                localSpawned.add(spawned.getTrajectory(j));
+                for (Trajectory secondary: spawned.getTrajectory(j).getNeighbors()) {
+                    localSecondarySpawned.add(secondary);
+                }
+            }
+            if (result == null) {
+                result = new SpawnedDataBlockWrapper(new ListDataBlock<>(localSpawned), spawned.getConfiguration(), new ListDataBlock<>(localSecondarySpawned));
+            } else {
+                ValidityRegionsComputation computation = (ValidityRegionsComputation) cloneComputation();
+                computation.spawned = new SpawnedDataBlockWrapper(new ListDataBlock<>(localSpawned), spawned.getConfiguration(), new ListDataBlock<>(localSecondarySpawned));
+                emitter.emit(computation);
+            }
+        }
+        return result;
     }
 }

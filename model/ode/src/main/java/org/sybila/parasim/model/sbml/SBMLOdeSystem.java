@@ -142,7 +142,9 @@ public class SBMLOdeSystem implements OdeSystem {
                 Parameter parameter = localParameters.get(mathml.getName());
                 if (parameter == null) {
                     parameter = parameters.get(mathml.getName());
-                    LOGGER.warn("There is no variable or parameter called [" + mathml.getName() + "].");
+                    if (parameter == null) {
+                        LOGGER.warn("There is no variable or parameter called [" + mathml.getName() + "].");
+                    }
                 }
                 return parameter;
             }
