@@ -30,7 +30,7 @@
             <species id="B" compartment="uVol" initialConcentration="0"/>
         </listOfSpecies>
         <listOfParameters>
-            <parameter id="k" name="0_100000000_" value="1"/>
+            <parameter id="k" value="1"/>
         </listOfParameters>
         <listOfReactions>
             <reaction id="R1" reversible="false">
