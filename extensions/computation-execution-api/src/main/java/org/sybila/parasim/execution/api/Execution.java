@@ -19,7 +19,6 @@
  */
 package org.sybila.parasim.execution.api;
 
-import java.util.concurrent.Future;
 import org.sybila.parasim.model.Mergeable;
 
 /**
@@ -29,7 +28,7 @@ public interface Execution<L extends Mergeable<L>> {
 
     void abort();
 
-    Future<L> execute();
+    ExecutionResult<L> execute();
 
     boolean isRunning();
 

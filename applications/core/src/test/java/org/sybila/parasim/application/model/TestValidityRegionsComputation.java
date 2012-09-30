@@ -71,7 +71,7 @@ public class TestValidityRegionsComputation {
     public void testComputation() throws ExecutionException, InterruptedException {
         ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f), 0);
         ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
-        VerificationResult result = container.compute(computation).get();
+        VerificationResult result = container.compute(computation).full().get();
         for (int i=0; i<result.size(); i++) {
             assertTrue(result.getRobustness(i).getValue() > 0, "The robustness in index [" + i + "] (point " + result.getPoint(i) + ") should be poisitive, but was " + result.getRobustness(i).getValue());
             assertEquals(result.getPoint(i).getTime(), 0f);
@@ -83,7 +83,7 @@ public class TestValidityRegionsComputation {
     public void testComputation2() throws ExecutionException, InterruptedException {
         ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(2), 0);
         ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
-        VerificationResult result = container.compute(computation).get();
+        VerificationResult result = container.compute(computation).full().get();
         for (int i=0; i<result.size(); i++) {
             assertEquals(result.getPoint(i).getTime(), 0f);
             if (result.getPoint(i).getValue(0) > 2) {

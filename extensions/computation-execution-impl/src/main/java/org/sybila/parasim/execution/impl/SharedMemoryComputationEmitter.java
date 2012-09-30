@@ -60,6 +60,6 @@ public class SharedMemoryComputationEmitter<L extends Mergeable<L>> implements C
                 (Computation) computation,
                 enrichment,
                 computationInstanceContextEvent,
-                parentContext).execute());
+                parentContext).execute().full());
     }
 }

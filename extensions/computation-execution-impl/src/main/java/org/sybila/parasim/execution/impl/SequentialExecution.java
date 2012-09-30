@@ -29,6 +29,7 @@ import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
+import org.sybila.parasim.execution.api.ExecutionResult;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.computation.ComputationId;
@@ -65,10 +66,10 @@ public class SequentialExecution<L extends Mergeable<L>> implements Execution<L>
     }
 
     @Override
-    public Future<L> execute() {
+    public ExecutionResult<L> execute() {
         running = true;
         runnableExecutor.execute(task);
-        return task;
+        return new SequentialExecutionResult<>(task);
     }
 
     @Override
@@ -93,6 +94,26 @@ public class SequentialExecution<L extends Mergeable<L>> implements Execution<L>
                 }
             }
         };
+    }
+
+    private static class SequentialExecutionResult<L extends Mergeable<L>> implements ExecutionResult<L> {
+
+        private final Future<L> task;
+
+        public SequentialExecutionResult(Future<L> task) {
+            this.task = task;
+        }
+
+        @Override
+        public Future<L> full() {
+            return task;
+        }
+
+        @Override
+        public Future<L> partial() {
+            return task;
+        }
+
     }
 
 }

@@ -64,11 +64,11 @@ public class AbstractExecutionTest {
     }
 
     protected <R extends Mergeable<R>> void testExecute(Execution<R> execution, R expected) throws InterruptedException, ExecutionException, TimeoutException {
-        assertEquals(execution.execute().get(2, TimeUnit.SECONDS), expected);
+        assertEquals(execution.execute().full().get(2, TimeUnit.SECONDS), expected);
     }
 
     protected void testAbort(Execution execution) throws InterruptedException, ExecutionException, TimeoutException {
-        Future<MergeableString> result = execution.execute();
+        Future<MergeableString> result = execution.execute().full();
         result.cancel(true);
         try {
             result.get(2, TimeUnit.SECONDS);

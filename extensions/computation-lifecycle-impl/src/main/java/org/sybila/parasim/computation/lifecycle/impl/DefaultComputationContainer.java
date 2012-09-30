@@ -21,7 +21,6 @@ package org.sybila.parasim.computation.lifecycle.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.Validate;
@@ -32,6 +31,7 @@ import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.execution.api.Execution;
+import org.sybila.parasim.execution.api.ExecutionResult;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.model.Mergeable;
 
@@ -58,7 +58,7 @@ public class DefaultComputationContainer implements ComputationContainer {
     }
 
     @Override
-    public <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation) {
+    public <Result extends Mergeable<Result>> ExecutionResult<Result> compute(Computation<Result> computation) {
         Validate.notNull(computation);
         if (executions.containsKey(computation)) {
             throw new IllegalArgumentException("The computation can't be computed, because it's already being computed by this container.");

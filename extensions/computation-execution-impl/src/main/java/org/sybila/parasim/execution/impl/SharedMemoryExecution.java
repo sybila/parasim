@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import org.apache.commons.lang3.Validate;
@@ -31,6 +32,7 @@ import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
+import org.sybila.parasim.execution.api.ExecutionResult;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.computation.ComputationId;
@@ -81,13 +83,14 @@ public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<
     }
 
     @Override
-    public Future<L> execute() {
+    public ExecutionResult<L> execute() {
+        final SharedMemoryExecutionResult<L> executionResult = new SharedMemoryExecutionResult<>(runnableExecutor);
         task = new FutureTask<>(new Callable<L>() {
             @Override
             public L call() throws Exception {
                 try {
                     for (Execution execution: executions) {
-                        while (!futures.offer(execution.execute()));
+                        while (!futures.offer(execution.execute().full()));
                     }
                     L result = null;
                     while (!futures.isEmpty()) {
@@ -98,6 +101,7 @@ public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<
                             } else {
                                 result = result.merge(current);
                             }
+                            executionResult.lastPartial = result;
                         }
                     }
                     return result;
@@ -106,8 +110,9 @@ public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<
                 }
             }
         });
+        executionResult.setTask(task);
         runnableExecutor.execute(task);
-        return task;
+        return executionResult;
     }
 
     @Override
@@ -121,5 +126,54 @@ public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<
             }
         }
         return false;
+    }
+
+    private static class SharedMemoryExecutionResult<L extends Mergeable<L>> implements ExecutionResult<L> {
+
+        private boolean finished;
+        private L lastPartial;
+        private final Executor executor;
+        private Future<L> task;
+
+        public SharedMemoryExecutionResult(Executor executor) {
+            this.executor = executor;
+        }
+
+        @Override
+        public Future<L> full() {
+            return task;
+        }
+
+        @Override
+        public Future<L> partial() {
+            FutureTask<L> result = new FutureTask<>(new Callable<L>() {
+                @Override
+                public L call() throws Exception {
+                    return poll();
+                }
+            });
+            executor.execute(result);
+            return result;
+        }
+
+        private void setTask(Future<L> task) {
+            this.task = task;
+        }
+
+        private synchronized void offer(L lastPartial) {
+            this.lastPartial = lastPartial;
+            this.notifyAll();
+        }
+
+        private synchronized L poll() {
+            while (lastPartial == null) {
+                try {
+                    this.wait();
+                } catch (InterruptedException ignored) {
+                }
+            }
+            return lastPartial;
+        }
+
     }
 }

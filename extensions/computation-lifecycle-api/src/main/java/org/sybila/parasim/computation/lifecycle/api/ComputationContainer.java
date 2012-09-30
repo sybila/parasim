@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
-import java.util.concurrent.Future;
+import org.sybila.parasim.execution.api.ExecutionResult;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.Mergeable;
 
@@ -30,5 +30,5 @@ public interface ComputationContainer {
 
     void abort(Computation<?> computation) throws AbortionException;
 
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    <Result extends Mergeable<Result>> ExecutionResult<Result> compute(Computation<Result> computation);
 }

@@ -20,11 +20,13 @@
 package org.sybila.parasim.application.model;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.execution.api.ExecutionResult;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
@@ -50,14 +52,20 @@ public class ExperimentLauncher {
         for (OdeSystemVariable variable: experiment.getOdeSystem()) {
             LOGGER.info(variable.getName() + "' = " + variable.getRightSideExpression().toFormula());
         }
-        return container.compute(new ValidityRegionsComputation(
+        ExecutionResult<VerificationResult> result = container.compute(new ValidityRegionsComputation(
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfigurationResources().getRoot(),
                 experiment.getInitialSamplingResource().getRoot(),
                 experiment.getSimulationSpaceResource().getRoot(),
                 experiment.getInitialSpaceResource().getRoot(),
                 experiment.getSTLFormulaResource().getRoot(),
-                experiment.getIterationLimit())).get(experiment.getTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS);
+                experiment.getIterationLimit()));
+        try {
+            return result.full().get(experiment.getTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS);
+        } catch(TimeoutException e) {
+            LOGGER.error("timeout");
+            return result.partial().get(1, TimeUnit.SECONDS);
+        }
     }
 
 }

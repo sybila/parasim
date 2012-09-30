@@ -60,7 +60,7 @@ public class TestSharedMemoryExecutorImpl extends AbstractExecutionTest {
     @Test
     public void testEmitter() throws InterruptedException, ExecutionException, TimeoutException {
         Execution<MaxMergeableIntegerBox> result = (Execution<MaxMergeableIntegerBox>) createSharedMemoryExecution(new TestMaxIntegerComputation());
-        Assert.assertEquals(TestMaxIntegerComputation.TO_EMIT.get(), result.execute().get().get());
+        Assert.assertEquals(TestMaxIntegerComputation.TO_EMIT.get(), result.execute().full().get().get());
     }
 
     protected <L extends Mergeable<L>> Execution<L> createSharedMemoryExecution(Computation<L> computation) {
