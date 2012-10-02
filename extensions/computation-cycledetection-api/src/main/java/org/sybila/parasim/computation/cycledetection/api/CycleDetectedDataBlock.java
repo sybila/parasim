@@ -17,33 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.cycledetection.cpu;
+package org.sybila.parasim.computation.cycledetection.api;
+
+import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
- * Specifies which extreme values are to be remembered.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public enum ExtremesMode {
+public interface CycleDetectedDataBlock<T extends Trajectory> extends DataBlock<T> {
 
-    EXTREME_NONE,
-    EXTREME_MIN,
-    EXTREME_MAX,
-    EXTREME_BOTH;
-
-    public static ExtremesMode fromInt(int status) {
-    switch(status) {
-            case 0:
-                return EXTREME_NONE;
-            case 1:
-        return EXTREME_MIN;
-            case 2:
-        return EXTREME_MAX;
-            case 3:
-        return EXTREME_BOTH;
-            default:
-        throw new IllegalStateException("There is no mode corresponding to the number [" + status + "].");
-        }
-    }
+    CycleDetector getCycleDetector(int index);
 
 }

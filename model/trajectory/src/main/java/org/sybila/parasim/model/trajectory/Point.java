@@ -29,6 +29,8 @@ import java.io.Serializable;
  */
 public interface Point extends Iterable<Float>, Serializable {
 
+    boolean equals(Point point, float relativeTolerance);
+
     /**
      * @return Number of dimensions of given point.
      */

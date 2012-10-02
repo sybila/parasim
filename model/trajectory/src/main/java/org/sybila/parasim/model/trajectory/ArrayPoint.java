@@ -19,8 +19,6 @@
  */
 package org.sybila.parasim.model.trajectory;
 
-import java.util.Iterator;
-
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -54,36 +52,5 @@ public class ArrayPoint extends AbstractPoint {
             throw new IllegalArgumentException("The index is out of the range [0, " + (getDimension() - 1) + "].");
         }
         return data[startIndex + index];
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Point)) {
-            return false;
-        }
-        Point other = (Point) o;
-        if (other.getDimension() != getDimension()) {
-            return false;
-        }
-        if (other.getTime() != getTime()) {
-            return false;
-        }
-        Iterator<Float> thisIter = iterator();
-        Iterator<Float> otherIter = other.iterator();
-        while (thisIter.hasNext()) {
-            if (!thisIter.next().equals(otherIter.next())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + Math.round(getValue(0));
-        hash = 97 * hash + Math.round(getTime());
-        hash = 97 * hash + getDimension();
-        return hash;
     }
 }

@@ -113,4 +113,9 @@ public class PointDerivativeCache implements PointDerivative {
     public float[] toArrayCopy(int numOfDimensions) {
         return p.toArrayCopy(numOfDimensions);
     }
+
+    @Override
+    public boolean equals(Point point, float relativeTolerance) {
+        return point.equals(point, relativeTolerance);
+    }
 }

@@ -19,28 +19,42 @@
  */
 package org.sybila.parasim.computation.cycledetection.api;
 
+import java.util.Iterator;
+import java.util.List;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface CycleDetectorFactory {
+public class CycleDetectedDataBlockWrapper<T extends Trajectory> implements CycleDetectedDataBlock<T> {
 
-    /**
-     * Performs cycle detection on the trajectory
-     *
-     * @param trajectory Trajectory on which to carry out cycle detection.
-     * @return cycle detector
-     */
-    CycleDetector detect(Trajectory trajectory);
+    private final DataBlock<T> trajectories;
+    private final List<CycleDetector> cycleDetectors;
 
-    /**
-     * Performs cycle detection on the trajectory data block
-     *
-     * @param trajectories trajectories on which to carry out cycle detection.
-     * @return cycle detected data block
-     */
-    <T extends Trajectory> CycleDetectedDataBlock<T> detect(DataBlock<T> trajectories);
+    public CycleDetectedDataBlockWrapper(DataBlock<T> trajectories, List<CycleDetector> cycleDetectors) {
+        this.trajectories = trajectories;
+        this.cycleDetectors = cycleDetectors;
+    }
+
+    @Override
+    public CycleDetector getCycleDetector(int index) {
+        return cycleDetectors.get(index);
+    }
+
+    @Override
+    public T getTrajectory(int index) {
+        return trajectories.getTrajectory(index);
+    }
+
+    @Override
+    public int size() {
+        return trajectories.size();
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return trajectories.iterator();
+    }
 
 }

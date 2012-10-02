@@ -19,101 +19,99 @@
  */
 package org.sybila.parasim.computation.cycledetection.cpu;
 
+import org.sybila.parasim.computation.cycledetection.api.CycleDetectedDataBlock;
+import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
 import org.sybila.parasim.computation.cycledetection.api.CycleDetectorFactory;
-import org.sybila.parasim.model.trajectory.PointComparator;
+import org.sybila.parasim.computation.cycledetection.api.SimpleCycleDetector;
+import org.sybila.parasim.model.trajectory.DataBlock;
+import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.util.ExtremesQueue;
 
-/**
- * A factory to create new ExtremesCycleDetectors with different parameter
- * settings.
+ /**
+ * The extremes cycle detection provides means to detect cycles on trajectories.
+ * A cycle is considered the repetition of points who's values are close enough
+ * on all spatial dimensions. Close enough is specified by relative tolerance
+ * which is the same for all dimensions.
+ *
+ * To detect a cycle the extremes of the trajectory (minima, maxima) are
+ * first detected as canonical points to compare. This works only if the
+ * points are actualy provided to the detectCycle method with a small enough
+ * tolerance. The minima and maxima are detected automaticaly from the last
+ * two tested points.
+ *
+ * The mode array specifies if the cycle is to be detected in minima, maxima or
+ * both on each dimension.
+ *
+ * For each dimension a queue is maintained holding the last detected extreme
+ * points on this dimension and the next time a new extreme is detected
+ * for this dimension the new point is compared to all the points in the queue.
+ * If a cycle is not found the new point is then inserted into the queue.
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ExtremesCycleDetectorFactory implements CycleDetectorFactory<ExtremesCycleDetector> {
+public class ExtremesCycleDetectorFactory implements CycleDetectorFactory {
 
-    private PointComparator comparator;
-    private int capacity;
-    private ExtremesMode[] modes;
+    private final float relativeTolerance;
 
-    public ExtremesCycleDetectorFactory(PointComparator comparator) {
-        if (comparator == null) {
-            throw new IllegalArgumentException("The parameter comparator is null.");
-        }
-        this.comparator = comparator;
-        this.capacity = 10;
-        this.modes = new ExtremesMode[comparator.getDimension()];
-        for (int i = 0; i < comparator.getDimension(); i++) {
-            modes[i] = ExtremesMode.EXTREME_BOTH;
-        }
+    public ExtremesCycleDetectorFactory(float relativeTolerance) {
+        this.relativeTolerance = relativeTolerance;
     }
 
-    public ExtremesCycleDetector create() {
-        return new ExtremesCycleDetector(capacity, comparator, modes);
+    @Override
+    public CycleDetector detect(Trajectory trajectory) {
+        ExtremesQueue<Point, Float>[] extremes = new ExtremesQueue[trajectory.getDimension()];
+        for (int dim=0; dim<extremes.length; dim++) {
+            extremes[dim] = new ExtremesQueue(new DimensionRetriever(dim));
+        }
+        for (int dim=0; dim < extremes.length; dim++) {
+            int length = 0;
+            for (Point point: trajectory) {
+                extremes[dim].offer(point);
+                length++;
+            }
+        }
+        for (ExtremesQueue<Point, ?> extremesInDimension: extremes) {
+            for (Point p: extremesInDimension) {
+                int alreadyFoundIndex = -1;
+                int indexInTrajectory = -1;
+                for (Point main: trajectory) {
+                    indexInTrajectory++;
+                    if (p.getTime() > main.getTime()) {
+                        continue;
+                    }
+                    if (main.equals(p, relativeTolerance)) {
+                        if (alreadyFoundIndex == -1) {
+                            alreadyFoundIndex = indexInTrajectory;
+                        } else {
+                            return new SimpleCycleDetector(trajectory, alreadyFoundIndex, indexInTrajectory - 1);
+                        }
+                    }
+                }
+            }
+        }
+        return CycleDetector.CYCLE_IS_NOT_DETECTED;
     }
 
-    /**
-     * @return the comparator
-     */
-    public PointComparator getComparator() {
-        return comparator;
+    @Override
+    public <T extends Trajectory> CycleDetectedDataBlock<T> detect(DataBlock<T> trajectories) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Sets a new PointComparator that will be used for creating new CycleDetectors.
-     * Together with this the modes array is reset to have the same number of
-     * dimensions as the comparator and is filled with ExtremesMode.EXTREME_BOTH.
-     *
-     * @param comparator the comparator to set
-     */
-    public void setComparator(PointComparator comparator) {
-        if (comparator == null) {
-            throw new IllegalArgumentException("The parameter comparator is null.");
+    private static class DimensionRetriever implements ExtremesQueue.Evaluator<Point, Float> {
+
+        private final int dimension;
+
+        private DimensionRetriever(int dimension) {
+            this.dimension = dimension;
         }
-        this.comparator = comparator;
-        modes = new ExtremesMode[comparator.getDimension()];
-        for (int i = 0; i < comparator.getDimension(); i++) {
-            modes[i] = ExtremesMode.EXTREME_BOTH;
+
+        @Override
+        public Float evaluate(Point item) {
+            return item.getValue(dimension);
         }
+
     }
 
-    /**
-     * @return the capacity
-     */
-    public int getCapacity() {
-        return capacity;
-    }
-
-    /**
-     * @param capacity the capacity to set
-     */
-    public void setCapacity(int capacity) {
-        if (capacity <= 0) {
-            throw new IllegalArgumentException("The parameter capacity must be positive.");
-        }
-        this.capacity = capacity;
-    }
-
-    /**
-     * @param index Index of dimension who's mode to return.
-     * @return Mode of dimension with given index.
-     */
-    public ExtremesMode getModes(int index) {
-        if (index < 0 || index >= modes.length) {
-            throw new IllegalArgumentException("The parameter index must be in range [0, " + modes.length + ")");
-        }
-        return modes[index];
-    }
-
-    /**
-     * @param index
-     * @param mode The new mode of dimension with given index.
-     */
-    public void setModes(int index, ExtremesMode mode) {
-        if (mode == null) {
-            throw new IllegalArgumentException("The parameter mode is null.");
-        }
-        if (index < 0 || index >= modes.length) {
-            throw new IllegalArgumentException("The parameter index must be in range [0, " + modes.length + ")");
-        }
-        this.modes[index] = mode;
-    }
 }

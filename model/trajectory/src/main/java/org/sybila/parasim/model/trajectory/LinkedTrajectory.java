@@ -180,9 +180,10 @@ public class LinkedTrajectory extends AbstractTrajectory implements MutableTraje
                 if (index >= startIndex && index < startIndex + t.getLength()) {
                     iterator = t.iterator(index - startIndex);
                     absolutePointIndex = index;
+                    break;
                 }
-                trajectoryIndex++;
                 startIndex += t.getLength();
+                trajectoryIndex++;
             }
         }
 

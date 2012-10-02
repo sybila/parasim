@@ -17,13 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.cycledetection.api;
+
+package org.sybila.parasim.computation.cycledetection.cpu;
+
+import org.testng.annotations.Test;
 
 /**
- * Describes possible statuses of a cycle detection computation.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public enum CycleDetectionStatus {
-    CYCLE, NOCYCLE, COMPUTING;
+public class ExtremesCycleDetectorFactoryTest extends AbstracCycleDetectorFactoryTest {
+
+    @Test
+    public void testCycle() {
+        checkCycle(new ExtremesCycleDetectorFactory(0.01f));
+    }
+
+    @Test
+    public void testEqulibrium() {
+        checkEqulibrium(new ExtremesCycleDetectorFactory(0.01f));
+    }
+
+    @Test
+    public void testNoCycle() {
+        checkNoCycle(new ExtremesCycleDetectorFactory(0.01f));
+    }
+
 }

@@ -107,4 +107,56 @@ public abstract class AbstractPoint implements Point {
     public String toString() {
         return time + ":" + Arrays.toString(toArray());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Point)) {
+            return false;
+        }
+        Point other = (Point) o;
+        if (other.getDimension() != getDimension()) {
+            return false;
+        }
+        if (other.getTime() != getTime()) {
+            return false;
+        }
+        Iterator<Float> thisIter = iterator();
+        Iterator<Float> otherIter = other.iterator();
+        while (thisIter.hasNext()) {
+            if (!thisIter.next().equals(otherIter.next())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(Point point, float relativeTolerance) {
+        if (point == this) {
+            return true;
+        }
+        if (point.getDimension() != this.getDimension()) {
+            return false;
+        }
+        Iterator<Float> thisIter = iterator();
+        Iterator<Float> otherIter = point.iterator();
+        while (thisIter.hasNext()) {
+            Float thisValue = thisIter.next();
+            Float otherValue = otherIter.next();
+            float absoluteTolerance = relativeTolerance * Math.min(thisValue, otherValue);
+            if (Math.abs(thisValue - otherValue) > absoluteTolerance) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + Math.round(getValue(0));
+        hash = 97 * hash + Math.round(getTime());
+        hash = 97 * hash + getDimension();
+        return hash;
+    }
 }

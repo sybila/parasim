@@ -20,7 +20,6 @@
 package org.sybila.parasim.computation.cycledetection.api;
 
 import org.sybila.parasim.model.trajectory.Point;
-import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * Enables cycle detecion on a trajectory while specifying how many points
@@ -29,23 +28,38 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  * A cycle is understood as two points on the trajectory being marked as
  * similar.
  *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Dra�an</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface CycleDetector<T extends Trajectory> {
+public interface CycleDetector {
 
-    /**
-     * Performs cycle detection on the trajectory while carrying out at most
-     * stepLimit point comparisons. The actuall number of points compared
-     * is returned.
-     *
-     * If stepLimit = 0 then the computation continues as long as it takes
-     * to detect a cycle or reach the end of the trajectory.
-     *
-     * @param trajectory Trajectory on which to carry out cycle detection.
-     * @param stepLimit Maximum number of point comparisons to carry out.
-     * @return Actual number of comparisons carried out.
-     */
-    int detectCycle(T trajectory, int stepLimit);
+    public static CycleDetector CYCLE_IS_NOT_DETECTED = new CycleDetector() {
+
+        @Override
+        public boolean isCycleDetected() {
+            return false;
+        }
+
+        @Override
+        public Point getCycleStart() {
+            throw new IllegalStateException("The cycle hasn't been detected.");
+        }
+
+        @Override
+        public int getCycleStartPosition() {
+            throw new IllegalStateException("The cycle hasn't been detected.");
+        }
+
+        @Override
+        public Point getCycleEnd() {
+            throw new IllegalStateException("The cycle hasn't been detected.");
+        }
+
+        @Override
+        public int getCycleEndPosition() {
+            throw new IllegalStateException("The cycle hasn't been detected.");
+        }
+    };
 
     /**
      * Before a cycle has been detected false is returned, if a cycle
@@ -53,7 +67,7 @@ public interface CycleDetector<T extends Trajectory> {
      *
      * @return True if cycle has been already detected, false otherwise.
      */
-    boolean cycleDetected();
+    boolean isCycleDetected();
 
     /**
      * If a cycle has been detected on a trajectory then two points have been
