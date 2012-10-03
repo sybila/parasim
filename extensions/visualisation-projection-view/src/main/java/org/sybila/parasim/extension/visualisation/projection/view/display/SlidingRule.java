@@ -15,9 +15,9 @@ import org.sybila.parasim.extension.visualisation.projection.view.display.rule.N
 import org.sybila.parasim.extension.visualisation.projection.view.display.rule.ScaleFormat;
 import org.sybila.parasim.extension.visualisation.projection.view.display.rule.StringMeasure;
 import org.sybila.parasim.extension.visualisation.projection.view.display.rule.TickModel;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.DimensionFunctional;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.Orientation;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.PositionChangeListener;
+import org.sybila.parasim.extension.visualisation.projection.view.util.DimensionFunctional;
+import org.sybila.parasim.extension.visualisation.projection.view.util.Orientation;
+import org.sybila.parasim.extension.visualisation.projection.view.util.PositionChangeListener;
 import org.sybila.parasim.visualisation.projection.api.scale.Scale;
 
 /**

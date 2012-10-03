@@ -25,8 +25,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JViewport;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.DimensionFunctional;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.Orientation;
+import org.sybila.parasim.extension.visualisation.projection.view.util.DimensionFunctional;
+import org.sybila.parasim.extension.visualisation.projection.view.util.Orientation;
 
 /**
  *

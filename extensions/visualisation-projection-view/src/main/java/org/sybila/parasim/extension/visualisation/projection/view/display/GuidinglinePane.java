@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.event.EventListenerList;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.PositionChangeListener;
+import org.sybila.parasim.extension.visualisation.projection.view.util.PositionChangeListener;
 
 /**
  *

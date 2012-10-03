@@ -4,8 +4,8 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.DimensionFunctional;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.Orientation;
+import org.sybila.parasim.extension.visualisation.projection.view.util.DimensionFunctional;
+import org.sybila.parasim.extension.visualisation.projection.view.util.Orientation;
 import org.sybila.parasim.visualisation.projection.api.scale.InverseScale;
 import org.sybila.parasim.visualisation.projection.api.scale.Scale;
 

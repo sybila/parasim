@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.visualisation.projection.view.display.util;
+package org.sybila.parasim.extension.visualisation.projection.view.util;
 
 import java.awt.Point;
 import java.util.EventListener;

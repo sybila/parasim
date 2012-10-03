@@ -9,8 +9,8 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.text.DecimalFormat;
 import javax.swing.JComponent;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.Orientation;
-import org.sybila.parasim.extension.visualisation.projection.view.display.util.PositionChangeListener;
+import org.sybila.parasim.extension.visualisation.projection.view.util.Orientation;
+import org.sybila.parasim.extension.visualisation.projection.view.util.PositionChangeListener;
 import org.sybila.parasim.visualisation.projection.api.scale.Scale;
 
 /**
