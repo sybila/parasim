@@ -1,4 +1,4 @@
-package org.sybila.parasim.visualisation.projection.api;
+package org.sybila.parasim.visualisation.projection.api.layers;
 
 /**
  * An interval in an number axis. Has a reference value (centre) and is able to

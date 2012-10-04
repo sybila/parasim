@@ -1,4 +1,4 @@
-package org.sybila.parasim.visualisation.projection.api;
+package org.sybila.parasim.visualisation.projection.api.layers;
 
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.util.Coordinate;
