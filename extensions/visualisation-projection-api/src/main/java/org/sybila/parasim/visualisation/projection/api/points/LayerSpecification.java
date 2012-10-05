@@ -13,4 +13,6 @@ public interface LayerSpecification {
     public int getYDimension();
 
     public int getLayer(int index);
+
+    public boolean isDegenerate();
 }
