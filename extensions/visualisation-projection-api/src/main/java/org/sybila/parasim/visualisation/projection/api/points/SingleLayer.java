@@ -1,6 +1,7 @@
 package org.sybila.parasim.visualisation.projection.api.points;
 
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
  *
@@ -17,4 +18,6 @@ public interface SingleLayer extends Iterable<Point2D> {
     public float getMaxY();
 
     public Point getPoint(Point2D target);
+
+    public Robustness getRobustness(Point2D target);
 }
