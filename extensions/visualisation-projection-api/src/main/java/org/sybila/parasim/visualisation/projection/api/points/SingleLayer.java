@@ -1,7 +1,5 @@
 package org.sybila.parasim.visualisation.projection.api.points;
 
-import java.awt.Shape;
-import java.awt.geom.Point2D;
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
@@ -18,7 +16,5 @@ public interface SingleLayer extends Iterable<Point2D> {
 
     public float getMaxY();
 
-    public Point getClosestPoint(Point2D target);
-
-    public Iterable<Point> getPoints(Shape target);
+    public Point getPoint(Point2D target);
 }
