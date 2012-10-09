@@ -37,9 +37,14 @@ public class CycleDetectedDataBlockWrapper<T extends Trajectory> implements Cycl
         this.cycleDetectors = cycleDetectors;
     }
 
+    public CycleDetectedDataBlockWrapper(DataBlock<T> trajectories) {
+        this.trajectories = trajectories;
+        this.cycleDetectors = null;
+    }
+
     @Override
     public CycleDetector getCycleDetector(int index) {
-        return cycleDetectors.get(index);
+        return cycleDetectors == null ? CycleDetector.CYCLE_IS_NOT_DETECTED : cycleDetectors.get(index);
     }
 
     @Override

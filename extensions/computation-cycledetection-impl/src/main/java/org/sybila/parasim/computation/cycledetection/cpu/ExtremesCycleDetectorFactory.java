@@ -19,7 +19,10 @@
  */
 package org.sybila.parasim.computation.cycledetection.cpu;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.sybila.parasim.computation.cycledetection.api.CycleDetectedDataBlock;
+import org.sybila.parasim.computation.cycledetection.api.CycleDetectedDataBlockWrapper;
 import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
 import org.sybila.parasim.computation.cycledetection.api.CycleDetectorFactory;
 import org.sybila.parasim.computation.cycledetection.api.SimpleCycleDetector;
@@ -96,7 +99,11 @@ public class ExtremesCycleDetectorFactory implements CycleDetectorFactory {
 
     @Override
     public <T extends Trajectory> CycleDetectedDataBlock<T> detect(DataBlock<T> trajectories) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<CycleDetector> detectors = new ArrayList<>(trajectories.size());
+        for (Trajectory trajectory: trajectories) {
+            detectors.add(detect(trajectory));
+        }
+        return new CycleDetectedDataBlockWrapper<>(trajectories, detectors);
     }
 
     private static class DimensionRetriever implements ExtremesQueue.Evaluator<Point, Float> {

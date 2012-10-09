@@ -268,4 +268,9 @@ public class Buchi implements Property {
         }
         return s + "}\n";
     }
+
+    @Override
+    public float getTimeNeeded() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

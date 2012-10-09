@@ -17,27 +17,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification;
+package org.sybila.parasim.computation.cycledetection;
+
+import org.sybila.parasim.core.LoadableExtension;
+import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
 
 /**
- * Represents some way of specifing a property of an OdeSystem.
- *
- * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Property {
+public class CycleDetectionExtension implements LoadableExtension {
 
-    /**
-     * Formulas such as Until, Future and Globaly have as a parameter
-     * an interval. To evaluate the satisfaction of a formula on a trajectory
-     * a minimal length is needed which can be computed from the structure
-     * of the formula.
-     *
-     * This method returns the time needed to evaluate this formula and all
-     * its subformulas. If a formula is evaluated in a single time point 0
-     * will be returned.
-     *
-     * @return Time or trajectory length needed to evaluate formula.
-     */
-    float getTimeNeeded();
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.extension(CycleDetectionRegistrar.class);
+    }
 
 }

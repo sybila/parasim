@@ -30,6 +30,11 @@
             <artifactId>computation-density-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim.extension</groupId>
+            <artifactId>computation-cycledetection-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

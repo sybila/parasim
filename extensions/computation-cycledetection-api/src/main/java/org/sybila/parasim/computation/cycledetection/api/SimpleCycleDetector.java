@@ -76,4 +76,9 @@ public class SimpleCycleDetector implements CycleDetector {
         return end;
     }
 
+    @Override
+    public int getCycleSize() {
+        return end - start + 1;
+    }
+
 }

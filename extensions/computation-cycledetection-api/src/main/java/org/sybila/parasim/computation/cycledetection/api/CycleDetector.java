@@ -59,6 +59,11 @@ public interface CycleDetector {
         public int getCycleEndPosition() {
             throw new IllegalStateException("The cycle hasn't been detected.");
         }
+
+        @Override
+        public int getCycleSize() {
+            return 0;
+        }
     };
 
     /**
@@ -90,5 +95,7 @@ public interface CycleDetector {
     Point getCycleEnd();
 
     int getCycleEndPosition();
+
+    int getCycleSize();
 
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sybila.parasim.computation.cycledetection.api.CycleDetectorFactory;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.api.annotations.InitialSpace;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
@@ -89,6 +90,8 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     @Inject
     private DistanceChecker distanceChecker;
     @Inject
+    private CycleDetectorFactory cycleDetectorFactory;
+    @Inject
     private ComputationEmitter emitter;
 
     @Inject
@@ -141,7 +144,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             if (spawned.getSecondaryTrajectories().size() > 0) {
                 SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
             }
-            VerifiedDataBlock<TrajectoryWithNeighborhood> verified = verifier.verify(simulated, property);
+            VerifiedDataBlock<TrajectoryWithNeighborhood> verified = verifier.verify(cycleDetectorFactory.detect(simulated), property);
             if (result == null) {
                 result = new VerifiedDataBlockResultAdapter(verified);
             } else {

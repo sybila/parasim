@@ -21,9 +21,10 @@ package org.sybila.parasim.computation.verification.cpu;
 
 import java.util.Iterator;
 import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.cycledetection.api.CycleDetectedDataBlock;
+import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.computation.verification.api.Verifier;
-import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.Property;
@@ -42,11 +43,13 @@ public class SimpleVerifier<P extends Property> implements Verifier<P> {
     }
 
     @Override
-    public <T extends Trajectory> VerifiedDataBlock<T> verify(final DataBlock<T> trajectories, P property) {
+    public <T extends Trajectory> VerifiedDataBlock<T> verify(final CycleDetectedDataBlock<T> trajectories, P property) {
         final Robustness[] robustnesses = new Robustness[trajectories.size()];
         int counter = 0;
         for (Trajectory trajectory: trajectories) {
-            robustnesses[counter] = monitorFactory.createMonitor(trajectory.getReference().getTrajectory(), property).getRobustness(0);
+            CycleDetector detector = trajectories.getCycleDetector(counter);
+            Trajectory toVerify = detector.isCycleDetected() ? new ExpandedTrajectory(trajectory, detector, property) : trajectory;
+            robustnesses[counter] = monitorFactory.createMonitor(toVerify, property).getRobustness(0);
             counter++;
         }
         return new VerifiedDataBlock<T>() {
