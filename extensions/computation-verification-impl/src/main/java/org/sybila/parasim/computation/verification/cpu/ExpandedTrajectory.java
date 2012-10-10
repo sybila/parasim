@@ -66,7 +66,7 @@ public class ExpandedTrajectory extends AbstractTrajectory {
             int numOfCycles = expansionPosition / detector.getCycleSize();
             result.add(new ArrayPoint(current.getTime() + cycleTime * (numOfCycles + 1), current.toArray()));
             expansionPosition++;
-        } while(result.get(result.size() - 1).getTime() >= formula.getTimeNeeded());
+        } while(result.get(result.size() - 1).getTime() < formula.getTimeNeeded());
         return result;
     }
 
