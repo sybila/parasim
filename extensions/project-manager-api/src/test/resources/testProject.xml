@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.sybila.org/parasim/project">
+    <model>testModel.xml</model>
+    <formulae>
+        <item>Tameka Sutherlin</item>
+        <item>Hugh Knudtson</item>
+        <item>Kelly Craighead</item>
+    </formulae>
+    <initial-spaces/>
+    <simulation-spaces>
+        <item>Loraine Coletta</item>
+        <item>Jamie Gills</item>
+    </simulation-spaces>
+    <precision-configurations>
+        <item>Max Mccook</item>
+    </precision-configurations>
+    <initial-samplings>
+        <item>Horney</item>
+        <item>Odessa Juliano</item>
+        <item>Javier Nogueira</item>
+    </initial-samplings>
+    <results>
+        <item>Ted Pin</item>
+    </results>
+</project>

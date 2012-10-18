@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.sybila.org/parasim/project"
+           xmlns="http://www.sybila.org/parasim/project"
+           elementFormDefault="qualified">
+
+    <xs:complexType name="stringList">
+        <xs:sequence>
+            <xs:element name="item" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="activeExperiment">
+        <xs:choice>
+            <xs:element name="unnamed">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="formula" type="xs:string"/>
+                        <xs:element name="initial-space" type="xs:string"/>
+                        <xs:element name="simulation-space" type="xs:string"/>
+                        <xs:element name="precision-configuration" type="xs:string"/>
+                        <xs:element name="initial-sampling" type="xs:string"/>
+                        <xs:element name="result" type="xs:string"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="named" type="xs:string"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:element name="project">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="model" type="xs:string"/>
+                <xs:element name="formulae" type="stringList"/>
+                <xs:element name="initial-spaces" type="stringList"/>
+                <xs:element name="simulation-spaces" type="stringList"/>
+                <xs:element name="precision-configurations" type="stringList"/>
+                <xs:element name="initial-samplings" type="stringList"/>
+                <xs:element name="results" type="stringList"/>
+                <!--<xs:element name="experiments" type="stringList"/>-->
+                <!--<xs:element name="active-experiment" type="activeExperiment"/>-->
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
