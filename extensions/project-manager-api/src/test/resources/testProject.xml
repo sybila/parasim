@@ -22,4 +22,9 @@
     <results>
         <item>Ted Pin</item>
     </results>
+    <experiments>
+        <item>Marylou Bufford</item>
+        <item>Darcy Schuh</item>
+    </experiments>
+    <active-experiment>Darcy Schuh</active-experiment>
 </project>

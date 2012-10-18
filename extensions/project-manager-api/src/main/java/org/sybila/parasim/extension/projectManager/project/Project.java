@@ -1,7 +1,9 @@
 package org.sybila.parasim.extension.projectManager.project;
 
+import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.extension.projectManager.names.ExperimentNames;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.verification.result.VerificationResult;
@@ -29,7 +31,10 @@ public interface Project extends XMLRepresentable {
     public ResourceList<InitialSampling> getInitialSamplings();
 
     public ResourceList<VerificationResult> getVerificationResults();
-    /*
-     * ještě se musí dostat k experimentům a aktivnímu experimentu
-     */
+
+    public ResourceList<ExperimentNames> getExperimentList();
+
+    public Experiment getExperiment(ExperimentNames names);
+
+    public String getActiveExperiment();
 }

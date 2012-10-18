@@ -10,24 +10,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="activeExperiment">
-        <xs:choice>
-            <xs:element name="unnamed">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="formula" type="xs:string"/>
-                        <xs:element name="initial-space" type="xs:string"/>
-                        <xs:element name="simulation-space" type="xs:string"/>
-                        <xs:element name="precision-configuration" type="xs:string"/>
-                        <xs:element name="initial-sampling" type="xs:string"/>
-                        <xs:element name="result" type="xs:string"/>
-                    </xs:all>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="named" type="xs:string"/>
-        </xs:choice>
-    </xs:complexType>
-
     <xs:element name="project">
         <xs:complexType>
             <xs:all>
@@ -38,8 +20,8 @@
                 <xs:element name="precision-configurations" type="stringList"/>
                 <xs:element name="initial-samplings" type="stringList"/>
                 <xs:element name="results" type="stringList"/>
-                <!--<xs:element name="experiments" type="stringList"/>-->
-                <!--<xs:element name="active-experiment" type="activeExperiment"/>-->
+                <xs:element name="experiments" type="stringList"/>
+                <xs:element name="active-experiment" type="xs:string"/>
             </xs:all>
         </xs:complexType>
     </xs:element>

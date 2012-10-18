@@ -15,13 +15,14 @@ import org.w3c.dom.Element;
  */
 public class ProjectNames implements XMLRepresentable {
 
-    private String odeName;
+    private String odeName, active;
     private Set<String> formulae = new HashSet<>();
     private Set<String> initSpaces = new HashSet<>();
     private Set<String> simSpaces = new HashSet<>();
     private Set<String> precisions = new HashSet<>();
     private Set<String> samplings = new HashSet<>();
     private Set<String> results = new HashSet<>();
+    private Set<String> experiments = new HashSet<>();
 
     private static void addAll(Collection<String> target, ResourceList<?> src) {
         for (String item : src.getNames()) {
@@ -73,6 +74,18 @@ public class ProjectNames implements XMLRepresentable {
         return results;
     }
 
+    public Set<String> getExperimentsNames() {
+        return experiments;
+    }
+
+    public String getActiveExperiment() {
+        return active;
+    }
+
+    public void setActiveExperiment(String name) {
+        active = name;
+    }
+
     private static Element toXML(Document doc, Set<String> target, String name) {
         Element result = doc.createElement(name);
         for (String item : target) {
@@ -97,6 +110,11 @@ public class ProjectNames implements XMLRepresentable {
         result.appendChild(toXML(doc, precisions, ProjectNamesFactory.PRECISIONS_NAME));
         result.appendChild(toXML(doc, samplings, ProjectNamesFactory.SAMPLINGS_NAME));
         result.appendChild(toXML(doc, results, ProjectNamesFactory.RESULTS_NAME));
+        result.appendChild(toXML(doc, experiments, ProjectNamesFactory.EXPERIMENTS_NAME));
+
+        Element act = doc.createElement(ProjectNamesFactory.ACTIVE_NAME);
+        act.appendChild(doc.createTextNode(getActiveExperiment()));
+        result.appendChild(act);
         return result;
     }
 
@@ -130,6 +148,12 @@ public class ProjectNames implements XMLRepresentable {
         if (!getVerificationResultsNames().equals(target.getVerificationResultsNames())) {
             return false;
         }
+        if (!getExperimentsNames().equals(target.getExperimentsNames())) {
+            return false;
+        }
+        if (!getActiveExperiment().equals(target.getActiveExperiment())) {
+            return false;
+        }
         return true;
     }
 
@@ -143,6 +167,8 @@ public class ProjectNames implements XMLRepresentable {
         result = prime * result + getPrecisionConfigurationsNames().hashCode();
         result = prime * result + getInitialSamplingsNames().hashCode();
         result = prime * result + getVerificationResultsNames().hashCode();
+        result = prime * result + getExperimentsNames().hashCode();
+        result = prime * result + getActiveExperiment().hashCode();
         return result;
     }
 }
