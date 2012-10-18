@@ -1,5 +1,6 @@
 package org.sybila.parasim.extension.projectManager.project;
 
+import org.sybila.parasim.extension.projectManager.names.ProjectNames;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

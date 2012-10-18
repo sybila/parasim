@@ -16,6 +16,8 @@ public interface Project extends XMLRepresentable {
 
     public OdeSystem getOdeSystem();
 
+    public String getModelName();
+
     public ResourceList<Formula> getFormulae();
 
     public ResourceList<OrthogonalSpace> getInitialSpaces();
@@ -29,9 +31,5 @@ public interface Project extends XMLRepresentable {
     public ResourceList<VerificationResult> getVerificationResults();
     /*
      * ještě se musí dostat k experimentům a aktivnímu experimentu
-     */
-
-    /*
-     * další věc, potřebuju cestu k ODE
      */
 }

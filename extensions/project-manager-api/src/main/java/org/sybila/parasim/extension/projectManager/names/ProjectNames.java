@@ -1,8 +1,10 @@
-package org.sybila.parasim.extension.projectManager.project;
+package org.sybila.parasim.extension.projectManager.names;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.sybila.parasim.extension.projectManager.project.Project;
+import org.sybila.parasim.extension.projectManager.project.ResourceList;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,6 +31,7 @@ public class ProjectNames implements XMLRepresentable {
 
     public static ProjectNames getFromProject(Project target) {
         ProjectNames res = new ProjectNames();
+        res.setModelName(target.getModelName());
         addAll(res.formulae, target.getFormulae());
         addAll(res.initSpaces, target.getInitialSpaces());
         addAll(res.simSpaces, target.getSimulationSpaces());

@@ -1,7 +1,9 @@
-package org.sybila.parasim.extension.projectManager.project;
+package org.sybila.parasim.extension.projectManager.names;
 
+import org.sybila.parasim.extension.projectManager.project.ProjectFactory;
 import java.io.File;
 import java.net.URL;
+import org.sybila.parasim.extension.projectManager.project.Project;
 import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;

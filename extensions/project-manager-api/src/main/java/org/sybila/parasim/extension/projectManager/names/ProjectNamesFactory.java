@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.project;
+package org.sybila.parasim.extension.projectManager.names;
 
 import java.util.Collection;
 import org.sybila.parasim.model.xml.XMLFormatException;

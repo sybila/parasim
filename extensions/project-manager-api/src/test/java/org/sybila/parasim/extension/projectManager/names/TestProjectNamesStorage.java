@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.project;
+package org.sybila.parasim.extension.projectManager.names;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +75,6 @@ public class TestProjectNamesStorage {
             }
             Assert.fail("XML error: " + xmle.getMessage());
         }
-        System.out.println(resource.getRoot().getModelName());
         Assert.assertEquals(resource.getRoot(), getTestProjectNames(), "ProjectNames should load correctly.");
     }
 
