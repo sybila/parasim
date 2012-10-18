@@ -6,7 +6,6 @@ package org.sybila.parasim.extension.projectManager.names;
  */
 public enum ExperimentSuffixes {
 
-    FORMULA(".formula.xml"),
     INITIAL_SAMPLING(".sampling.xml"),
     INITIAL_SPACE(".init_space.xml"),
     PRECISION_CONFIGURATION(".precision.xml"),
