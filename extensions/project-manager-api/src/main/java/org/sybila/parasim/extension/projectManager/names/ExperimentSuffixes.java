@@ -6,6 +6,7 @@ package org.sybila.parasim.extension.projectManager.names;
  */
 public enum ExperimentSuffixes {
 
+    FORMULA(".formula.xml"),
     INITIAL_SAMPLING(".sampling.xml"),
     INITIAL_SPACE(".init_space.xml"),
     PRECISION_CONFIGURATION(".precision.xml"),
@@ -30,5 +31,17 @@ public enum ExperimentSuffixes {
 
     public String getSuffix() {
         return suffix;
+    }
+
+    public static ExperimentSuffixes getSuffix(String name) {
+        if (!name.endsWith(".xml")) {
+            return null;
+        }
+        for (ExperimentSuffixes suff : values()) {
+            if (name.endsWith(suff.getSuffix())) {
+                return suff;
+            }
+        }
+        return null;
     }
 }

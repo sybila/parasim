@@ -163,7 +163,7 @@ public class ExperimentNames {
         public ExperimentNames getExperimentNames(Properties properties) throws ResourceException {
             ExperimentNames result = new ExperimentNames();
             result.setModelName(getAndValidate(properties, MODEL_PRP));
-            result.setFormulaName(getAndValidate(properties, FORMULA_PRP));
+            result.setFormulaName(getAndRemoveSuffix(properties, FORMULA_PRP, ExperimentSuffixes.FORMULA));
             result.setInitialSpaceName(getAndRemoveSuffix(properties, INITSPACE_PRP, ExperimentSuffixes.INITIAL_SPACE));
             result.setSimulationSpaceName(getAndRemoveSuffix(properties, SIMSPACE_PRP, ExperimentSuffixes.SIMULATION_SPACE));
             result.setPrecisionConfigurationName(getAndRemoveSuffix(properties, PRECISION_PRP, ExperimentSuffixes.PRECISION_CONFIGURATION));
@@ -188,7 +188,7 @@ public class ExperimentNames {
         public Properties getProperties(ExperimentNames names) {
             Properties result = new Properties();
             result.setProperty(MODEL_PRP, names.getModelName());
-            result.setProperty(FORMULA_PRP, names.getFormulaName());
+            result.setProperty(FORMULA_PRP, ExperimentSuffixes.FORMULA.add(names.getFormulaName()));
             result.setProperty(INITSPACE_PRP, ExperimentSuffixes.INITIAL_SPACE.add(names.getInitialSpaceName()));
             result.setProperty(SIMSPACE_PRP, ExperimentSuffixes.SIMULATION_SPACE.add(names.getSimulationSpaceName()));
             result.setProperty(PRECISION_PRP, ExperimentSuffixes.PRECISION_CONFIGURATION.add(names.getPrecisionConfigurationName()));
