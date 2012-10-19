@@ -19,7 +19,6 @@
                 <xs:element name="simulation-spaces" type="stringList"/>
                 <xs:element name="precision-configurations" type="stringList"/>
                 <xs:element name="initial-samplings" type="stringList"/>
-                <xs:element name="results" type="stringList"/>
                 <xs:element name="experiments" type="stringList"/>
                 <xs:element name="active-experiment" type="xs:string"/>
             </xs:all>

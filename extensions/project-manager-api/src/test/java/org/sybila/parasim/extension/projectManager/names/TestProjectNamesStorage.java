@@ -32,7 +32,6 @@ public class TestProjectNamesStorage {
         addAll(result.getSimulationSpacesNames(), new String[]{"Loraine Coletta", "Jamie Gills"});
         addAll(result.getPrecisionConfigurationsNames(), new String[]{"Max Mccook"});
         addAll(result.getInitialSamplingsNames(), new String[]{"Horney", "Odessa Juliano", "Javier Nogueira"});
-        addAll(result.getVerificationResultsNames(), new String[]{"Ted Pin"});
         addAll(result.getExperimentsNames(), new String[]{"Marylou Bufford", "Darcy Schuh"});
         result.setActiveExperiment("Darcy Schuh");
         return result;

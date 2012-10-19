@@ -21,7 +21,6 @@ public class ProjectNames implements XMLRepresentable {
     private Set<String> simSpaces = new HashSet<>();
     private Set<String> precisions = new HashSet<>();
     private Set<String> samplings = new HashSet<>();
-    private Set<String> results = new HashSet<>();
     private Set<String> experiments = new HashSet<>();
 
     private static void addAll(Collection<String> target, ResourceList<?> src) {
@@ -38,7 +37,6 @@ public class ProjectNames implements XMLRepresentable {
         addAll(res.simSpaces, target.getSimulationSpaces());
         addAll(res.precisions, target.getPrecisionConfigurations());
         addAll(res.samplings, target.getInitialSamplings());
-        addAll(res.results, target.getVerificationResults());
         return res;
     }
 
@@ -68,10 +66,6 @@ public class ProjectNames implements XMLRepresentable {
 
     public Set<String> getInitialSamplingsNames() {
         return samplings;
-    }
-
-    public Set<String> getVerificationResultsNames() {
-        return results;
     }
 
     public Set<String> getExperimentsNames() {
@@ -109,7 +103,6 @@ public class ProjectNames implements XMLRepresentable {
         result.appendChild(toXML(doc, simSpaces, ProjectNamesFactory.SIM_SPACES_NAME));
         result.appendChild(toXML(doc, precisions, ProjectNamesFactory.PRECISIONS_NAME));
         result.appendChild(toXML(doc, samplings, ProjectNamesFactory.SAMPLINGS_NAME));
-        result.appendChild(toXML(doc, results, ProjectNamesFactory.RESULTS_NAME));
         result.appendChild(toXML(doc, experiments, ProjectNamesFactory.EXPERIMENTS_NAME));
 
         Element act = doc.createElement(ProjectNamesFactory.ACTIVE_NAME);
@@ -145,9 +138,6 @@ public class ProjectNames implements XMLRepresentable {
         if (!getInitialSamplingsNames().equals(target.getInitialSamplingsNames())) {
             return false;
         }
-        if (!getVerificationResultsNames().equals(target.getVerificationResultsNames())) {
-            return false;
-        }
         if (!getExperimentsNames().equals(target.getExperimentsNames())) {
             return false;
         }
@@ -166,7 +156,6 @@ public class ProjectNames implements XMLRepresentable {
         result = prime * result + getSimulationSpacesNames().hashCode();
         result = prime * result + getPrecisionConfigurationsNames().hashCode();
         result = prime * result + getInitialSamplingsNames().hashCode();
-        result = prime * result + getVerificationResultsNames().hashCode();
         result = prime * result + getExperimentsNames().hashCode();
         result = prime * result + getActiveExperiment().hashCode();
         return result;

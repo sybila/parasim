@@ -6,6 +6,7 @@ package org.sybila.parasim.extension.projectManager.names;
  */
 public enum ExperimentSuffixes {
 
+    EXPERIMENT(".experiment.properties"),
     MODEL(".model.xml"),
     FORMULA(".formula.xml"),
     INITIAL_SAMPLING(".sampling.xml"),
@@ -35,9 +36,6 @@ public enum ExperimentSuffixes {
     }
 
     public static ExperimentSuffixes getSuffix(String name) {
-        if (!name.endsWith(".xml")) {
-            return null;
-        }
         for (ExperimentSuffixes suff : values()) {
             if (name.endsWith(suff.getSuffix())) {
                 return suff;

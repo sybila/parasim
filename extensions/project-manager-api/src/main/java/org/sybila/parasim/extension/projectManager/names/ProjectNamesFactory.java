@@ -20,7 +20,6 @@ public enum ProjectNamesFactory implements XMLRepresentableFactory<ProjectNames>
     static final String SIM_SPACES_NAME = "simulation-spaces";
     static final String PRECISIONS_NAME = "precision-configurations";
     static final String SAMPLINGS_NAME = "initial-samplings";
-    static final String RESULTS_NAME = "results";
     static final String EXPERIMENTS_NAME = "experiments";
     static final String ACTIVE_NAME = "active-experiment";
     static final String ITEM_NAME = "item";
@@ -62,9 +61,6 @@ public enum ProjectNamesFactory implements XMLRepresentableFactory<ProjectNames>
                     break;
                 case SAMPLINGS_NAME:
                     fill(result.getInitialSamplingsNames(), child);
-                    break;
-                case RESULTS_NAME:
-                    fill(result.getVerificationResultsNames(), child);
                     break;
                 case EXPERIMENTS_NAME:
                     fill(result.getExperimentsNames(), child);
