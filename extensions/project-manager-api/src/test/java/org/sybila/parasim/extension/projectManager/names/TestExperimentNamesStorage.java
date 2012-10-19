@@ -15,8 +15,8 @@ public class TestExperimentNamesStorage {
 
     private ExperimentNames getTestExperimentNames() {
         ExperimentNames result = new ExperimentNames();
-        result.setModelName("testModel.xml");
-        result.setFormulaName("Tameka Sutherlin.xml");
+        result.setModelName("testModel");
+        result.setFormulaName("Tameka Sutherlin");
         result.setInitialSpaceName("Hugh Knudtson");
         result.setSimulationSpaceName("Jamie Gills");
         result.setPrecisionConfigurationName("Max Mccook");
