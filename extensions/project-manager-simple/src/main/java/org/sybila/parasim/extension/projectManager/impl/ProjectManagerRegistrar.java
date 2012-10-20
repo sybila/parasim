@@ -5,6 +5,7 @@ import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.extension.projectManager.api.ProjectManager;
 import org.sybila.parasim.extension.projectManager.api.ProjectManagerRegistered;
+import org.sybila.parasim.extension.projectManager.view.PhonyProjectManager;
 
 /**
  *
@@ -15,11 +16,10 @@ public class ProjectManagerRegistrar {
     @Inject
     private Event<ProjectManagerRegistered> event;
 
-
     @Provide
     public ProjectManager register() {
         fireEvent();
-        throw new UnsupportedOperationException("Not yet implemented.");
+        return new PhonyProjectManager();
     }
 
     private void fireEvent() {
