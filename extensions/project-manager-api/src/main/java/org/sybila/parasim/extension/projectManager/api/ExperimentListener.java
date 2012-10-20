@@ -1,6 +1,6 @@
 package org.sybila.parasim.extension.projectManager.api;
 
-import org.sybila.parasim.application.model.Experiment;
+import org.sybila.parasim.application.model.LoadedExperiment;
 
 /**
  *
@@ -8,7 +8,7 @@ import org.sybila.parasim.application.model.Experiment;
  */
 public interface ExperimentListener {
 
-    public void performExperiment(Experiment target);
+    public void performExperiment(LoadedExperiment target);
 
-    public void showResult(Experiment target);
+    public void showResult(LoadedExperiment target);
 }
