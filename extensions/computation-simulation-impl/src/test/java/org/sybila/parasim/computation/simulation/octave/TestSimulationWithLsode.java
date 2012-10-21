@@ -17,26 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.simulation.cpu;
+package org.sybila.parasim.computation.simulation.octave;
 
 import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.Simulator;
-import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
+import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 /**
- *
- * @author jpapouse
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestSimpleAdaptiveStepSimulator extends AbstractAdaptiveStepSimulationTest {
+public class TestSimulationWithLsode extends AbstractAdaptiveStepSimulationTest {
 
-    private static final SimulationEngineFactory LSODE_ENGINE_FACTORY = new LsodeEngineFactory();
+    private static final SimulationEngineFactory ENGINE_FACTORY = new LsodeEngineFactory(LsodeEngineFactory.IntegrationMethod.NONSTIFF);
 
     @Test
     public void testTimeStep() {
-        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+        if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
         super.testTimeStep(10, 10);
@@ -44,7 +44,7 @@ public class TestSimpleAdaptiveStepSimulator extends AbstractAdaptiveStepSimulat
 
     @Test
     public void testMinimalNumberOfPoints() {
-        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+        if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
         super.testMinimalNumberOfPoints(10, 10);
@@ -52,7 +52,7 @@ public class TestSimpleAdaptiveStepSimulator extends AbstractAdaptiveStepSimulat
 
     @Test
     public void testValidNumberOfTrajectories() {
-        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+        if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
         super.testValidNumberOfTrajectories(10, 10);
@@ -60,7 +60,7 @@ public class TestSimpleAdaptiveStepSimulator extends AbstractAdaptiveStepSimulat
 
     @Test
     public void testParameters() {
-        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+        if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
         super.testParameters(2);
@@ -68,7 +68,7 @@ public class TestSimpleAdaptiveStepSimulator extends AbstractAdaptiveStepSimulat
 
     @Override
     protected Simulator<AdaptiveStepConfiguration> createSimulator() {
-        return new SimpleAdaptiveStepSimulator(LSODE_ENGINE_FACTORY);
+        return new SimpleAdaptiveStepSimulator(ENGINE_FACTORY);
     }
 
 }

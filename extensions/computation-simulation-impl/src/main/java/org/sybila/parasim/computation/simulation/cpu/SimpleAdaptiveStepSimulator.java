@@ -1,21 +1,23 @@
 /**
  * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
- * contributors by the @authors tag.
+ * contributors by the
+ *
+ * @authors tag.
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.computation.simulation.cpu;
 
@@ -48,21 +50,23 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
     @Override
     public <T extends Trajectory> SimulatedDataBlock<T> simulate(AdaptiveStepConfiguration configuration, DataBlock<T> data) {
         SimulationEngine simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations(), configuration.getPrecisionConfiguration().getMaxRelativeError());
-        List<T> trajectories = new ArrayList<>(data.size());
-        Status[] statuses = new Status[data.size()];
-        for (int i = 0; i < data.size(); i++) {
-            Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getPrecisionConfiguration().getTimeStep(), configuration.getSpace().getMaxBounds().getTime());
-            LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
-            trajectory.append(simulated);
-            trajectories.add((T) trajectory);
-            if (simulated.getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
-                statuses[i] = Status.TIMEOUT;
-            } else {
-                statuses[i] = Status.OK;
+        try {
+            List<T> trajectories = new ArrayList<>(data.size());
+            Status[] statuses = new Status[data.size()];
+            for (int i = 0; i < data.size(); i++) {
+                Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getPrecisionConfiguration().getTimeStep(), configuration.getSpace().getMaxBounds().getTime());
+                LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
+                trajectory.append(simulated);
+                trajectories.add((T) trajectory);
+                if (simulated.getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
+                    statuses[i] = Status.TIMEOUT;
+                } else {
+                    statuses[i] = Status.OK;
+                }
             }
+            return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
+        } finally {
+            simulationEngine.close();
         }
-        simulationEngine.close();
-        return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
     }
-
 }

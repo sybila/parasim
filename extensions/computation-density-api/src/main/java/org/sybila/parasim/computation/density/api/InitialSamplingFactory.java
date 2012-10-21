@@ -51,6 +51,7 @@ public class InitialSamplingFactory implements XMLRepresentableFactory<InitialSa
         this.odeSystem = odeSystem;
     }
 
+    @Override
     public InitialSampling getObject(Node source) throws XMLFormatException {
         if (!source.getNodeName().equals(INITIAL_SAMPLING_NAME)) {
             throw new XMLFormatException(

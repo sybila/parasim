@@ -60,7 +60,7 @@ public class TestOctaveOdeSystem {
 
     @Test
     public void testOctaveStringSimple() {
-        String octaveString = system.octaveString().trim();
+        String octaveString = system.octaveString(false).trim();
         assertTrue(octaveString.startsWith("function"));
         assertTrue(octaveString.endsWith("endfunction"));
         assertTrue(octaveString.replace(" ", "").contains("xdot=f(x,t)"));
@@ -73,7 +73,7 @@ public class TestOctaveOdeSystem {
         try {
             engine = new OctaveEngineFactory().getScriptEngine();
             try {
-                engine.eval(system.octaveString());
+                engine.eval(system.octaveString(false));
             }
             catch(Exception e) {
                 e.printStackTrace(System.err);

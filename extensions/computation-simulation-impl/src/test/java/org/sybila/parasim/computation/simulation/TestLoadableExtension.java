@@ -23,6 +23,7 @@ import org.sybila.parasim.core.context.Context;
 import java.lang.annotation.Annotation;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
+import org.sybila.parasim.computation.simulation.api.Simulator;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
@@ -56,12 +57,20 @@ public class TestLoadableExtension {
 
     @Test
     public void testSimulatorLoaded() {
-        assertNotNull(manager.resolve(AdaptiveStepSimulator.class, Default.class, manager.getRootContext()));
+        Context context = new AbstractContext() {
+            @Override
+            public Class<? extends Annotation> getScope() {
+                return ComputationInstanceScope.class;
+            }
+        };
+        manager.initializeContext(context);
+        assertNotNull(manager.resolve(AdaptiveStepSimulator.class, Default.class, context));
     }
 
     @Test
     public void testConfigurationLoaded() {
         Context context = new AbstractContext() {
+            @Override
             public Class<? extends Annotation> getScope() {
                 return ComputationInstanceScope.class;
             }

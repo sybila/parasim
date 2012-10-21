@@ -19,15 +19,24 @@
  */
 package org.sybila.parasim.computation.simulation;
 
+import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
+import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory.IntegrationMethod;
+import org.sybila.parasim.computation.simulation.octave.OdePkgEngineFactory;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ComputationSimulationConfiguration {
 
-    private boolean stiff = false;
+    private OdePkgEngineFactory odepkgFunction;
+    private LsodeEngineFactory.IntegrationMethod lsodeIntegrationMethod = LsodeEngineFactory.IntegrationMethod.NONSTIFF;
 
-    public boolean isStiff() {
-        return stiff;
+    public IntegrationMethod getLsodeIntegrationMethod() {
+        return lsodeIntegrationMethod;
+    }
+
+    public OdePkgEngineFactory getOdepkgFunction() {
+        return odepkgFunction;
     }
 
 }

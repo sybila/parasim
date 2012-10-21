@@ -121,8 +121,14 @@ public final class Parameter implements Expression<Parameter>, Indexable {
                 release = true;
             }
         }
-        if ((release && isSubstituted()) || indexBefore != 0) {
+        if (release && isSubstituted()) {
             return new Parameter(name, index+indexBefore, originalIndex);
+        } else if(indexBefore != 0) {
+            if (substitution == null) {
+                return new Parameter(name, index+indexBefore, originalIndex);
+            } else {
+                return new Parameter(name, index+indexBefore, originalIndex, substitution);
+            }
         } else {
             return this;
         }
@@ -142,8 +148,14 @@ public final class Parameter implements Expression<Parameter>, Indexable {
                 release = true;
             }
         }
-        if ((release && isSubstituted()) || indexBefore != 0) {
+        if (release && isSubstituted()) {
             return new Parameter(name, index+indexBefore, originalIndex);
+        } else if(indexBefore != 0) {
+            if (substitution == null) {
+                return new Parameter(name, index+indexBefore, originalIndex);
+            } else {
+                return new Parameter(name, index+indexBefore, originalIndex, substitution);
+            }
         } else {
             return this;
         }
@@ -152,6 +164,7 @@ public final class Parameter implements Expression<Parameter>, Indexable {
     @Override
     public Parameter substitute(SubstitutionValue... substitutionValues) {
         int indexBefore = 0;
+        SubstitutionValue toSubstitute = null;
         for (SubstitutionValue v: substitutionValues) {
             if (!(v instanceof ParameterValue)) {
                 if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
@@ -161,14 +174,20 @@ public final class Parameter implements Expression<Parameter>, Indexable {
             }
             ParameterValue paramValue = (ParameterValue) v;
             if (paramValue.getExpression().equals(this)) {
-                return new Parameter(name, index, originalIndex, paramValue);
+                toSubstitute = paramValue;
             }
             if (paramValue.getExpression().getIndex() < index) {
                 indexBefore++;
             }
         }
-        if (indexBefore != 0) {
-            return new Parameter(name, index - indexBefore, originalIndex);
+        if (toSubstitute != null) {
+            return new Parameter(name, index - indexBefore, originalIndex, toSubstitute);
+        } else if (indexBefore != 0) {
+            if (this.substitution == null) {
+                return new Parameter(name, index - indexBefore, originalIndex);
+            } else {
+                return new Parameter(name, index - indexBefore, originalIndex, substitution);
+            }
         } else {
             return this;
         }
@@ -177,6 +196,7 @@ public final class Parameter implements Expression<Parameter>, Indexable {
     @Override
     public Parameter substitute(Collection<SubstitutionValue> substitutionValues) {
         int indexBefore = 0;
+        SubstitutionValue toSubstitute = null;
         for (SubstitutionValue v: substitutionValues) {
             if (!(v instanceof ParameterValue)) {
                 if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
@@ -186,14 +206,20 @@ public final class Parameter implements Expression<Parameter>, Indexable {
             }
             ParameterValue paramValue = (ParameterValue) v;
             if (paramValue.getExpression().equals(this)) {
-                return new Parameter(name, index, originalIndex, paramValue);
+                toSubstitute = paramValue;
             }
             if (paramValue.getExpression().getIndex() < index) {
                 indexBefore++;
             }
         }
-        if (indexBefore != 0) {
-            return new Parameter(name, index - indexBefore, originalIndex);
+        if (toSubstitute != null) {
+            return new Parameter(name, index - indexBefore, originalIndex, toSubstitute);
+        } else if (indexBefore != 0) {
+            if (this.substitution == null) {
+                return new Parameter(name, index - indexBefore, originalIndex);
+            } else {
+                return new Parameter(name, index - indexBefore, originalIndex, substitution);
+            }
         } else {
             return this;
         }

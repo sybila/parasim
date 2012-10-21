@@ -33,6 +33,12 @@ import org.sybila.parasim.model.trajectory.Point;
  */
 public class LsodeEngineFactory implements SimulationEngineFactory {
 
+    private final IntegrationMethod integrationMethod;
+
+    public LsodeEngineFactory(IntegrationMethod integrationMethod) {
+        this.integrationMethod = integrationMethod;
+    }
+
     @Override
     public boolean isAvailable() {
         try {
@@ -45,27 +51,46 @@ public class LsodeEngineFactory implements SimulationEngineFactory {
 
     @Override
     public SimulationEngine simulationEngine(long stepLimit, double relativeTolerance) {
-        return new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), stepLimit, relativeTolerance);
+        return new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), integrationMethod, stepLimit, relativeTolerance);
     }
 
     private static class LsodeEngine extends OctaveSimulationEngine {
 
-        public LsodeEngine(OctaveEngine octave, long stepLimit, double relativeTolerance) {
+        public LsodeEngine(OctaveEngine octave, IntegrationMethod integrationMethod, long stepLimit, double relativeTolerance) {
             super(octave, stepLimit, relativeTolerance);
             getOctave().eval("lsode_options(\"step limit\", " + stepLimit + ");");
             if (relativeTolerance > 0) {
                 getOctave().eval("lsode_options(\"relative tolerance\", " + relativeTolerance + ");");
             }
+            getOctave().eval("lsode_options('integration method', '" + integrationMethod.getName() + "');");
         }
 
         @Override
         protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, double timeStep) {
-            getOctave().eval(odeSystem.octaveString());
-            getOctave().eval("i = " + Arrays.toString(point.toArray(odeSystem.dimension())) + ";");
+            getOctave().eval(odeSystem.octaveString(false));
+            getOctave().eval("i = " + Arrays.toString(point.toArray(odeSystem.getVariables().size())) + ";");
             getOctave().eval("t = linspace(" + point.getTime() + ", " + numberOfIterations * timeStep + ", " + numberOfIterations + ");");
             getOctave().eval("y = lsode(\"" + odeSystem.octaveName() + "\", i, t);");
             return getOctave().get(OctaveDouble.class, "y");
 
+        }
+    }
+
+    public static enum IntegrationMethod {
+
+        ADAMS("adams"),
+        NONSTIFF("non-stiff"),
+        BDF("bdf"),
+        STIFF("stiff");
+
+        private final String name;
+
+        private IntegrationMethod(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

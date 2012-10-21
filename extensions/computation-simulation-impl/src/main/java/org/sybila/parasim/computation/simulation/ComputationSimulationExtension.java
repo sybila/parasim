@@ -27,6 +27,7 @@ import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
  */
 public class ComputationSimulationExtension implements LoadableExtension {
 
+    @Override
     public void register(ExtensionBuilder builder) {
         builder.extension(SimulatorRegistrar.class);
         builder.extension(ConfigurationRegistrar.class);
