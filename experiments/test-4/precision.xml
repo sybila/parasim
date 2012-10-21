@@ -23,5 +23,4 @@
 <precision xmlns="http://www.sybila.org/parasim/precision" maxRelativeError="0.1" timeStep="0.1">
     <dimension maxAbsoluteError="0"/>
     <dimension maxAbsoluteError="0"/>
-    <dimension maxAbsoluteError="0"/>
 </precision>

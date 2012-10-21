@@ -19,39 +19,56 @@
  */
 package org.sybila.parasim.computation.simulation.cpu;
 
+import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.Simulator;
+import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
+import org.testng.SkipException;
 import org.testng.annotations.Test;
-import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationTest;
 
 /**
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ *
+ * @author jpapouse
  */
-public class TestRkf45Simulator extends AbstractAdaptiveStepSimulationTest {
+public class TestSimpleAdaptiveStepSimulator extends AbstractAdaptiveStepSimulationTest {
 
-    @Test
-    public void testAbsoluteStep() {
-        super.testAbsoluteStep(10, 10);
-    }
+    private static final SimulationEngineFactory LSODE_ENGINE_FACTORY = new LsodeEngineFactory();
 
     @Test
     public void testTimeStep() {
+        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
         super.testTimeStep(10, 10);
     }
 
     @Test
     public void testMinimalNumberOfPoints() {
+        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
         super.testMinimalNumberOfPoints(10, 10);
     }
 
     @Test
     public void testValidNumberOfTrajectories() {
+        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
         super.testValidNumberOfTrajectories(10, 10);
+    }
+
+    @Test
+    public void testParameters() {
+        if (!LSODE_ENGINE_FACTORY.isAvailable()) {
+            throw new SkipException("The Octave is not available.");
+        }
+        super.testParameters(2);
     }
 
     @Override
     protected Simulator<AdaptiveStepConfiguration> createSimulator() {
-        return new Rkf45Simulator();
+        return new SimpleAdaptiveStepSimulator(LSODE_ENGINE_FACTORY);
     }
 
 }

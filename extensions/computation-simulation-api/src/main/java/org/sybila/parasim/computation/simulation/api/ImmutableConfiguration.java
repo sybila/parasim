@@ -71,7 +71,7 @@ public class ImmutableConfiguration implements Configuration {
 
     @Override
     public int getDimension() {
-        return odeSystem.dimension();
+        return odeSystem.getVariables().size();
     }
 
     @Override

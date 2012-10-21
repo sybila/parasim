@@ -141,7 +141,7 @@ public class OrthogonalSpaceFactory implements
                 }
             } else if (releasedOdeSystem.isParamater(dim)) {
                 Parameter param = releasedOdeSystem.getParameter(dim);
-                if (param == null) {
+                if (!paramMin.containsKey(param.getName()) || !paramMax.containsKey(param.getName())) {
                     minArray[param.getIndex()] = releasedOdeSystem.getDeclaredParamaterValue(param).getValue();
                     maxArray[param.getIndex()] = releasedOdeSystem.getDeclaredParamaterValue(param).getValue();
                 } else {

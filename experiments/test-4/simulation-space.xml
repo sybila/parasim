@@ -24,5 +24,4 @@
     <time min="0" max="10" />
     <variable name="A" min="0" max="200"/>
     <variable name="B" min="0" max="200"/>
-    <parameter name="k" min="0" max="2" />
 </space>

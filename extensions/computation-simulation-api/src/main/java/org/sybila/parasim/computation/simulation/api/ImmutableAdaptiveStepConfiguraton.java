@@ -44,6 +44,7 @@ public class ImmutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurat
         this.precisionConfiguration = precisionConfiguration;
     }
 
+    @Override
     public PrecisionConfiguration getPrecisionConfiguration() {
         return precisionConfiguration;
     }
