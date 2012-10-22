@@ -4,6 +4,7 @@ import org.sybila.parasim.extension.projectManager.project.ProjectFactory;
 import java.io.File;
 import java.net.URL;
 import org.sybila.parasim.extension.projectManager.project.Project;
+import org.sybila.parasim.extension.projectManager.project.ResourceException;
 import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLFormatException;
 import org.sybila.parasim.model.xml.XMLRepresentableFactory;
@@ -20,7 +21,11 @@ public abstract class ProjectResource extends FileXMLResource<Project> {
         @Override
         public Project getObject(Node source) throws XMLFormatException {
             ProjectNames names = ProjectNamesFactory.getInstance().getObject(source);
-            return getProjectFactory().getProject(names);
+            try {
+                return getProjectFactory().getProject(names);
+            } catch (ResourceException re) {
+                throw new XMLFormatException("Cannot load project from project names.", re);
+            }
         }
     };
 

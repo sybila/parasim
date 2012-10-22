@@ -8,5 +8,5 @@ import org.sybila.parasim.extension.projectManager.names.ProjectNames;
  */
 public interface ProjectFactory {
 
-    public Project getProject(ProjectNames names);
+    public Project getProject(ProjectNames names) throws ResourceException;
 }
