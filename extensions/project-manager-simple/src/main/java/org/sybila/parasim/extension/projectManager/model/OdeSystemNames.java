@@ -55,4 +55,8 @@ public class OdeSystemNames {
         }
         throw new IllegalArgumentException("Ode system contains no variable or parameter of such value.");
     }
+
+    public String getVariable(int dimension) {
+        return system.getVariable(dimension).getName();
+    }
 }
