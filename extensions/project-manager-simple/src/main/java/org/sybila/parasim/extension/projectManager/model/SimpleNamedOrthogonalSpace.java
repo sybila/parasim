@@ -12,7 +12,7 @@ import org.sybila.parasim.util.Pair;
  */
 public final class SimpleNamedOrthogonalSpace implements NamedOrthogonalSpace {
 
-    Map<String, Pair<Float, Float>> values;
+    private final Map<String, Pair<Float, Float>> values;
 
     public SimpleNamedOrthogonalSpace(Map<String, Pair<Float, Float>> values) {
         this.values = new HashMap<>(values);
