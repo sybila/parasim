@@ -1,5 +1,6 @@
 package org.sybila.parasim.extension.projectManager.view;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JLabel;
@@ -15,8 +16,8 @@ public final class TableConstraints {
 
     private static GridBagConstraints getDefaultConstraints() {
         GridBagConstraints result = new GridBagConstraints();
-        result.weightx = 1;
-        result.weighty = 1;
+        //result.weightx = 1;
+        //result.weighty = 1;
         result.fill = GridBagConstraints.BOTH;
         result.insets = new Insets(2, 1, 2, 1);
         return result;
@@ -52,12 +53,22 @@ public final class TableConstraints {
     public static JLabel getRowLabel(String name) {
         JLabel result = new JLabel(name);
         result.setHorizontalAlignment(JLabel.RIGHT);
+        result.setBackground(Color.WHITE);
+        result.setOpaque(true);
         return result;
     }
 
     public static JLabel getHeaderLabelWithToolTip(String name, String toolTip) {
         JLabel result = getHeaderLabel(name);
         result.setToolTipText(toolTip);
+        return result;
+    }
+
+    public static JLabel getCellLabel(String text) {
+        JLabel result = new JLabel(text);
+        result.setBackground(Color.WHITE);
+        result.setOpaque(true);
+        result.setHorizontalAlignment(JLabel.CENTER);
         return result;
     }
 }

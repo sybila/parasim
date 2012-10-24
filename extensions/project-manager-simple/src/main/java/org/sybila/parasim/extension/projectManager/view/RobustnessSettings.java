@@ -1,5 +1,6 @@
 package org.sybila.parasim.extension.projectManager.view;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -148,6 +149,7 @@ public class RobustnessSettings extends JPanel {
                 Float value = names.getValue(var);
                 String val;
                 JCheckBox box = new JCheckBox();
+                box.setBackground(Color.WHITE);
                 if (value == null) {
                     val = "N/A";
                     box.setSelected(true);
@@ -158,7 +160,7 @@ public class RobustnessSettings extends JPanel {
                     box.addItemListener(new ChoiceBoxListener(var));
                 }
 
-                add(TableConstraints.getHeaderLabel(val), TableConstraints.getCellConstraints(1, y));
+                add(TableConstraints.getCellLabel(val), TableConstraints.getCellConstraints(1, y));
                 add(box, TableConstraints.getCellConstraints(2, y));
 
                 y++;
