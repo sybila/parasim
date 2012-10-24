@@ -54,4 +54,10 @@ public final class TableConstraints {
         result.setHorizontalAlignment(JLabel.RIGHT);
         return result;
     }
+
+    public static JLabel getHeaderLabelWithToolTip(String name, String toolTip) {
+        JLabel result = getHeaderLabel(name);
+        result.setToolTipText(toolTip);
+        return result;
+    }
 }

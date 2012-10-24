@@ -56,20 +56,14 @@ public class SimulationSettings extends JPanel {
 
     private class VariablePanel extends JPanel {
 
-        private JLabel getHeaderLabel(String name, String toolTip) {
-            JLabel result = TableConstraints.getHeaderLabel(name);
-            result.setToolTipText(toolTip);
-            return result;
-        }
-        //
         private Map<String, JFormattedTextField[]> fields = new HashMap<>();
 
         public VariablePanel() {
             setLayout(new GridBagLayout());
             //labels
-            add(getHeaderLabel("Abs error", "Maximum absolute error"), TableConstraints.getHeaderConstraints(1));
-            add(getHeaderLabel("Minimum", "Minimum bound"), TableConstraints.getHeaderConstraints(2));
-            add(getHeaderLabel("Maximum", "Maximum bound"), TableConstraints.getHeaderConstraints(3));
+            add(TableConstraints.getHeaderLabelWithToolTip("Abs error", "Maximum absolute error"), TableConstraints.getHeaderConstraints(1));
+            add(TableConstraints.getHeaderLabelWithToolTip("Minimum", "Minimum bound"), TableConstraints.getHeaderConstraints(2));
+            add(TableConstraints.getHeaderLabelWithToolTip("Maximum", "Maximum bound"), TableConstraints.getHeaderConstraints(3));
             int y = 1;
             for (String var : names.getVariables()) {
                 add(TableConstraints.getRowLabel(var), TableConstraints.getRowConstraints(y));
