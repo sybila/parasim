@@ -2,6 +2,7 @@ package org.sybila.parasim.extension.projectManager.model;
 
 import java.util.Set;
 import org.sybila.parasim.model.math.Parameter;
+import org.sybila.parasim.model.math.VariableValue;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 
@@ -44,10 +45,15 @@ public class OdeSystemNames {
         return var.getIndex();
     }
 
-    public float getValue(String name) {
+    public Float getValue(String name) {
         OdeSystemVariable var = system.getVariables().get(name);
         if (var != null) {
-            return system.getInitialVariableValue(var).getValue();
+            VariableValue value = system.getInitialVariableValue(var);
+            if (value != null) {
+                return value.getValue();
+            } else {
+                return null;
+            }
         }
         Parameter par = system.getAvailableParameters().get(name);
         if (par != null) {
