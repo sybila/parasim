@@ -56,47 +56,9 @@ public class SimulationSettings extends JPanel {
 
     private class VariablePanel extends JPanel {
 
-        private GridBagConstraints getConstraints() {
-            GridBagConstraints result = new GridBagConstraints();
-            result.weightx = 1;
-            result.weighty = 1;
-            result.fill = GridBagConstraints.BOTH;
-            result.insets = new Insets(1, 2, 1, 2);
-            result.ipadx = 5;
-            return result;
-        }
-
-        private GridBagConstraints getRowConstraints(int y) {
-            GridBagConstraints result = getConstraints();
-            result.gridx = 0;
-            result.gridy = y;
-            return result;
-        }
-
-        private GridBagConstraints getCellConstraints(int x, int y) {
-            GridBagConstraints result = getConstraints();
-            result.gridx = x;
-            result.gridy = y;
-            return result;
-        }
-
-        private GridBagConstraints getHeaderConstraints(int x) {
-            GridBagConstraints result = getConstraints();
-            result.gridx = x;
-            result.gridy = 0;
-            return result;
-        }
-
         private JLabel getHeaderLabel(String name, String toolTip) {
-            JLabel result = new JLabel(name);
+            JLabel result = TableConstraints.getHeaderLabel(name);
             result.setToolTipText(toolTip);
-            result.setHorizontalAlignment(JLabel.CENTER);
-            return result;
-        }
-
-        private JLabel getRowLabel(String name) {
-            JLabel result = new JLabel(name);
-            result.setHorizontalAlignment(JLabel.RIGHT);
             return result;
         }
         //
@@ -105,12 +67,12 @@ public class SimulationSettings extends JPanel {
         public VariablePanel() {
             setLayout(new GridBagLayout());
             //labels
-            add(getHeaderLabel("Abs error", "Maximum absolute error"), getHeaderConstraints(1));
-            add(getHeaderLabel("Minimum", "Minimum bound"), getHeaderConstraints(2));
-            add(getHeaderLabel("Maximum", "Maximum bound"), getHeaderConstraints(3));
+            add(getHeaderLabel("Abs error", "Maximum absolute error"), TableConstraints.getHeaderConstraints(1));
+            add(getHeaderLabel("Minimum", "Minimum bound"), TableConstraints.getHeaderConstraints(2));
+            add(getHeaderLabel("Maximum", "Maximum bound"), TableConstraints.getHeaderConstraints(3));
             int y = 1;
             for (String var : names.getVariables()) {
-                add(getRowLabel(var), getRowConstraints(y));
+                add(TableConstraints.getRowLabel(var), TableConstraints.getRowConstraints(y));
                 JFormattedTextField[] field = new JFormattedTextField[3];
                 field[0] = new FloatTextField(var, new FloatTextField.Model() {
 
@@ -156,9 +118,9 @@ public class SimulationSettings extends JPanel {
 
                 fields.put(var, field);
 
-                add(field[0], getCellConstraints(1, y));
-                add(field[1], getCellConstraints(2, y));
-                add(field[2], getCellConstraints(3, y));
+                add(field[0], TableConstraints.getCellConstraints(1, y));
+                add(field[1], TableConstraints.getCellConstraints(2, y));
+                add(field[2], TableConstraints.getCellConstraints(3, y));
 
                 y++;
             }
