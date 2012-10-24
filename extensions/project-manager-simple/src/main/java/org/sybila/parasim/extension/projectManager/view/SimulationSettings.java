@@ -87,8 +87,9 @@ public class SimulationSettings extends JPanel {
             return result;
         }
 
-        private JLabel getHeaderLabel(String name) {
+        private JLabel getHeaderLabel(String name, String toolTip) {
             JLabel result = new JLabel(name);
+            result.setToolTipText(toolTip);
             result.setHorizontalAlignment(JLabel.CENTER);
             return result;
         }
@@ -104,12 +105,12 @@ public class SimulationSettings extends JPanel {
         public VariablePanel() {
             setLayout(new GridBagLayout());
             //labels
-            add(getRowLabel("Maximum absolute error"), getRowConstraints(1));
-            add(getRowLabel("Minimum bound"), getRowConstraints(2));
-            add(getRowLabel("Maximum bound"), getRowConstraints(3));
-            int x = 1;
+            add(getHeaderLabel("Abs error", "Maximum absolute error"), getHeaderConstraints(1));
+            add(getHeaderLabel("Minimum", "Minimum bound"), getHeaderConstraints(2));
+            add(getHeaderLabel("Maximum", "Maximum bound"), getHeaderConstraints(3));
+            int y = 1;
             for (String var : names.getVariables()) {
-                add(getHeaderLabel(var), getHeaderConstraints(x));
+                add(getRowLabel(var), getRowConstraints(y));
                 JFormattedTextField[] field = new JFormattedTextField[3];
                 field[0] = new FloatTextField(var, new FloatTextField.Model() {
 
@@ -155,11 +156,11 @@ public class SimulationSettings extends JPanel {
 
                 fields.put(var, field);
 
-                add(field[0], getCellConstraints(x, 1));
-                add(field[1], getCellConstraints(x, 2));
-                add(field[2], getCellConstraints(x, 3));
+                add(field[0], getCellConstraints(1, y));
+                add(field[1], getCellConstraints(2, y));
+                add(field[2], getCellConstraints(3, y));
 
-                x++;
+                y++;
             }
         }
 
