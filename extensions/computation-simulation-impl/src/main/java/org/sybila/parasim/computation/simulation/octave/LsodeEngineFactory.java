@@ -23,6 +23,7 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.Arrays;
+import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
@@ -66,10 +67,17 @@ public class LsodeEngineFactory implements SimulationEngineFactory {
         }
 
         @Override
-        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, double timeStep) {
+        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision) {
+            if (absoluteToleranceIsSet(precision)) {
+                float[] tolerance = new float[precision.getDimension()];
+                for (int i=0; i<tolerance.length; i++) {
+                    tolerance[i] = precision.getMaxAbsoluteError(i);
+                }
+                getOctave().eval("lsode_options(\"absolute tolerance\", " + Arrays.toString(tolerance) + ")");
+            }
             getOctave().eval(odeSystem.octaveString(false));
             getOctave().eval("i = " + Arrays.toString(point.toArray(odeSystem.getVariables().size())) + ";");
-            getOctave().eval("t = linspace(" + point.getTime() + ", " + numberOfIterations * timeStep + ", " + numberOfIterations + ");");
+            getOctave().eval("t = linspace(" + point.getTime() + ", " + numberOfIterations * precision.getTimeStep() + ", " + numberOfIterations + ");");
             getOctave().eval("y = lsode(\"" + odeSystem.octaveName() + "\", i, t);");
             return getOctave().get(OctaveDouble.class, "y");
 

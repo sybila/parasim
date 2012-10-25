@@ -91,6 +91,11 @@ public class Variable implements Expression<Variable>, Indexable {
     }
 
     @Override
+    public int getOriginalIndex() {
+        return originalIndex;
+    }
+
+    @Override
     public final float evaluate(Point point) {
         return substitution == null ? point.getValue(index) : substitution.getValue();
     }
@@ -109,10 +114,8 @@ public class Variable implements Expression<Variable>, Indexable {
         int indexBefore = 0;
         boolean release = false;
         for (Expression e: expressions) {
-            if (!(e instanceof Variable)) {
-                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
-                    indexBefore++;
-                }
+            if (e instanceof Indexable && ((Indexable)e).getOriginalIndex() < originalIndex) {
+                indexBefore++;
             }
             if (e.equals(this)) {
                 release = true;
@@ -130,10 +133,8 @@ public class Variable implements Expression<Variable>, Indexable {
         int indexBefore = 0;
         boolean release = false;
         for (Expression e: expressions) {
-            if (!(e instanceof Variable)) {
-                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
-                    indexBefore++;
-                }
+            if (e instanceof Indexable && ((Indexable)e).getOriginalIndex() < originalIndex) {
+                indexBefore++;
             }
             if (e.equals(this)) {
                 release = true;

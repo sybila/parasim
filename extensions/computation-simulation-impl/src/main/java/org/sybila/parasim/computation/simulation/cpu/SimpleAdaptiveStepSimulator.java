@@ -54,7 +54,7 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
             List<T> trajectories = new ArrayList<>(data.size());
             Status[] statuses = new Status[data.size()];
             for (int i = 0; i < data.size(); i++) {
-                Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getPrecisionConfiguration().getTimeStep(), configuration.getSpace().getMaxBounds().getTime());
+                Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
                 LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
                 trajectory.append(simulated);
                 trajectories.add((T) trajectory);

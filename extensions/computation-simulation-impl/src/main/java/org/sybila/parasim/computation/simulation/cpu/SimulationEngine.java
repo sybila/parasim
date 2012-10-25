@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.simulation.cpu;
 
+import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
@@ -30,6 +31,6 @@ public interface SimulationEngine {
 
     void close();
 
-    Trajectory simulate(Point point, OdeSystem odeSystem, double timeStep, double timeLimit);
+    Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration configuration);
 
 }

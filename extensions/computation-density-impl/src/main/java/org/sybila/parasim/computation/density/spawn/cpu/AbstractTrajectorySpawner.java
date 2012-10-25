@@ -91,7 +91,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
         // compute distances to sample
         float[] sampleDistances = new float[initialSampling.getDimension()];
         for (int dim=0; dim<sampleDistances.length; dim++) {
-            if (initialSampling.getNumberOfSamples(dim) >= 1)  {
+            if (initialSampling.getNumberOfSamples(dim) > 1)  {
                 sampleDistances[dim] = Math.abs(space.getMinBounds().getValue(dim) - space.getMaxBounds().getValue(dim)) / (initialSampling.getNumberOfSamples(dim) - 1);
             } else {
                 sampleDistances[dim] = -1;

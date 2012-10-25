@@ -99,6 +99,11 @@ public final class Parameter implements Expression<Parameter>, Indexable {
         return index;
     }
 
+    @Override
+    public int getOriginalIndex() {
+        return originalIndex;
+    }
+
     public String getName() {
         return name;
     }
@@ -112,10 +117,8 @@ public final class Parameter implements Expression<Parameter>, Indexable {
         int indexBefore = 0;
         boolean release = false;
         for (Expression e: expressions) {
-            if (!(e instanceof Parameter)) {
-                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
-                    indexBefore++;
-                }
+            if (e instanceof Indexable && ((Indexable)e).getOriginalIndex() < originalIndex) {
+                indexBefore++;
             }
             if (e.equals(this)) {
                 release = true;
@@ -139,10 +142,8 @@ public final class Parameter implements Expression<Parameter>, Indexable {
         int indexBefore = 0;
         boolean release = false;
         for (Expression e: expressions) {
-            if (!(e instanceof Parameter)) {
-                if (e instanceof Indexable && ((Indexable)e).getIndex() < originalIndex) {
-                    indexBefore++;
-                }
+            if (e instanceof Indexable && ((Indexable)e).getOriginalIndex() < originalIndex) {
+                indexBefore++;
             }
             if (e.equals(this)) {
                 release = true;

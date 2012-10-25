@@ -220,9 +220,10 @@ public class SBMLOdeSystem implements OdeSystem {
         for (Reaction reaction: model.getListOfReactions()) {
             String reactionName = reaction.getName() == null || reaction.getName().isEmpty() ? reaction.getId() : reaction.getName();
             Map<String, Parameter> localParameters = new HashMap<>();
+            LOGGER.debug("parsing reaction with id = " + reaction.getId());
             for (org.sbml.jsbml.LocalParameter p : reaction.getKineticLaw().getListOfLocalParameters()) {
                 if (p.getId() == null || p.getId().isEmpty()) {
-                    LOGGER.warn("skipping local parameter with undefined id");
+                    LOGGER.warn("skipping local parameter with undefined id in reaction with id = " + reaction.getId() + ".");
                 }
                 String paramLocalName = p.getName() == null || p.getName().isEmpty() ? p.getId() : p.getName();
                 String paramGloabalName = reactionName + ":" + paramLocalName;
@@ -242,11 +243,11 @@ public class SBMLOdeSystem implements OdeSystem {
             }
             Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory, parametersMemory, localParameters);
             if (kineticLaw == null) {
-                throw new IllegalStateException("Can't parse a kinetic law.");
+                throw new IllegalStateException("Can't parse a kinetic law in reaction with id = " + reaction.getId() + ".");
             }
             for (SpeciesReference speciesReference: reaction.getListOfReactants()) {
                 if (speciesReference.getSpecies() == null || speciesReference.getSpecies().isEmpty()) {
-                    LOGGER.warn("skipping species reference with undefined species");
+                    LOGGER.warn("skipping species reference with undefined species in reaction with id = " + reaction.getId() + ".");
                     continue;
                 }
                 Variable variable = variablesMemory.get(speciesReference.getSpecies());

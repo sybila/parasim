@@ -49,6 +49,9 @@ public class OdeVariableMapping implements PointVariableMapping {
 
     @Override
     public Integer getKey(String variableName) {
+        if (!odeSystem.getVariables().containsKey(variableName)) {
+            throw new IllegalArgumentException("There is no mapping for variable '"+variableName+"'");
+        }
         return odeSystem.getVariables().get(variableName).getIndex();
     }
 }

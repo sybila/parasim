@@ -1,21 +1,23 @@
 /**
  * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
- * contributors by the @authors tag.
+ * contributors by the
+ *
+ * @authors tag.
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.computation.simulation.octave;
 
@@ -24,6 +26,7 @@ import dk.ange.octave.type.OctaveDouble;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -40,7 +43,7 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
 
     private final OctaveEngine octave;
     private final long stepLimit;
-    private final double  relativeTolerance;
+    private final double relativeTolerance;
 
     public OctaveSimulationEngine(OctaveEngine octave, long stepLimit, double relativeTolerance) {
         Validate.notNull(octave);
@@ -56,14 +59,14 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
     }
 
     @Override
-    public Trajectory simulate(Point point, OdeSystem odeSystem, double timeStep, double timeLimit) {
+    public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
         // load parameter values
         List<ParameterValue> paramValues = loadParameterValues(point, odeSystem);
         // create substituted octave ode system
         OctaveOdeSystem octaveOdeSystem = paramValues.isEmpty() ? new OctaveOdeSystem(odeSystem) : new OctaveOdeSystem(odeSystem.substitute(paramValues));
         // compute
-        long numOfIterations = Math.min(Math.round((timeLimit - point.getTime()) / timeStep), getStepLimit());
-        double[] loadedData = rawSimulation(point, octaveOdeSystem, numOfIterations, timeStep).getData();
+        long numOfIterations = Math.min(Math.round((timeLimit - point.getTime()) / precision.getTimeStep()), getStepLimit());
+        double[] loadedData = rawSimulation(point, octaveOdeSystem, numOfIterations, precision).getData();
         float[] data = new float[loadedData.length];
         for (int dim = 0; dim < octaveOdeSystem.dimension(); dim++) {
             for (int i = 0; i < loadedData.length / octaveOdeSystem.dimension(); i++) {
@@ -73,7 +76,7 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         float[] times = new float[loadedData.length / octaveOdeSystem.dimension()];
         float time = point.getTime();
         for (int i = 0; i < times.length; i++) {
-            time += timeStep;
+            time += precision.getTimeStep();
             times[i] = time;
         }
         if (paramValues.isEmpty()) {
@@ -95,9 +98,18 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         return stepLimit;
     }
 
+    protected static boolean absoluteToleranceIsSet(PrecisionConfiguration precision) {
+        for (int i=0; i<precision.getDimension(); i++) {
+            if (precision.getMaxAbsoluteError(i) != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private List<ParameterValue> loadParameterValues(Point point, OdeSystem odeSystem) {
         List<ParameterValue> paramValues = new ArrayList<>();
-        for (Parameter param: odeSystem.getAvailableParameters().values()) {
+        for (Parameter param : odeSystem.getAvailableParameters().values()) {
             if (!param.isSubstituted()) {
                 paramValues.add(new ParameterValue(param, point.getValue(param.getIndex())));
             }
@@ -105,6 +117,5 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         return paramValues;
     }
 
-    protected abstract OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, double timeStep);
-
+    protected abstract OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision);
 }

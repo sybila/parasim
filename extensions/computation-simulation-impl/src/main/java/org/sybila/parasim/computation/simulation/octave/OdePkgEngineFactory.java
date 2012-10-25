@@ -4,6 +4,7 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.Arrays;
+import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
@@ -55,11 +56,11 @@ public enum OdePkgEngineFactory implements SimulationEngineFactory {
         }
 
         @Override
-        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, double timeStep) {
+        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision) {
             getOctave().eval(odeSystem.octaveString(true));
             getOctave().eval("pkg load odepkg;");
-            getOctave().eval("vopt = odeset('RelTol', " + getRelativeTolerance() + ", 'AbsTol', " + Long.MAX_VALUE + ", 'InitialStep', " + timeStep + ", 'MaxStep', " + timeStep + ");");
-            getOctave().eval("y = " + function + "(@f, [" + point.getTime() + ", " + (numberOfIterations * timeStep) + "], " + Arrays.toString(point.toArray(odeSystem.getVariables().size())) + ", vopt);");
+            getOctave().eval("vopt = odeset('RelTol', " + getRelativeTolerance() + ", 'AbsTol', " + Long.MAX_VALUE + ", 'InitialStep', " + precision.getTimeStep() + ", 'MaxStep', " + precision.getTimeStep() + ");");
+            getOctave().eval("y = " + function + "(@f, [" + point.getTime() + ", " + (numberOfIterations * precision.getTimeStep()) + "], " + Arrays.toString(point.toArray(odeSystem.getVariables().size())) + ", vopt);");
             getOctave().eval("result = getfield(y, 'y');");
             return getOctave().get(OctaveDouble.class, "result");
         }
