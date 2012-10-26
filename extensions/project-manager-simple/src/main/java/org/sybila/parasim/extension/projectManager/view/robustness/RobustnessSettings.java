@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.view;
+package org.sybila.parasim.extension.projectManager.view.robustness;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -27,6 +27,8 @@ import javax.swing.event.ChangeListener;
 import org.sybila.parasim.extension.projectManager.model.OdeSystemNames;
 import org.sybila.parasim.extension.projectManager.model.SimpleNamedInitialSampling;
 import org.sybila.parasim.extension.projectManager.model.SimpleNamedOrthogonalSpace;
+import org.sybila.parasim.extension.projectManager.view.OdeSystemFactory;
+import org.sybila.parasim.extension.projectManager.view.TableConstraints;
 import org.sybila.parasim.util.Pair;
 
 /**

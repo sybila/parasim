@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.view;
+package org.sybila.parasim.extension.projectManager.view.robustness;
 
 /**
  *

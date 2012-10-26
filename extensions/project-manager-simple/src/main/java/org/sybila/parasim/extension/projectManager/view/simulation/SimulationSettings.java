@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.view;
+package org.sybila.parasim.extension.projectManager.view.simulation;
 
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -14,6 +14,9 @@ import org.sybila.parasim.computation.simulation.api.ArrayPrecisionConfiguration
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectManager.model.OdeSystemNames;
 import org.sybila.parasim.extension.projectManager.model.SimpleNamedOrthogonalSpace;
+import org.sybila.parasim.extension.projectManager.view.FloatTextField;
+import org.sybila.parasim.extension.projectManager.view.OdeSystemFactory;
+import org.sybila.parasim.extension.projectManager.view.TableConstraints;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.util.Pair;
 

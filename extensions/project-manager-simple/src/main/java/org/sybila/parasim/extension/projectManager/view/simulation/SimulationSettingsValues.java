@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.view;
+package org.sybila.parasim.extension.projectManager.view.simulation;
 
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectManager.model.NamedOrthogonalSpace;
