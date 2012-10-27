@@ -59,7 +59,9 @@ public class ParasimOptions {
             Option result = new Option("r", "result", false, "do not execute experiment, only print result");
             Option help = new Option("h", "help", false, "show help");
             Option version = new Option("v", "version", false, "show version");
-            options = new Options().addOption(config).addOption(experiment).addOption(result).addOption(help).addOption(version);
+            Option cvs = new Option("cvs", "cvs", true, "specify CVS file");
+            cvs.setArgName("file");
+            options = new Options().addOption(config).addOption(experiment).addOption(result).addOption(help).addOption(version).addOption(cvs);
         }
         return options;
     }
@@ -91,11 +93,6 @@ public class ParasimOptions {
         return line.getOptionValue("e");
     }
 
-    @Deprecated
-    public String getResultFile() {
-        return line.getOptionValue("r");
-    }
-
     public boolean isResultOnly() {
         return line.hasOption("r");
     }
@@ -106,5 +103,9 @@ public class ParasimOptions {
 
     public boolean isVersion() {
         return line.hasOption("v");
+    }
+
+    public String getCvsFile() {
+        return line.getOptionValue("cvs");
     }
 }

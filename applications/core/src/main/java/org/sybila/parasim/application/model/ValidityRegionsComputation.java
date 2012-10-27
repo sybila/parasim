@@ -139,7 +139,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 
         while (spawned != null) {
             currentIteration++;
-            LOGGER.info("["+threadId.currentId()+"] iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned trajectories.");
+            LOGGER.info("["+threadId.currentId()+"] iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned primary and <" + spawned.getSecondaryTrajectories().size() + "> secondary trajectories.");
             SimulatedDataBlock<TrajectoryWithNeighborhood> simulated = simulator.simulate(simulationConfiguration, spawned);
             if (spawned.getSecondaryTrajectories().size() > 0) {
                 SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());

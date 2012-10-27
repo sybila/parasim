@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.application.cli;
 
+import java.io.File;
 import java.io.IOException;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.ExperimentImpl;
 import org.sybila.parasim.application.model.ExperimentLauncher;
+import org.sybila.parasim.application.model.ResultUtils;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.model.verification.result.VerificationResult;
@@ -83,7 +85,6 @@ public class Main {
             } else {
                 executeExperiment();
             }
-
         } catch (ParseException ex) {
             ParasimOptions.printHelp(System.out);
             System.exit(1);
@@ -108,7 +109,7 @@ public class Main {
         }
     }
 
-    private static void executeExperiment() {
+    private static void executeExperiment() throws IOException {
         // launch experiment
         VerificationResult result = null;
         try {
@@ -128,6 +129,9 @@ public class Main {
                 LOGGER.error("Unable to store result.", xmle);
                 System.exit(1);
             }
+        }
+        if (options.getCvsFile() != null) {
+            ResultUtils.toCVS(result, experiment.getOdeSystem(), new File(options.getCvsFile()));
         }
 
         // plot result
