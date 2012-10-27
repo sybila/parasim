@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.sybila.parasim.extension.projectManager.view.names.NameList;
 
 /**
  *
@@ -38,14 +39,22 @@ public class FormulaeList extends JPanel {
     private Set<String> names;
     private DefaultListModel<String> listModel;
     private Action addAction, removeAction, renameAction, chooseAction;
+    private NameList chooser;
     //
     private JList<String> list;
 
-    public FormulaeList(FormulaeListModel formulaeModel, Set<String> formulaeNames) {
+    public FormulaeList(FormulaeListModel formulaeModel, NameList nameChooser, Set<String> formulaeNames) {
         if (formulaeModel == null) {
             throw new IllegalArgumentException("Argument (model) is null.");
         }
+        if (formulaeNames == null) {
+            throw new IllegalArgumentException("Argument (names) is null.");
+        }
+        if (nameChooser == null) {
+            throw new IllegalArgumentException("Argument (chooser) is null.");
+        }
         model = formulaeModel;
+        chooser = nameChooser;
 
         names = new HashSet<>(formulaeNames);
         listModel = new DefaultListModel<>();
@@ -63,6 +72,7 @@ public class FormulaeList extends JPanel {
                         throw new IllegalStateException("This name cannot be added to the list.");
                     }
                     listModel.addElement(name);
+                    chooser.addName(name);
                 }
             }
         };
@@ -71,9 +81,12 @@ public class FormulaeList extends JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String name = list.getSelectedValue();
-                if (names.remove(name)) {
+                if (model.remove(name)) {
+                    if (!names.remove(name)) {
+                        throw new IllegalStateException("Name `" + name + "' cannot be removed.");
+                    }
                     listModel.removeElement(name);
-                    model.remove(name);
+                    chooser.removeName(name);
                     setItemSelected(false);
                 }
             }
@@ -88,11 +101,10 @@ public class FormulaeList extends JPanel {
                     if (names.contains(newName)) {
                         JOptionPane.showMessageDialog(FormulaeList.this, "Formula of name `" + newName + "' already exists.", "Rename error", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        if (!model.rename(name, newName)) {
-                            JOptionPane.showMessageDialog(FormulaeList.this, "Unable to rename formula `" + name + "' to `" + newName + "'.", "Rename error", JOptionPane.ERROR_MESSAGE);
-                        } else {
+                        if (model.rename(name, newName)) {
                             names.remove(name);
                             names.add(newName);
+                            chooser.renameName(name, newName);
                             listModel.set(list.getSelectedIndex(), newName);
                         }
                     }
@@ -103,7 +115,10 @@ public class FormulaeList extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                model.choose(list.getSelectedValue());
+                String name = list.getSelectedValue();
+                if (model.choose(name)) {
+                    chooser.selectName(name);
+                }
             }
         };
         setItemSelected(false);
@@ -133,6 +148,14 @@ public class FormulaeList extends JPanel {
         chooseAction.setEnabled(isSelected);
     }
 
+    public void setSelectedName(String name) {
+        if (names.contains(name)) {
+            list.setSelectedValue(name, true);
+        } else {
+            throw new IllegalArgumentException("No formula of name `" + name + "'.");
+        }
+    }
+
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
 
@@ -149,8 +172,9 @@ public class FormulaeList extends JPanel {
                     }
 
                     @Override
-                    public void remove(String name) {
+                    public boolean remove(String name) {
                         System.out.println("Formula `" + name + "' deleted.");
+                        return true;
                     }
 
                     @Override
@@ -160,10 +184,11 @@ public class FormulaeList extends JPanel {
                     }
 
                     @Override
-                    public void choose(String name) {
+                    public boolean choose(String name) {
                         System.out.println("Formula `" + name + "' chosen.");
+                        return true;
                     }
-                }, Collections.<String>emptySet());
+                }, new NameList.Adapter(), Collections.<String>emptySet());
                 frame.add(list);
                 frame.setVisible(true);
             }

@@ -8,9 +8,9 @@ public interface FormulaeListModel {
 
     public String add();
 
-    public void remove(String name);
+    public boolean remove(String name);
 
     public boolean rename(String name, String newName);
 
-    public void choose(String name);
+    public boolean choose(String name);
 }

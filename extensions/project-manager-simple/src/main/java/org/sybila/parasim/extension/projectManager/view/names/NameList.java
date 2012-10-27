@@ -13,4 +13,23 @@ public interface NameList {
     public void renameName(String name, String newName);
 
     public void selectName(String name);
+
+    public static class Adapter implements NameList {
+
+        @Override
+        public void addName(String name) {
+        }
+
+        @Override
+        public void removeName(String name) {
+        }
+
+        @Override
+        public void renameName(String name, String newName) {
+        }
+
+        @Override
+        public void selectName(String name) {
+        }
+    }
 }
