@@ -270,8 +270,6 @@ public class SimulationSettings extends JPanel {
         timeEndField.setValue(timeEnd);
         timeStepField.setValue(timeStep);
         relativeErrorField.setValue(relativeError);
-
-        fireChange();
     }
 
     public static void main(String[] args) {

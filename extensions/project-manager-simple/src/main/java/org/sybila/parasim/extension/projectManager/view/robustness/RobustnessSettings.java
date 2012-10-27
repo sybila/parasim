@@ -278,7 +278,6 @@ public class RobustnessSettings extends JPanel {
                 }
             }
         }
-        fireChanges();
     }
 
     public static void main(String[] args) {
