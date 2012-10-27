@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.view;
+package org.sybila.parasim.extension.projectManager.view.names;
 
 /**
  *
@@ -10,9 +10,9 @@ public interface NameManagerModel {
 
     public void newName();
 
-    public boolean renameCurrent(String name);
+    public boolean renameCurrent(String name, String newName);
 
     public boolean saveCurrent(String name);
 
-    public boolean removeCurrent();
+    public boolean removeCurrent(String name);
 }
