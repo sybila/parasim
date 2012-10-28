@@ -5,3 +5,4 @@ package-info.java
 nbactions.xml
 octave-core
 experiments/*/*result.xml
+experiments/*/result*.xml
