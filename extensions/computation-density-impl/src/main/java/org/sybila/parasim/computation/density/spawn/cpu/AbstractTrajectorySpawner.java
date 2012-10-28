@@ -63,7 +63,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
                 // check distance
                 if (!trajectories.getDistance(i, n).isValid()) {
                     Trajectory neighbor = trajectory.getNeighbors().getTrajectory(n);
-                    SpawnedResult spawned = spawnTrajectories(trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n));
+                    SpawnedResult spawned = spawnTrajectories(configuration, trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n));
                     if (spawned.containsTrajectories()) {
                         newTrajectories.addAll(spawned.getTrajectories());
                         if (spawned.getSecondaryTrajectories() != null) {
@@ -135,8 +135,12 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
                 if (!cache.containsKey(negativeNeighbor)) {
                     cache.put(negativeNeighbor, new PointTrajectory(negativeNeighbor));
                 }
-                neighborhood.add(cache.get(positiveNeighbor));
-                neighborhood.add(cache.get(negativeNeighbor));
+                if (space.isIn(positiveNeighbor)) {
+                    neighborhood.add(cache.get(positiveNeighbor));
+                }
+                if (space.isIn(negativeNeighbor)) {
+                    neighborhood.add(cache.get(negativeNeighbor));
+                }
             }
             primaryTrajectories.add(new PointTrajectory(new ListDataBlock<>(neighborhood), p));
         }
@@ -182,7 +186,7 @@ public abstract class AbstractTrajectorySpawner implements TrajectorySpawner {
      *
      * @return collection containing spawned trajectories
      */
-    protected abstract SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance);
+    protected abstract SpawnedResult spawnTrajectories(Configuration configuration, Trajectory trajectory, Trajectory neighbor, Distance distance);
 
     protected static class SpawnedResult {
 

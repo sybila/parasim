@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
@@ -40,7 +41,7 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
     private Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<>();
 
     @Override
-    protected SpawnedResult spawnTrajectories(Trajectory trajectory, Trajectory neighbor, Distance distance) {
+    protected SpawnedResult spawnTrajectories(Configuration configuration, Trajectory trajectory, Trajectory neighbor, Distance distance) {
         // mark secondary trajectory as a primary one
         Trajectory newPrimary = neighbor;
         // find dimension which the first points of the given trajectories differ in
@@ -64,6 +65,9 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
                 float[] newPointData = newPrimary.getFirstPoint().toArrayCopy();
                 newPointData[dim] += sign * radius;
                 Trajectory newTrajectory = new PointTrajectory(trajectory.getFirstPoint().getTime(), newPointData);
+                if (!configuration.getInitialSpace().isIn(newTrajectory.getFirstPoint())) {
+                    continue;
+                }
                 if (alreadySpawnedCollisionTrajectories.containsKey(newTrajectory.getFirstPoint())) {
                     newTrajectory = alreadySpawnedCollisionTrajectories.get(newTrajectory.getFirstPoint());
                 } else {
