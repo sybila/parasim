@@ -52,6 +52,11 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
             List<T> trajectories = new ArrayList<>(data.size());
             Status[] statuses = new Status[data.size()];
             for (int i = 0; i < data.size(); i++) {
+                if (data.getTrajectory(i).getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
+                    statuses[i] = Status.OK;
+                    trajectories.add(data.getTrajectory(i));
+                    continue;
+                }
                 Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
                 LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
                 trajectory.append(simulated);
@@ -70,8 +75,13 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
 
     @Override
     public <T extends Trajectory> T simulate(AdaptiveStepConfiguration configuration, T trajectory) {
+        if (trajectory.getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
+            return trajectory;
+        }
         SimulationEngine simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
         Trajectory simulated = simulationEngine.simulate(trajectory.getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
-        return (T) simulated;
+        LinkedTrajectory result = trajectory instanceof LinkedTrajectory ? (LinkedTrajectory) trajectory : (trajectory instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) trajectory) : LinkedTrajectory.createAndUpdateReference(trajectory));
+        result.append(simulated);
+        return (T) result;
     }
 }
