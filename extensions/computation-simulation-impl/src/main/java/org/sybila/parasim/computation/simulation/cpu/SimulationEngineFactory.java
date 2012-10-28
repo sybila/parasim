@@ -22,10 +22,10 @@ package org.sybila.parasim.computation.simulation.cpu;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface SimulationEngineFactory {
+public interface SimulationEngineFactory<E extends SimulationEngine>{
 
     boolean isAvailable();
 
-    SimulationEngine simulationEngine(long stepLimit, double relativeTolerance);
+    E simulationEngine(long stepLimit);
 
 }

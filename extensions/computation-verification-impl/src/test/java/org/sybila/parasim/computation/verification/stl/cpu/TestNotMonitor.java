@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -32,7 +32,7 @@ public class TestNotMonitor extends AbstractMonitorTest {
     public void testNotMonitor() {
         Monitor monitor = createIncreasingTestMonitor(10, 1);
         Monitor expected = createIncreasingTestMonitor(10, -1);
-        Monitor notMonitor = new NotMonitor(monitor);
+        Monitor notMonitor = new NotMonitor(EMPTY_PROPERTY, monitor);
         assertEquals(notMonitor.size(), expected.size());
         for (int i=0; i<10; i++) {
             assertEquals(notMonitor.getRobustness(i).getValue(), expected.getRobustness(i).getValue());

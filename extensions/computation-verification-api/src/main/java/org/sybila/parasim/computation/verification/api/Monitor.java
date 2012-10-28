@@ -17,36 +17,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.stl.cpu;
+package org.sybila.parasim.computation.verification.api;
 
-import java.util.Comparator;
-import org.sybila.parasim.computation.verification.api.Monitor;
+import java.util.Collection;
 import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
-import org.sybila.parasim.model.verification.stl.FormulaInterval;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class GloballyMonitor extends AbstractUnaryTemporalMonitor {
+public interface Monitor extends Iterable<Robustness> {
 
-    public GloballyMonitor(Property property, Monitor subMonitor, FormulaInterval interval) {
-        super(property, subMonitor, interval);
-    }
+    Property getProperty();
 
-    @Override
-    protected Comparator<Robustness> createComparator() {
-        return new Comparator<Robustness>() {
-            @Override
-            public int compare(Robustness o1, Robustness o2) {
-                if (o1.getValue() > o2.getValue()) {
-                    return -1;
-                } else if (o1.getValue() < o2.getValue()) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        };
-    }
+    Robustness getRobustness(int index);
+
+    Collection<Monitor> getSubmonitors();
+
+    int size();
 }

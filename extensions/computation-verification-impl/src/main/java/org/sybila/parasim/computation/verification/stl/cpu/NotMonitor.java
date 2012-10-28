@@ -19,9 +19,12 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 
 /**
@@ -34,15 +37,23 @@ public class NotMonitor extends AbstractMonitor {
 
     private final Monitor subMonitor;
 
-    public NotMonitor(Monitor subMonitor) {
+    public NotMonitor(Property property, Monitor subMonitor) {
+        super(property);
         Validate.notNull(subMonitor);
         this.subMonitor = subMonitor;
     }
 
+    @Override
     public Robustness getRobustness(int index) {
         return subMonitor.getRobustness(index).invert();
     }
 
+    @Override
+    public Collection<Monitor> getSubmonitors() {
+        return Arrays.asList(subMonitor);
+    }
+
+    @Override
     public int size() {
         return subMonitor.size();
     }

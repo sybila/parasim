@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
 import static org.testng.Assert.*;
 
 

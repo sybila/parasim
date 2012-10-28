@@ -20,7 +20,8 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import java.util.Collection;
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.SimpleRobustness;
 
@@ -29,8 +30,8 @@ import org.sybila.parasim.model.verification.SimpleRobustness;
  */
 public class AndMonitor extends AbstractBinaryPropositionalMonitor {
 
-    public AndMonitor(Monitor left, Monitor right, Collection<Integer> consideredDimensions) {
-        super(left, right, consideredDimensions);
+    public AndMonitor(Property property, Monitor left, Monitor right, Collection<Integer> consideredDimensions) {
+        super(property, left, right, consideredDimensions);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class AndFormula extends BinaryFormula {
 
     @Override
     public String toString() {
-        return "( " + getSubformula(0).toString() + " ) && ( " + getSubformula(1).toString() + " )";
+        return "( " + getSubformula(0).toString() + " ) and ( " + getSubformula(1).toString() + " )";
     }
 
     @Override

@@ -20,6 +20,8 @@
 package org.sybila.parasim.visualisation.plot.impl;
 
 import org.sybila.parasim.visualisation.plot.api.Plotter;
+import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
+import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
 
 /**
  * Mockup plotter created when there are no points in the result.
@@ -28,6 +30,26 @@ import org.sybila.parasim.visualisation.plot.api.Plotter;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class EmptyPlotter implements Plotter {
+
+    @Override
+    public void addMouseOnResultListener(MouseOnResultListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void removeMouseOnResultListener(MouseOnResultListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void addPlotterWindowListener(PlotterWindowListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void removePlotterWindowListener(PlotterWindowListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public void plot() {

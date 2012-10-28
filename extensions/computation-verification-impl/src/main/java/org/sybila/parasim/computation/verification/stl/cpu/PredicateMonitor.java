@@ -20,9 +20,12 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import java.util.Collection;
+import java.util.Collections;
 import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.sybila.parasim.model.verification.stl.Predicate;
@@ -36,7 +39,8 @@ public class PredicateMonitor extends AbstractMonitor {
     private final Trajectory trajectory;
     private final Collection<Integer> consideredDimensions;
 
-    public PredicateMonitor(Trajectory trajectory, Predicate predicate, Collection<Integer> consideredDimensions) {
+    public PredicateMonitor(Property property, Trajectory trajectory, Predicate predicate, Collection<Integer> consideredDimensions) {
+        super(property);
         Validate.notNull(trajectory);
         Validate.notNull(predicate);
         this.predicate = predicate;
@@ -44,10 +48,17 @@ public class PredicateMonitor extends AbstractMonitor {
         this.consideredDimensions = consideredDimensions;
     }
 
+    @Override
     public Robustness getRobustness(int index) {
         return new SimpleRobustness(predicate.getValue(trajectory.getPoint(index)), trajectory.getPoint(index).getTime(), consideredDimensions);
     }
 
+    @Override
+    public Collection<Monitor> getSubmonitors() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
     public int size() {
         return trajectory.getLength();
     }

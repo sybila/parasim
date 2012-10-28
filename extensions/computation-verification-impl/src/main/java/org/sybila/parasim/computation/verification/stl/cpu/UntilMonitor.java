@@ -20,10 +20,12 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.sybila.parasim.model.verification.stl.FormulaInterval;
@@ -34,8 +36,11 @@ import org.sybila.parasim.model.verification.stl.FormulaInterval;
 public class UntilMonitor extends AbstractMonitor {
 
     private final List<Robustness> robustnesses;
+    private final Monitor left;
+    private final Monitor right;
 
-    public UntilMonitor(Monitor left, Monitor right, FormulaInterval interval, Collection<Integer> consideredDimensions) {
+    public UntilMonitor(Property property, Monitor left, Monitor right, FormulaInterval interval, Collection<Integer> consideredDimensions) {
+        super(property);
         if (left == null) {
             throw new IllegalArgumentException("The parameter [left] is null.");
         }
@@ -45,13 +50,22 @@ public class UntilMonitor extends AbstractMonitor {
         if (interval == null) {
             throw new IllegalArgumentException("The parameter [interval] is null.");
         }
+        this.left = left;
+        this.right = right;
         robustnesses = precompute(left, right, interval, consideredDimensions);
     }
 
+    @Override
     public Robustness getRobustness(int index) {
         return robustnesses.get(index);
     }
 
+    @Override
+    public Collection<Monitor> getSubmonitors() {
+        return Arrays.asList(left, right);
+    }
+
+    @Override
     public int size() {
         return robustnesses.size();
     }

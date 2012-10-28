@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
+import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
@@ -39,20 +40,8 @@ public class SimulatorRegistrar {
     private final Logger LOGGER = LoggerFactory.getLogger(SimulatorRegistrar.class);
 
     @Provide
-    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration) {
-        if (configuration.getOdepkgFunction() == null) {
-            LOGGER.debug("using default LSODE simulation engine");
-            return new SimpleAdaptiveStepSimulator(new LsodeEngineFactory(configuration.getLsodeIntegrationMethod()));
-        } else {
-            if (configuration.getOdepkgFunction().isAvailable()) {
-                LOGGER.debug("using '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg");
-                return new SimpleAdaptiveStepSimulator(configuration.getOdepkgFunction());
-            } else {
-                LOGGER.warn("requested '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg isn't available, LSODE is used instead");
-                return new SimpleAdaptiveStepSimulator(new LsodeEngineFactory(configuration.getLsodeIntegrationMethod()));
-            }
-
-        }
+    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
+        return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
     }
 
     @Provide
@@ -63,5 +52,22 @@ public class SimulatorRegistrar {
             mapper.map(extensionDescriptor, configuration);
         }
         return configuration;
+    }
+
+    @Provide
+    public OctaveSimulationEngineFactory provideOctaveSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
+        if (configuration.getOdepkgFunction() == null) {
+            LOGGER.debug("using default LSODE simulation engine");
+            return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
+        } else {
+            if (configuration.getOdepkgFunction().isAvailable()) {
+                LOGGER.debug("using '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg");
+                return configuration.getOdepkgFunction();
+            } else {
+                LOGGER.warn("requested '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg isn't available, LSODE is used instead");
+                return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
+            }
+
+        }
     }
 }

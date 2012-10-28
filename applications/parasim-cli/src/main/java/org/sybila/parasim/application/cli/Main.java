@@ -28,12 +28,22 @@ import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.ExperimentImpl;
 import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.application.model.ResultUtils;
+import org.sybila.parasim.application.model.TrajectoryAnalysisComputation;
+import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
+import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLResource;
+import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
+import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
+import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener.PlotterWindowEvent;
+import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
+import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener.ResultEvent;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
@@ -88,12 +98,6 @@ public class Main {
         } catch (ParseException ex) {
             ParasimOptions.printHelp(System.out);
             System.exit(1);
-        } finally {
-            try {
-                manager.shutdown();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -138,7 +142,7 @@ public class Main {
         plotResult(result);
     }
 
-    private static void showResult() {
+    private static void showResult() throws XMLException {
         XMLResource<VerificationResult> input = experiment.getVerificationResultResource();
         try {
             input.load();
@@ -149,8 +153,32 @@ public class Main {
         plotResult(input.getRoot());
     }
 
-    private static void plotResult(VerificationResult result) {
+    private static void plotResult(VerificationResult result) throws XMLException {
+        if (experiment.getSimulationSpaceResource().getRoot() == null) {
+            experiment.getSimulationSpaceResource().load();
+        };
+        if (experiment.getPrecisionConfigurationResources().getRoot() == null) {
+            experiment.getPrecisionConfigurationResources().load();
+        }
+        if (experiment.getSTLFormulaResource().getRoot() == null) {
+            experiment.getSTLFormulaResource().setVariableMapping(new OdeVariableMapping(experiment.getOdeSystem()));
+            experiment.getSTLFormulaResource().load();
+        }
         PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
-        strictPlotterFactory.getPlotter(result, experiment.getOdeSystem()).plot();
+        final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
+        plotter.addMouseOnResultListener(new MouseOnResultListener() {
+            @Override
+            public void click(ResultEvent event) {
+                Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getSTLFormulaResource().getRoot(), experiment.getPrecisionConfigurationResources().getRoot(), experiment.getSimulationSpaceResource().getRoot());
+                manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
+            }
+        });
+        plotter.addPlotterWindowListener(new PlotterWindowListener() {
+            @Override
+            public void windowClosed(PlotterWindowEvent event) {
+                manager.shutdown();
+            }
+        });
+        plotter.plot();
     }
 }

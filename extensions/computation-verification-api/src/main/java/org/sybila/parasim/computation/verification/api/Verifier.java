@@ -20,8 +20,10 @@
 package org.sybila.parasim.computation.verification.api;
 
 import org.sybila.parasim.computation.cycledetection.api.CycleDetectedDataBlock;
+import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.Property;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -29,5 +31,13 @@ import org.sybila.parasim.model.verification.Property;
 public interface Verifier<P extends Property> {
 
     <T extends Trajectory> VerifiedDataBlock<T> verify(CycleDetectedDataBlock<T> trajectories, P property);
+
+    public Robustness verify(final Trajectory trajectory, final P property);
+
+    public Robustness verify(final Trajectory trajectory, final P property, final CycleDetector detector);
+
+    public Monitor monitor(final Trajectory trajectory, final P property);
+
+    public Monitor monitor(final Trajectory trajectory, final P property, final CycleDetector detector);
 
 }

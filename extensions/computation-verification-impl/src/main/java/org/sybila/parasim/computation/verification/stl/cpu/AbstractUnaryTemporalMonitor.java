@@ -20,13 +20,16 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.stl.FormulaInterval;
 import org.sybila.parasim.util.LemireDeque;
@@ -37,17 +40,27 @@ import org.sybila.parasim.util.LemireDeque;
 public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
 
     private final List<Robustness> robustnesses;
+    private final Monitor suMonitor;
 
-    public AbstractUnaryTemporalMonitor(Monitor subMonitor, FormulaInterval interval) {
+    public AbstractUnaryTemporalMonitor(Property property, Monitor subMonitor, FormulaInterval interval) {
+        super(property);
         Validate.notNull(interval);
         Validate.notNull(subMonitor);
+        this.suMonitor = subMonitor;
         this.robustnesses = precomputeRobustness(subMonitor, interval);
     }
 
+    @Override
     public Robustness getRobustness(int index) {
         return robustnesses.get(index);
     }
 
+    @Override
+    public Collection<Monitor> getSubmonitors() {
+        return Arrays.asList(suMonitor);
+    }
+
+    @Override
     public int size() {
         return robustnesses.size();
     }

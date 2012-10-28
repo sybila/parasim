@@ -19,10 +19,12 @@
  */
 package org.sybila.parasim.computation.verification.cpu;
 
+import org.sybila.parasim.computation.verification.api.MonitorFactory;
 import java.util.Iterator;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.cycledetection.api.CycleDetectedDataBlock;
 import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
+import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.computation.verification.api.Verifier;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
@@ -48,8 +50,7 @@ public class SimpleVerifier<P extends Property> implements Verifier<P> {
         int counter = 0;
         for (Trajectory trajectory: trajectories) {
             CycleDetector detector = trajectories.getCycleDetector(counter);
-            Trajectory toVerify = detector.isCycleDetected() ? new ExpandedTrajectory(trajectory, detector, property) : trajectory;
-            robustnesses[counter] = monitorFactory.createMonitor(toVerify, property).getRobustness(0);
+            robustnesses[counter] = verify(trajectory, property, detector);
             counter++;
         }
         return new VerifiedDataBlock<T>() {
@@ -80,4 +81,26 @@ public class SimpleVerifier<P extends Property> implements Verifier<P> {
             }
         };
     }
+
+    @Override
+    public Robustness verify(final Trajectory trajectory, final P property) {
+        return verify(trajectory, property, CycleDetector.CYCLE_IS_NOT_DETECTED);
+    }
+
+    @Override
+    public Robustness verify(final Trajectory trajectory, final P property, final CycleDetector detector) {
+        return monitor(trajectory, property, detector).getRobustness(0);
+    }
+
+    @Override
+    public Monitor monitor(final Trajectory trajectory, final P property) {
+        return monitor(trajectory, property, CycleDetector.CYCLE_IS_NOT_DETECTED);
+    }
+
+    @Override
+    public Monitor monitor(final Trajectory trajectory, final P property, final CycleDetector detector) {
+        Trajectory toVerify = detector.isCycleDetected() ? new ExpandedTrajectory(trajectory, detector, property) : trajectory;
+        return monitorFactory.createMonitor(toVerify, property);
+    }
+
 }

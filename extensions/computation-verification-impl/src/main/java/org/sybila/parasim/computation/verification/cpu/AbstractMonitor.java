@@ -19,7 +19,10 @@
  */
 package org.sybila.parasim.computation.verification.cpu;
 
+import org.sybila.parasim.computation.verification.api.Monitor;
 import java.util.Iterator;
+import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 
 /**
@@ -27,15 +30,31 @@ import org.sybila.parasim.model.verification.Robustness;
  */
 public abstract class AbstractMonitor implements Monitor {
 
+    private final Property property;
+
+    public AbstractMonitor(Property property) {
+        Validate.notNull(property);
+        this.property = property;
+    }
+
+    @Override
+    public Property getProperty() {
+        return property;
+    }
+
+    @Override
     public Iterator<Robustness> iterator() {
         return new Iterator<Robustness>() {
             private int next = 0;
+            @Override
             public boolean hasNext() {
                 return next < size();
             }
+            @Override
             public Robustness next() {
                 return getRobustness(next++);
             }
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("Not supported yet.");
             }

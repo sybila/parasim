@@ -29,4 +29,5 @@ public interface Simulator<Conf extends Configuration> {
 
     <T extends Trajectory> SimulatedDataBlock<T> simulate(Conf configuration, DataBlock<T> trajectories);
 
+    <T extends Trajectory> T simulate(Conf configuration, T trajectory);
 }

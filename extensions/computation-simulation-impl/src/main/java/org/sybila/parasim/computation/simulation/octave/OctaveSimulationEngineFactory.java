@@ -17,20 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.stl.cpu;
+package org.sybila.parasim.computation.simulation.octave;
 
-import org.sybila.parasim.computation.verification.api.STLVerifier;
-import org.sybila.parasim.computation.verification.api.MonitorFactory;
-import org.sybila.parasim.computation.verification.cpu.SimpleVerifier;
-import org.sybila.parasim.model.verification.stl.Formula;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SimpleSTLVerifier extends SimpleVerifier<Formula> implements STLVerifier {
-
-    public SimpleSTLVerifier(MonitorFactory<Formula> monitorFactory) {
-        super(monitorFactory);
-    }
-
+public interface OctaveSimulationEngineFactory extends SimulationEngineFactory<OctaveSimulationEngine> {
 }

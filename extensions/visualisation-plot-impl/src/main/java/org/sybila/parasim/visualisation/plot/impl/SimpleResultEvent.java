@@ -17,16 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.cpu;
+package org.sybila.parasim.visualisation.plot.impl;
 
-import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Monitor extends Iterable<Robustness> {
+public class SimpleResultEvent implements MouseOnResultListener.ResultEvent {
 
-    Robustness getRobustness(int index);
+    private Point point;
+    private Float robustness;
 
-    int size();
+    public SimpleResultEvent(Point point, Float robustness) {
+        this.point = point;
+        this.robustness = robustness;
+    }
+
+    @Override
+    public Point getPoint() {
+        return point;
+    }
+
+    @Override
+    public Float getRobustness() {
+        return robustness;
+    }
+
 }

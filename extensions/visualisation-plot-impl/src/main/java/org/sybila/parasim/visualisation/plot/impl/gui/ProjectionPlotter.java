@@ -26,9 +26,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -41,12 +47,16 @@ import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
+import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
+import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
 import org.sybila.parasim.visualisation.plot.impl.LayerFactory;
 import org.sybila.parasim.visualisation.plot.impl.LayerMetaFactory;
 import org.sybila.parasim.visualisation.plot.impl.ResultPlotterConfiguration;
+import org.sybila.parasim.visualisation.plot.impl.SimpleResultEvent;
 import org.sybila.parasim.visualisation.plot.impl.SpaceUtils;
 
 /**
@@ -75,6 +85,8 @@ public class ProjectionPlotter extends JFrame implements Plotter {
     private int dimension;
     private LayerMetaFactory metaLayers;
     private LayerFactory layers;
+    private Set<MouseOnResultListener> mouseOnResultListeners = new HashSet<>();
+    private Set<PlotterWindowListener> plotterWindowListeners = new HashSet<>();
 
     /**
      * Creates new plotter on a given verification result with specified axes
@@ -104,6 +116,26 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         updateView();
     }
 
+    @Override
+    public void addMouseOnResultListener(MouseOnResultListener listener) {
+        mouseOnResultListeners.add(listener);
+    }
+
+    @Override
+    public void addPlotterWindowListener(PlotterWindowListener listener) {
+        plotterWindowListeners.add(listener);
+    }
+
+    @Override
+    public void removeMouseOnResultListener(MouseOnResultListener listener) {
+        mouseOnResultListeners.remove(listener);
+    }
+
+    @Override
+    public void removePlotterWindowListener(PlotterWindowListener listener) {
+        plotterWindowListeners.remove(listener);
+    }
+
     private void init(ResultPlotterConfiguration conf, PointRenderer appearance, int width, int height) {
         ResourceBundle strings = ResourceBundle.getBundle(getClass().getSimpleName());
         setTitle(strings.getString("title"));
@@ -117,10 +149,75 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         initSliders();
         initAxes(conf, strings.getString("x_axis"), strings.getString("y_axis"));
         initCanvas(appearance, conf);
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+            @Override
+            public void windowClosing(WindowEvent e) {
+            }
+            @Override
+            public void windowClosed(WindowEvent e) {
+                for (PlotterWindowListener listener: plotterWindowListeners) {
+                    listener.windowClosed(PlotterWindowListener.PlotterWindowEvent.CLOSED);
+                }
+            }
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+        } );
     }
 
     private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
         canvas = new Canvas(appearance);
+        canvas.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // call 'click on result' listeners
+                float xstart = extent.getMinBounds().getValue(xAxis.getSelected());
+                float ystart = extent.getMinBounds().getValue(yAxis.getSelected());
+                float xend = extent.getMaxBounds().getValue(xAxis.getSelected());
+                float yend = extent.getMaxBounds().getValue(yAxis.getSelected());
+                float x = (e.getX() / (float) canvas.getSize().width) * (xend - xstart) + xstart;
+                float y = ((canvas.getSize().height - e.getY()) / (float) canvas.getSize().height) * (yend - ystart) + ystart;
+                float[] pointData = new float[extent.getDimension()];
+                for (int dim=0; dim<axisSliders.length; dim++) {
+                    if (xAxis.getSelected() == dim || yAxis.getSelected() == dim) {
+                        continue;
+                    }
+                    pointData[dim] = (axisSliders[dim].getValue() / (float) layers.ticks(dim)) * (extent.getMaxBounds().getValue(dim) - extent.getMinBounds().getValue(dim)) + extent.getMinBounds().getValue(dim);
+                }
+                pointData[xAxis.getSelected()] = x;
+                pointData[yAxis.getSelected()] = y;
+                MouseOnResultListener.ResultEvent event = new SimpleResultEvent(new ArrayPoint(0, pointData), null);
+                for (MouseOnResultListener listener: mouseOnResultListeners) {
+                    listener.click(event);
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
         canvasPane = new CanvasPane(conf, canvas, new CanvasPane.PositionChangeListener() {
 
             @Override

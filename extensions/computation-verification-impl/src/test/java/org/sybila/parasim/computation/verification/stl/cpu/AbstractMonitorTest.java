@@ -20,9 +20,12 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.SimpleRobustness;
 
@@ -31,13 +34,26 @@ import org.sybila.parasim.model.verification.SimpleRobustness;
  */
 public class AbstractMonitorTest {
 
+    protected static final Property EMPTY_PROPERTY = new Property() {
+        @Override
+        public float getTimeNeeded() {
+            return 0;
+        }
+    };
+
     protected Monitor createTestMonitor(final float... values) {
-        return new AbstractMonitor() {
+        return new AbstractMonitor(EMPTY_PROPERTY) {
+            @Override
             public Robustness getRobustness(int index) {
                 return new SimpleRobustness(values[index], index);
             }
+            @Override
             public int size() {
                 return values.length;
+            }
+            @Override
+            public Collection<Monitor> getSubmonitors() {
+                return Collections.EMPTY_LIST;
             }
         };
     }
@@ -47,12 +63,18 @@ public class AbstractMonitorTest {
         for (int i=size-1; i>=0; i--) {
             robustnesses.add(new SimpleRobustness(i == 0 ? 0 : i * factor, 9 - i));
         }
-        return new AbstractMonitor() {
+        return new AbstractMonitor(EMPTY_PROPERTY) {
+            @Override
             public Robustness getRobustness(int index) {
                 return robustnesses.get(index);
             }
+            @Override
             public int size() {
                 return size;
+            }
+            @Override
+            public Collection<Monitor> getSubmonitors() {
+                return Collections.EMPTY_LIST;
             }
 
         };
@@ -63,12 +85,18 @@ public class AbstractMonitorTest {
         for (int i=0; i<size; i++) {
             robustnesses.add(new SimpleRobustness(i == 0 ? 0 : i * factor, i));
         }
-        return new AbstractMonitor() {
+        return new AbstractMonitor(EMPTY_PROPERTY) {
+            @Override
             public Robustness getRobustness(int index) {
                 return robustnesses.get(index);
             }
+            @Override
             public int size() {
                 return size;
+            }
+            @Override
+            public Collection<Monitor> getSubmonitors() {
+                return Collections.EMPTY_LIST;
             }
 
         };

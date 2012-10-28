@@ -20,7 +20,8 @@
 package org.sybila.parasim.computation.verification.stl.cpu;
 
 import java.util.Comparator;
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
+import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.stl.FormulaInterval;
 
@@ -29,13 +30,14 @@ import org.sybila.parasim.model.verification.stl.FormulaInterval;
  */
 public class FutureMonitor extends AbstractUnaryTemporalMonitor {
 
-    public FutureMonitor(Monitor subMonitor, FormulaInterval interval) {
-        super(subMonitor, interval);
+    public FutureMonitor(Property property, Monitor subMonitor, FormulaInterval interval) {
+        super(property, subMonitor, interval);
     }
 
     @Override
     protected Comparator<Robustness> createComparator() {
         return new Comparator<Robustness>() {
+            @Override
             public int compare(Robustness o1, Robustness o2) {
                 if (o1.getValue() > o2.getValue()) {
                     return 1;

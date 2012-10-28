@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
-import org.sybila.parasim.computation.verification.cpu.Monitor;
+import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
 import org.sybila.parasim.model.verification.stl.TimeInterval;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ public class TestGloballyMonitor extends AbstractMonitorTest {
     public void testGloballyMonitorIncreasing() {
         // 0 1 2 3 4 5 6 7 8 9
         Monitor subMonitor = createIncreasingTestMonitor(10, 1);
-        Monitor future = new GloballyMonitor(subMonitor, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
+        Monitor future = new GloballyMonitor(EMPTY_PROPERTY, subMonitor, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
         Monitor expected = createTestMonitor(2, 3, 4, 5, 6, 7);
         assertEquals(future.size(), expected.size(), "The monitor size doesn't match.");
         for (int i=0; i<expected.size(); i++) {
@@ -46,7 +46,7 @@ public class TestGloballyMonitor extends AbstractMonitorTest {
     public void testGloballyMonitorDecreasing() {
         // 9 8 7 6 5 4 3 2 1 0
         Monitor subMonitor = createDecreasingTestMonitor(10, 1);
-        Monitor future = new GloballyMonitor(subMonitor, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
+        Monitor future = new GloballyMonitor(EMPTY_PROPERTY, subMonitor, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
         Monitor expected = createTestMonitor(5, 4, 3, 2, 1, 0);
         assertEquals(future.size(), expected.size(), "The monitor size doesn't match.");
         for (int i=0; i<expected.size(); i++) {

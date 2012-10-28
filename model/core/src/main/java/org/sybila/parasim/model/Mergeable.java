@@ -26,5 +26,19 @@ import java.io.Serializable;
  */
 public interface Mergeable<M extends Mergeable<M>> extends Serializable {
 
+    public static final class Void implements Mergeable<Void> {
+
+        public static final Void INSTANCE = new Void();
+
+        private Void() {
+        }
+
+        @Override
+        public Void merge(Void toMerge) {
+            return INSTANCE;
+        }
+
+    }
+
     M merge(M toMerge);
 }

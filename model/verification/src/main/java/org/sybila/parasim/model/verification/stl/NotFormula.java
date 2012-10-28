@@ -37,7 +37,7 @@ public class NotFormula extends UnaryFormula {
 
     @Override
     public String toString() {
-        return "!( " + getSubformula(0).toString() + " )";
+        return "not( " + getSubformula(0).toString() + " )";
     }
 
     @Override

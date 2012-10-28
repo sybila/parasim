@@ -17,16 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.cpu;
-
-import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.verification.Property;
+package org.sybila.parasim.visualisation.plot.api;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface MonitorFactory<P extends Property> {
+public interface PlotterWindowListener {
 
-    Monitor createMonitor(Trajectory trajectory, P property);
+    void windowClosed(PlotterWindowEvent event);
 
+    public static enum PlotterWindowEvent {
+        CLOSED;
+    }
 }

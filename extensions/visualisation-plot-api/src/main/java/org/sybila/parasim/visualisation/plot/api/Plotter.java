@@ -26,9 +26,17 @@ package org.sybila.parasim.visualisation.plot.api;
  */
 public interface Plotter {
 
+    void addMouseOnResultListener(MouseOnResultListener listener);
+
+    void addPlotterWindowListener(PlotterWindowListener listener);
+
+    void removeMouseOnResultListener(MouseOnResultListener listener);
+
+    void removePlotterWindowListener(PlotterWindowListener listener);
+
     /**
      * Plots included object. Expected to be called repeatedly,
      * but not simultaneously.
      */
-    public void plot();
+    void plot();
 }

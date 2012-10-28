@@ -17,20 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.stl.cpu;
+package org.sybila.parasim.computation.verification.api;
 
-import org.sybila.parasim.computation.verification.api.STLVerifier;
-import org.sybila.parasim.computation.verification.api.MonitorFactory;
-import org.sybila.parasim.computation.verification.cpu.SimpleVerifier;
-import org.sybila.parasim.model.verification.stl.Formula;
+import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.verification.Property;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SimpleSTLVerifier extends SimpleVerifier<Formula> implements STLVerifier {
+public interface MonitorFactory<P extends Property> {
 
-    public SimpleSTLVerifier(MonitorFactory<Formula> monitorFactory) {
-        super(monitorFactory);
-    }
+    Monitor createMonitor(Trajectory trajectory, P property);
 
 }
