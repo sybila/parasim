@@ -148,6 +148,11 @@ public class NameChooser extends JPanel implements NameList {
         lock.unlock();
     }
 
+    @Override
+    public Set<String> getNames() {
+        return Collections.unmodifiableSet(names);
+    }
+
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
 

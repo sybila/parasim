@@ -1,5 +1,8 @@
 package org.sybila.parasim.extension.projectManager.view.names;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
@@ -13,6 +16,8 @@ public interface NameList {
     public void renameName(String name, String newName);
 
     public void selectName(String name);
+
+    public Set<String> getNames();
 
     public static class Adapter implements NameList {
 
@@ -30,6 +35,11 @@ public interface NameList {
 
         @Override
         public void selectName(String name) {
+        }
+
+        @Override
+        public Set<String> getNames() {
+            return Collections.<String>emptySet();
         }
     }
 }

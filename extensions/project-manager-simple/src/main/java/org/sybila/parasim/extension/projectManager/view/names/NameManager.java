@@ -41,19 +41,16 @@ public class NameManager extends JPanel {
         init(names);
     }
 
-    public NameManager(ExtendedNameManagerModel managerModel, NameList nameChooser, Set<String> names) {
+    public NameManager(ExtendedNameManagerModel managerModel, NameList nameChooser) {
         if (managerModel == null) {
             throw new IllegalArgumentException("Argument (model) is null.");
         }
         if (nameChooser == null) {
             throw new IllegalArgumentException("Argument (chooser) is null.");
         }
-        if (names == null) {
-            throw new IllegalArgumentException("Argument (names) is null.");
-        }
         model = managerModel;
         chooser = nameChooser;
-        init(names);
+        init(nameChooser.getNames());
     }
 
     private void init(Set<String> newNames) {
@@ -285,7 +282,12 @@ public class NameManager extends JPanel {
                     public void selectName(String name) {
                         System.out.println("Name `" + name + "' selected in the list.");
                     }
-                }, Collections.<String>emptySet());
+
+                    @Override
+                    public Set<String> getNames() {
+                        return Collections.<String>emptySet();
+                    }
+                });
 
 
                 frame.add(manager);
