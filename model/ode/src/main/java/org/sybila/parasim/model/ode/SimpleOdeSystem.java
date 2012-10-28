@@ -42,7 +42,7 @@ public class SimpleOdeSystem implements OdeSystem {
     private final Map<String, OdeSystemVariable> variablesByName = new HashMap<>();
     private final Map<Integer, Parameter> parameters = new HashMap<>();
     private final Map<String, Parameter> parametersByName = new HashMap<>();
-    private final Map<Variable, VariableValue> initialVariableValues = new HashMap<>();
+    private final Map<String, VariableValue> initialVariableValues = new HashMap<>();
     private final Map<Parameter, ParameterValue> parameterValues = new HashMap<>();
 
     public SimpleOdeSystem(Collection<OdeSystemVariable> variables, Collection<VariableValue> initialVariableValues, Collection<ParameterValue> parameterValues) {
@@ -60,7 +60,7 @@ public class SimpleOdeSystem implements OdeSystem {
             this.variablesByName.put(var.getName(), var);
         }
         for (VariableValue value: initialVariableValues) {
-            this.initialVariableValues.put(value.getExpression(), value);
+            this.initialVariableValues.put(value.getExpression().getName(), value);
         }
         for (ParameterValue value: parameterValues) {
             this.parameterValues.put(value.getExpression(), value);
@@ -91,7 +91,7 @@ public class SimpleOdeSystem implements OdeSystem {
         if (variable == null) {
             throw new IllegalArgumentException("The parameter [variable] is null.");
         }
-        return initialVariableValues.get(variable);
+        return initialVariableValues.get(variable.getName());
     }
 
     @Override

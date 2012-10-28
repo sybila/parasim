@@ -39,7 +39,7 @@
 	<xs:complexType name="orthogonal_space">
                 <xs:sequence>
                     <xs:element name="time" type="time_bounds" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="variable" type="dimension_bounds" minOccurs="1" maxOccurs="unbounded"/>
+                    <xs:element name="variable" type="dimension_bounds" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="parameter" type="dimension_bounds" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>

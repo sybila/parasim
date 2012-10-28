@@ -45,4 +45,9 @@ public final class VariableValue implements SubstitutionValue<Variable> {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return "[" + getExpression().getName() + "/" + getValue() + "]";
+    }
+
 }

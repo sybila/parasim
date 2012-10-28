@@ -132,7 +132,7 @@ public class OrthogonalSpaceFactory implements
         for (int dim=0; dim<releasedOdeSystem.dimension(); dim++) {
             if (releasedOdeSystem.isVariable(dim)) {
                 Variable var = releasedOdeSystem.getVariable(dim);
-                if (var == null) {
+                if (!varMin.containsKey(var.getName()) || !varMax.containsKey(var.getName())) {
                     minArray[var.getIndex()] = releasedOdeSystem.getInitialVariableValue(var).getValue();
                     maxArray[var.getIndex()] = releasedOdeSystem.getInitialVariableValue(var).getValue();
                 } else {
