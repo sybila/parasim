@@ -31,6 +31,7 @@ import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
 import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.sybila.parasim.model.verification.stl.FormulaInterval;
 import org.sybila.parasim.util.LemireDeque;
 
@@ -41,13 +42,16 @@ public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
 
     private final List<Robustness> robustnesses;
     private final Monitor suMonitor;
+    private final Collection<Integer> consideredDimensions;
 
-    public AbstractUnaryTemporalMonitor(Property property, Monitor subMonitor, FormulaInterval interval) {
+    public AbstractUnaryTemporalMonitor(Property property, Monitor subMonitor, FormulaInterval interval, Collection<Integer> consideredDimensions) {
         super(property);
         Validate.notNull(interval);
         Validate.notNull(subMonitor);
+        Validate.notNull(consideredDimensions);
         this.suMonitor = subMonitor;
         this.robustnesses = precomputeRobustness(subMonitor, interval);
+        this.consideredDimensions = consideredDimensions;
     }
 
     @Override
@@ -101,7 +105,8 @@ public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
                 lemireDeque.remove();
             }
             // get the first robustness in deque
-            precomputed.add(lemireDeque.removeFirst());
+            Robustness found = lemireDeque.peekFirst();
+            precomputed.add(new SimpleRobustness(found.getValue(), currentTime, consideredDimensions));
             currentIndex++;
             currentTime = current.next().getTime();
             if (memory != null) {

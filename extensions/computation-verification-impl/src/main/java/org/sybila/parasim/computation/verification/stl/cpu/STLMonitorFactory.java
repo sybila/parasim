@@ -53,9 +53,9 @@ public class STLMonitorFactory implements MonitorFactory<Formula> {
             case AND:
                 return new AndMonitor(property, createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)), consideredDimensions);
             case FUTURE:
-                return new FutureMonitor(property, createMonitor(trajectory, property.getSubformula(0)), ((FutureFormula) property).getInterval());
+                return new FutureMonitor(property, createMonitor(trajectory, property.getSubformula(0)), ((FutureFormula) property).getInterval(), consideredDimensions);
             case GLOBALLY:
-                return new GloballyMonitor(property, createMonitor(trajectory, property.getSubformula(0)), ((GloballyFormula) property).getInterval());
+                return new GloballyMonitor(property, createMonitor(trajectory, property.getSubformula(0)), ((GloballyFormula) property).getInterval(), consideredDimensions);
             case NOT:
                 return new NotMonitor(property, createMonitor(trajectory, property.getSubformula(0)));
             case OR:
