@@ -25,7 +25,7 @@
     <future>
         <interval>
             <lower type="closed">0.00001</lower>
-            <upper type="closed">40</upper>
+            <upper type="closed">5</upper>
         </interval>
         <globally>
             <interval>
@@ -34,8 +34,8 @@
             </interval>
             <future>
                 <interval>
-                    <lower type="closed">0.01</lower>
-                    <upper type="closed">2</upper>
+                    <lower type="closed">0.00001</lower>
+                    <upper type="closed">5</upper>
                 </interval>
                 <and>
                     <predicate>
@@ -45,8 +45,8 @@
                     </predicate>
                     <future>
                         <interval>
-                            <lower type="closed">0.01</lower>
-                            <upper type="closed">2</upper>
+                            <lower type="closed">0.0001</lower>
+                            <upper type="closed">5</upper>
                         </interval>
                         <predicate>
                             <variable multiplier="1">x1</variable>
