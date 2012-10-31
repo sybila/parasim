@@ -134,8 +134,8 @@ public class Main {
                 System.exit(1);
             }
         }
-        if (options.getCvsFile() != null) {
-            ResultUtils.toCVS(result, experiment.getOdeSystem(), new File(options.getCvsFile()));
+        if (options.getCsvFile() != null) {
+            ResultUtils.toCSV(result, experiment.getOdeSystem(), new File(options.getCsvFile()));
         }
 
         // plot result
