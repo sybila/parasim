@@ -179,7 +179,15 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
     private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
         canvas = new Canvas(appearance);
-        canvas.addMouseListener(new MouseListener() {
+        canvasPane = new CanvasPane(conf, canvas, new CanvasPane.PositionChangeListener() {
+
+            @Override
+            public void updatePosition(float x, float y) {
+                status.setValue(xAxis.getSelected(), x);
+                status.setValue(yAxis.getSelected(), y);
+            }
+        });
+        canvasPane.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // call 'click on result' listeners
@@ -216,14 +224,6 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
             @Override
             public void mouseExited(MouseEvent e) {
-            }
-        });
-        canvasPane = new CanvasPane(conf, canvas, new CanvasPane.PositionChangeListener() {
-
-            @Override
-            public void updatePosition(float x, float y) {
-                status.setValue(xAxis.getSelected(), x);
-                status.setValue(yAxis.getSelected(), y);
             }
         });
         hRule = new Rule(conf, Rule.Orientation.HORIZONTAL);
