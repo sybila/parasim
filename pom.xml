@@ -129,11 +129,4 @@
         <url>https://github.com/sybila/parasim</url>
       <tag>HEAD</tag>
   </scm>
-    <distributionManagement>
-        <site>
-            <id>sybila-site-ssh</id>
-            <name>Site hosted on http://sybila.fi.muni.cz</name>
-            <url>scp://anna.fi.muni.cz:/srv/www/htdocs/sybila/public/parasim/${project.version}</url>
-        </site>
-    </distributionManagement>
 </project>
