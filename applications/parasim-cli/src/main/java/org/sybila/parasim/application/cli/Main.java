@@ -142,7 +142,7 @@ public class Main {
         plotResult(result);
     }
 
-    private static void showResult() throws XMLException {
+    private static void showResult() throws XMLException, IOException {
         XMLResource<VerificationResult> input = experiment.getVerificationResultResource();
         try {
             input.load();
@@ -151,6 +151,9 @@ public class Main {
             System.exit(1);
         }
         plotResult(input.getRoot());
+        if (options.getCsvFile() != null) {
+            ResultUtils.toCSV(input.getRoot(), experiment.getOdeSystem(), new File(options.getCsvFile()));
+        }
     }
 
     private static void plotResult(VerificationResult result) throws XMLException {
