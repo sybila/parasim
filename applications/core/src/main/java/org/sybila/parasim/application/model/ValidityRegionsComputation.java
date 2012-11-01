@@ -50,6 +50,8 @@ import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.computation.ComputationId;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
@@ -100,6 +102,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     private int iterationLimit;
     private int currentIteration = 0;
     private SpawnedDataBlock spawned;
+    private final OrthogonalSpace originalSimulationSpace;
 
     public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
         if (odeSystem == null) {
@@ -123,7 +126,8 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         this.odeSystem = odeSystem;
         this.precisionConfiguration = precisionConfiguration;
         this.initialSampling = initialSampling;
-        this.simulationSpace = simulationSpace;
+        this.simulationSpace = new OrthogonalSpaceImpl(simulationSpace.getMinBounds(), new ArrayPoint(Math.min(property.getTimeNeeded(), simulationSpace.getMaxBounds().getTime()), simulationSpace.getMaxBounds().toArray()), simulationSpace.getOdeSystem());
+        this.originalSimulationSpace = simulationSpace;
         this.initialSpace = initialSpace;
         this.property = property;
         this.iterationLimit = iterationLimit;
@@ -163,7 +167,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 
     @Override
     public Computation<VerificationResult> cloneComputation() {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, initialSampling, simulationSpace, initialSpace, property, iterationLimit);
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, initialSampling, originalSimulationSpace, initialSpace, property, iterationLimit);
         computation.currentIteration = this.currentIteration;
         computation.spawned = this.spawned;
         return computation;

@@ -66,7 +66,7 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         // create substituted octave ode system
         OctaveOdeSystem octaveOdeSystem = paramValues.isEmpty() ? new OctaveOdeSystem(odeSystem) : new OctaveOdeSystem(odeSystem.substitute(paramValues));
         // compute
-        long numOfIterations = Math.min(Math.round((timeLimit - point.getTime()) / precision.getTimeStep()), getStepLimit());
+        long numOfIterations = Math.min(Math.round(Math.ceil((timeLimit - point.getTime()) / precision.getTimeStep())), getStepLimit());
         double[] loadedData = rawSimulation(point, octaveOdeSystem, numOfIterations, precision).getData();
         float[] data = new float[loadedData.length];
         for (int dim = 0; dim < octaveOdeSystem.dimension(); dim++) {

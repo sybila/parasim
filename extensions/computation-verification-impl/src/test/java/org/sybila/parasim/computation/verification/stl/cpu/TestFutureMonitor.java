@@ -62,9 +62,6 @@ public class TestFutureMonitor extends AbstractMonitorTest {
         Monitor future = new FutureMonitor(EMPTY_PROPERTY, subMonitor, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED), Collections.EMPTY_LIST);
         Monitor expected = createTestMonitor(4, 4, 5, 5, 5, 6);
         assertEquals(future.size(), expected.size(), "The monitor size doesn't match.");
-        for (Robustness r: future) {
-            System.out.println(r.getValue());
-        }
         for (int i=0; i<expected.size(); i++) {
             assertEquals(future.getRobustness(i).getValue(), expected.getRobustness(i).getValue(), "The robustness doesn't match in iteration <" + i + ">,");
         }
