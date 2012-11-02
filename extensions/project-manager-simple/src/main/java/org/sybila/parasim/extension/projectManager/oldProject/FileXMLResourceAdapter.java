@@ -1,6 +1,7 @@
-package org.sybila.parasim.extension.projectManager.project;
+package org.sybila.parasim.extension.projectManager.oldProject;
 
 import java.io.File;
+import org.sybila.parasim.extension.projectManager.project.ResourceException;
 import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLRepresentable;
@@ -8,12 +9,13 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
-public class FileXMLResourceAdapter<T extends XMLRepresentable> implements FileResource<T> {
+public class FileXMLResourceAdapter<T extends XMLRepresentable, R extends FileXMLResource<T>> implements FileResource<T> {
 
-    private FileXMLResource<T> resource;
+    private R resource;
 
-    public FileXMLResourceAdapter(FileXMLResource<T> resource) {
+    public FileXMLResourceAdapter(R resource) {
         if (resource == null) {
             throw new IllegalArgumentException("Argument (resource) is null.");
         }
@@ -53,7 +55,7 @@ public class FileXMLResourceAdapter<T extends XMLRepresentable> implements FileR
         }
     }
 
-    public FileXMLResource<T> getResource() {
+    public R getResource() {
         return resource;
     }
 }

@@ -1,4 +1,4 @@
-package org.sybila.parasim.extension.projectManager.project;
+package org.sybila.parasim.extension.projectManager.oldProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,12 +6,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.sybila.parasim.extension.projectManager.names.ExperimentSuffixes;
+import org.sybila.parasim.extension.projectManager.project.ResourceException;
+import org.sybila.parasim.extension.projectManager.project.ResourceList;
 
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
-public abstract class DirResourceList<T, R extends FileResource<T>> implements ResourceList<T> {
+public class DirResourceList<T, R extends FileResource<T>> implements ResourceList<T> {
 
     private File parent;
     private ExperimentSuffixes suffix;
@@ -106,7 +109,22 @@ public abstract class DirResourceList<T, R extends FileResource<T>> implements R
         }
     }
 
+    @Override
+    public int size() {
+        return resources.size();
+    }
+
     public R getResource(String name) {
         return resources.get(name);
+    }
+
+    public void addExisting(String name) throws ResourceException {
+        if (resources.containsKey(name)) {
+            throw new ResourceException("Cannot add load resource: resource with given name already exists.");
+        }
+
+        R resource = factory.get(createPath(name));
+        resource.setRoot(null);
+        resources.put(name, resource);
     }
 }

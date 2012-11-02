@@ -1,10 +1,12 @@
-package org.sybila.parasim.extension.projectManager.project;
+package org.sybila.parasim.extension.projectManager.oldProject;
 
 import java.io.File;
+import org.sybila.parasim.extension.projectManager.project.ResourceException;
 
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
 public interface FileResource<T> {
 
