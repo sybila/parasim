@@ -24,6 +24,7 @@ public class TestExperimentNamesStorage {
         result.setVerificationResultName("Ted Pin");
         result.setTimeout(480000);
         result.setIterationLimit(25);
+        result.setAnnotation("A test experiment.");
         return result;
     }
 

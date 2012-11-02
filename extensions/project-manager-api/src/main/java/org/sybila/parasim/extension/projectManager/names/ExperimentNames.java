@@ -9,7 +9,7 @@ import org.sybila.parasim.extension.projectManager.project.ResourceException;
  */
 public class ExperimentNames {
 
-    private String formulaName, initialSpaceName, simulationSpaceName, precisionConfigurationName, initialSamplingName, verificationResultName, modelName;
+    private String formulaName, initialSpaceName, simulationSpaceName, precisionConfigurationName, initialSamplingName, verificationResultName, modelName, annotation;
     private int iterationLimit;
     private long timeout;
 
@@ -85,6 +85,14 @@ public class ExperimentNames {
         this.verificationResultName = verificationResultName;
     }
 
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -121,6 +129,9 @@ public class ExperimentNames {
         if (getIterationLimit() != target.getIterationLimit()) {
             return false;
         }
+        if (!getAnnotation().equals(target.getAnnotation())) {
+            return false;
+        }
         return true;
     }
 
@@ -136,6 +147,7 @@ public class ExperimentNames {
         result = result * prime + getVerificationResultName().hashCode();
         result = result * prime + Long.valueOf(getTimeout()).hashCode();
         result = result * prime + getIterationLimit();
+        result = result * prime + getAnnotation().hashCode();
         return result;
     }
 
@@ -182,6 +194,7 @@ public class ExperimentNames {
             } catch (NumberFormatException nfe) {
                 throw new ResourceException("Wrong number format of iteration limit: " + property, nfe);
             }
+            result.setAnnotation(properties.getProperty(ANNOTATION_PRP));
             return result;
         }
 
@@ -196,6 +209,9 @@ public class ExperimentNames {
             result.setProperty(RESULT_PRP, ExperimentSuffixes.VERIFICATION_RESULT.add(names.getVerificationResultName()));
             result.setProperty(TIMEOUT_PRP, Long.toString(names.getTimeout()));
             result.setProperty(ITERATION_PRP, Integer.toString(names.getIterationLimit()));
+            if (names.getAnnotation() != null && !names.getAnnotation().isEmpty()) {
+                result.setProperty(ANNOTATION_PRP, names.getAnnotation());
+            }
             return result;
         }
 
@@ -212,4 +228,5 @@ public class ExperimentNames {
     private static final String RESULT_PRP = "result.output.file";
     private static final String TIMEOUT_PRP = "timeout";
     private static final String ITERATION_PRP = "iteration.limit";
+    private static final String ANNOTATION_PRP = "annotation";
 }
