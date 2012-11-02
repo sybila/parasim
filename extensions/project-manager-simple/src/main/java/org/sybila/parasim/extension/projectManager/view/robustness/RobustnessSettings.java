@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JCheckBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,6 +26,7 @@ import javax.swing.event.ChangeListener;
 import org.sybila.parasim.extension.projectManager.model.OdeSystemNames;
 import org.sybila.parasim.extension.projectManager.model.SimpleNamedInitialSampling;
 import org.sybila.parasim.extension.projectManager.model.SimpleNamedOrthogonalSpace;
+import org.sybila.parasim.extension.projectManager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectManager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectManager.view.TableConstraints;
 import org.sybila.parasim.util.Pair;
@@ -46,15 +46,15 @@ public class RobustnessSettings extends JPanel {
     private class Row {
 
         private JLabel rowLabel;
-        private JFormattedTextField min, max;
+        private CommitFormattedTextField min, max;
         private JSpinner samples;
         private SpinnerNumberModel samplesModel;
 
         public Row(String name) {
             rowLabel = TableConstraints.getRowLabel(name);
-            min = new JFormattedTextField(DecimalFormat.getNumberInstance());
-            max = new JFormattedTextField(DecimalFormat.getNumberInstance());
-            min.addActionListener(new ActionListener() {
+            min = new CommitFormattedTextField(DecimalFormat.getNumberInstance());
+            max = new CommitFormattedTextField(DecimalFormat.getNumberInstance());
+            min.addCommitListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent ae) {
@@ -64,7 +64,7 @@ public class RobustnessSettings extends JPanel {
                     fireChanges();
                 }
             });
-            max.addActionListener(new ActionListener() {
+            max.addCommitListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent ae) {

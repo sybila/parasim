@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,6 +13,7 @@ import org.sybila.parasim.computation.simulation.api.ArrayPrecisionConfiguration
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectManager.model.OdeSystemNames;
 import org.sybila.parasim.extension.projectManager.model.SimpleNamedOrthogonalSpace;
+import org.sybila.parasim.extension.projectManager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectManager.view.FloatTextField;
 import org.sybila.parasim.extension.projectManager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectManager.view.TableConstraints;
@@ -53,13 +53,13 @@ public class SimulationSettings extends JPanel {
         return result;
     }
 
-    private void configureTextField(JFormattedTextField target) {
+    private void configureTextField(CommitFormattedTextField target) {
         target.setColumns(7);
     }
 
     private class VariablePanel extends JPanel {
 
-        private Map<String, JFormattedTextField[]> fields = new HashMap<>();
+        private Map<String, CommitFormattedTextField[]> fields = new HashMap<>();
 
         public VariablePanel() {
             setLayout(new GridBagLayout());
@@ -70,11 +70,11 @@ public class SimulationSettings extends JPanel {
             int y = 1;
             for (String var : names.getVariables()) {
                 add(TableConstraints.getRowLabel(var), TableConstraints.getRowConstraints(y));
-                JFormattedTextField[] field = new JFormattedTextField[3];
+                CommitFormattedTextField[] field = new CommitFormattedTextField[3];
                 field[0] = new FloatTextField(var, new FloatTextField.Model() {
 
                     @Override
-                    public void putValue(String name, float value, JFormattedTextField field) {
+                    public void putValue(String name, float value, FloatTextField field) {
                         if (value < 0) {
                             value = 0;
                             field.setValue(value);
@@ -87,7 +87,7 @@ public class SimulationSettings extends JPanel {
                 field[1] = new FloatTextField(var, new FloatTextField.Model() {
 
                     @Override
-                    public void putValue(String name, float value, JFormattedTextField field) {
+                    public void putValue(String name, float value, FloatTextField field) {
                         Pair<Float, Float> bound = bounds.get(name);
                         if (value >= bound.second()) {
                             value = bound.second();
@@ -101,7 +101,7 @@ public class SimulationSettings extends JPanel {
                 field[2] = new FloatTextField(var, new FloatTextField.Model() {
 
                     @Override
-                    public void putValue(String name, float value, JFormattedTextField field) {
+                    public void putValue(String name, float value, FloatTextField field) {
                         Pair<Float, Float> bound = bounds.get(name);
                         if (value <= bound.first()) {
                             value = bound.first();
@@ -125,7 +125,7 @@ public class SimulationSettings extends JPanel {
 
         public void reloadFields() {
             for (String name : names.getVariables()) {
-                JFormattedTextField[] field = fields.get(name);
+                CommitFormattedTextField[] field = fields.get(name);
                 field[0].setValue(absoluteErrors.get(name));
                 field[1].setValue(bounds.get(name).first());
                 field[2].setValue(bounds.get(name).second());
@@ -157,7 +157,7 @@ public class SimulationSettings extends JPanel {
         add(timeStartField = new FloatTextField(null, new FloatTextField.Model() {
 
             @Override
-            public void putValue(String name, float value, JFormattedTextField target) {
+            public void putValue(String name, float value, FloatTextField target) {
                 if (value > timeEnd) {
                     value = timeEnd;
                     target.setValue(value);
@@ -173,7 +173,7 @@ public class SimulationSettings extends JPanel {
         add(timeEndField = new FloatTextField(null, new FloatTextField.Model() {
 
             @Override
-            public void putValue(String name, float value, JFormattedTextField target) {
+            public void putValue(String name, float value, FloatTextField target) {
                 if (value < timeStart) {
                     value = timeStart;
                     target.setValue(value);
@@ -186,7 +186,7 @@ public class SimulationSettings extends JPanel {
         add(timeStepField = new FloatTextField(null, new FloatTextField.Model() {
 
             @Override
-            public void putValue(String name, float value, JFormattedTextField target) {
+            public void putValue(String name, float value, FloatTextField target) {
                 if (value < 0) {
                     value = 0;
                     target.setValue(value);
@@ -199,7 +199,7 @@ public class SimulationSettings extends JPanel {
         add(relativeErrorField = new FloatTextField(null, new FloatTextField.Model() {
 
             @Override
-            public void putValue(String name, float value, JFormattedTextField target) {
+            public void putValue(String name, float value, FloatTextField target) {
                 if (value < 0) {
                     value = 0;
                     target.setValue(value);
