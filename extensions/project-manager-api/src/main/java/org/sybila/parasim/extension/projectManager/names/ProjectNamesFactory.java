@@ -7,8 +7,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
 public enum ProjectNamesFactory implements XMLRepresentableFactory<ProjectNames> {
 

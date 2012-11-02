@@ -13,6 +13,7 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
 public interface Project extends XMLRepresentable {
 

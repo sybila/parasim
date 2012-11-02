@@ -13,6 +13,7 @@ import org.w3c.dom.Node;
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
 public abstract class ProjectResource extends FileXMLResource<Project> {
 

@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
 public abstract class AbstractProject implements Project {
 
