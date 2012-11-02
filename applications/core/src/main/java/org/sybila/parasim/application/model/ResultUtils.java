@@ -59,7 +59,7 @@ public class ResultUtils {
 
     }
 
-    public static void toCVS(VerificationResult verificationResult, OdeSystem ode, File cvsFile) throws IOException {
+    public static void toCSV(VerificationResult verificationResult, OdeSystem ode, File cvsFile) throws IOException {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(cvsFile);

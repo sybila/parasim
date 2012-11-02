@@ -72,6 +72,7 @@ public class StatusBar extends JPanel {
         }
     }
     private StatusLabel[] labels;
+    private float[] values;
     private Font labelFont;
     private DecimalFormat format;
 
@@ -103,10 +104,14 @@ public class StatusBar extends JPanel {
             labelPanel.add(labels[i]);
         }
         add(labelPanel, BorderLayout.LINE_START);
-
+        values  = new float[dimension];
         JPanel filler = new JPanel();
         filler.setBorder(border);
         add(filler, BorderLayout.CENTER);
+    }
+
+    public float getValue(int index) {
+        return values[index];
     }
 
     /**
@@ -115,6 +120,7 @@ public class StatusBar extends JPanel {
      * @float value Displayed value.
      */
     public void setValue(int index, float value) {
+        values[index] = value;
         labels[index].setCaption(value);
     }
 }

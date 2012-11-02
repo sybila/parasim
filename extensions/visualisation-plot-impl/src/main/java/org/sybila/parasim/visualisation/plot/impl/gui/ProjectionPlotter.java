@@ -179,25 +179,22 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
     private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
         canvas = new Canvas(appearance);
-        canvas.addMouseListener(new MouseListener() {
+        canvasPane = new CanvasPane(conf, canvas, new CanvasPane.PositionChangeListener() {
+
+            @Override
+            public void updatePosition(float x, float y) {
+                status.setValue(xAxis.getSelected(), x);
+                status.setValue(yAxis.getSelected(), y);
+            }
+        });
+        canvasPane.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // call 'click on result' listeners
-                float xstart = extent.getMinBounds().getValue(xAxis.getSelected());
-                float ystart = extent.getMinBounds().getValue(yAxis.getSelected());
-                float xend = extent.getMaxBounds().getValue(xAxis.getSelected());
-                float yend = extent.getMaxBounds().getValue(yAxis.getSelected());
-                float x = (e.getX() / (float) canvas.getSize().width) * (xend - xstart) + xstart;
-                float y = ((canvas.getSize().height - e.getY()) / (float) canvas.getSize().height) * (yend - ystart) + ystart;
                 float[] pointData = new float[extent.getDimension()];
                 for (int dim=0; dim<axisSliders.length; dim++) {
-                    if (xAxis.getSelected() == dim || yAxis.getSelected() == dim) {
-                        continue;
-                    }
-                    pointData[dim] = (axisSliders[dim].getValue() / (float) layers.ticks(dim)) * (extent.getMaxBounds().getValue(dim) - extent.getMinBounds().getValue(dim)) + extent.getMinBounds().getValue(dim);
+                    pointData[dim] = status.getValue(dim);
                 }
-                pointData[xAxis.getSelected()] = x;
-                pointData[yAxis.getSelected()] = y;
                 MouseOnResultListener.ResultEvent event = new SimpleResultEvent(new ArrayPoint(0, pointData), null);
                 for (MouseOnResultListener listener: mouseOnResultListeners) {
                     listener.click(event);
@@ -216,14 +213,6 @@ public class ProjectionPlotter extends JFrame implements Plotter {
 
             @Override
             public void mouseExited(MouseEvent e) {
-            }
-        });
-        canvasPane = new CanvasPane(conf, canvas, new CanvasPane.PositionChangeListener() {
-
-            @Override
-            public void updatePosition(float x, float y) {
-                status.setValue(xAxis.getSelected(), x);
-                status.setValue(yAxis.getSelected(), y);
             }
         });
         hRule = new Rule(conf, Rule.Orientation.HORIZONTAL);

@@ -134,15 +134,15 @@ public class Main {
                 System.exit(1);
             }
         }
-        if (options.getCvsFile() != null) {
-            ResultUtils.toCVS(result, experiment.getOdeSystem(), new File(options.getCvsFile()));
+        if (options.getCsvFile() != null) {
+            ResultUtils.toCSV(result, experiment.getOdeSystem(), new File(options.getCsvFile()));
         }
 
         // plot result
         plotResult(result);
     }
 
-    private static void showResult() throws XMLException {
+    private static void showResult() throws XMLException, IOException {
         XMLResource<VerificationResult> input = experiment.getVerificationResultResource();
         try {
             input.load();
@@ -151,6 +151,9 @@ public class Main {
             System.exit(1);
         }
         plotResult(input.getRoot());
+        if (options.getCsvFile() != null) {
+            ResultUtils.toCSV(input.getRoot(), experiment.getOdeSystem(), new File(options.getCsvFile()));
+        }
     }
 
     private static void plotResult(VerificationResult result) throws XMLException {
