@@ -11,20 +11,22 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import org.sybila.parasim.extension.projectManager.model.OdeSystemNames;
 import org.sybila.parasim.extension.projectManager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectManager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectManager.view.TableConstraints;
+import org.sybila.parasim.extension.projectManager.view.ValueHolder;
 import org.sybila.parasim.extension.projectManager.view.names.NameChooser;
 import org.sybila.parasim.extension.projectManager.view.names.NameChooserModel;
 import org.sybila.parasim.extension.projectManager.view.names.NameList;
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.util.Pair;
+import org.sybila.parasim.util.SimpleLock;
 
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class ExperimentSettings extends JPanel {
+public class ExperimentSettings extends JPanel implements ValueHolder<Pair<ExperimentSettingsValues, String>> {
 
     private GridBagConstraints getConstraints() {
         GridBagConstraints result = new GridBagConstraints();
@@ -49,21 +51,17 @@ public class ExperimentSettings extends JPanel {
     }
     //
     private ExperimentSettingsModel model;
-    private OdeSystemNames names;
+    private SimpleLock lock = new SimpleLock();
     //
     private NameChooser formulae, simulation, robustness;
     private CommitFormattedTextField iterationField, timeoutField;
     private JTextArea annotation;
 
-    public ExperimentSettings(ExperimentSettingsModel experimentModel, OdeSystemNames odeNames, Set<String> formulaeNames, Set<String> simulationsNames, Set<String> robustnessNames) {
+    public ExperimentSettings(ExperimentSettingsModel experimentModel, Set<String> formulaeNames, Set<String> simulationsNames, Set<String> robustnessNames) {
         if (experimentModel == null) {
             throw new IllegalArgumentException("Argument (model) is null.");
         }
-        if (odeNames == null) {
-            throw new IllegalArgumentException("Argument (ode system names) is null.");
-        }
         model = experimentModel;
-        names = odeNames;
 
         iterationField = new CommitFormattedTextField(new Integer(0));
         iterationField.addCommitListener(new ActionListener() {
@@ -117,9 +115,9 @@ public class ExperimentSettings extends JPanel {
     }
 
     private void fireChanges() {
-        Number iteration = (Number) iterationField.getValue();
-        Number timeout = (Number) timeoutField.getValue();
-        model.valuesChanged(new ExperimentSettingsValues(iteration.intValue(), timeout.longValue()));
+        if (lock.isAccessible()) {
+            model.valuesChanged(getValues().first());
+        }
     }
 
     public NameList getFormulaeNameList() {
@@ -136,6 +134,22 @@ public class ExperimentSettings extends JPanel {
 
     public String getAnnotation() {
         return annotation.getText();
+    }
+
+    @Override
+    public Pair<ExperimentSettingsValues, String> getValues() {
+        Number iteration = (Number) iterationField.getValue();
+        Number timeout = (Number) timeoutField.getValue();
+        return new Pair(new ExperimentSettingsValues(iteration.intValue(), timeout.longValue()), getAnnotation());
+    }
+
+    @Override
+    public void setValues(Pair<ExperimentSettingsValues, String> target) {
+        lock.lock();
+        annotation.setText(target.second());
+        timeoutField.setValue(target.first().getTimeout());
+        iterationField.setValue(target.first().getIterationLimit());
+        lock.unlock();
     }
 
     public static void main(String[] args) {
@@ -201,7 +215,7 @@ public class ExperimentSettings extends JPanel {
                     public void valuesChanged(ExperimentSettingsValues values) {
                         System.out.println("Values changed.");
                     }
-                }, new OdeSystemNames(system), Collections.<String>emptySet(), Collections.<String>emptySet(), Collections.<String>emptySet());
+                }, Collections.<String>emptySet(), Collections.<String>emptySet(), Collections.<String>emptySet());
                 frame.add(settings);
                 frame.setVisible(true);
             }

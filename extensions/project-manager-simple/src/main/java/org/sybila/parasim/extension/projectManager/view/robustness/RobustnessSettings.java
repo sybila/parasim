@@ -29,13 +29,14 @@ import org.sybila.parasim.extension.projectManager.model.SimpleNamedOrthogonalSp
 import org.sybila.parasim.extension.projectManager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectManager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectManager.view.TableConstraints;
+import org.sybila.parasim.extension.projectManager.view.ValueHolder;
 import org.sybila.parasim.util.Pair;
 
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class RobustnessSettings extends JPanel {
+public class RobustnessSettings extends JPanel implements ValueHolder<RobustnessSettingsValues> {
 
     private static GridBagConstraints getConstraints() {
         GridBagConstraints result = new GridBagConstraints();
@@ -254,6 +255,7 @@ public class RobustnessSettings extends JPanel {
         model.valuesChanged(getValues());
     }
 
+    @Override
     public RobustnessSettingsValues getValues() {
         Map<String, Integer> sampling = new HashMap<>();
         Map<String, Pair<Float, Float>> space = new HashMap<>();
@@ -266,6 +268,7 @@ public class RobustnessSettings extends JPanel {
         return new RobustnessSettingsValues(new SimpleNamedInitialSampling(sampling), new SimpleNamedOrthogonalSpace(space));
     }
 
+    @Override
     public void setValues(RobustnessSettingsValues newValues) {
         for (String name : names.getVariables()) {
             Pair<Float, Float> bounds = newValues.getInitialSpace().getValues(name);

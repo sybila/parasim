@@ -17,6 +17,7 @@ import org.sybila.parasim.extension.projectManager.view.CommitFormattedTextField
 import org.sybila.parasim.extension.projectManager.view.FloatTextField;
 import org.sybila.parasim.extension.projectManager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectManager.view.TableConstraints;
+import org.sybila.parasim.extension.projectManager.view.ValueHolder;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.util.Pair;
 
@@ -24,7 +25,7 @@ import org.sybila.parasim.util.Pair;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class SimulationSettings extends JPanel {
+public class SimulationSettings extends JPanel implements ValueHolder<SimulationSettingsValues> {
 
     private GridBagConstraints getDefaultConstraints() {
         GridBagConstraints result = new GridBagConstraints();
@@ -221,6 +222,7 @@ public class SimulationSettings extends JPanel {
         model.valuesChanged(getValues());
     }
 
+    @Override
     public SimulationSettingsValues getValues() {
         if (names == null) {
             throw new IllegalStateException("No ode system set.");
@@ -237,6 +239,7 @@ public class SimulationSettings extends JPanel {
         return new SimulationSettingsValues(precision, new SimpleNamedOrthogonalSpace(bounds), timeStart, timeEnd);
     }
 
+    @Override
     public void setValues(SimulationSettingsValues values) {
         int size = names.getVariables().size();
         if (values.getPrecisionConfiguration().getDimension() != size) {
