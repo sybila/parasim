@@ -65,4 +65,26 @@ public class OdeSystemNames {
     public String getVariable(int dimension) {
         return system.getVariable(dimension).getName();
     }
+
+    public String getName(int dimension) {
+        if (dimension < 0 || dimension >= system.dimension()) {
+            throw new IndexOutOfBoundsException("Dimension out of bounds: " + dimension);
+        }
+        if (system.isParamater(dimension)) {
+            return system.getParameter(dimension).getName();
+        } else if (system.isVariable(dimension)) {
+            return system.getVariable(dimension).getName();
+        } else {
+            throw new IllegalStateException("Dimension that is not out of bounds, and is neither a parameter or a variable.");
+        }
+    }
+
+    public boolean isSubstituted(String paramName) {
+        Parameter param = system.getAvailableParameters().get(paramName);
+        if (param == null) {
+            throw new IllegalArgumentException("System contains no such parameter.");
+        }
+        return param.isSubstituted();
+    }
+;
 }
