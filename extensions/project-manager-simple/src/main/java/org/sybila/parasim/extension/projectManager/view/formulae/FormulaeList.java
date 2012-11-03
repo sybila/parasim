@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
@@ -43,12 +42,9 @@ public class FormulaeList extends JPanel {
     //
     private JList<String> list;
 
-    public FormulaeList(FormulaeListModel formulaeModel, NameList nameChooser, Set<String> formulaeNames) {
+    public FormulaeList(FormulaeListModel formulaeModel, NameList nameChooser) {
         if (formulaeModel == null) {
             throw new IllegalArgumentException("Argument (model) is null.");
-        }
-        if (formulaeNames == null) {
-            throw new IllegalArgumentException("Argument (names) is null.");
         }
         if (nameChooser == null) {
             throw new IllegalArgumentException("Argument (chooser) is null.");
@@ -56,9 +52,9 @@ public class FormulaeList extends JPanel {
         model = formulaeModel;
         chooser = nameChooser;
 
-        names = new HashSet<>(formulaeNames);
+        names = new HashSet<>(nameChooser.getNames());
         listModel = new DefaultListModel<>();
-        for (String name : formulaeNames) {
+        for (String name : names) {
             listModel.addElement(name);
         }
 
@@ -188,7 +184,7 @@ public class FormulaeList extends JPanel {
                         System.out.println("Formula `" + name + "' chosen.");
                         return true;
                     }
-                }, new NameList.Adapter(), Collections.<String>emptySet());
+                }, new NameList.Adapter());
                 frame.add(list);
                 frame.setVisible(true);
             }
