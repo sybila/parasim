@@ -90,7 +90,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
     public boolean removeCurrent() {
         checkCurrentName();
         if (getFirstList().isUsedInExperiment(currentName) || getSecondList().isUsedInExperiment(currentName)) {
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "This simulation setting is used in one or more experiments."
+            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "This setting is used in one or more experiments."
                     + " Do you really want to delete it?", "Delete Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
                 return false;
             }
