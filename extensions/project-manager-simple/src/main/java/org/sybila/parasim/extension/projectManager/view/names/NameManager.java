@@ -110,7 +110,7 @@ public class NameManager extends JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (!isNewName() || saveData()) {
-                    model.chooseCurrent(getSelectedName());
+                    model.chooseCurrent();
                     chooser.selectName(getSelectedName());
                 }
             }
@@ -258,8 +258,8 @@ public class NameManager extends JPanel {
                     }
 
                     @Override
-                    public void chooseCurrent(String name) {
-                        System.out.println("Name `" + name + "' has been chosen.");
+                    public void chooseCurrent() {
+                        System.out.println("Name has been chosen.");
                     }
                 }, new NameList() {
 

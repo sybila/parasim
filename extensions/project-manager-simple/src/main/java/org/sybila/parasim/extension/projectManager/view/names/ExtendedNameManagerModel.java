@@ -6,5 +6,5 @@ package org.sybila.parasim.extension.projectManager.view.names;
  */
 public interface ExtendedNameManagerModel extends NameManagerModel {
 
-    public void chooseCurrent(String name);
+    public void chooseCurrent();
 }
