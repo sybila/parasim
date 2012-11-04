@@ -10,9 +10,9 @@ public interface NameManagerModel {
 
     public void newName();
 
-    public boolean renameCurrent(String name, String newName);
+    public boolean renameCurrent(String newName);
 
     public boolean saveCurrent(String name);
 
-    public boolean removeCurrent(String name);
+    public boolean removeCurrent();
 }

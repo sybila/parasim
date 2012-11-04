@@ -26,13 +26,13 @@ public class NameManagerModelAdapter implements ExtendedNameManagerModel {
     }
 
     @Override
-    public boolean removeCurrent(String name) {
-        return model.removeCurrent(name);
+    public boolean removeCurrent() {
+        return model.removeCurrent();
     }
 
     @Override
-    public boolean renameCurrent(String name, String newName) {
-        return model.renameCurrent(name, newName);
+    public boolean renameCurrent(String newName) {
+        return model.renameCurrent(newName);
     }
 
     @Override

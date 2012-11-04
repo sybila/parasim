@@ -73,7 +73,7 @@ public class NameManager extends JPanel {
                         JOptionPane.showMessageDialog(NameManager.this, "You have chosen the same name.", "Rename dialog", JOptionPane.INFORMATION_MESSAGE);
                     } else if (items.getIndexOf(name) != -1) {
                         JOptionPane.showMessageDialog(NameManager.this, "Name `" + name + "' already in use.", "Rename error", JOptionPane.ERROR_MESSAGE);
-                    } else if (model.renameCurrent(getSelectedName(), name)) {
+                    } else if (model.renameCurrent(name)) {
                         int pos = items.getIndexOf(items.getSelectedItem());
                         chooser.renameName(getSelectedName(), name);
                         items.removeElementAt(pos);
@@ -89,7 +89,7 @@ public class NameManager extends JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 lock.lock();
-                if (model.removeCurrent(getSelectedName())) {
+                if (model.removeCurrent()) {
                     chooser.removeName(getSelectedName());
                     Object current = items.getSelectedItem();
                     setNewName();
@@ -240,8 +240,8 @@ public class NameManager extends JPanel {
                     }
 
                     @Override
-                    public boolean renameCurrent(String name, String newName) {
-                        System.out.println("`" + name + "' renamed to `" + newName + "'.");
+                    public boolean renameCurrent(String newName) {
+                        System.out.println("Renamed to `" + newName + "'.");
                         return true;
                     }
 
@@ -252,8 +252,8 @@ public class NameManager extends JPanel {
                     }
 
                     @Override
-                    public boolean removeCurrent(String name) {
-                        System.out.println("Name `" + name + "' has been removed.");
+                    public boolean removeCurrent() {
+                        System.out.println("Name has been removed.");
                         return true;
                     }
 
