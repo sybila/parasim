@@ -22,7 +22,7 @@ public class OrthogonalSpaceFactory extends OdeInsideFactory {
         return get(space, 0, 0);
     }
 
-    public OrthogonalSpace get(NamedOrthogonalSpace space, int startTime, int endTime) {
+    public OrthogonalSpace get(NamedOrthogonalSpace space, float startTime, float endTime) {
         OdeSystem result = OdeUtils.release(getOdeSystem(), space.getVariables());
         OdeSystemNames names = new OdeSystemNames(result);
 
