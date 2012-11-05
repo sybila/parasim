@@ -1,8 +1,11 @@
 package org.sybila.parasim.extension.projectManager.model.components;
 
+import java.io.File;
 import javax.swing.JOptionPane;
 import org.sybila.parasim.extension.projectManager.model.project.Project;
+import org.sybila.parasim.extension.projectManager.view.FormulaImporter;
 import org.sybila.parasim.extension.projectManager.view.formulae.FormulaeListModel;
+import org.sybila.parasim.util.Pair;
 
 /**
  *
@@ -12,6 +15,7 @@ public class FormulaModel implements FormulaeListModel {
 
     private final Project project;
     private final ExperimentModel experiment;
+    private final FormulaImporter importer = new FormulaImporter();
 
     public FormulaModel(Project targetProject, ExperimentModel experimentModel) {
         if (targetProject == null) {
@@ -61,12 +65,15 @@ public class FormulaModel implements FormulaeListModel {
 
     @Override
     public String add() {
-        /*
-         * tohle je nejsložitější, protože tady proběhne import
-         *
-         * je třeba udělat komponentu, která má v sobě fileChooser a název -- ta
-         * vrátí obojí
-         */
-        throw new UnsupportedOperationException("Not supported yet.");
+        Pair<File, String> result = importer.showDialog();
+        if (result == null) {
+            return null;
+        }
+
+        if (project.getFormulae().add(result.second(), result.first())) {
+            return result.second();
+        }
+        JOptionPane.showMessageDialog(null, "Unable to import formula `" + result.second() + "' from `" + result.first().toString() + "'.", "Formula Import Error", JOptionPane.ERROR_MESSAGE);
+        return null;
     }
 }
