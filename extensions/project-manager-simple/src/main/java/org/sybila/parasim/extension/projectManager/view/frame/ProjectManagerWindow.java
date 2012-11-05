@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import org.sybila.parasim.extension.projectManager.api.ExperimentListener;
@@ -25,6 +26,7 @@ import org.sybila.parasim.extension.projectManager.api.ProjectManager;
 public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
     private ExperimentListener launcher;
+    //
     private Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
 
     public ProjectManagerWindow() {
@@ -32,14 +34,18 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                if (checkSaved()) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
             }
         });
         loadAction = IconSource.getLoadAction(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                if (checkSaved()) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
             }
         });
         saveAction = IconSource.getSaveAction(new ActionListener() {
@@ -67,9 +73,9 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                // checks whether saved //
-
-                dispose();
+                if (checkSaved()) {
+                    dispose();
+                }
             }
         };
 
@@ -141,6 +147,28 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         item = new JMenuItem(showAction);
         menu.add(item);
 
+    }
+
+    private boolean isSaved() {
+        //TODO
+        return true;
+    }
+
+    private boolean checkSaved() {
+        if (isSaved()) {
+            return true;
+        }
+        int choice = JOptionPane.showConfirmDialog(this, "This project is not saved. If you continue with this operation,"
+                + " some data may be lost. Do you wish to save this project?", "Unsaved Project", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        switch (choice) {
+            case JOptionPane.YES_OPTION:
+                saveAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "saveclose"));
+            case JOptionPane.NO_OPTION:
+                return true;
+            case JOptionPane.CANCEL_OPTION:
+            default:
+                return false;
+        }
     }
 
     @Override
