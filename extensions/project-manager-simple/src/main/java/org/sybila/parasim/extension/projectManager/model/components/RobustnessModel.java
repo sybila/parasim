@@ -1,8 +1,8 @@
 package org.sybila.parasim.extension.projectManager.model.components;
 
 import org.sybila.parasim.computation.density.api.InitialSampling;
+import org.sybila.parasim.extension.projectManager.model.project.ExperimentResourceList;
 import org.sybila.parasim.extension.projectManager.model.project.Project;
-import org.sybila.parasim.extension.projectManager.model.project.ResourceList;
 import org.sybila.parasim.extension.projectManager.view.names.NameManagerModel;
 import org.sybila.parasim.extension.projectManager.view.robustness.RobustnessSettingsModel;
 import org.sybila.parasim.extension.projectManager.view.robustness.RobustnessSettingsValues;
@@ -23,12 +23,12 @@ public class RobustnessModel extends DoubleListNameManagerModel<InitialSampling,
     }
 
     @Override
-    protected ResourceList<InitialSampling> getFirstList() {
+    protected ExperimentResourceList<InitialSampling> getFirstList() {
         return getProject().getInitialSamplings();
     }
 
     @Override
-    protected ResourceList<OrthogonalSpace> getSecondList() {
+    protected ExperimentResourceList<OrthogonalSpace> getSecondList() {
         return getProject().getInitialSpaces();
     }
 

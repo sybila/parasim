@@ -10,13 +10,7 @@ public interface ResourceList<T> {
 
     public T get(String name);
 
-    public void put(String name, T target);
-
-    public boolean isUsedInExperiment(String name);
-
     public void remove(String name);
 
     public boolean rename(String name, String newName);
-
-    public boolean duplicate(String name, String newName);
 }

@@ -2,6 +2,7 @@ package org.sybila.parasim.extension.projectManager.model.project;
 
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.extension.projectManager.names.ExperimentNames;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 
@@ -13,11 +14,15 @@ public interface Project {
 
     public OdeSystem getOdeSystem();
 
-    public ResourceList<OrthogonalSpace> getSimulationSpaces();
+    public FormulaResourceList getFormulae();
 
-    public ResourceList<PrecisionConfiguration> getPrecisionsConfigurations();
+    public ExperimentResourceList<OrthogonalSpace> getSimulationSpaces();
 
-    public ResourceList<OrthogonalSpace> getInitialSpaces();
+    public ExperimentResourceList<PrecisionConfiguration> getPrecisionsConfigurations();
 
-    public ResourceList<InitialSampling> getInitialSamplings();
+    public ExperimentResourceList<OrthogonalSpace> getInitialSpaces();
+
+    public ExperimentResourceList<InitialSampling> getInitialSamplings();
+
+    public ResourceList<ExperimentNames> getExperiments();
 }

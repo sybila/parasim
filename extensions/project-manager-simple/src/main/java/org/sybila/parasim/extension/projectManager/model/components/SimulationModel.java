@@ -2,8 +2,8 @@ package org.sybila.parasim.extension.projectManager.model.components;
 
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectManager.model.OrthogonalSpaceFactory;
+import org.sybila.parasim.extension.projectManager.model.project.ExperimentResourceList;
 import org.sybila.parasim.extension.projectManager.model.project.Project;
-import org.sybila.parasim.extension.projectManager.model.project.ResourceList;
 import org.sybila.parasim.extension.projectManager.view.names.NameManagerModel;
 import org.sybila.parasim.extension.projectManager.view.simulation.SimulationSettingsModel;
 import org.sybila.parasim.extension.projectManager.view.simulation.SimulationSettingsValues;
@@ -23,12 +23,12 @@ public class SimulationModel extends DoubleListNameManagerModel<PrecisionConfigu
     }
 
     @Override
-    protected ResourceList<PrecisionConfiguration> getFirstList() {
+    protected ExperimentResourceList<PrecisionConfiguration> getFirstList() {
         return getProject().getPrecisionsConfigurations();
     }
 
     @Override
-    protected ResourceList<OrthogonalSpace> getSecondList() {
+    protected ExperimentResourceList<OrthogonalSpace> getSecondList() {
         return getProject().getSimulationSpaces();
     }
 

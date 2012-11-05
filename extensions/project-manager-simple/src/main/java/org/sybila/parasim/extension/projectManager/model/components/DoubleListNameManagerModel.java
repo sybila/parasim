@@ -1,8 +1,8 @@
 package org.sybila.parasim.extension.projectManager.model.components;
 
 import javax.swing.JOptionPane;
+import org.sybila.parasim.extension.projectManager.model.project.ExperimentResourceList;
 import org.sybila.parasim.extension.projectManager.model.project.Project;
-import org.sybila.parasim.extension.projectManager.model.project.ResourceList;
 import org.sybila.parasim.extension.projectManager.view.ValueHolder;
 import org.sybila.parasim.extension.projectManager.view.names.ExtendedNameManagerModel;
 
@@ -27,9 +27,9 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         settings = target;
     }
 
-    protected abstract ResourceList<T> getFirstList();
+    protected abstract ExperimentResourceList<T> getFirstList();
 
-    protected abstract ResourceList<S> getSecondList();
+    protected abstract ExperimentResourceList<S> getSecondList();
 
     protected abstract R getValue(T first, S second);
 
