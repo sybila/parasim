@@ -6,6 +6,7 @@ import org.sybila.parasim.extension.projectManager.names.ExperimentNames;
 import org.sybila.parasim.extension.projectManager.view.experiment.ExperimentSettingsModel;
 import org.sybila.parasim.extension.projectManager.view.experiment.ExperimentSettingsValues;
 import org.sybila.parasim.extension.projectManager.view.names.NameChooserModel;
+import org.sybila.parasim.extension.projectManager.view.names.NameManager;
 import org.sybila.parasim.extension.projectManager.view.names.NameManagerModel;
 
 /**
@@ -18,6 +19,8 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     private final Project project;
     private String currentName = null;
     private ExperimentNames current = new ExperimentNames();
+    //
+    private NameManager formulae, robustness, simulations;
 
     private void checkCurrentName() {
         if (currentName == null) {
@@ -48,11 +51,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
 
             @Override
             public void seeName(String name) {
-                /*
-                 * pošle jiné komponentě vzkaz -- ta zareaguje -- pokud je nové
-                 * jméno, zeptá se na uložení
-                 */
-                throw new UnsupportedOperationException("Not supported yet.");
+                formulae.chooseName(name);
             }
         };
         robustnessChooser = new NameChooserModel() {
@@ -67,11 +66,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
 
             @Override
             public void seeName(String name) {
-                /*
-                 * pošle jiné komponentě vzkaz -- ta zareaguje -- pokud je nové
-                 * jméno, zeptá se na uložení
-                 */
-                throw new UnsupportedOperationException("Not supported yet.");
+                robustness.chooseName(name);
             }
         };
         simulationChooser = new NameChooserModel() {
@@ -86,13 +81,25 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
 
             @Override
             public void seeName(String name) {
-                /*
-                 * pošle jiné komponentě vzkaz -- ta zareaguje -- pokud je nové
-                 * jméno, zeptá se na uložení
-                 */
-                throw new UnsupportedOperationException("Not supported yet.");
+                simulations.chooseName(name);
             }
         };
+
+        formulae = null;
+        robustness = null;
+        simulations = null;
+    }
+
+    public void registerFormulaeManager(NameManager manager) {
+        formulae = manager;
+    }
+
+    public void registerRobustnessManager(NameManager manager) {
+        robustness = manager;
+    }
+
+    public void registerSimulationsManager(NameManager manager) {
+        simulations = manager;
     }
 
     @Override

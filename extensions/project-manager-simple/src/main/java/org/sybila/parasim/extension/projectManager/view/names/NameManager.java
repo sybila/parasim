@@ -220,6 +220,10 @@ public class NameManager extends JPanel {
         lock.unlock();
     }
 
+    public void chooseName(String name) {
+        items.setSelectedItem(name);
+    }
+
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
 
@@ -288,7 +292,6 @@ public class NameManager extends JPanel {
                         return Collections.<String>emptySet();
                     }
                 });
-
 
                 frame.add(manager);
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
