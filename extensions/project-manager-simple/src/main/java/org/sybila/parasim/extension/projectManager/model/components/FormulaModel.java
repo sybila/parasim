@@ -11,12 +11,17 @@ import org.sybila.parasim.extension.projectManager.view.formulae.FormulaeListMod
 public class FormulaModel implements FormulaeListModel {
 
     private final Project project;
+    private final ExperimentModel experiment;
 
-    public FormulaModel(Project targetProject) {
+    public FormulaModel(Project targetProject, ExperimentModel experimentModel) {
         if (targetProject == null) {
             throw new IllegalArgumentException("Argument (project) is null.");
         }
+        if (experimentModel == null) {
+            throw new IllegalArgumentException("Argument (experiment model) is null.");
+        }
         project = targetProject;
+        experiment = experimentModel;
     }
 
     private void checkName(String name) {
@@ -28,9 +33,8 @@ public class FormulaModel implements FormulaeListModel {
     @Override
     public boolean choose(String name) {
         checkName(name);
-        // uživateli musí být jasné, že tím znevalidní model
-        //TODO
-        throw new UnsupportedOperationException("Not supported yet.");
+        experiment.getFormulaChooser().chooseName(name);
+        return true;
     }
 
     @Override
@@ -60,7 +64,8 @@ public class FormulaModel implements FormulaeListModel {
         /*
          * tohle je nejsložitější, protože tady proběhne import
          *
-         * je třeba udělat komponentu, která má v sobě fileChooser a název -- ta vrátí obojí
+         * je třeba udělat komponentu, která má v sobě fileChooser a název -- ta
+         * vrátí obojí
          */
         throw new UnsupportedOperationException("Not supported yet.");
     }

@@ -16,10 +16,15 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 public class SimulationModel extends DoubleListNameManagerModel<PrecisionConfiguration, OrthogonalSpace, SimulationSettingsValues> implements SimulationSettingsModel, NameManagerModel {
 
     private final OrthogonalSpaceFactory spaceFactory;
+    private final ExperimentModel experiment;
 
-    public SimulationModel(Project targetProject) {
+    public SimulationModel(Project targetProject, ExperimentModel experimentModel) {
         super(targetProject);
+        if (experimentModel == null) {
+            throw new IllegalArgumentException("Argument (experiment model) is null.");
+        }
         spaceFactory = new OrthogonalSpaceFactory(targetProject.getOdeSystem());
+        experiment = experimentModel;
     }
 
     @Override
@@ -49,9 +54,8 @@ public class SimulationModel extends DoubleListNameManagerModel<PrecisionConfigu
 
     @Override
     public void chooseCurrent() {
-        //TODO
-        //user has to be aware that this generally invalidates the experiment.
-        throw new UnsupportedOperationException("Not supported yet.");
+        checkCurrentName();
+        experiment.getSimulationChooser().chooseName(getCurrentName());
     }
 
     @Override

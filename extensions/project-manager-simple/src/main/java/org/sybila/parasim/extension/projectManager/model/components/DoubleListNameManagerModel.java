@@ -58,7 +58,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         return true;
     }
 
-    private void checkCurrentName() {
+    protected void checkCurrentName() {
         if (currentName == null) {
             throw new IllegalStateException("Current name is not chosen.");
         }

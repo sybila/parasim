@@ -80,7 +80,6 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
             public void chooseName(String name) {
                 // user SHOULD know this invalidates experiment
                 checkName(name);
-                checkCurrentName();
                 current.setPrecisionConfigurationName(name);
                 current.setSimulationSpaceName(name);
             }

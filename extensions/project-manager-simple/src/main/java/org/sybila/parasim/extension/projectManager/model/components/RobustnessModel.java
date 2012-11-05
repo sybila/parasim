@@ -16,10 +16,15 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 public class RobustnessModel extends DoubleListNameManagerModel<InitialSampling, OrthogonalSpace, RobustnessSettingsValues> implements RobustnessSettingsModel, NameManagerModel {
 
     private final RobustnessSettingsValuesFactory factory;
+    private final ExperimentModel experiment;
 
-    public RobustnessModel(Project targetProject) {
+    public RobustnessModel(Project targetProject, ExperimentModel experimentModel) {
         super(targetProject);
+        if (experimentModel == null) {
+            throw new IllegalArgumentException("Argument (experiment model) is null.");
+        }
         factory = new RobustnessSettingsValuesFactory(targetProject.getOdeSystem());
+        experiment = experimentModel;
     }
 
     @Override
@@ -49,9 +54,8 @@ public class RobustnessModel extends DoubleListNameManagerModel<InitialSampling,
 
     @Override
     public void chooseCurrent() {
-        // TODO
-        //user has to be aware that this generally invalidates the experiment.
-        throw new UnsupportedOperationException("Not supported yet.");
+        checkCurrentName();
+        experiment.getRobustnessChooser().chooseName(getCurrentName());
     }
 
     @Override
