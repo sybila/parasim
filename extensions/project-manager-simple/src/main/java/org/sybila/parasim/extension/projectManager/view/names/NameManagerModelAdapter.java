@@ -16,7 +16,7 @@ public class NameManagerModelAdapter implements ExtendedNameManagerModel {
     }
 
     @Override
-    public void chooseCurrent(String name) {
+    public void chooseCurrent() {
         // do nothing //
     }
 
