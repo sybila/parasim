@@ -5,7 +5,7 @@ import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.extension.projectManager.api.ProjectManager;
 import org.sybila.parasim.extension.projectManager.api.ProjectManagerRegistered;
-import org.sybila.parasim.extension.projectManager.view.PhonyProjectManager;
+import org.sybila.parasim.extension.projectManager.view.frame.ProjectManagerWindow;
 
 /**
  *
@@ -19,7 +19,7 @@ public class ProjectManagerRegistrar {
     @Provide
     public ProjectManager register() {
         fireEvent();
-        return new PhonyProjectManager();
+        return new ProjectManagerWindow();
     }
 
     private void fireEvent() {

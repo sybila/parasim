@@ -22,6 +22,7 @@ import org.sybila.parasim.extension.projectManager.api.ProjectManager;
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
+ * @deprecated
  */
 public class PhonyProjectManager extends JFrame implements ProjectManager {
 
