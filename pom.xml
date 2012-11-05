@@ -39,6 +39,8 @@
                 <module>extensions/performence-api</module>
                 <module>extensions/performence-conf</module>
                 <module>extensions/performence-impl</module>
+                <module>extensions/project-manager-api</module>
+                <module>extensions/project-manager-impl</module>
                 <module>extensions/remote-api</module>
                 <module>extensions/remote-conf</module>
                 <module>extensions/remote-ftest</module>
@@ -95,6 +97,7 @@
             <modules>
                 <module>applications/core</module>
                 <module>applications/parasim-cli</module>
+                <module>applications/parasim-gui</module>
             </modules>
         </profile>
         <profile>
