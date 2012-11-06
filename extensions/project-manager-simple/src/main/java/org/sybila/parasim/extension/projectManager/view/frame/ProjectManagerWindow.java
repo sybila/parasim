@@ -18,6 +18,8 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import org.sybila.parasim.extension.projectManager.api.ExperimentListener;
 import org.sybila.parasim.extension.projectManager.api.ProjectManager;
+import org.sybila.parasim.extension.projectManager.model.project.Project;
+import org.sybila.parasim.extension.projectManager.project.ResourceException;
 
 /**
  *
@@ -26,16 +28,40 @@ import org.sybila.parasim.extension.projectManager.api.ProjectManager;
 public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
     private ExperimentListener launcher;
+    private Project project = null;
     //
+    private ProjectLoader projectCreator, projectLoader;
     private Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
 
     public ProjectManagerWindow() {
+        projectCreator = new ProjectLoader() {
+
+            @Override
+            public Project loadProject() {
+                //do nothing
+                JOptionPane.showMessageDialog(ProjectManagerWindow.this, "Project created.");
+                return null;
+            }
+        };
+        projectLoader = new ProjectLoader() {
+
+            @Override
+            public Project loadProject() {
+                // do nothing
+                JOptionPane.showMessageDialog(ProjectManagerWindow.this, "Project loaded");
+                return null;
+            }
+        };
+
         newAction = IconSource.getNewAction(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (checkSaved()) {
-                    throw new UnsupportedOperationException("Not supported yet.");
+                    project = projectCreator.loadProject();
+                    if (project != null) {
+                        buildProjectWindow();
+                    }
                 }
             }
         });
@@ -44,7 +70,10 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (checkSaved()) {
-                    throw new UnsupportedOperationException("Not supported yet.");
+                    project = projectLoader.loadProject();
+                    if (project != null) {
+                        buildProjectWindow();
+                    }
                 }
             }
         });
@@ -52,7 +81,11 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                try {
+                    project.save();
+                } catch (ResourceException re) {
+                    JOptionPane.showMessageDialog(ProjectManagerWindow.this, "Unable to save project: " + re.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         launchAction = new AbstractAction("Launch Experiment") {
@@ -78,6 +111,9 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
                 }
             }
         };
+
+        launchAction.setEnabled(false);
+        showAction.setEnabled(false);
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -150,8 +186,10 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     }
 
     private boolean isSaved() {
-        //TODO
-        return true;
+        if (project == null) {
+            return true;
+        }
+        return project.isSaved();
     }
 
     private boolean checkSaved() {
@@ -163,12 +201,19 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         switch (choice) {
             case JOptionPane.YES_OPTION:
                 saveAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "saveclose"));
+                if (!isSaved()) {
+                    return false;
+                }
             case JOptionPane.NO_OPTION:
                 return true;
             case JOptionPane.CANCEL_OPTION:
             default:
                 return false;
         }
+    }
+
+    private void buildProjectWindow() {
+        throw new UnsupportedOperationException("Not yet supported.");
     }
 
     @Override
