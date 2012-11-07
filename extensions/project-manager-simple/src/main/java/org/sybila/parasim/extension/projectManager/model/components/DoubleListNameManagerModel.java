@@ -3,6 +3,7 @@ package org.sybila.parasim.extension.projectManager.model.components;
 import javax.swing.JOptionPane;
 import org.sybila.parasim.extension.projectManager.model.project.ExperimentResourceList;
 import org.sybila.parasim.extension.projectManager.model.project.Project;
+import org.sybila.parasim.extension.projectManager.model.project.ResourceAction;
 import org.sybila.parasim.extension.projectManager.view.ValueHolder;
 import org.sybila.parasim.extension.projectManager.view.names.ExtendedNameManagerModel;
 
@@ -105,15 +106,18 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
     public boolean renameCurrent(String newName) {
         checkName(newName);
         checkCurrentName();
-        if (getFirstList().duplicate(currentName, newName)) {
-            if (getSecondList().rename(currentName, newName)) {
-                getFirstList().remove(currentName);
-                currentName = newName;
-                return true;
-            } else {
-                getFirstList().remove(newName);
-            }
+
+        ResourceAction first = getFirstList().rename(currentName, newName);
+        ResourceAction second = getSecondList().rename(currentName, newName);
+
+        if (first.isViable() && second.isViable()) {
+            first.commit();
+            second.commit();
+            return true;
         }
+
+        first.revert();
+        second.revert();
         JOptionPane.showMessageDialog(null, "Unable to rename `" + currentName + "' to `" + newName + "'.", "Rename Error", JOptionPane.ERROR_MESSAGE);
         return false;
     }
@@ -122,14 +126,17 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
     public boolean saveCurrent(String name) {
         checkName(name);
         R values = settings.getValues();
-        if (getFirstList().add(name, getFirstValue(values))) {
-            if (getSecondList().add(name, getSecondValue(values))) {
-                currentName = name;
-                return true;
-            } else {
-                getFirstList().remove(name);
-            }
+
+        ResourceAction first = getFirstList().add(name, getFirstValue(values));
+        ResourceAction second = getSecondList().add(name, getSecondValue(values));
+        if (first.isViable() && second.isViable()) {
+            first.commit();
+            second.commit();
+            return true;
         }
+
+        first.revert();
+        second.revert();
         JOptionPane.showMessageDialog(null, "Unable to save `" + name + "'.", "Save Error", JOptionPane.ERROR_MESSAGE);
         return false;
     }
