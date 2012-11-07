@@ -10,8 +10,19 @@ import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 public class ExperimentNames {
 
     private String formulaName, initialSpaceName, simulationSpaceName, precisionConfigurationName, initialSamplingName, verificationResultName, modelName, annotation;
-    private int iterationLimit;
-    private long timeout;
+    private int iterationLimit = 0;
+    private long timeout = 0;
+
+    public ExperimentNames() {
+        formulaName = null;
+        initialSpaceName = null;
+        simulationSpaceName = null;
+        precisionConfigurationName = null;
+        initialSamplingName = null;
+        verificationResultName = null;
+        modelName = null;
+        annotation = null;
+    }
 
     public String getModelName() {
         return modelName;
