@@ -24,6 +24,19 @@ public class ExperimentNames {
         annotation = null;
     }
 
+    public ExperimentNames(ExperimentNames source) {
+        formulaName = source.formulaName;
+        initialSpaceName = source.initialSpaceName;
+        simulationSpaceName = source.simulationSpaceName;
+        precisionConfigurationName = source.precisionConfigurationName;
+        initialSamplingName = source.initialSamplingName;
+        verificationResultName = source.verificationResultName;
+        modelName = source.modelName;
+        annotation = source.annotation;
+        iterationLimit = source.iterationLimit;
+        timeout = source.timeout;
+    }
+
     public String getModelName() {
         return modelName;
     }
