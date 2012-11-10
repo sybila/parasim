@@ -89,11 +89,24 @@ public class DirProject implements Project {
                 saved = false;
             }
         }
+
+        @Override
+        public void setFormulaName(String formulaName) {
+            if (!formulaName.equals(getFormulaName())) {
+                if (getFormulaName() != null) {
+                    formulae.removeExperiment(getFormulaName());
+                }
+                formulae.addExperiment(formulaName);
+                super.setFormulaName(formulaName);
+                saved = false;
+            }
+        }
     }
     //
     private boolean saved = true;
     private File projectDir;
     private OdeSystem odeSystem;
+    private DirFormulaeList formulae;
     private XMLResourceList<InitialSampling> samplingList;
     private XMLResourceList<PrecisionConfiguration> precisionList;
     private XMLResourceList<OrthogonalSpace> initialSpaceList;
@@ -111,7 +124,7 @@ public class DirProject implements Project {
 
     @Override
     public FormulaResourceList getFormulae() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return formulae;
     }
 
     @Override
