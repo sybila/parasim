@@ -1,8 +1,10 @@
 package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.extension.projectmanager.model.project.FormulaResourceList;
@@ -101,6 +103,11 @@ public class DirFormulaeList implements FormulaResourceList {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public Set<String> getNames() {
+        return Collections.unmodifiableSet(resources.keySet());
     }
 
     @Override

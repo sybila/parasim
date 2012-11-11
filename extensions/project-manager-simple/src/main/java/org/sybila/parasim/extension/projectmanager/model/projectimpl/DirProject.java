@@ -2,8 +2,10 @@ package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.LoadedExperiment;
@@ -169,6 +171,11 @@ public class DirProject implements Project {
             if (target.getSimulationSpaceName() != null) {
                 simulationSpaceList.addExperiment(target.getSimulationSpaceName());
             }
+        }
+
+        @Override
+        public Set<String> getNames() {
+            return Collections.unmodifiableSet(resources.keySet());
         }
 
         @Override
