@@ -54,11 +54,14 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
         }
     }
     //
+    private DirProject project;
     private FileManager manager;
     private boolean saved = true;
     private Map<String, Resource> resources;
 
     protected abstract XMLResource<E> getXMLResource(File target);
+
+    protected abstract DirProject.ExperimentAction getAction(final String name, final String newName);
 
     public void save() throws ResourceException {
         for (Resource resource : resources.values()) {
@@ -132,7 +135,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
     public void remove(String name) {
         if (resources.containsKey(name)) {
             if (resources.remove(name).isUsed()) {
-                //TODO remove resource from experiments
+                project.applyAction(getAction(name, null));
             }
             manager.deleteFile(name);
         }
@@ -162,7 +165,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
 
     private void removeAndRename(String name, String newName) {
         if (resources.remove(name).isUsed()) {
-            //TODO rename resource in experiments
+            project.applyAction(getAction(name, newName));
         }
     }
 

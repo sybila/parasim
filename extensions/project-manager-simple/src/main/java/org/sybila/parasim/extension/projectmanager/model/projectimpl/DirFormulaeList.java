@@ -123,7 +123,7 @@ public class DirFormulaeList implements FormulaResourceList {
         Resource target = resources.remove(name);
         if (target != null) {
             if (target.isUsed()) {
-                //TODO remove from experiments
+                parent.removeFormula(name);
             }
             files.deleteFile(name);
         }
@@ -150,6 +150,9 @@ public class DirFormulaeList implements FormulaResourceList {
         target.get().setRoot(src.get().getRoot());
         if (storeFormula(target)) {
             resources.remove(name);
+            if (target.isUsed()) {
+                parent.renameFormula(name, newName);
+            }
             resources.put(newName, target);
             return true;
         } else {

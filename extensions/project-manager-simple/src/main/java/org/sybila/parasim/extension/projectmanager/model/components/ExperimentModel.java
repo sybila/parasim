@@ -133,7 +133,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     public boolean saveCurrent(String name) {
         checkName(name);
         if (project.getExperiments().add(currentName, current)) {
-            currentName = name;
+            selectionChanged(name);
             return true;
         }
         JOptionPane.showMessageDialog(null, "Unable to save current experiment as `" + name + "'.", "Save Error", JOptionPane.ERROR_MESSAGE);

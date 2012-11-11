@@ -109,6 +109,11 @@ public class DirProject implements Project {
         }
     }
 
+    public static interface ExperimentAction {
+
+        public void apply(ExperimentNames target);
+    }
+
     private class ExperimentList implements ResourceList<ExperimentNames> {
 
         private FileManager files;
@@ -131,7 +136,7 @@ public class DirProject implements Project {
             }
 
             ExperimentNamesResource resource = new ExperimentNamesResource(file);
-            resource.setRoot(new ConnectedExperiment(target));
+            resource.setRoot(target);
             resources.put(name, resource);
 
             if (target.getFormulaName() != null) {
@@ -155,7 +160,7 @@ public class DirProject implements Project {
 
         @Override
         public ExperimentNames get(String name) {
-            return resources.get(name).getRoot();
+            return new ConnectedExperiment(resources.get(name).getRoot());
         }
 
         @Override
@@ -201,6 +206,12 @@ public class DirProject implements Project {
             resources.put(newName, resource);
             saved = false;
             return true;
+        }
+
+        public void applyAction(ExperimentAction target) {
+            for (ExperimentNamesResource resource : resources.values()) {
+                target.apply(resource.getRoot());
+            }
         }
     }
     //
@@ -278,5 +289,33 @@ public class DirProject implements Project {
         precisionList.save();
         experiments.save();
         saved = true;
+    }
+
+    void removeFormula(final String name) {
+        experiments.applyAction(new ExperimentAction() {
+
+            @Override
+            public void apply(ExperimentNames target) {
+                if (name.equals(target.getFormulaName())) {
+                    target.setFormulaName(null);
+                }
+            }
+        });
+    }
+
+    void renameFormula(final String name, final String newName) {
+        experiments.applyAction(new ExperimentAction() {
+
+            @Override
+            public void apply(ExperimentNames target) {
+                if (name.equals(target.getFormulaName())) {
+                    target.setFormulaName(newName);
+                }
+            }
+        });
+    }
+
+    void applyAction(ExperimentAction target) {
+        experiments.applyAction(target);
     }
 }
