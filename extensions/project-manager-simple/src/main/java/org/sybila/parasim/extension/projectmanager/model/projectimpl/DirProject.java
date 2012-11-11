@@ -1,6 +1,7 @@
 package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
+import java.util.Map;
 import org.sybila.parasim.application.model.LoadedExperiment;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
@@ -9,6 +10,7 @@ import org.sybila.parasim.extension.projectmanager.model.project.FormulaResource
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.model.project.ResourceList;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
+import org.sybila.parasim.extension.projectmanager.names.ExperimentNamesResource;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -20,6 +22,10 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 public class DirProject implements Project {
 
     private class ConnectedExperiment extends ExperimentNames {
+
+        public ConnectedExperiment(ExperimentNames target) {
+            super(target);
+        }
 
         @Override
         public void setModelName(String modelName) {
@@ -102,15 +108,110 @@ public class DirProject implements Project {
             }
         }
     }
+
+    private class ExperimentList implements ResourceList<ExperimentNames> {
+
+        private FileManager files;
+        private Map<String, ExperimentNamesResource> resources;
+
+        public void save() throws ResourceException {
+            for (ExperimentNamesResource resource : resources.values()) {
+                resource.store();
+            }
+        }
+
+        @Override
+        public boolean add(String name, ExperimentNames target) {
+            if (resources.containsKey(name)) {
+                return false;
+            }
+            File file = files.createFile(name);
+            if (file == null) {
+                return false;
+            }
+
+            ExperimentNamesResource resource = new ExperimentNamesResource(file);
+            resource.setRoot(new ConnectedExperiment(target));
+            resources.put(name, resource);
+
+            if (target.getFormulaName() != null) {
+                formulae.addExperiment(target.getFormulaName());
+            }
+            if (target.getInitialSamplingName() != null) {
+                samplingList.addExperiment(target.getInitialSamplingName());
+            }
+            if (target.getInitialSpaceName() != null) {
+                initialSpaceList.addExperiment(target.getInitialSpaceName());
+            }
+            if (target.getPrecisionConfigurationName() != null) {
+                precisionList.addExperiment(target.getPrecisionConfigurationName());
+            }
+            if (target.getSimulationSpaceName() != null) {
+                simulationSpaceList.addExperiment(target.getSimulationSpaceName());
+            }
+            saved = false;
+            return true;
+        }
+
+        @Override
+        public ExperimentNames get(String name) {
+            return resources.get(name).getRoot();
+        }
+
+        @Override
+        public void remove(String name) {
+            ExperimentNamesResource resource = resources.get(name);
+            if (resource != null) {
+                files.deleteFile(name);
+                ExperimentNames target = resource.getRoot();
+                if (target.getFormulaName() != null) {
+                    formulae.removeExperiment(target.getFormulaName());
+                }
+                if (target.getInitialSamplingName() != null) {
+                    samplingList.removeExperiment(target.getInitialSamplingName());
+                }
+                if (target.getInitialSpaceName() != null) {
+                    initialSpaceList.removeExperiment(target.getInitialSpaceName());
+                }
+                if (target.getPrecisionConfigurationName() != null) {
+                    precisionList.removeExperiment(target.getPrecisionConfigurationName());
+                }
+                if (target.getSimulationSpaceName() != null) {
+                    simulationSpaceList.removeExperiment(target.getSimulationSpaceName());
+                }
+            }
+        }
+
+        @Override
+        public boolean rename(String name, String newName) {
+            if (!resources.containsKey(name)) {
+                return false;
+            }
+            if (resources.containsKey(newName)) {
+                return false;
+            }
+            File target = files.createFile(newName);
+            if (target == null) {
+                return false;
+            }
+
+            ExperimentNamesResource resource = new ExperimentNamesResource(target);
+            ExperimentNamesResource src = resources.remove(name);
+            resource.setRoot(src.getRoot());
+            resources.put(newName, resource);
+            saved = false;
+            return true;
+        }
+    }
     //
     private boolean saved = true;
-    private File projectDir;
     private OdeSystem odeSystem;
     private DirFormulaeList formulae;
     private XMLResourceList<InitialSampling> samplingList;
     private XMLResourceList<PrecisionConfiguration> precisionList;
     private XMLResourceList<OrthogonalSpace> initialSpaceList;
     private XMLResourceList<OrthogonalSpace> simulationSpaceList;
+    private ExperimentList experiments;
 
     @Override
     public LoadedExperiment getExperiment(ExperimentNames experiment) {
@@ -119,7 +220,7 @@ public class DirProject implements Project {
 
     @Override
     public ResourceList<ExperimentNames> getExperiments() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return experiments;
     }
 
     @Override
@@ -166,9 +267,6 @@ public class DirProject implements Project {
         if (!precisionList.isSaved()) {
             return false;
         }
-
-        //TODO
-
         return saved;
     }
 
@@ -178,6 +276,7 @@ public class DirProject implements Project {
         simulationSpaceList.save();
         samplingList.save();
         precisionList.save();
-        throw new UnsupportedOperationException("Not supported yet.");
+        experiments.save();
+        saved = true;
     }
 }
