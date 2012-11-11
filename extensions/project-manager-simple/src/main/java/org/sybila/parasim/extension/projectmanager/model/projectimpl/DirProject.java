@@ -1,7 +1,10 @@
 package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.LoadedExperiment;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
@@ -11,6 +14,7 @@ import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.model.project.ResourceList;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNamesResource;
+import org.sybila.parasim.extension.projectmanager.names.ExperimentSuffixes;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -20,6 +24,8 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class DirProject implements Project {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DirProject.class);
 
     private class ConnectedExperiment extends ExperimentNames {
 
@@ -116,12 +122,50 @@ public class DirProject implements Project {
 
     private class ExperimentList implements ResourceList<ExperimentNames> {
 
-        private FileManager files;
-        private Map<String, ExperimentNamesResource> resources;
+        private final FileManager files;
+        private final Map<String, ExperimentNamesResource> resources = new HashMap<>();
+
+        public ExperimentList() {
+            files = new FileManager(directory, ExperimentSuffixes.EXPERIMENT);
+        }
+
+        public void loadResources() {
+            resources.clear();
+            for (String name : files.getFiles()) {
+                if (!resources.containsKey(name)) {
+                    ExperimentNamesResource resource = new ExperimentNamesResource(files.getFile(name));
+                    try {
+                        resource.load();
+                        resources.put(name, resource);
+                        addExperiments(resource.getRoot());
+                    } catch (ResourceException re) {
+                        LOGGER.warn("Unable to load `" + files.getFile(name) + "'.", re);
+                    }
+                }
+            }
+        }
 
         public void save() throws ResourceException {
             for (ExperimentNamesResource resource : resources.values()) {
                 resource.store();
+            }
+        }
+
+        private void addExperiments(ExperimentNames target) {
+            if (target.getFormulaName() != null) {
+                formulae.addExperiment(target.getFormulaName());
+            }
+            if (target.getInitialSamplingName() != null) {
+                samplingList.addExperiment(target.getInitialSamplingName());
+            }
+            if (target.getInitialSpaceName() != null) {
+                initialSpaceList.addExperiment(target.getInitialSpaceName());
+            }
+            if (target.getPrecisionConfigurationName() != null) {
+                precisionList.addExperiment(target.getPrecisionConfigurationName());
+            }
+            if (target.getSimulationSpaceName() != null) {
+                simulationSpaceList.addExperiment(target.getSimulationSpaceName());
             }
         }
 
@@ -138,22 +182,7 @@ public class DirProject implements Project {
             ExperimentNamesResource resource = new ExperimentNamesResource(file);
             resource.setRoot(target);
             resources.put(name, resource);
-
-            if (target.getFormulaName() != null) {
-                formulae.addExperiment(target.getFormulaName());
-            }
-            if (target.getInitialSamplingName() != null) {
-                samplingList.addExperiment(target.getInitialSamplingName());
-            }
-            if (target.getInitialSpaceName() != null) {
-                initialSpaceList.addExperiment(target.getInitialSpaceName());
-            }
-            if (target.getPrecisionConfigurationName() != null) {
-                precisionList.addExperiment(target.getPrecisionConfigurationName());
-            }
-            if (target.getSimulationSpaceName() != null) {
-                simulationSpaceList.addExperiment(target.getSimulationSpaceName());
-            }
+            addExperiments(target);
             saved = false;
             return true;
         }
@@ -215,6 +244,7 @@ public class DirProject implements Project {
         }
     }
     //
+    private File directory;
     private boolean saved = true;
     private OdeSystem odeSystem;
     private DirFormulaeList formulae;
@@ -223,6 +253,10 @@ public class DirProject implements Project {
     private XMLResourceList<OrthogonalSpace> initialSpaceList;
     private XMLResourceList<OrthogonalSpace> simulationSpaceList;
     private ExperimentList experiments;
+
+    public File getProjectDirectory() {
+        return directory;
+    }
 
     @Override
     public LoadedExperiment getExperiment(ExperimentNames experiment) {

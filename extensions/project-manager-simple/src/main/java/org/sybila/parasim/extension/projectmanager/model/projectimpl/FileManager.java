@@ -1,6 +1,7 @@
 package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,16 @@ public class FileManager {
             name = suffix.add(name);
         }
         return new File(dir, name);
+    }
+
+    public String[] getFiles() {
+        return dir.list(new FilenameFilter() {
+
+            @Override
+            public boolean accept(File file, String string) {
+                return string.endsWith(suffix.getSuffix());
+            }
+        });
     }
 
     public File createFile(String name) {

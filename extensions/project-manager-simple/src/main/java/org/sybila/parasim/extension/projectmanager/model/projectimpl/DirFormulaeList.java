@@ -1,10 +1,12 @@
 package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.extension.projectmanager.model.project.FormulaResourceList;
+import org.sybila.parasim.extension.projectmanager.names.ExperimentSuffixes;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.verification.stl.FormulaResource;
 import org.sybila.parasim.model.xml.XMLException;
@@ -50,9 +52,32 @@ public class DirFormulaeList implements FormulaResourceList {
         }
     }
     //
-    private DirProject parent;
-    private FileManager files;
-    private Map<String, Resource> resources;
+    private final DirProject project;
+    private final FileManager files;
+    private final Map<String, Resource> resources = new HashMap<>();
+
+    public DirFormulaeList(DirProject parent) {
+        if (parent == null) {
+            throw new IllegalArgumentException("Argument (parent) is null.");
+        }
+        project = parent;
+        files = new FileManager(parent.getProjectDirectory(), ExperimentSuffixes.FORMULA);
+    }
+
+    public void loadResources() {
+        resources.clear();
+        for (String name : files.getFiles()) {
+            if (!resources.containsKey(name)) {
+                Resource resource = new Resource(new FormulaResource(files.getFile(name)));
+                try {
+                    resource.get().load();
+                    resources.put(name, resource);
+                } catch (XMLException xmle) {
+                    LOGGER.warn("Unable to load `" + files.getFile(name) + "'.", xmle);
+                }
+            }
+        }
+    }
 
     public void addExperiment(String name) {
         resources.get(name).addExperiment();
@@ -64,7 +89,7 @@ public class DirFormulaeList implements FormulaResourceList {
 
     private FormulaResource createResource(File target) {
         FormulaResource result = new FormulaResource(target);
-        result.setVariableMapping(new OdeVariableMapping(parent.getOdeSystem()));
+        result.setVariableMapping(new OdeVariableMapping(project.getOdeSystem()));
         return result;
     }
 
@@ -123,7 +148,7 @@ public class DirFormulaeList implements FormulaResourceList {
         Resource target = resources.remove(name);
         if (target != null) {
             if (target.isUsed()) {
-                parent.removeFormula(name);
+                project.removeFormula(name);
             }
             files.deleteFile(name);
         }
@@ -151,7 +176,7 @@ public class DirFormulaeList implements FormulaResourceList {
         if (storeFormula(target)) {
             resources.remove(name);
             if (target.isUsed()) {
-                parent.renameFormula(name, newName);
+                project.renameFormula(name, newName);
             }
             resources.put(newName, target);
             return true;

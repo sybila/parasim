@@ -1,9 +1,13 @@
 package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.extension.projectmanager.model.project.ExperimentResourceList;
 import org.sybila.parasim.extension.projectmanager.model.project.ResourceAction;
+import org.sybila.parasim.extension.projectmanager.names.ExperimentSuffixes;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLRepresentable;
@@ -15,6 +19,8 @@ import org.sybila.parasim.util.SimpleLock;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public abstract class XMLResourceList<E extends XMLRepresentable> implements ExperimentResourceList<E> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XMLResourceList.class);
 
     private class Resource {
 
@@ -54,10 +60,36 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
         }
     }
     //
-    private DirProject project;
-    private FileManager manager;
+    private final DirProject project;
+    private final FileManager files;
     private boolean saved = true;
-    private Map<String, Resource> resources;
+    private final Map<String, Resource> resources = new HashMap<>();
+
+    public XMLResourceList(DirProject parent, ExperimentSuffixes suffix) {
+        if (parent == null) {
+            throw new IllegalArgumentException("Argument (parent) is null.");
+        }
+        if (suffix == null) {
+            throw new IllegalArgumentException("Argument (suffix) is null.");
+        }
+        project = parent;
+        files = new FileManager(parent.getProjectDirectory(), suffix);
+    }
+
+    public void loadResources() {
+        resources.clear();
+        for (String name : files.getFiles()) {
+            if (!resources.containsKey(name)) {
+                Resource resource = new Resource(getXMLResource(files.getFile(name)));
+                try {
+                    resource.get().load();
+                    resources.put(name, resource);
+                } catch (XMLException xmle) {
+                    LOGGER.warn("Unable to load `" + files.getFile(name) + "'.", xmle);
+                }
+            }
+        }
+    }
 
     protected abstract XMLResource<E> getXMLResource(File target);
 
@@ -112,7 +144,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
         if (resources.containsKey(name)) {
             return null;
         }
-        return new AddAction(target, manager, name);
+        return new AddAction(target, files, name);
     }
 
     @Override
@@ -137,7 +169,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
             if (resources.remove(name).isUsed()) {
                 project.applyAction(getAction(name, null));
             }
-            manager.deleteFile(name);
+            files.deleteFile(name);
         }
     }
 
@@ -177,6 +209,6 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
         if (resources.containsKey(newName)) {
             return null;
         }
-        return new RenameAction(name, manager, newName);
+        return new RenameAction(name, files, newName);
     }
 }
