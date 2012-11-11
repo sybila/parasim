@@ -1,6 +1,7 @@
 package org.sybila.parasim.extension.projectmanager.model.projectimpl;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.sybila.parasim.extension.projectmanager.names.ExperimentNamesResource
 import org.sybila.parasim.extension.projectmanager.names.ExperimentSuffixes;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.sbml.SBMLOdeSystemFactory;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 
 /**
@@ -126,7 +128,7 @@ public class DirProject implements Project {
         private final Map<String, ExperimentNamesResource> resources = new HashMap<>();
 
         public ExperimentList() {
-            files = new FileManager(directory, ExperimentSuffixes.EXPERIMENT);
+            files = new FileManager(dir, ExperimentSuffixes.EXPERIMENT);
         }
 
         public void loadResources() {
@@ -244,18 +246,58 @@ public class DirProject implements Project {
         }
     }
     //
-    private File directory;
+    private final File dir;
     private boolean saved = true;
-    private OdeSystem odeSystem;
-    private DirFormulaeList formulae;
-    private XMLResourceList<InitialSampling> samplingList;
-    private XMLResourceList<PrecisionConfiguration> precisionList;
-    private XMLResourceList<OrthogonalSpace> initialSpaceList;
-    private XMLResourceList<OrthogonalSpace> simulationSpaceList;
-    private ExperimentList experiments;
+    private final OdeSystem odeSystem;
+    private final DirFormulaeList formulae;
+    private final XMLResourceList<InitialSampling> samplingList;
+    private final XMLResourceList<PrecisionConfiguration> precisionList;
+    private final XMLResourceList<OrthogonalSpace> initialSpaceList;
+    private final XMLResourceList<OrthogonalSpace> simulationSpaceList;
+    private final ExperimentList experiments;
+
+    public DirProject(File directory) throws ResourceException {
+        if (directory == null) {
+            throw new IllegalArgumentException("Argument (directory) is null.");
+        }
+        if (!directory.isDirectory()) {
+            throw new IllegalArgumentException("Argument (directory) is not a directory.");
+        }
+        dir = directory;
+
+        FileManager modelManager = new FileManager(dir, ExperimentSuffixes.MODEL);
+        String[] models = modelManager.getFiles();
+        if (models.length == 0) {
+            throw new ResourceException("There is no model file in the directory.");
+        }
+        if (models.length > 1) {
+            throw new ResourceException("There is more than one model in the directory.");
+        }
+        try {
+            odeSystem = SBMLOdeSystemFactory.fromFile(modelManager.getFile(models[0]));
+        } catch (IOException ioe) {
+            throw new ResourceException("Unable to load ODE system from `" + modelManager.getFile(models[0]) + "'.", ioe);
+        }
+
+        formulae = new DirFormulaeList(this);
+        samplingList = new InitialSamplingResourceList(this);
+        precisionList = new PrecisionConfigurationResourceList(this);
+        initialSpaceList = new InitialSpaceResourceList(this);
+        simulationSpaceList = new SimulationSpaceResourceList(this);
+        experiments = new ExperimentList();
+    }
+
+    public void loadResources() {
+        formulae.loadResources();
+        samplingList.loadResources();
+        precisionList.loadResources();
+        initialSpaceList.loadResources();
+        simulationSpaceList.loadResources();
+        experiments.loadResources();
+    }
 
     public File getProjectDirectory() {
-        return directory;
+        return dir;
     }
 
     @Override
