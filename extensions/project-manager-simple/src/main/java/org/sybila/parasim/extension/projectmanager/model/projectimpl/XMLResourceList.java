@@ -93,7 +93,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
 
     protected abstract XMLResource<E> getXMLResource(File target);
 
-    protected abstract DirProject.ExperimentAction getAction(final String name, final String newName);
+    protected abstract DirProject.ExperimentAction getAction(String name, String newName);
 
     public void save() throws ResourceException {
         for (Resource resource : resources.values()) {
@@ -116,6 +116,10 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
 
     public void removeExperiment(String name) {
         resources.get(name).removeExperiment();
+    }
+
+    protected DirProject getParent() {
+        return project;
     }
 
     private class AddAction extends CreateFile {
