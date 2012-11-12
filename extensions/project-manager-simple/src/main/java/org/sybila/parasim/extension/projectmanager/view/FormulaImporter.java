@@ -26,7 +26,7 @@ public class FormulaImporter {
 
     private boolean approved;
     private JDialog importer;
-    private JFileChooser chooser;
+    private ListeningFileChooser chooser;
     private JTextField nameField;
 
     private String removeExtension(File target) {
@@ -45,15 +45,13 @@ public class FormulaImporter {
 
         importer.getContentPane().setLayout(new BoxLayout(importer.getContentPane(), BoxLayout.PAGE_AXIS));
 
-        chooser = new JFileChooser(System.getProperty("user.home"));
-        chooser.setControlButtonsAreShown(false);
+        chooser = new ListeningFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setMultiSelectionEnabled(false);
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("XML files", "xml"));
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("STL formulae", "stl"));
 
-        chooser.addActionListener(new ActionListener() {
+        chooser.addSelectedFileChangedListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
