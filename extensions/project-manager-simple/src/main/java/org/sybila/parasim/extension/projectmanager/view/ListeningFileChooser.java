@@ -24,11 +24,9 @@ public class ListeningFileChooser extends JFileChooser {
 
             @Override
             public void propertyChange(PropertyChangeEvent pce) {
-                if (!pce.getNewValue().equals(pce.getOldValue())) {
-                    ActionEvent event = new ActionEvent(ListeningFileChooser.this, ActionEvent.ACTION_PERFORMED, JFileChooser.SELECTED_FILE_CHANGED_PROPERTY);
-                    for (ActionListener change : changeListeners) {
-                        change.actionPerformed(event);
-                    }
+                ActionEvent event = new ActionEvent(ListeningFileChooser.this, ActionEvent.ACTION_PERFORMED, JFileChooser.SELECTED_FILE_CHANGED_PROPERTY);
+                for (ActionListener change : changeListeners) {
+                    change.actionPerformed(event);
                 }
             }
         });
