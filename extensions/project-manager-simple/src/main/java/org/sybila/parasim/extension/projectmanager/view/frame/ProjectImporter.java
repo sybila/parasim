@@ -2,14 +2,20 @@ package org.sybila.parasim.extension.projectmanager.view.frame;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
+import org.sybila.parasim.extension.projectmanager.view.ListeningFileChooser;
 
 /**
  *
@@ -18,6 +24,8 @@ import org.sybila.parasim.extension.projectmanager.model.project.Project;
 public class ProjectImporter implements ProjectLoader {
 
     private final JDialog importer;
+    private final ListeningFileChooser modelChooser, projectChooser;
+    private final JButton approveBtn;
     private boolean approved;
 
     public ProjectImporter() {
@@ -28,16 +36,39 @@ public class ProjectImporter implements ProjectLoader {
 
         importer.getContentPane().setLayout(new BoxLayout(importer.getContentPane(), BoxLayout.PAGE_AXIS));
 
+        ActionListener changeListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                checkSelection();
+            }
+        };
+
+        modelChooser = new ListeningFileChooser();
+        modelChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        modelChooser.setAcceptAllFileFilterUsed(false);
+        modelChooser.addChoosableFileFilter(new FileNameExtensionFilter("SBML files", "sbml", "xml"));
+        modelChooser.addSelectedFileChangedListener(changeListener);
+        modelChooser.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Select Model File"));
+        importer.add(modelChooser);
+
+        projectChooser = new ListeningFileChooser();
+        projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        projectChooser.addSelectedFileChangedListener(changeListener);
+        projectChooser.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Select Project Directory"));
+        importer.add(projectChooser);
 
         JPanel buttons = new JPanel();
-        buttons.add(new JButton(new AbstractAction("OK") {
+        approveBtn = new JButton(new AbstractAction("OK") {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 approved = true;
                 importer.setVisible(false);
             }
-        }));
+        });
+        buttons.add(approveBtn);
+        approveBtn.setEnabled(false);
         buttons.add(new JButton(new AbstractAction("Cancel") {
 
             @Override
@@ -47,6 +78,10 @@ public class ProjectImporter implements ProjectLoader {
         }));
         importer.add(buttons);
         importer.pack();
+    }
+
+    private void checkSelection() {
+        approveBtn.setEnabled((modelChooser.getSelectedFile() != null) && (projectChooser.getSelectedFile() != null));
     }
 
     @Override
@@ -59,6 +94,7 @@ public class ProjectImporter implements ProjectLoader {
             return null;
         }
 
+        //tady se zkopíruje soubor a otevře se projekt -- měla by tam možná být nějaká kontrola pro případ, že directory není prázdný
 
         throw new UnsupportedOperationException("Not supported yet.");
     }
