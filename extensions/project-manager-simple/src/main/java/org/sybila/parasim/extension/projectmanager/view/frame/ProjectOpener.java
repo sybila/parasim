@@ -1,15 +1,25 @@
 package org.sybila.parasim.extension.projectmanager.view.frame;
 
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FilenameFilter;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
+import org.sybila.parasim.extension.projectmanager.model.projectimpl.DirProject;
+import org.sybila.parasim.extension.projectmanager.names.ExperimentSuffixes;
+import org.sybila.parasim.extension.projectmanager.project.ResourceException;
+import org.sybila.parasim.extension.projectmanager.view.ListeningFileChooser;
 
 /**
  *
@@ -18,6 +28,9 @@ import org.sybila.parasim.extension.projectmanager.model.project.Project;
 public class ProjectOpener implements ProjectLoader {
 
     private final JDialog importer;
+    private final ListeningFileChooser chooser;
+    private final JButton approveBtn;
+    private final JLabel info;
     private boolean approved;
 
     public ProjectOpener() {
@@ -28,15 +41,32 @@ public class ProjectOpener implements ProjectLoader {
 
         importer.getContentPane().setLayout(new BoxLayout(importer.getContentPane(), BoxLayout.PAGE_AXIS));
 
+        chooser = new ListeningFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.addSelectedFileChangedListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                checkFile(chooser.getSelectedFile());
+            }
+        });
+        importer.add(chooser);
+
+        info = new JLabel("Selected directory does not contain model file (or contains more of them).");
+        info.setAlignmentX(0.5f);
+        info.setForeground(Color.RED);
+        importer.add(info);
+
         JPanel buttons = new JPanel();
-        buttons.add(new JButton(new AbstractAction("OK") {
+        approveBtn = new JButton(new AbstractAction("OK") {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 approved = true;
                 importer.setVisible(false);
             }
-        }));
+        });
+        buttons.add(approveBtn);
         buttons.add(new JButton(new AbstractAction("Cancel") {
 
             @Override
@@ -45,7 +75,27 @@ public class ProjectOpener implements ProjectLoader {
             }
         }));
         importer.add(buttons);
+
+        setDirectoryOK(false);
         importer.pack();
+    }
+
+    private void setDirectoryOK(boolean value) {
+        approveBtn.setEnabled(value);
+        info.setVisible(!value);
+    }
+
+    private void checkFile(File target) {
+        if (target != null) {
+            String[] models = target.list(new FilenameFilter() {
+
+                @Override
+                public boolean accept(File file, String string) {
+                    return string.endsWith(ExperimentSuffixes.MODEL.getSuffix());
+                }
+            });
+            setDirectoryOK(models.length == 1);
+        }
     }
 
     @Override
@@ -58,7 +108,14 @@ public class ProjectOpener implements ProjectLoader {
             return null;
         }
 
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            DirProject result = new DirProject(chooser.getSelectedFile());
+            result.loadResources();
+            return result;
+        } catch (ResourceException re) {
+            JOptionPane.showMessageDialog(null, "Unable to load project in `" + chooser.getSelectedFile().toString() + "' directory:\n" + re.getLocalizedMessage(), "Open Project Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
     }
 
     public static void main(String[] args) {
