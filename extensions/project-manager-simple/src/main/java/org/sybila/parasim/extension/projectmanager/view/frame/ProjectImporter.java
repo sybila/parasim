@@ -1,21 +1,34 @@
 package org.sybila.parasim.extension.projectmanager.view.frame;
 
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
+import org.sybila.parasim.extension.projectmanager.model.projectimpl.DirProject;
+import org.sybila.parasim.extension.projectmanager.names.ExperimentSuffixes;
+import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.extension.projectmanager.view.ListeningFileChooser;
+import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.sbml.SBMLOdeSystemFactory;
 
 /**
  *
@@ -26,7 +39,18 @@ public class ProjectImporter implements ProjectLoader {
     private final JDialog importer;
     private final ListeningFileChooser modelChooser, projectChooser;
     private final JButton approveBtn;
+    private final JLabel info;
     private boolean approved;
+
+    private String removeExtension(String name) {
+        if (name.endsWith(".sbml")) {
+            return name.substring(0, name.length() - 5);
+        } else if (name.endsWith(".xml")) {
+            return name.substring(0, name.length() - 4);
+        } else {
+            return name;
+        }
+    }
 
     public ProjectImporter() {
         importer = new JDialog();
@@ -52,11 +76,21 @@ public class ProjectImporter implements ProjectLoader {
         modelChooser.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Select Model File"));
         importer.add(modelChooser);
 
+
+        JPanel projectPanel = new JPanel();
+        projectPanel.setLayout(new BoxLayout(projectPanel, BoxLayout.PAGE_AXIS));
+        projectPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Select Project Directory"));
+        importer.add(projectPanel);
+
         projectChooser = new ListeningFileChooser();
         projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         projectChooser.addSelectedFileChangedListener(changeListener);
-        projectChooser.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Select Project Directory"));
-        importer.add(projectChooser);
+        projectPanel.add(projectChooser);
+
+        info = new JLabel("Project directory is not empty.");
+        info.setAlignmentX(0.5f);
+        info.setForeground(Color.RED);
+        projectPanel.add(info);
 
         JPanel buttons = new JPanel();
         approveBtn = new JButton(new AbstractAction("OK") {
@@ -68,7 +102,6 @@ public class ProjectImporter implements ProjectLoader {
             }
         });
         buttons.add(approveBtn);
-        approveBtn.setEnabled(false);
         buttons.add(new JButton(new AbstractAction("Cancel") {
 
             @Override
@@ -78,10 +111,22 @@ public class ProjectImporter implements ProjectLoader {
         }));
         importer.add(buttons);
         importer.pack();
+
+        checkSelection();
     }
 
     private void checkSelection() {
-        approveBtn.setEnabled((modelChooser.getSelectedFile() != null) && (projectChooser.getSelectedFile() != null));
+        boolean correct = (modelChooser.getSelectedFile() != null);
+        info.setVisible(false);
+        if (projectChooser.getSelectedFile() != null) {
+            if (projectChooser.getSelectedFile().list().length != 0) {
+                info.setVisible(true);
+                correct = false;
+            }
+        } else {
+            correct = false;
+        }
+        approveBtn.setEnabled(correct);
     }
 
     @Override
@@ -94,9 +139,50 @@ public class ProjectImporter implements ProjectLoader {
             return null;
         }
 
-        //tady se zkopíruje soubor a otevře se projekt -- měla by tam možná být nějaká kontrola pro případ, že directory není prázdný
+        try {
+            OdeSystem test = SBMLOdeSystemFactory.fromFile(modelChooser.getSelectedFile());
+        } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(null, "Unable to load model (it probably is not SBML file):\n" + ioe.getMessage(), "Project Creation Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
 
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        String name = ExperimentSuffixes.MODEL.add(removeExtension(modelChooser.getSelectedFile().getName()));
+        File target = new File(projectChooser.getSelectedFile(), name);
+        FileChannel src = null;
+        FileChannel dst = null;
+        try {
+            src = new FileInputStream(modelChooser.getSelectedFile()).getChannel();
+            dst = new FileOutputStream(target).getChannel();
+            dst.transferFrom(src, 0, src.size());
+        } catch (FileNotFoundException fnfe) {
+            //TODO
+            return null;
+        } catch (IOException ioe) {
+            //TODO
+            return null;
+        } finally {
+            if (src != null) {
+                try {
+                    src.close();
+                } catch (IOException ioe) {
+                    //TODO
+                }
+            }
+            if (dst != null) {
+                try {
+                    dst.close();
+                } catch (IOException ioe) {
+                    //TODO
+                }
+            }
+        }
+        try {
+            return new DirProject(target);
+        } catch (ResourceException re) {
+            //TODO
+            return null;
+        }
     }
 
     public static void main(String[] args) {
