@@ -256,6 +256,7 @@ public class DirProject implements Project {
     private final File dir;
     private boolean saved = true;
     private final OdeSystem odeSystem;
+    private final String name;
     private final DirFormulaeList formulae;
     private final XMLResourceList<InitialSampling> samplingList;
     private final XMLResourceList<PrecisionConfiguration> precisionList;
@@ -280,10 +281,11 @@ public class DirProject implements Project {
         if (models.length > 1) {
             throw new ResourceException("There is more than one model in the directory.");
         }
+        name = models[0];
         try {
-            odeSystem = SBMLOdeSystemFactory.fromFile(modelManager.getFile(models[0]));
+            odeSystem = SBMLOdeSystemFactory.fromFile(modelManager.getFile(name));
         } catch (IOException ioe) {
-            throw new ResourceException("Unable to load ODE system from `" + modelManager.getFile(models[0]) + "'.", ioe);
+            throw new ResourceException("Unable to load ODE system from `" + modelManager.getFile(name) + "'.", ioe);
         }
 
         formulae = new DirFormulaeList(this);
@@ -305,6 +307,11 @@ public class DirProject implements Project {
 
     public File getProjectDirectory() {
         return dir;
+    }
+
+    @Override
+    public String getModelName() {
+        return name;
     }
 
     @Override
