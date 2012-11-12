@@ -16,7 +16,7 @@ public interface Project {
 
     public OdeSystem getOdeSystem();
 
-    public String getModelName();
+    public String getProjectName();
 
     public FormulaResourceList getFormulae();
 
