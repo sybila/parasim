@@ -28,6 +28,7 @@ public class FormulaImporter {
     private JDialog importer;
     private ListeningFileChooser chooser;
     private JTextField nameField;
+    private final JButton approveBtn;
 
     private String removeExtension(File target) {
         String name = target.getName();
@@ -55,7 +56,12 @@ public class FormulaImporter {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                nameField.setText(removeExtension(chooser.getSelectedFile()));
+                if (chooser.getSelectedFile() != null) {
+                    nameField.setText(removeExtension(chooser.getSelectedFile()));
+                } else {
+                    nameField.setText(null);
+                }
+                approveBtn.setEnabled(chooser.getSelectedFile() != null);
             }
         });
 
@@ -68,14 +74,16 @@ public class FormulaImporter {
         importer.getContentPane().add(nameField);
 
         JPanel buttons = new JPanel();
-        buttons.add(new JButton(new AbstractAction("OK") {
+        approveBtn = new JButton(new AbstractAction("OK") {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 approved = true;
                 importer.setVisible(false);
             }
-        }));
+        });
+        buttons.add(approveBtn);
+        approveBtn.setEnabled(false);
         buttons.add(new JButton(new AbstractAction("Cancel") {
 
             @Override
