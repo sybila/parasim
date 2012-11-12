@@ -36,6 +36,7 @@ import org.sybila.parasim.model.sbml.SBMLOdeSystemFactory;
  */
 public class ProjectImporter implements ProjectLoader {
 
+    private static final String ERROR_HEADER = "Project Creation Error";
     private final JDialog importer;
     private final ListeningFileChooser modelChooser, projectChooser;
     private final JButton approveBtn;
@@ -129,6 +130,10 @@ public class ProjectImporter implements ProjectLoader {
         approveBtn.setEnabled(correct);
     }
 
+    private void showImportError(String message) {
+        JOptionPane.showMessageDialog(null, message, ERROR_HEADER, JOptionPane.ERROR_MESSAGE);
+    }
+
     @Override
     public Project loadProject() {
         approved = false;
@@ -142,7 +147,7 @@ public class ProjectImporter implements ProjectLoader {
         try {
             OdeSystem test = SBMLOdeSystemFactory.fromFile(modelChooser.getSelectedFile());
         } catch (IOException ioe) {
-            JOptionPane.showMessageDialog(null, "Unable to load model (it probably is not SBML file):\n" + ioe.getMessage(), "Project Creation Error", JOptionPane.ERROR_MESSAGE);
+            showImportError("Unable to load model (it probably is not SBML file):\n" + ioe.getMessage());
             return null;
         }
 
@@ -156,31 +161,33 @@ public class ProjectImporter implements ProjectLoader {
             dst = new FileOutputStream(target).getChannel();
             dst.transferFrom(src, 0, src.size());
         } catch (FileNotFoundException fnfe) {
-            //TODO
+            showImportError("Unable to create project:\n" + fnfe.getMessage());
             return null;
         } catch (IOException ioe) {
-            //TODO
+            showImportError("Unable to create project:\n" + ioe.getMessage());
             return null;
         } finally {
             if (src != null) {
                 try {
                     src.close();
                 } catch (IOException ioe) {
-                    //TODO
+                    showImportError("Unable to create project:\n" + ioe.getMessage());
+                    return null;
                 }
             }
             if (dst != null) {
                 try {
                     dst.close();
                 } catch (IOException ioe) {
-                    //TODO
+                    showImportError("Unable to create project:\n" + ioe.getMessage());
+                    return null;
                 }
             }
         }
         try {
             return new DirProject(target);
         } catch (ResourceException re) {
-            //TODO
+            showImportError("Unable to create project:\n" + re.getMessage());
             return null;
         }
     }
