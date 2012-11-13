@@ -7,19 +7,36 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import org.sybila.parasim.extension.projectmanager.api.ExperimentListener;
 import org.sybila.parasim.extension.projectmanager.api.ProjectManager;
+import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
+import org.sybila.parasim.extension.projectmanager.model.components.ExperimentModel;
+import org.sybila.parasim.extension.projectmanager.model.components.FormulaModel;
+import org.sybila.parasim.extension.projectmanager.model.components.RobustnessModel;
+import org.sybila.parasim.extension.projectmanager.model.components.SimulationModel;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
+import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettings;
+import org.sybila.parasim.extension.projectmanager.view.formulae.FormulaeList;
+import org.sybila.parasim.extension.projectmanager.view.names.NameManager;
+import org.sybila.parasim.extension.projectmanager.view.robustness.RobustnessSettings;
+import org.sybila.parasim.extension.projectmanager.view.simulation.SimulationSettings;
 
 /**
  *
@@ -34,24 +51,8 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     private Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
 
     public ProjectManagerWindow() {
-        projectCreator = new ProjectLoader() {
-
-            @Override
-            public Project loadProject() {
-                //do nothing
-                JOptionPane.showMessageDialog(ProjectManagerWindow.this, "Project created.");
-                return null;
-            }
-        };
-        projectLoader = new ProjectLoader() {
-
-            @Override
-            public Project loadProject() {
-                // do nothing
-                JOptionPane.showMessageDialog(ProjectManagerWindow.this, "Project loaded");
-                return null;
-            }
-        };
+        projectCreator = new ProjectImporter();
+        projectLoader = new ProjectOpener();
 
         newAction = IconSource.getNewAction(new ActionListener() {
 
@@ -213,7 +214,79 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     }
 
     private void buildProjectWindow() {
-        throw new UnsupportedOperationException("Not yet supported.");
+        JPanel projectPanel = setUpProjectPanel();
+        OdeSystemNames names = new OdeSystemNames(project.getOdeSystem());
+        Set<String> simulationsNames = new HashSet<>(project.getSimulationSpaces().getNames());
+        simulationsNames.retainAll(project.getPrecisionsConfigurations().getNames());
+        Set<String> robustnessNames = new HashSet<>(project.getInitialSamplings().getNames());
+        robustnessNames.retainAll(project.getInitialSpaces().getNames());
+
+        ExperimentModel experimentModel = new ExperimentModel(project);
+        FormulaModel formulaModel = new FormulaModel(project, experimentModel);
+        SimulationModel simulationModel = new SimulationModel(project, experimentModel);
+        RobustnessModel robustnessModel = new RobustnessModel(project, experimentModel);
+
+        JPanel experimentPanel = setUpComponentPanel("Experiment");
+        ExperimentSettings experiments = new ExperimentSettings(experimentModel, project.getFormulae().getNames(), simulationsNames, robustnessNames);
+        experimentPanel.add(experiments);
+        NameManager experimentsManager = new NameManager(experimentModel, project.getExperiments().getNames());
+        experimentPanel.add(experimentsManager);
+
+        FormulaeList formulae = new FormulaeList(formulaModel, experiments.getFormulaeNameList());
+        addBorder(formulae, "Formula");
+        experimentModel.registerFormulaeManager(formulae);
+
+        JPanel simulationPanel = setUpComponentPanel("Simulation");
+        SimulationSettings simulations = new SimulationSettings(simulationModel, names);
+        simulationPanel.add(simulations);
+        NameManager simulationsManager = new NameManager(simulationModel, experiments.getSimulationsNameList());
+        simulationPanel.add(simulationsManager);
+        experimentModel.registerSimulationsManager(simulationsManager);
+        simulationModel.registerSettings(simulations);
+
+
+        JPanel robustnessPanel = setUpComponentPanel("Robustness");
+        RobustnessSettings robustness = new RobustnessSettings(robustnessModel, names);
+        robustnessPanel.add(robustness);
+        NameManager robustnessManager = new NameManager(robustnessModel, experiments.getRobustnessNameList());
+        robustnessPanel.add(robustnessManager);
+        experimentModel.registerRobustnessManager(robustnessManager);
+        robustnessModel.registerSettings(robustness);
+
+        projectPanel.add(experimentPanel);
+        projectPanel.add(formulae);
+        projectPanel.add(simulationPanel);
+        projectPanel.add(robustnessPanel);
+        pack();
+
+        // selfcheck //
+        if (!experimentModel.isReady()) {
+            throw new IllegalStateException("Experiment model not ready.");
+        }
+        if (!simulationModel.isReady()) {
+            throw new IllegalStateException("Simulation model not ready.");
+        }
+        if (!robustnessModel.isReady()) {
+            throw new IllegalStateException("Robustness model not ready.");
+        }
+    }
+
+    private void addBorder(JComponent target, String title) {
+        target.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), title));
+    }
+
+    private JPanel setUpProjectPanel() {
+        JPanel result = new JPanel();
+        result.setLayout(new BoxLayout(result, BoxLayout.LINE_AXIS));
+        add(result, BorderLayout.CENTER);
+        return result;
+    }
+
+    private JPanel setUpComponentPanel(String title) {
+        JPanel result = new JPanel();
+        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+        addBorder(result, title);
+        return result;
     }
 
     @Override
