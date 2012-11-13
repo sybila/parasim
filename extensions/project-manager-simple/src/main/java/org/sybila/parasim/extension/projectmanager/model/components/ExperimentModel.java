@@ -5,6 +5,7 @@ import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettingsModel;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettingsValues;
+import org.sybila.parasim.extension.projectmanager.view.formulae.FormulaeList;
 import org.sybila.parasim.extension.projectmanager.view.names.NameChooserModel;
 import org.sybila.parasim.extension.projectmanager.view.names.NameManager;
 import org.sybila.parasim.extension.projectmanager.view.names.NameManagerModel;
@@ -20,7 +21,8 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     private String currentName = null;
     private ExperimentNames current = new ExperimentNames();
     //
-    private NameManager formulae, robustness, simulations;
+    private NameManager robustness, simulations;
+    private FormulaeList formulae;
 
     private void checkCurrentName() {
         if (currentName == null) {
@@ -51,7 +53,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
 
             @Override
             public void seeName(String name) {
-                formulae.chooseName(name);
+                formulae.setSelectedName(name);
             }
         };
         robustnessChooser = new NameChooserModel() {
@@ -90,7 +92,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         simulations = null;
     }
 
-    public void registerFormulaeManager(NameManager manager) {
+    public void registerFormulaeManager(FormulaeList manager) {
         formulae = manager;
     }
 
