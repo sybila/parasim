@@ -102,6 +102,10 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         simulations = manager;
     }
 
+    public boolean isReady() {
+        return (formulae != null) && (robustness != null) && (simulations != null);
+    }
+
     @Override
     public void newName() {
         currentName = null;

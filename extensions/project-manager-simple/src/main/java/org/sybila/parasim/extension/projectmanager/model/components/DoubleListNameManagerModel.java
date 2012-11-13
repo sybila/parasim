@@ -28,6 +28,10 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         settings = target;
     }
 
+    public boolean isReady() {
+        return (settings != null);
+    }
+
     protected abstract ExperimentResourceList<T> getFirstList();
 
     protected abstract ExperimentResourceList<S> getSecondList();
