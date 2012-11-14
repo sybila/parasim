@@ -59,10 +59,12 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (checkSaved()) {
+                    setActionsEnabled(false);
                     project = projectCreator.loadProject();
                     if (project != null) {
                         buildProjectWindow();
                     }
+                    setActionsEnabled(true);
                 }
             }
         });
@@ -71,10 +73,12 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (checkSaved()) {
+                    setActionsEnabled(false);
                     project = projectLoader.loadProject();
                     if (project != null) {
                         buildProjectWindow();
                     }
+                    setActionsEnabled(true);
                 }
             }
         });
@@ -83,7 +87,9 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 try {
+                    setActionsEnabled(false);
                     project.save();
+                    setActionsEnabled(true);
                 } catch (ResourceException re) {
                     JOptionPane.showMessageDialog(ProjectManagerWindow.this, "Unable to save project: " + re.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -113,6 +119,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             }
         };
 
+        saveAction.setEnabled(false);
         launchAction.setEnabled(false);
         showAction.setEnabled(false);
 
@@ -287,6 +294,15 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
         addBorder(result, title);
         return result;
+    }
+
+    private void setActionsEnabled(boolean enabled) {
+        newAction.setEnabled(enabled);
+        loadAction.setEnabled(enabled);
+        saveAction.setEnabled(enabled);
+        if (project == null) {
+            saveAction.setEnabled(false);
+        }
     }
 
     @Override
