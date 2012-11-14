@@ -2,11 +2,14 @@ package org.sybila.parasim.extension.projectmanager.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -27,6 +30,17 @@ public class ListeningFileChooser extends JFileChooser {
                 ActionEvent event = new ActionEvent(ListeningFileChooser.this, ActionEvent.ACTION_PERFORMED, JFileChooser.SELECTED_FILE_CHANGED_PROPERTY);
                 for (ActionListener change : changeListeners) {
                     change.actionPerformed(event);
+                }
+            }
+        });
+
+        getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "openDir");
+        getActionMap().put("openDir", new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (getSelectedFile() != null && getSelectedFile().isDirectory()) {
+                    setCurrentDirectory(getSelectedFile());
                 }
             }
         });

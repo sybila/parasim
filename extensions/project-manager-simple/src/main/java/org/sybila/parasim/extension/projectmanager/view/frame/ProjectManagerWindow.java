@@ -305,8 +305,14 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             @Override
             public void run() {
                 JFrame manager = new ProjectManagerWindow();
-                manager.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 manager.setVisible(true);
+                manager.addWindowListener(new WindowAdapter() {
+
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
             }
         });
     }

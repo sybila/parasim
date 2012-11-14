@@ -70,7 +70,7 @@ public class ProjectImporter implements ProjectLoader {
         };
 
         modelChooser = new ListeningFileChooser();
-        modelChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        modelChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         modelChooser.setAcceptAllFileFilterUsed(false);
         modelChooser.addChoosableFileFilter(new FileNameExtensionFilter("SBML files", "sbml", "xml"));
         modelChooser.addSelectedFileChangedListener(changeListener);
@@ -117,9 +117,9 @@ public class ProjectImporter implements ProjectLoader {
     }
 
     private void checkSelection() {
-        boolean correct = (modelChooser.getSelectedFile() != null);
+        boolean correct = ((modelChooser.getSelectedFile() != null) && modelChooser.getSelectedFile().isFile());
         info.setVisible(false);
-        if (projectChooser.getSelectedFile() != null) {
+        if (projectChooser.getSelectedFile() != null && projectChooser.getSelectedFile().canRead()) {
             if (projectChooser.getSelectedFile().list().length != 0) {
                 info.setVisible(true);
                 correct = false;
@@ -185,7 +185,7 @@ public class ProjectImporter implements ProjectLoader {
             }
         }
         try {
-            return new DirProject(target);
+            return new DirProject(projectChooser.getSelectedFile());
         } catch (ResourceException re) {
             showImportError("Unable to create project:\n" + re.getMessage());
             return null;

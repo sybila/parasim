@@ -48,7 +48,7 @@ public class FormulaImporter {
 
         chooser = new ListeningFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("XML files", "xml"));
         chooser.addChoosableFileFilter(new FileNameExtensionFilter("STL formulae", "stl"));
 
@@ -56,12 +56,9 @@ public class FormulaImporter {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (chooser.getSelectedFile() != null) {
-                    nameField.setText(removeExtension(chooser.getSelectedFile()));
-                } else {
-                    nameField.setText(null);
-                }
-                approveBtn.setEnabled(chooser.getSelectedFile() != null);
+                boolean chosen = (chooser.getSelectedFile() != null) && (chooser.getSelectedFile().isFile());
+                nameField.setText(chosen ? removeExtension(chooser.getSelectedFile()) : null);
+                approveBtn.setEnabled(chosen);
             }
         });
 
