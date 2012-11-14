@@ -216,6 +216,8 @@ public class SimulationSettings extends JPanel implements ValueHolder<Simulation
         constraints.gridx = 0;
         constraints.gridy = 4;
         add(variablePanel, constraints);
+
+        setValues(odeNames.getDefaultSimulationSettingsValues());
     }
 
     private void fireChange() {
@@ -240,7 +242,7 @@ public class SimulationSettings extends JPanel implements ValueHolder<Simulation
     }
 
     @Override
-    public void setValues(SimulationSettingsValues values) {
+    public final void setValues(SimulationSettingsValues values) {
         int size = names.getVariables().size();
         if (values.getPrecisionConfiguration().getDimension() != size) {
             throw new IllegalArgumentException("Precision configuration has wrong dimension.");

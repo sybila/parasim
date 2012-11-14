@@ -238,6 +238,8 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
         constraints.gridx = 1;
         constraints.gridy = 1;
         add(parameters, constraints);
+
+        setValues(names.getDefaultRobustnessSettingsValues());
     }
 
     private void addRow(String name, int index) {
@@ -269,7 +271,7 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
     }
 
     @Override
-    public void setValues(RobustnessSettingsValues newValues) {
+    public final void setValues(RobustnessSettingsValues newValues) {
         for (String name : names.getVariables()) {
             Pair<Float, Float> bounds = newValues.getInitialSpace().getValues(name);
             int samples = newValues.getInitialSampling().getSamples(name);

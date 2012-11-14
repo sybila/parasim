@@ -1,10 +1,18 @@
 package org.sybila.parasim.extension.projectmanager.model;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import org.sybila.parasim.computation.simulation.api.ArrayPrecisionConfiguration;
+import org.sybila.parasim.extension.projectmanager.view.robustness.RobustnessSettingsValues;
+import org.sybila.parasim.extension.projectmanager.view.simulation.SimulationSettingsValues;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.VariableValue;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
+import org.sybila.parasim.util.Pair;
 
 /**
  *
@@ -86,5 +94,47 @@ public class OdeSystemNames {
         }
         return param.isSubstituted();
     }
-;
+
+    public SimulationSettingsValues getDefaultSimulationSettingsValues() {
+        float[] absolute = new float[system.dimension()];
+        Arrays.fill(absolute, 0f);
+
+        Map<String, Pair<Float, Float>> space = new HashMap<>();
+        for (String name : getVariables()) {
+            Float value = getValue(name);
+            Pair<Float, Float> bounds;
+            if (value == null) {
+                value = 0f;
+            }
+            if (value == 0) {
+                bounds = new Pair<>(0f, 100f);
+            } else {
+                int magnitude = Double.valueOf(Math.ceil(Math.log10(value))).intValue() + 1;
+                bounds = new Pair<>(0f, Double.valueOf(Math.pow(10, magnitude)).floatValue());
+            }
+            space.put(name, bounds);
+        }
+
+        return new SimulationSettingsValues(
+                new ArrayPrecisionConfiguration(absolute, 0.1f, 0.1f),
+                new SimpleNamedOrthogonalSpace(space),
+                0, 100);
+    }
+
+    public RobustnessSettingsValues getDefaultRobustnessSettingsValues() {
+        Map<String, Pair<Float, Float>> space = new HashMap<>();
+        Map<String, Integer> sampling = new HashMap<>();
+
+        Set<String> names = new HashSet<>(getVariables());
+        names.addAll(getParameters());
+        for (String name : names) {
+            Float value = getValue(name);
+            if (value == null) {
+                space.put(name, new Pair<>(0f, 0f));
+                sampling.put(name, 1);
+            }
+        }
+
+        return new RobustnessSettingsValues(new SimpleNamedInitialSampling(sampling), new SimpleNamedOrthogonalSpace(space));
+    }
 }
