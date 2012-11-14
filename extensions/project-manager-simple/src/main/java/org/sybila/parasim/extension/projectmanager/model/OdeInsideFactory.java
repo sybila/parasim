@@ -15,7 +15,7 @@ public class OdeInsideFactory {
             throw new IllegalArgumentException("Argumetn (ode system) is null.");
         }
 
-        system = OdeUtils.substituteAll(system);
+        system = OdeUtils.substituteAll(odeSystem);
     }
 
     protected OdeSystem getOdeSystem() {
