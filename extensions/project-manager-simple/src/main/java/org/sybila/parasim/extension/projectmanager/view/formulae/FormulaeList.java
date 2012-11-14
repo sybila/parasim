@@ -1,6 +1,7 @@
 package org.sybila.parasim.extension.projectmanager.view.formulae;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,6 +17,9 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.sybila.parasim.extension.projectmanager.view.names.NameList;
@@ -128,7 +132,9 @@ public class FormulaeList extends JPanel {
             }
         });
 
-        setLayout(new BorderLayout());
+        list.setBorder(new CompoundBorder(new LineBorder(Color.GRAY), new EmptyBorder(2, 2, 2, 2)));
+
+        setLayout(new BorderLayout(3, 0));
         add(list, BorderLayout.CENTER);
         JPanel buttons = new JPanel(new GridBagLayout());
         buttons.add(new JButton(addAction), getButtonConstraints(0));
