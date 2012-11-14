@@ -2,6 +2,8 @@ package org.sybila.parasim.extension.projectmanager.view.frame;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -44,6 +46,12 @@ import org.sybila.parasim.extension.projectmanager.view.simulation.SimulationSet
  */
 public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
+    private static GridBagConstraints getConstraints(int x) {
+        GridBagConstraints result = new GridBagConstraints();
+        result.gridx = x;
+        result.fill = GridBagConstraints.VERTICAL;
+        return result;
+    }
     private ExperimentListener launcher;
     private Project project = null;
     //
@@ -221,7 +229,6 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     }
 
     private void buildProjectWindow() {
-        JPanel projectPanel = setUpProjectPanel();
         OdeSystemNames names = new OdeSystemNames(project.getOdeSystem());
         Set<String> simulationsNames = new HashSet<>(project.getSimulationSpaces().getNames());
         simulationsNames.retainAll(project.getPrecisionsConfigurations().getNames());
@@ -260,10 +267,11 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         experimentModel.registerRobustnessManager(robustnessManager);
         robustnessModel.registerSettings(robustness);
 
-        projectPanel.add(experimentPanel);
-        projectPanel.add(formulae);
-        projectPanel.add(simulationPanel);
-        projectPanel.add(robustnessPanel);
+        JPanel projectPanel = setUpProjectPanel();
+        projectPanel.add(experimentPanel, getConstraints(0));
+        projectPanel.add(formulae, getConstraints(1));
+        projectPanel.add(simulationPanel, getConstraints(2));
+        projectPanel.add(robustnessPanel, getConstraints(3));
         pack();
 
         // selfcheck //
@@ -283,8 +291,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     }
 
     private JPanel setUpProjectPanel() {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.LINE_AXIS));
+        JPanel result = new JPanel(new GridBagLayout());
         add(result, BorderLayout.CENTER);
         return result;
     }
