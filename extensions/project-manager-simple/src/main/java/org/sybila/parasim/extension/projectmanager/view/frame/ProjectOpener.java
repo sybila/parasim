@@ -94,7 +94,7 @@ public class ProjectOpener implements ProjectLoader {
                     return string.endsWith(ExperimentSuffixes.MODEL.getSuffix());
                 }
             });
-            setDirectoryOK(models.length == 1);
+            setDirectoryOK(models != null && models.length == 1);
         }
     }
 
