@@ -36,13 +36,18 @@ public class FileManager {
     }
 
     public String[] getFiles() {
-        return dir.list(new FilenameFilter() {
+        String[] names = dir.list(new FilenameFilter() {
 
             @Override
             public boolean accept(File file, String string) {
                 return string.endsWith(suffix.getSuffix());
             }
         });
+        String[] result = new String[names.length];
+        for (int i = 0; i < names.length; i++) {
+            result[i] = suffix.remove(names[0]);
+        }
+        return result;
     }
 
     public File createFile(String name) {
