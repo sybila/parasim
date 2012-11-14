@@ -70,7 +70,7 @@ public class DirFormulaeList implements FormulaResourceList {
         resources.clear();
         for (String name : files.getFiles()) {
             if (!resources.containsKey(name)) {
-                Resource resource = new Resource(new FormulaResource(files.getFile(name)));
+                Resource resource = new Resource(createResource(files.getFile(name)));
                 try {
                     resource.get().load();
                     resources.put(name, resource);
@@ -186,6 +186,7 @@ public class DirFormulaeList implements FormulaResourceList {
                 project.renameFormula(name, newName);
             }
             resources.put(newName, target);
+            files.deleteFile(name);
             return true;
         } else {
             files.deleteFile(newName);

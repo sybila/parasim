@@ -45,7 +45,7 @@ public class FileManager {
         });
         String[] result = new String[names.length];
         for (int i = 0; i < names.length; i++) {
-            result[i] = suffix.remove(names[0]);
+            result[i] = suffix.remove(names[i]);
         }
         return result;
     }
