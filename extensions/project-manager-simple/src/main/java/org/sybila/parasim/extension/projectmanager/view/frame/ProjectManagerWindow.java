@@ -49,7 +49,9 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     private static GridBagConstraints getConstraints(int x) {
         GridBagConstraints result = new GridBagConstraints();
         result.gridx = x;
-        result.fill = GridBagConstraints.VERTICAL;
+        result.weightx = 1;
+        result.weighty = 1;
+        result.fill = GridBagConstraints.BOTH;
         return result;
     }
     private ExperimentListener launcher;
