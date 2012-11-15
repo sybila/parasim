@@ -46,6 +46,7 @@ public class ExperimentSettings extends JPanel implements ValueHolder<Pair<Exper
         GridBagConstraints result = getConstraints();
         result.gridx = 1;
         result.gridy = y;
+        result.weightx = 0.5;
         result.insets = new Insets(1, 2, 1, 1);
         return result;
     }
@@ -111,6 +112,8 @@ public class ExperimentSettings extends JPanel implements ValueHolder<Pair<Exper
         GridBagConstraints annotationConstraints = getConstraints();
         annotationConstraints.gridy = 5;
         annotationConstraints.gridwidth = 2;
+        annotationConstraints.weightx = 1;
+        annotationConstraints.weighty = 1;
         add(annotation, annotationConstraints);
     }
 
