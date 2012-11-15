@@ -9,6 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.LoadedExperiment;
+import org.sybila.parasim.application.model.LoadedExperimentImpl;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectmanager.model.project.ExperimentResourceList;
@@ -22,6 +23,7 @@ import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.sbml.SBMLOdeSystemFactory;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.verification.stl.Formula;
 
 /**
  *
@@ -188,6 +190,7 @@ public class DirProject implements Project {
                 return false;
             }
 
+            target.setModelName(odeName);
             ExperimentNamesResource resource = new ExperimentNamesResource(file);
             resource.setRoot(target);
             resources.put(name, resource);
@@ -256,6 +259,8 @@ public class DirProject implements Project {
     private final File dir;
     private boolean saved = true;
     private final OdeSystem odeSystem;
+    private final String odeName;
+    private final FileManager results;
     private final DirFormulaeList formulae;
     private final XMLResourceList<InitialSampling> samplingList;
     private final XMLResourceList<PrecisionConfiguration> precisionList;
@@ -280,13 +285,14 @@ public class DirProject implements Project {
         if (models.length > 1) {
             throw new ResourceException("There is more than one model in the directory.");
         }
-        String name = models[0];
+        odeName = models[0];
         try {
-            odeSystem = SBMLOdeSystemFactory.fromFile(modelManager.getFile(name));
+            odeSystem = SBMLOdeSystemFactory.fromFile(modelManager.getFile(odeName));
         } catch (IOException ioe) {
-            throw new ResourceException("Unable to load ODE system from `" + modelManager.getFile(name) + "'.", ioe);
+            throw new ResourceException("Unable to load ODE system from `" + modelManager.getFile(odeName) + "'.", ioe);
         }
 
+        results = new FileManager(directory, ExperimentSuffixes.VERIFICATION_RESULT);
         formulae = new DirFormulaeList(this);
         samplingList = new InitialSamplingResourceList(this);
         precisionList = new PrecisionConfigurationResourceList(this);
@@ -315,7 +321,35 @@ public class DirProject implements Project {
 
     @Override
     public LoadedExperiment getExperiment(ExperimentNames experiment) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (!experiment.isFilled()) {
+            return null;
+        }
+        if (!experiment.getModelName().equals(odeName)) {
+            return null;
+        }
+
+        OrthogonalSpace initSpace = initialSpaceList.get(experiment.getInitialSpaceName());
+        if (initSpace == null) {
+            return null;
+        }
+        InitialSampling sampling = samplingList.get(experiment.getInitialSamplingName());
+        if (sampling == null) {
+            return null;
+        }
+        OrthogonalSpace simSpace = simulationSpaceList.get(experiment.getSimulationSpaceName());
+        if (simSpace == null) {
+            return null;
+        }
+        PrecisionConfiguration precision = precisionList.get(experiment.getPrecisionConfigurationName());
+        if (precision == null) {
+            return null;
+        }
+        Formula formula = formulae.get(experiment.getFormulaName());
+        if (formula == null) {
+            return null;
+        }
+
+        return new LoadedExperimentImpl(odeSystem, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit(), results.getFile(experiment.getVerificationResultName()));
     }
 
     @Override

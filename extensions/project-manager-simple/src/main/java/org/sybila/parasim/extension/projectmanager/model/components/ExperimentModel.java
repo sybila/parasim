@@ -129,6 +129,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         checkCurrentName();
         if (project.getExperiments().rename(currentName, newName)) {
             currentName = newName;
+            current.setVerificationResultName(currentName);
             return true;
         }
         JOptionPane.showMessageDialog(null, "Unable to rename experiment `" + currentName + "' to `" + newName + "'.", "Rename Error", JOptionPane.ERROR_MESSAGE);
@@ -140,6 +141,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         checkName(name);
         if (project.getExperiments().add(currentName, current)) {
             selectionChanged(name);
+            current.setVerificationResultName(currentName);
             return true;
         }
         JOptionPane.showMessageDialog(null, "Unable to save current experiment as `" + name + "'.", "Save Error", JOptionPane.ERROR_MESSAGE);

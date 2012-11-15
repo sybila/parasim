@@ -117,6 +117,13 @@ public class ExperimentNames {
         this.annotation = annotation;
     }
 
+    public boolean isFilled() {
+        return ((formulaName != null) && (initialSpaceName != null)
+                && (simulationSpaceName != null) && (precisionConfigurationName != null)
+                && (initialSamplingName != null) && (verificationResultName != null)
+                && (modelName != null) && (iterationLimit > 0) && (timeout > 0));
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

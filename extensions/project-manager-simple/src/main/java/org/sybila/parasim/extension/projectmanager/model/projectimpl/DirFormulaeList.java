@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.extension.projectmanager.model.project.FormulaResourceList;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentSuffixes;
 import org.sybila.parasim.model.ode.OdeVariableMapping;
+import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.FormulaResource;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.util.SimpleLock;
@@ -103,6 +104,14 @@ public class DirFormulaeList implements FormulaResourceList {
             return false;
         }
         return true;
+    }
+
+    public Formula get(String name) {
+        Resource target = resources.get(name);
+        if (target == null) {
+            return null;
+        }
+        return target.get().getRoot();
     }
 
     @Override
