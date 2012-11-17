@@ -128,8 +128,8 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
 
         private E target;
 
-        public AddAction(E target, FileManager manager, String name) {
-            super(manager, name);
+        public AddAction(E target, String name) {
+            super(files, name);
             this.target = target;
         }
 
@@ -155,7 +155,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
         if (resources.containsKey(name)) {
             return null;
         }
-        return new AddAction(target, files, name);
+        return new AddAction(target, name);
     }
 
     @Override
@@ -188,8 +188,8 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
 
         private String oldName;
 
-        public RenameAction(String oldName, FileManager manager, String name) {
-            super(manager, name);
+        public RenameAction(String oldName, String name) {
+            super(files, name);
             this.oldName = oldName;
         }
 
@@ -200,6 +200,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
                 Resource old = resources.get(oldName);
                 Resource resource = new Resource(getXMLResource(getFile()), old);
                 resource.get().setRoot(old.get().getRoot());
+                resources.put(getName(), resource);
                 removeAndRename(oldName, getName());
                 saved = false;
             }
@@ -210,6 +211,7 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
         if (resources.remove(name).isUsed()) {
             project.applyAction(getAction(name, newName));
         }
+        files.deleteFile(name);
     }
 
     @Override
@@ -220,6 +222,6 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
         if (resources.containsKey(newName)) {
             return null;
         }
-        return new RenameAction(name, files, newName);
+        return new RenameAction(name, newName);
     }
 }

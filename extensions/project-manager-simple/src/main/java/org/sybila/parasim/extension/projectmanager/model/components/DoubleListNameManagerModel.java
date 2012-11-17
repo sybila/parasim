@@ -117,6 +117,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         if (first.isViable() && second.isViable()) {
             first.commit();
             second.commit();
+            currentName = newName;
             return true;
         }
 
@@ -136,6 +137,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         if (first.isViable() && second.isViable()) {
             first.commit();
             second.commit();
+            currentName = name;
             return true;
         }
 
