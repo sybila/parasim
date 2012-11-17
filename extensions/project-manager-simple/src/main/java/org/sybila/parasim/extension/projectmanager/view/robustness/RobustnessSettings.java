@@ -29,6 +29,7 @@ import org.sybila.parasim.extension.projectmanager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectmanager.view.TableConstraints;
 import org.sybila.parasim.extension.projectmanager.view.ValueHolder;
 import org.sybila.parasim.util.Pair;
+import org.sybila.parasim.util.SimpleLock;
 
 /**
  *
@@ -181,6 +182,7 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
         }
     }
     //
+    private final SimpleLock lock = new SimpleLock();
     private RobustnessSettingsModel model;
     private OdeSystemNames names;
     private Map<String, Row> rows = new HashMap<>();
@@ -264,7 +266,9 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
     }
 
     private void fireChanges() {
-        model.valuesChanged(getValues());
+        if (lock.isAccessible()) {
+            model.valuesChanged(getValues());
+        }
     }
 
     @Override
@@ -281,30 +285,34 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
     }
 
     private boolean setValues(String name, RobustnessSettingsValues values) {
+        lock.lock();
         Pair<Float, Float> bounds = values.getInitialSpace().getValues(name);
         int samples = values.getInitialSampling().getSamples(name);
         Row row = rows.get(name);
-        if (bounds != null) {
+        boolean nonEmpty = (bounds != null);
+        if (nonEmpty) {
             row.setValues(bounds.first(), bounds.second(), samples);
-            row.setVisible(true);
-            return true;
         } else {
             if (unvalued.contains(name)) {
                 throw new IllegalArgumentException("New values do not cover all parameters withou value.");
             }
-            row.setVisible(false);
-            return false;
         }
+        row.setVisible(nonEmpty);
+        lock.unlock();
+        return nonEmpty;
+
     }
 
     @Override
     public final void setValues(RobustnessSettingsValues newValues) {
+        lock.lock();
         for (String name : names.getVariables()) {
             variables.setChecked(name, setValues(name, newValues));
         }
         for (String name : names.getParameters()) {
             parameters.setChecked(name, setValues(name, newValues));
         }
+        lock.unlock();
     }
 
     public static void main(String[] args) {
