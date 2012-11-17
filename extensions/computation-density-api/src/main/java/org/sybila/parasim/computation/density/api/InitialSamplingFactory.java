@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.computation.density.api;
 
@@ -86,12 +86,12 @@ public class InitialSamplingFactory implements XMLRepresentableFactory<InitialSa
         OdeSystem releasedOdeSystem = odeSystem.release(toRelease);
         int[] sampling = new int[releasedOdeSystem.dimension()];
 
-        for (int dim = 0; dim < odeSystem.dimension(); dim++) {
-            if (odeSystem.isVariable(dim)) {
-                Variable var = odeSystem.getVariable(dim);
+        for (int dim = 0; dim < releasedOdeSystem.dimension(); dim++) {
+            if (releasedOdeSystem.isVariable(dim)) {
+                Variable var = releasedOdeSystem.getVariable(dim);
                 sampling[dim] = varSampling.containsKey(var.getName()) ? varSampling.get(var.getName()) : 1;
             } else {
-                Parameter param = odeSystem.getParameter(dim);
+                Parameter param = releasedOdeSystem.getParameter(dim);
                 sampling[dim] = paramSampling.containsKey(param.getName()) ? paramSampling.get(param.getName()) : 1;
             }
         }
