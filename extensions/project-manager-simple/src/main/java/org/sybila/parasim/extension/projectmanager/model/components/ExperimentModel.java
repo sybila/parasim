@@ -139,7 +139,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     @Override
     public boolean saveCurrent(String name) {
         checkName(name);
-        if (project.getExperiments().add(currentName, current)) {
+        if (project.getExperiments().add(name, current)) {
             selectionChanged(name);
             current.setVerificationResultName(currentName);
             return true;
