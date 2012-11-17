@@ -11,6 +11,8 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.sybila.parasim.extension.projectmanager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectmanager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectmanager.view.TableConstraints;
@@ -106,6 +108,29 @@ public class ExperimentSettings extends JPanel {
         add(robustness, getRightConstraints(4));
 
         annotation = new JTextArea(5, 35);
+        annotation.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                if (lock.isAccessible()) {
+                    model.annotationChanged(getAnnotation());
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                if (lock.isAccessible()) {
+                    model.annotationChanged(getAnnotation());
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                if (lock.isAccessible()) {
+                    model.annotationChanged(getAnnotation());
+                }
+            }
+        });
         annotation.setLineWrap(true);
         annotation.setWrapStyleWord(true);
         GridBagConstraints annotationConstraints = getConstraints();
