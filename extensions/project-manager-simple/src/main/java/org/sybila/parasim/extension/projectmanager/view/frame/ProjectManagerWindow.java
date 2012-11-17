@@ -145,6 +145,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
         generateToolBar();
         generateMenu();
+        setTitle();
         pack();
     }
 
@@ -275,6 +276,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         projectPanel.add(simulationPanel, getConstraints(2));
         projectPanel.add(robustnessPanel, getConstraints(3));
         pack();
+        setTitle();
 
         // selfcheck //
         if (!experimentModel.isReady()) {
@@ -312,6 +314,15 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         if (project == null) {
             saveAction.setEnabled(false);
         }
+    }
+
+    private void setTitle() {
+        StringBuilder title = new StringBuilder("PARASIM project manager");
+        if (project != null) {
+            title.append(": ");
+            title.append(project.getProjectName());
+        }
+        setTitle(title.toString());
     }
 
     @Override
