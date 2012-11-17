@@ -96,7 +96,8 @@ public class FormulaeList extends JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String name = list.getSelectedValue();
-                String newName = JOptionPane.showInputDialog(FormulaeList.this, "Select new name for formula `" + name + "':", "Rename dialog", JOptionPane.QUESTION_MESSAGE);
+                String newName = (String) JOptionPane.showInputDialog(FormulaeList.this, "Select new name for formula `" + name + "':",
+                        "Rename dialog", JOptionPane.QUESTION_MESSAGE, null, null, name);
                 if (newName != null) {
                     if (names.contains(newName)) {
                         JOptionPane.showMessageDialog(FormulaeList.this, "Formula of name `" + newName + "' already exists.", "Rename error", JOptionPane.ERROR_MESSAGE);
