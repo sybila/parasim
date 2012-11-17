@@ -3,12 +3,14 @@ package org.sybila.parasim.extension.projectmanager.model.components;
 import javax.swing.JOptionPane;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
+import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettings;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettingsModel;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettingsValues;
 import org.sybila.parasim.extension.projectmanager.view.formulae.FormulaeList;
 import org.sybila.parasim.extension.projectmanager.view.names.NameChooserModel;
 import org.sybila.parasim.extension.projectmanager.view.names.NameManager;
 import org.sybila.parasim.extension.projectmanager.view.names.NameManagerModel;
+import org.sybila.parasim.util.Pair;
 
 /**
  *
@@ -23,6 +25,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     //
     private NameManager robustness, simulations;
     private FormulaeList formulae;
+    private ExperimentSettings settings = null;
 
     private void checkCurrentName() {
         if (currentName == null) {
@@ -104,8 +107,12 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         simulations = manager;
     }
 
+    public void registerExperimentSettings(ExperimentSettings settings) {
+        this.settings = settings;
+    }
+
     public boolean isReady() {
-        return (formulae != null) && (robustness != null) && (simulations != null);
+        return (formulae != null) && (robustness != null) && (simulations != null) && (settings != null);
     }
 
     @Override
@@ -157,6 +164,11 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         }
         current = values;
         currentName = name;
+
+        settings.setValues(new Pair<>(new ExperimentSettingsValues(values.getIterationLimit(), values.getTimeout()), values.getAnnotation()));
+        settings.getFormulaeNameList().selectName(values.getFormulaName());
+        settings.getSimulationsNameList().selectName(values.getSimulationSpaceName());
+        settings.getRobustnessNameList().selectName(values.getInitialSamplingName());
     }
 
     @Override

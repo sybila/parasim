@@ -249,6 +249,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         experimentPanel.add(experiments);
         NameManager experimentsManager = new NameManager(experimentModel, project.getExperiments().getNames());
         experimentPanel.add(experimentsManager);
+        experimentModel.registerExperimentSettings(experiments);
 
         FormulaeList formulae = new FormulaeList(formulaModel, experiments.getFormulaeNameList());
         addBorder(formulae, "Formula");

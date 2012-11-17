@@ -14,7 +14,6 @@ import javax.swing.JTextArea;
 import org.sybila.parasim.extension.projectmanager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectmanager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectmanager.view.TableConstraints;
-import org.sybila.parasim.extension.projectmanager.view.ValueHolder;
 import org.sybila.parasim.extension.projectmanager.view.names.NameChooser;
 import org.sybila.parasim.extension.projectmanager.view.names.NameChooserModel;
 import org.sybila.parasim.extension.projectmanager.view.names.NameList;
@@ -26,7 +25,7 @@ import org.sybila.parasim.util.SimpleLock;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class ExperimentSettings extends JPanel implements ValueHolder<Pair<ExperimentSettingsValues, String>> {
+public class ExperimentSettings extends JPanel {
 
     private GridBagConstraints getConstraints() {
         GridBagConstraints result = new GridBagConstraints();
@@ -139,14 +138,12 @@ public class ExperimentSettings extends JPanel implements ValueHolder<Pair<Exper
         return annotation.getText();
     }
 
-    @Override
     public Pair<ExperimentSettingsValues, String> getValues() {
         Number iteration = (Number) iterationField.getValue();
         Number timeout = (Number) timeoutField.getValue();
         return new Pair(new ExperimentSettingsValues(iteration.intValue(), timeout.longValue()), getAnnotation());
     }
 
-    @Override
     public void setValues(Pair<ExperimentSettingsValues, String> target) {
         lock.lock();
         annotation.setText(target.second());
