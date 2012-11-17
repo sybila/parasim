@@ -221,6 +221,10 @@ public class SBMLOdeSystem implements OdeSystem {
             String reactionName = reaction.getName() == null || reaction.getName().isEmpty() ? reaction.getId() : reaction.getName();
             Map<String, Parameter> localParameters = new HashMap<>();
             LOGGER.debug("parsing reaction with id = " + reaction.getId());
+            if (reaction.getKineticLaw() == null)  {
+                LOGGER.warn("skipping reaction (id = '" + reaction.getId() + "') without any kinetic law");
+                continue;
+            }
             for (org.sbml.jsbml.LocalParameter p : reaction.getKineticLaw().getListOfLocalParameters()) {
                 if (p.getId() == null || p.getId().isEmpty()) {
                     LOGGER.warn("skipping local parameter with undefined id in reaction with id = " + reaction.getId() + ".");

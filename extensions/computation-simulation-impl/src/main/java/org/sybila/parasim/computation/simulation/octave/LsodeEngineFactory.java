@@ -57,34 +57,36 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
 
         public LsodeEngine(OctaveEngine octave, IntegrationMethod integrationMethod, long stepLimit) {
             super(octave, stepLimit);
-            LOGGER.debug("lsode_options(\"step limit\", " + stepLimit + ");");
-            getOctave().eval("lsode_options(\"step limit\", " + stepLimit + ");");
-            LOGGER.debug("lsode_options('integration method', '" + integrationMethod.getName() + "');");
-            getOctave().eval("lsode_options('integration method', '" + integrationMethod.getName() + "');");
+            StringBuilder builder = new StringBuilder()
+                    .append("lsode_options(\"step limit\", ")
+                    .append(Long.toString(stepLimit))
+                    .append(");")
+                    .append("lsode_options('integration method', '")
+                    .append(integrationMethod.getName())
+                    .append("');");
+            LOGGER.debug(builder.toString());
+            getOctave().eval(builder.toString());
         }
 
         @Override
         protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision) {
+            StringBuilder builder = new StringBuilder();
             if (precision.getMaxRelativeError() > 0) {
-                LOGGER.debug("lsode_options(\"relative tolerance\", " + precision.getMaxRelativeError() + ");");
-                getOctave().eval("lsode_options(\"relative tolerance\", " + precision.getMaxRelativeError() + ");");
+                builder.append("lsode_options(\"relative tolerance\", ").append(precision.getMaxRelativeError()).append(");");
             }
             if (absoluteToleranceIsSet(precision)) {
                 float[] tolerance = new float[precision.getDimension()];
                 for (int i=0; i<tolerance.length; i++) {
                     tolerance[i] = precision.getMaxAbsoluteError(i);
                 }
-                LOGGER.debug("lsode_options(\"absolute tolerance\", " + Arrays.toString(tolerance) + ")");
-                getOctave().eval("lsode_options(\"absolute tolerance\", " + Arrays.toString(tolerance) + ")");
+                builder.append("lsode_options(\"absolute tolerance\", ").append(Arrays.toString(tolerance)).append(");");
             }
-            LOGGER.debug(odeSystem.octaveString(false));
-            getOctave().eval(odeSystem.octaveString(false));
-            LOGGER.debug("i = " + Arrays.toString(point.toArray(odeSystem.getVariables().size())) + ";");
-            getOctave().eval("i = " + Arrays.toString(point.toArray(odeSystem.getVariables().size())) + ";");
-            LOGGER.debug("t = linspace(" + point.getTime() + ", " + numberOfIterations * precision.getTimeStep() + ", " + numberOfIterations + ");");
-            getOctave().eval("t = linspace(" + point.getTime() + ", " + numberOfIterations * precision.getTimeStep() + ", " + numberOfIterations + ");");
-            LOGGER.debug("y = lsode(\"" + odeSystem.octaveName() + "\", i, t);");
-            getOctave().eval("y = lsode(\"" + odeSystem.octaveName() + "\", i, t);");
+            builder.append(odeSystem.octaveString(false));
+            builder.append("i = ").append(Arrays.toString(point.toArray(odeSystem.getVariables().size()))).append(";");
+            builder.append("t = linspace(").append(point.getTime()).append(", ").append(numberOfIterations * precision.getTimeStep()).append(", ").append(numberOfIterations).append(");");
+            builder.append("y = lsode(\"").append(odeSystem.octaveName()).append("\", i, t);");
+            LOGGER.debug(builder.toString());
+            getOctave().eval(builder.toString());
             return getOctave().get(OctaveDouble.class, "y");
 
         }

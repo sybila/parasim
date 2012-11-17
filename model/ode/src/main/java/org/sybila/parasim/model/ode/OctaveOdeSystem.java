@@ -113,7 +113,7 @@ public class OctaveOdeSystem implements OdeSystem {
             for (OdeSystemVariable variable: odeSystem) {
                 builder.append("xdot(").append(variable.getIndex() + 1).append(") = ").append(variable.getRightSideExpression().toFormula(VARIABLE_RENDERER)).append("; ");
             }
-            octaveString = builder.append("endfunction").toString();
+            octaveString = builder.append("endfunction;").toString();
         }
         return octaveString;
     }

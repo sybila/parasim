@@ -74,11 +74,30 @@ public enum OdePkgEngineFactory implements OctaveSimulationEngineFactory {
 
         @Override
         protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision) {
-            getOctave().eval(odeSystem.octaveString(true));
-            getOctave().eval("pkg load odepkg;");
-            getOctave().eval("vopt = odeset('RelTol', " + precision.getMaxRelativeError() + ", 'AbsTol', " + Long.MAX_VALUE + ", 'InitialStep', " + precision.getTimeStep() + ", 'MaxStep', " + precision.getTimeStep() + ");");
-            getOctave().eval("y = " + function + "(@f, [" + point.getTime() + ", " + (numberOfIterations * precision.getTimeStep()) + "], " + Arrays.toString(point.toArray(odeSystem.getVariables().size())) + ", vopt);");
-            getOctave().eval("result = getfield(y, 'y');");
+            StringBuilder builder = new StringBuilder()
+                    .append(odeSystem.octaveString(true))
+                    .append("pkg load odepkg;")
+                    .append("vopt = odeset('RelTol', ")
+                    .append(precision.getMaxRelativeError())
+                    .append(", 'AbsTol', ")
+                    .append(Long.MAX_VALUE)
+                    .append(", 'InitialStep', ")
+                    .append(precision.getTimeStep())
+                    .append(", 'MaxStep', ")
+                    .append(precision.getTimeStep())
+                    .append(");")
+                    .append("y = ")
+                    .append(function)
+                    .append("(@f, [")
+                    .append(point.getTime())
+                    .append(", ")
+                    .append(numberOfIterations * precision.getTimeStep())
+                    .append("], ")
+                    .append(Arrays.toString(point.toArray(odeSystem.getVariables().size())))
+                    .append(", vopt);")
+                    .append("result = getfield(y, 'y');");
+            LOGGER.debug(builder.toString());
+            getOctave().eval(builder.toString());
             return getOctave().get(OctaveDouble.class, "result");
         }
 
