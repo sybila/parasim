@@ -23,8 +23,8 @@ public class InitialSamplingFactory extends OdeInsideFactory {
         int[] values = new int[result.dimension()];
 
         for (int i = 0; i < result.dimension(); i++) {
-            Integer value = sampling.getSamples(names.getName(i));
-            values[i] = (value != null) ? value : 1;
+            int value = sampling.getSamples(names.getName(i));
+            values[i] = (value != 0) ? value : 1;
         }
 
         return new ArrayInitialSampling(result, values);
