@@ -35,8 +35,10 @@ public class DirProject implements Project {
 
     private class ConnectedExperiment extends ExperimentNames {
 
+        private final ExperimentNames content;
+
         public ConnectedExperiment(ExperimentNames target) {
-            super(target);
+            content = target;
         }
 
         @Override
@@ -47,7 +49,7 @@ public class DirProject implements Project {
         @Override
         public void setTimeout(long timeout) {
             if (timeout != getTimeout()) {
-                super.setTimeout(timeout);
+                content.setTimeout(timeout);
                 saved = false;
             }
         }
@@ -55,7 +57,7 @@ public class DirProject implements Project {
         @Override
         public void setIterationLimit(int iterationLimit) {
             if (iterationLimit != iterationLimit) {
-                super.setIterationLimit(iterationLimit);
+                content.setIterationLimit(iterationLimit);
                 saved = false;
             }
         }
@@ -67,7 +69,7 @@ public class DirProject implements Project {
                     samplingList.removeExperiment(getInitialSamplingName());
                 }
                 samplingList.addExperiment(initialSamplingName);
-                super.setInitialSamplingName(initialSamplingName);
+                content.setInitialSamplingName(initialSamplingName);
                 saved = false;
             }
         }
@@ -79,7 +81,7 @@ public class DirProject implements Project {
                     initialSpaceList.removeExperiment(getInitialSpaceName());
                 }
                 initialSpaceList.addExperiment(initialSpaceName);
-                super.setInitialSpaceName(initialSpaceName);
+                content.setInitialSpaceName(initialSpaceName);
                 saved = false;
             }
         }
@@ -91,7 +93,7 @@ public class DirProject implements Project {
                     precisionList.removeExperiment(getPrecisionConfigurationName());
                 }
                 precisionList.addExperiment(precisionConfigurationName);
-                super.setPrecisionConfigurationName(precisionConfigurationName);
+                content.setPrecisionConfigurationName(precisionConfigurationName);
                 saved = false;
             }
         }
@@ -103,7 +105,7 @@ public class DirProject implements Project {
                     simulationSpaceList.removeExperiment(getSimulationSpaceName());
                 }
                 simulationSpaceList.addExperiment(simulationSpaceName);
-                super.setSimulationSpaceName(simulationSpaceName);
+                content.setSimulationSpaceName(simulationSpaceName);
                 saved = false;
             }
         }
@@ -115,9 +117,71 @@ public class DirProject implements Project {
                     formulae.removeExperiment(getFormulaName());
                 }
                 formulae.addExperiment(formulaName);
-                super.setFormulaName(formulaName);
+                content.setFormulaName(formulaName);
                 saved = false;
             }
+        }
+
+        @Override
+        public void setVerificationResultName(String verificationResultName) {
+            content.setVerificationResultName(verificationResultName);
+            saved = false;
+        }
+
+        @Override
+        public void setAnnotation(String annotation) {
+            content.setAnnotation(annotation);
+            saved = false;
+        }
+
+        @Override
+        public String getAnnotation() {
+            return content.getAnnotation();
+        }
+
+        @Override
+        public String getFormulaName() {
+            return content.getFormulaName();
+        }
+
+        @Override
+        public String getInitialSamplingName() {
+            return content.getInitialSamplingName();
+        }
+
+        @Override
+        public String getInitialSpaceName() {
+            return content.getInitialSpaceName();
+        }
+
+        @Override
+        public int getIterationLimit() {
+            return content.getIterationLimit();
+        }
+
+        @Override
+        public String getModelName() {
+            return content.getModelName();
+        }
+
+        @Override
+        public String getPrecisionConfigurationName() {
+            return content.getPrecisionConfigurationName();
+        }
+
+        @Override
+        public String getSimulationSpaceName() {
+            return content.getSimulationSpaceName();
+        }
+
+        @Override
+        public long getTimeout() {
+            return content.getTimeout();
+        }
+
+        @Override
+        public String getVerificationResultName() {
+            return content.getVerificationResultName();
         }
     }
 
