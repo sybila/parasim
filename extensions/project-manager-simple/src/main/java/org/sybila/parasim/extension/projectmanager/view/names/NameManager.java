@@ -67,7 +67,8 @@ public class NameManager extends JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 lock.lock();
-                String name = JOptionPane.showInputDialog(NameManager.this, "Select new name for `" + getSelectedName() + "':", "Rename dialog", JOptionPane.QUESTION_MESSAGE);
+                String name = JOptionPane.showInputDialog(NameManager.this, "Select new name for `" + getSelectedName() + "':",
+                        "Rename dialog", JOptionPane.QUESTION_MESSAGE, null, null, getSelectedName()).toString();
                 if (name != null) {
                     if (name.equals(getSelectedName())) {
                         JOptionPane.showMessageDialog(NameManager.this, "You have chosen the same name.", "Rename dialog", JOptionPane.INFORMATION_MESSAGE);
