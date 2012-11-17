@@ -309,6 +309,7 @@ public class DirProject implements Project {
             ExperimentNamesResource src = resources.remove(name);
             resource.setRoot(src.getRoot());
             resources.put(newName, resource);
+            files.deleteFile(name);
             saved = false;
             return true;
         }
