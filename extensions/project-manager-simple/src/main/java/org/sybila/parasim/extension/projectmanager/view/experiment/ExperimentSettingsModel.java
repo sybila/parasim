@@ -15,4 +15,6 @@ public interface ExperimentSettingsModel {
     public NameChooserModel getRobustnessChooser();
 
     public void valuesChanged(ExperimentSettingsValues values);
+
+    public void annotationChanged(String annotation);
 }

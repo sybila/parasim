@@ -178,6 +178,11 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     }
 
     @Override
+    public void annotationChanged(String annotation) {
+        current.setAnnotation(annotation);
+    }
+
+    @Override
     public NameChooserModel getFormulaChooser() {
         return formulaeChooser;
     }

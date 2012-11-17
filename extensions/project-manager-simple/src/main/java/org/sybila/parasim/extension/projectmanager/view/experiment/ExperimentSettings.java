@@ -215,6 +215,11 @@ public class ExperimentSettings extends JPanel {
                     public void valuesChanged(ExperimentSettingsValues values) {
                         System.out.println("Values changed.");
                     }
+
+                    @Override
+                    public void annotationChanged(String annotation) {
+                        System.out.println("Annotation changed to `" + annotation + "'.");
+                    }
                 }, Collections.<String>emptySet(), Collections.<String>emptySet(), Collections.<String>emptySet());
                 frame.add(settings);
                 frame.setVisible(true);
