@@ -59,6 +59,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     //
     private ProjectLoader projectCreator, projectLoader;
     private Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
+    private JPanel projectPanel = null;
 
     public ProjectManagerWindow() {
         projectCreator = new ProjectImporter();
@@ -270,7 +271,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         experimentModel.registerRobustnessManager(robustnessManager);
         robustnessModel.registerSettings(robustness);
 
-        JPanel projectPanel = setUpProjectPanel();
+        setUpProjectPanel();
         projectPanel.add(experimentPanel, getConstraints(0));
         projectPanel.add(formulae, getConstraints(1));
         projectPanel.add(simulationPanel, getConstraints(2));
@@ -294,10 +295,12 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         target.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), title));
     }
 
-    private JPanel setUpProjectPanel() {
-        JPanel result = new JPanel(new GridBagLayout());
-        add(result, BorderLayout.CENTER);
-        return result;
+    private void setUpProjectPanel() {
+        if (projectPanel != null) {
+            remove(projectPanel);
+        }
+        projectPanel = new JPanel(new GridBagLayout());
+        add(projectPanel, BorderLayout.CENTER);
     }
 
     private JPanel setUpComponentPanel(String title) {
