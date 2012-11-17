@@ -30,6 +30,20 @@ public class RobustnessSettingsValuesFactory extends OdeInsideFactory {
         samplingFactory = new InitialSamplingFactory(odeSystem);
     }
 
+    private static boolean isDifferent(float a, float b) {
+        return (a - b) > 1E-5;
+    }
+
+    private boolean isDifferent(int sampleNum, Pair<Float, Float> bounds, float defaultValue) {
+        if (sampleNum != 1) {
+            return true;
+        }
+        if (isDifferent(bounds.first(), bounds.second())) {
+            return true;
+        }
+        return isDifferent(defaultValue, bounds.first());
+    }
+
     public RobustnessSettingsValues get(InitialSampling initialSampling, OrthogonalSpace initialSpace) {
         NamedInitialSampling sampling = samplingFactory.get(initialSampling);
         NamedOrthogonalSpace space = spaceFactory.get(initialSpace);
@@ -40,8 +54,8 @@ public class RobustnessSettingsValuesFactory extends OdeInsideFactory {
         for (String name : sampling.getVariables()) {
             int sampleNum = sampling.getSamples(name);
             Pair<Float, Float> bounds = space.getValues(name);
-            Float defalutValue = new OdeSystemNames(getOdeSystem()).getValue(name);
-            if ((sampleNum != 1) || (defalutValue == null) || (bounds.first() != defalutValue)) {
+            Float defaultValue = new OdeSystemNames(getOdeSystem()).getValue(name);
+            if (defaultValue == null || isDifferent(sampleNum, bounds, defaultValue)) {
                 sampleValues.put(name, sampleNum);
                 spaceValues.put(name, bounds);
             }
