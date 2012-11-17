@@ -7,8 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -123,23 +121,27 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
         }
     }
 
-    private class ChoiceBoxListener implements ItemListener {
+    private class ChoiceBoxListener implements ActionListener {
 
-        private String name;
+        private final String name;
+        private final JCheckBox box;
 
-        public ChoiceBoxListener(String name) {
+        public ChoiceBoxListener(String name, JCheckBox box) {
             this.name = name;
+            this.box = box;
         }
 
         @Override
-        public void itemStateChanged(ItemEvent ie) {
-            boolean visibility = ie.getStateChange() == ItemEvent.SELECTED;
-            rows.get(name).setVisible(visibility);
+        public void actionPerformed(ActionEvent ae) {
+            rows.get(name).setVisible(box.isSelected());
+            System.out.println(ae.getSource());
             fireChanges();
         }
     }
 
     private class AnalysisChoiceBox extends JPanel {
+
+        private final Map<String, JCheckBox> boxes = new HashMap<>();
 
         public AnalysisChoiceBox(Set<String> vars) {
             setLayout(new GridBagLayout());
@@ -160,13 +162,21 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
                 } else {
                     val = value.toString();
                     box.setSelected(false);
-                    box.addItemListener(new ChoiceBoxListener(var));
+                    box.addActionListener(new ChoiceBoxListener(var, box));
                 }
 
                 add(TableConstraints.getCellLabel(val), TableConstraints.getCellConstraints(1, y));
                 add(box, TableConstraints.getCellConstraints(2, y));
+                boxes.put(var, box);
 
                 y++;
+            }
+        }
+
+        public void setChecked(String name, boolean checked) {
+            JCheckBox box = boxes.get(name);
+            if (box.isEnabled()) {
+                box.setSelected(checked);
             }
         }
     }
@@ -270,18 +280,30 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
         return new RobustnessSettingsValues(new SimpleNamedInitialSampling(sampling), new SimpleNamedOrthogonalSpace(space));
     }
 
+    private boolean setValues(String name, RobustnessSettingsValues values) {
+        Pair<Float, Float> bounds = values.getInitialSpace().getValues(name);
+        int samples = values.getInitialSampling().getSamples(name);
+        Row row = rows.get(name);
+        if (bounds != null) {
+            row.setValues(bounds.first(), bounds.second(), samples);
+            row.setVisible(true);
+            return true;
+        } else {
+            if (unvalued.contains(name)) {
+                throw new IllegalArgumentException("New values do not cover all parameters withou value.");
+            }
+            row.setVisible(false);
+            return false;
+        }
+    }
+
     @Override
     public final void setValues(RobustnessSettingsValues newValues) {
         for (String name : names.getVariables()) {
-            Pair<Float, Float> bounds = newValues.getInitialSpace().getValues(name);
-            int samples = newValues.getInitialSampling().getSamples(name);
-            if (bounds != null) {
-                rows.get(name).setValues(bounds.first(), bounds.second(), samples);
-            } else {
-                if (unvalued.contains(name)) {
-                    throw new IllegalArgumentException("New values do not cover all parameters withou value.");
-                }
-            }
+            variables.setChecked(name, setValues(name, newValues));
+        }
+        for (String name : names.getParameters()) {
+            parameters.setChecked(name, setValues(name, newValues));
         }
     }
 
