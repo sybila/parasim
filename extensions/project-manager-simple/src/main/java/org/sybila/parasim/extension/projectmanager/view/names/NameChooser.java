@@ -139,12 +139,12 @@ public class NameChooser extends JPanel implements NameList {
 
     @Override
     public void selectName(String name) {
-        checkNotNull(name);
-        if (!names.contains(name)) {
+        if (name != null && !names.contains(name)) {
             throw new IllegalArgumentException("There is no name `" + name + "' in the list.");
         }
         lock.lock();
         choiceModel.setSelectedItem(name);
+        seeAction.setEnabled(name != null);
         lock.unlock();
     }
 

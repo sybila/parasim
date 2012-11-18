@@ -195,7 +195,10 @@ public class ExperimentNames {
         }
 
         private static String getAndRemoveSuffix(Properties src, String property, ExperimentSuffixes suff) throws ResourceException {
-            String fileName = getAndValidate(src, property);
+            String fileName = src.getProperty(property);
+            if (fileName == null) {
+                return null;
+            }
             String result = suff.remove(fileName);
             if (result == null) {
                 throw new ResourceException("Wrong file name format: " + fileName + " (missing `" + suff.getSuffix() + "' suffix)");
@@ -229,15 +232,21 @@ public class ExperimentNames {
             return result;
         }
 
+        private static void setIfNotNull(Properties properties, String name, String value, ExperimentSuffixes suffix) {
+            if (value != null) {
+                properties.setProperty(name, suffix.add(value));
+            }
+        }
+
         public Properties getProperties(ExperimentNames names) {
             Properties result = new Properties();
-            result.setProperty(MODEL_PRP, ExperimentSuffixes.MODEL.add(names.getModelName()));
-            result.setProperty(FORMULA_PRP, ExperimentSuffixes.FORMULA.add(names.getFormulaName()));
-            result.setProperty(INITSPACE_PRP, ExperimentSuffixes.INITIAL_SPACE.add(names.getInitialSpaceName()));
-            result.setProperty(SIMSPACE_PRP, ExperimentSuffixes.SIMULATION_SPACE.add(names.getSimulationSpaceName()));
-            result.setProperty(PRECISION_PRP, ExperimentSuffixes.PRECISION_CONFIGURATION.add(names.getPrecisionConfigurationName()));
-            result.setProperty(SAMPLING_PRP, ExperimentSuffixes.INITIAL_SAMPLING.add(names.getInitialSamplingName()));
-            result.setProperty(RESULT_PRP, ExperimentSuffixes.VERIFICATION_RESULT.add(names.getVerificationResultName()));
+            setIfNotNull(result, MODEL_PRP, names.getModelName(), ExperimentSuffixes.MODEL);
+            setIfNotNull(result, FORMULA_PRP, names.getFormulaName(), ExperimentSuffixes.FORMULA);
+            setIfNotNull(result, INITSPACE_PRP, names.getInitialSpaceName(), ExperimentSuffixes.INITIAL_SPACE);
+            setIfNotNull(result, SIMSPACE_PRP, names.getSimulationSpaceName(), ExperimentSuffixes.SIMULATION_SPACE);
+            setIfNotNull(result, PRECISION_PRP, names.getPrecisionConfigurationName(), ExperimentSuffixes.PRECISION_CONFIGURATION);
+            setIfNotNull(result, SAMPLING_PRP, names.getInitialSamplingName(), ExperimentSuffixes.INITIAL_SAMPLING);
+            setIfNotNull(result, RESULT_PRP, names.getVerificationResultName(), ExperimentSuffixes.VERIFICATION_RESULT);
             result.setProperty(TIMEOUT_PRP, Long.toString(names.getTimeout()));
             result.setProperty(ITERATION_PRP, Integer.toString(names.getIterationLimit()));
             if (names.getAnnotation() != null && !names.getAnnotation().isEmpty()) {
