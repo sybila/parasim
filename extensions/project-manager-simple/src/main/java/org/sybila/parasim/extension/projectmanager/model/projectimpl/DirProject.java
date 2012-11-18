@@ -183,6 +183,11 @@ public class DirProject implements Project {
         public String getVerificationResultName() {
             return content.getVerificationResultName();
         }
+
+        @Override
+        public boolean isFilled() {
+            return content.isFilled();
+        }
     }
 
     public static interface ExperimentAction {

@@ -25,9 +25,11 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import org.sybila.parasim.application.model.LoadedExperiment;
 import org.sybila.parasim.extension.projectmanager.api.ExperimentListener;
 import org.sybila.parasim.extension.projectmanager.api.ProjectManager;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
+import org.sybila.parasim.extension.projectmanager.model.components.ExperimentAvailableListener;
 import org.sybila.parasim.extension.projectmanager.model.components.ExperimentModel;
 import org.sybila.parasim.extension.projectmanager.model.components.FormulaModel;
 import org.sybila.parasim.extension.projectmanager.model.components.RobustnessModel;
@@ -60,6 +62,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     private ProjectLoader projectCreator, projectLoader;
     private Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
     private JPanel projectPanel = null;
+    private ExperimentModel experimentModel;
 
     public ProjectManagerWindow() {
         projectCreator = new ProjectImporter();
@@ -110,7 +113,9 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                if (launcher != null) {
+                    launcher.performExperiment(experimentModel.getExperiment());
+                }
             }
         };
         showAction = new AbstractAction("Show Results") {
@@ -233,13 +238,27 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     }
 
     private void buildProjectWindow() {
+        saveAction.setEnabled(false);
+        showAction.setEnabled(false);
+
         OdeSystemNames names = new OdeSystemNames(project.getOdeSystem());
         Set<String> simulationsNames = new HashSet<>(project.getSimulationSpaces().getNames());
         simulationsNames.retainAll(project.getPrecisionsConfigurations().getNames());
         Set<String> robustnessNames = new HashSet<>(project.getInitialSamplings().getNames());
         robustnessNames.retainAll(project.getInitialSpaces().getNames());
 
-        ExperimentModel experimentModel = new ExperimentModel(project);
+        experimentModel = new ExperimentModel(project, new ExperimentAvailableListener() {
+
+            @Override
+            public void experimentReady() {
+                launchAction.setEnabled(true);
+            }
+
+            @Override
+            public void invalidate() {
+                launchAction.setEnabled(false);
+            }
+        });
         FormulaModel formulaModel = new FormulaModel(project, experimentModel);
         SimulationModel simulationModel = new SimulationModel(project, experimentModel);
         RobustnessModel robustnessModel = new RobustnessModel(project, experimentModel);
@@ -344,13 +363,25 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public void run() {
-                JFrame manager = new ProjectManagerWindow();
+                ProjectManagerWindow manager = new ProjectManagerWindow();
                 manager.setVisible(true);
                 manager.addWindowListener(new WindowAdapter() {
 
                     @Override
                     public void windowClosed(WindowEvent e) {
                         System.exit(0);
+                    }
+                });
+                manager.setExperimentListener(new ExperimentListener() {
+
+                    @Override
+                    public void performExperiment(LoadedExperiment target) {
+                        JOptionPane.showMessageDialog(null, "Experiment performed.");
+                    }
+
+                    @Override
+                    public void showResult(LoadedExperiment target) {
+                        throw new UnsupportedOperationException("Not supported yet.");
                     }
                 });
             }

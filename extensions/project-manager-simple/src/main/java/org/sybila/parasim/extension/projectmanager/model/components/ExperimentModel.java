@@ -1,6 +1,7 @@
 package org.sybila.parasim.extension.projectmanager.model.components;
 
 import javax.swing.JOptionPane;
+import org.sybila.parasim.application.model.LoadedExperiment;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettings;
@@ -20,6 +21,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
 
     private final NameChooserModel formulaeChooser, robustnessChooser, simulationChooser;
     private final Project project;
+    private final ExperimentAvailableListener experimentListener;
     private String currentName = null;
     private ExperimentNames current = new ExperimentNames();
     //
@@ -39,11 +41,23 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         }
     }
 
-    public ExperimentModel(Project targetProject) {
+    private void checkExperiment() {
+        if (current != null && current.isFilled()) {
+            experimentListener.experimentReady();
+        } else {
+            experimentListener.invalidate();
+        }
+    }
+
+    public ExperimentModel(Project targetProject, ExperimentAvailableListener listener) {
         if (targetProject == null) {
             throw new IllegalArgumentException("Argument (project) is null.");
         }
+        if (listener == null) {
+            throw new IllegalArgumentException("Argument (listener) is null.");
+        }
         project = targetProject;
+        experimentListener = listener;
 
         formulaeChooser = new NameChooserModel() {
 
@@ -52,6 +66,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
                 // user SHOULD know this invalidates experiment
                 checkName(name);
                 current.setFormulaName(name);
+                checkExperiment();
             }
 
             @Override
@@ -67,6 +82,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
                 checkName(name);
                 current.setInitialSpaceName(name);
                 current.setInitialSamplingName(name);
+                checkExperiment();
             }
 
             @Override
@@ -82,6 +98,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
                 checkName(name);
                 current.setPrecisionConfigurationName(name);
                 current.setSimulationSpaceName(name);
+                checkExperiment();
             }
 
             @Override
@@ -113,6 +130,16 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
 
     public boolean isReady() {
         return (formulae != null) && (robustness != null) && (simulations != null) && (settings != null);
+    }
+
+    public LoadedExperiment getExperiment() {
+        if (current == null) {
+            return null;
+        }
+        if (!current.isFilled()) {
+            return null;
+        }
+        return project.getExperiment(current);
     }
 
     @Override
@@ -169,12 +196,14 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         settings.getFormulaeNameList().selectName(values.getFormulaName());
         settings.getSimulationsNameList().selectName(values.getSimulationSpaceName());
         settings.getRobustnessNameList().selectName(values.getInitialSamplingName());
+        checkExperiment();
     }
 
     @Override
     public void valuesChanged(ExperimentSettingsValues values) {
         current.setIterationLimit(values.getIterationLimit());
         current.setTimeout(values.getTimeout());
+        checkExperiment();
     }
 
     @Override
