@@ -36,6 +36,10 @@ public final class IconSource {
         };
     }
 
+    public static Icon getWarningIcon() {
+        return UIManager.getIcon("OptionPane.warningIcon");
+    }
+
     public static Action getNewAction(ActionListener listener) {
         return getAction("FileView.fileIcon", "New project", listener);
     }
