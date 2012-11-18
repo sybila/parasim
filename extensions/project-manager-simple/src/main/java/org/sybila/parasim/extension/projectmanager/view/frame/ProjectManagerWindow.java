@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -272,9 +271,9 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
         JPanel experimentPanel = setUpComponentPanel("Experiment");
         ExperimentSettings experiments = new ExperimentSettings(experimentModel, project.getFormulae().getNames(), simulationsNames, robustnessNames);
-        experimentPanel.add(experiments);
+        experimentPanel.add(experiments, BorderLayout.CENTER);
         NameManager experimentsManager = new NameManager(experimentModel, project.getExperiments().getNames());
-        experimentPanel.add(experimentsManager);
+        experimentPanel.add(experimentsManager, BorderLayout.PAGE_END);
         experimentModel.registerExperimentSettings(experiments);
 
         FormulaeList formulae = new FormulaeList(formulaModel, experiments.getFormulaeNameList());
@@ -283,18 +282,18 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
         JPanel simulationPanel = setUpComponentPanel("Simulation");
         SimulationSettings simulations = new SimulationSettings(simulationModel, names);
-        simulationPanel.add(simulations);
+        simulationPanel.add(simulations, BorderLayout.CENTER);
         NameManager simulationsManager = new NameManager(simulationModel, experiments.getSimulationsNameList());
-        simulationPanel.add(simulationsManager);
+        simulationPanel.add(simulationsManager, BorderLayout.PAGE_END);
         experimentModel.registerSimulationsManager(simulationsManager);
         simulationModel.registerSettings(simulations);
 
 
         JPanel robustnessPanel = setUpComponentPanel("Robustness");
         RobustnessSettings robustness = new RobustnessSettings(robustnessModel, names);
-        robustnessPanel.add(robustness);
+        robustnessPanel.add(robustness, BorderLayout.CENTER);
         NameManager robustnessManager = new NameManager(robustnessModel, experiments.getRobustnessNameList());
-        robustnessPanel.add(robustnessManager);
+        robustnessPanel.add(robustnessManager, BorderLayout.PAGE_END);
         experimentModel.registerRobustnessManager(robustnessManager);
         robustnessModel.registerSettings(robustness);
 
@@ -331,8 +330,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     }
 
     private JPanel setUpComponentPanel(String title) {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+        JPanel result = new JPanel(new BorderLayout());
         addBorder(result, title);
         return result;
     }
