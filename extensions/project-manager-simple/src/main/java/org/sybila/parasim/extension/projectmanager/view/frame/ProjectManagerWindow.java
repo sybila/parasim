@@ -36,6 +36,7 @@ import org.sybila.parasim.extension.projectmanager.model.components.SimulationMo
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.model.warning.UsedControler;
 import org.sybila.parasim.extension.projectmanager.model.warning.UsedWarningModel;
+import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettings;
 import org.sybila.parasim.extension.projectmanager.view.formulae.FormulaeList;
@@ -318,6 +319,28 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         });
         experimentModel.regiseterRobustnessWarning(robustnessWarning);
         robustnessModel.registerWarningLabel(robustnessWarning);
+
+        String experimentName = null;
+        String simulationsName = null;
+        String robustnessName = null;
+        if (!project.getExperiments().getNames().isEmpty()) {
+            experimentName = project.getExperiments().getNames().iterator().next();
+            ExperimentNames experiment = project.getExperiments().get(experimentName);
+            simulationsName = experiment.getSimulationSpaceName();
+            robustnessName = experiment.getInitialSamplingName();
+        }
+        if (simulationsName == null && !project.getSimulationSpaces().getNames().isEmpty()) {
+            simulationsName = project.getSimulationSpaces().getNames().iterator().next();
+        }
+        if (robustnessName == null && !project.getInitialSamplings().getNames().isEmpty()) {
+            robustnessName = project.getInitialSamplings().getNames().iterator().next();
+        }
+        experimentsManager.setSelectedName(experimentName);
+        experimentModel.selectionChanged(experimentName);
+        simulationsManager.setSelectedName(simulationsName);
+        simulationModel.selectionChanged(simulationsName);
+        robustnessManager.setSelectedName(robustnessName);
+        robustnessModel.selectionChanged(robustnessName);
 
 
         setUpProjectPanel();
