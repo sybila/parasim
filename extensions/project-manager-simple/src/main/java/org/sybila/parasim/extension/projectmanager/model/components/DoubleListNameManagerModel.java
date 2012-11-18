@@ -65,7 +65,6 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
      * <code>false</code> otherwise.
      */
     private boolean checkInvalidate() {
-        JOptionPane.showMessageDialog(null, "One or more experiments was invalidated.", "Warning", JOptionPane.WARNING_MESSAGE);
         return true;
     }
 
