@@ -145,8 +145,9 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             currentIteration++;
             LOGGER.info("["+threadId.currentId()+"] iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned primary and <" + spawned.getSecondaryTrajectories().size() + "> secondary trajectories.");
             SimulatedDataBlock<TrajectoryWithNeighborhood> simulated = simulator.simulate(simulationConfiguration, spawned);
+            SimulatedDataBlock simulatedSecondary = null;
             if (spawned.getSecondaryTrajectories().size() > 0) {
-                SimulatedDataBlock simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
+                simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
             }
             VerifiedDataBlock<TrajectoryWithNeighborhood> verified = verifier.verify(cycleDetectorFactory.detect(simulated), property);
             if (result == null) {
@@ -155,6 +156,10 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
                 result = result.merge(new VerifiedDataBlockResultAdapter(verified));
             }
             if (iterationLimit != 0 && currentIteration == iterationLimit) {
+                if (simulatedSecondary != null) {
+                    VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(cycleDetectorFactory.detect(simulatedSecondary), property);
+                    result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
+                }
                 LOGGER.warn("["+threadId.currentId()+"] iteration limit <" + iterationLimit + "> reached");
                 break;
             } else {

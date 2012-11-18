@@ -66,18 +66,52 @@ public final class Minus extends BinaryOperator<Minus> {
     }
 
     @Override
+    protected BinaryOperator create(Expression left, Expression right) {
+        return new Minus(left, right);
+    }
+
+    @Override
     public String toFormula() {
-        return "(" + getLeft().toFormula() + ") - (" + getRight().toFormula() + ")";
+        StringBuilder builder = new StringBuilder();
+        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
+            builder.append("(").append(getLeft().toFormula()).append(")");
+        } else {
+            builder.append(getLeft().toFormula());
+        }
+        builder.append(" ").append(getSymbol()).append(" ");
+        if (getRight() instanceof BinaryOperator) {
+            builder.append("(").append(getRight().toFormula()).append(")");
+        } else {
+            builder.append(getRight().toFormula());
+        }
+        return builder.toString();
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        return "(" + getLeft().toFormula(renderer) + ") - (" + getRight().toFormula(renderer) + ")";
+        StringBuilder builder = new StringBuilder();
+        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
+            builder.append("(").append(getLeft().toFormula(renderer)).append(")");
+        } else {
+            builder.append(getLeft().toFormula(renderer));
+        }
+        builder.append(" ").append(getSymbol()).append(" ");
+        if (getRight() instanceof BinaryOperator) {
+            builder.append("(").append(getRight().toFormula(renderer)).append(")");
+        } else {
+            builder.append(getRight().toFormula(renderer));
+        }
+        return builder.toString();
     }
 
     @Override
-    protected BinaryOperator create(Expression left, Expression right) {
-        return new Minus(left, right);
+    protected int getPriority() {
+        return 0;
+    }
+
+    @Override
+    protected String getSymbol() {
+        return "-";
     }
 
 }

@@ -24,7 +24,7 @@ package org.sybila.parasim.execution.conf;
  */
 public class ExecutionConfiguration {
 
-    private int queueSize = Runtime.getRuntime().availableProcessors() * 10;
+    private int queueSize = Runtime.getRuntime().availableProcessors() * 1000;
     private int coreThreadPoolSize = Runtime.getRuntime().availableProcessors();
     private int maxThreadPoolSize = coreThreadPoolSize * 5;
     private String defaultExecutorClass = "org.sybila.parasim.execution.api.SequentialExecutor";

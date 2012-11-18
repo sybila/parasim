@@ -228,12 +228,12 @@ public final class Parameter implements Expression<Parameter>, Indexable {
 
     @Override
     public String toFormula() {
-        return substitution == null ? name : Float.toString(substitution.getValue());
+        return substitution == null ? name : (substitution.getValue() >= 0 ? Float.toString(substitution.getValue()) : "(" + Float.toString(substitution.getValue()) + ")");
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        return substitution == null ? name : Float.toString(substitution.getValue());
+        return substitution == null ? name : (substitution.getValue() >= 0 ? Float.toString(substitution.getValue()) : "(" + Float.toString(substitution.getValue()) + ")");
     }
 
     @Override

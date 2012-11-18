@@ -66,18 +66,18 @@ public final class Plus extends BinaryOperator<Plus> {
     }
 
     @Override
-    public String toFormula() {
-        return "(" + getLeft().toFormula() + ") + (" + getRight().toFormula() + ")";
-    }
-
-    @Override
-    public String toFormula(VariableRenderer renderer) {
-        return "(" + getLeft().toFormula(renderer) + ") + (" + getRight().toFormula(renderer) + ")";
-    }
-
-    @Override
     protected BinaryOperator create(Expression left, Expression right) {
         return new Plus(left, right);
+    }
+
+    @Override
+    protected int getPriority() {
+        return 0;
+    }
+
+    @Override
+    protected String getSymbol() {
+        return "+";
     }
 
 }

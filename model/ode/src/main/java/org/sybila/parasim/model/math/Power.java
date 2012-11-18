@@ -67,15 +67,13 @@ public class Power extends BinaryOperator<Power> {
     }
 
     @Override
-    public String toFormula() {
-        return "(" + getLeft().toFormula() + ") ^ (" + getRight().toFormula() + ")";
+    protected int getPriority() {
+        return 20;
     }
 
     @Override
-    public String toFormula(VariableRenderer renderer) {
-        return "(" + getLeft().toFormula(renderer) + ") ^ (" + getRight().toFormula(renderer) + ")";
+    protected String getSymbol() {
+        return "^";
     }
-
-
 
 }

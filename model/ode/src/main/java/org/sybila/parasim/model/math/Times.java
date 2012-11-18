@@ -66,18 +66,18 @@ public final class Times extends BinaryOperator<Times> {
     }
 
     @Override
-    public String toFormula() {
-        return "(" + getLeft().toFormula() + ") * (" + getRight().toFormula() + ")";
-    }
-
-    @Override
-    public String toFormula(VariableRenderer renderer) {
-        return "(" + getLeft().toFormula(renderer) + ") * (" + getRight().toFormula(renderer) + ")";
-    }
-
-    @Override
     protected BinaryOperator create(Expression left, Expression right) {
         return new Times(left, right);
+    }
+
+    @Override
+    protected int getPriority() {
+        return 10;
+    }
+
+    @Override
+    protected String getSymbol() {
+        return "*";
     }
 
 }

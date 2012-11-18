@@ -69,6 +69,43 @@ public abstract class BinaryOperator<E extends BinaryOperator> implements Expres
         return function.apply(this, (T) getLeft().traverse(function), (T) getRight().traverse(function));
     }
 
+    @Override
+    public String toFormula() {
+        StringBuilder builder = new StringBuilder();
+        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
+            builder.append("(").append(getLeft().toFormula()).append(")");
+        } else {
+            builder.append(getLeft().toFormula());
+        }
+        builder.append(" ").append(getSymbol()).append(" ");
+        if (getRight() instanceof BinaryOperator && ((BinaryOperator) getRight()).getPriority() < getPriority()) {
+            builder.append("(").append(getRight().toFormula()).append(")");
+        } else {
+            builder.append(getRight().toFormula());
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public String toFormula(VariableRenderer renderer) {
+        StringBuilder builder = new StringBuilder();
+        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
+            builder.append("(").append(getLeft().toFormula(renderer)).append(")");
+        } else {
+            builder.append(getLeft().toFormula(renderer));
+        }
+        builder.append(" ").append(getSymbol()).append(" ");
+        if (getRight() instanceof BinaryOperator && ((BinaryOperator) getRight()).getPriority() < getPriority()) {
+            builder.append("(").append(getRight().toFormula(renderer)).append(")");
+        } else {
+            builder.append(getRight().toFormula(renderer));
+        }
+        return builder.toString();
+    }
+
     abstract protected BinaryOperator create(Expression left, Expression right);
 
+    abstract protected int getPriority();
+
+    abstract protected String getSymbol();
 }
