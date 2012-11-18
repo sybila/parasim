@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import org.sybila.parasim.extension.projectmanager.model.project.ExperimentResourceList;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.model.project.ResourceAction;
+import org.sybila.parasim.extension.projectmanager.model.warning.UsedWarningModel;
 import org.sybila.parasim.extension.projectmanager.view.ValueHolder;
 import org.sybila.parasim.extension.projectmanager.view.names.ExtendedNameManagerModel;
 
@@ -16,6 +17,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
     private final Project project;
     private String currentName = null;
     private ValueHolder<R> settings;
+    private UsedWarningModel warningModel;
 
     public DoubleListNameManagerModel(Project targetProject) {
         if (targetProject == null) {
@@ -28,8 +30,12 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         settings = target;
     }
 
+    public void registerWarningLabel(UsedWarningModel model) {
+        warningModel = model;
+    }
+
     public boolean isReady() {
-        return (settings != null);
+        return (settings != null) && (warningModel != null);
     }
 
     protected abstract ExperimentResourceList<T> getFirstList();
@@ -86,9 +92,14 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         }
     }
 
+    private void setCurrentName(String name) {
+        currentName = name;
+        warningModel.setName(name);
+    }
+
     @Override
     public void newName() {
-        currentName = null;
+        setCurrentName(null);
     }
 
     @Override
@@ -102,7 +113,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
 
         getFirstList().remove(currentName);
         getSecondList().remove(currentName);
-        currentName = null;
+        setCurrentName(null);
         return true;
     }
 
@@ -117,7 +128,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         if (first.isViable() && second.isViable()) {
             first.commit();
             second.commit();
-            currentName = newName;
+            setCurrentName(newName);
             return true;
         }
 
@@ -137,7 +148,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
         if (first.isViable() && second.isViable()) {
             first.commit();
             second.commit();
-            currentName = name;
+            setCurrentName(name);
             return true;
         }
 
@@ -150,7 +161,7 @@ public abstract class DoubleListNameManagerModel<T, S, R> implements ExtendedNam
     @Override
     public void selectionChanged(String name) {
         checkName(name);
-        currentName = name;
+        setCurrentName(name);
         settings.setValues(getValue(getFirstList().get(name), getSecondList().get(name)));
     }
 }

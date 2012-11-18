@@ -3,6 +3,7 @@ package org.sybila.parasim.extension.projectmanager.model.components;
 import javax.swing.JOptionPane;
 import org.sybila.parasim.application.model.LoadedExperiment;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
+import org.sybila.parasim.extension.projectmanager.model.warning.UsedWarningModel;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettings;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettingsModel;
@@ -28,6 +29,8 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     private NameManager robustness, simulations;
     private FormulaeList formulae;
     private ExperimentSettings settings = null;
+    private UsedWarningModel robustnessWarning = null;
+    private UsedWarningModel simulationsWarning = null;
 
     private void checkCurrentName() {
         if (currentName == null) {
@@ -83,6 +86,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
                 current.setInitialSpaceName(name);
                 current.setInitialSamplingName(name);
                 checkExperiment();
+                robustnessWarning.check();
             }
 
             @Override
@@ -99,6 +103,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
                 current.setPrecisionConfigurationName(name);
                 current.setSimulationSpaceName(name);
                 checkExperiment();
+                simulationsWarning.check();
             }
 
             @Override
@@ -128,8 +133,17 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         this.settings = settings;
     }
 
+    public void registerSimulationsWarning(UsedWarningModel model) {
+        simulationsWarning = model;
+    }
+
+    public void regiseterRobustnessWarning(UsedWarningModel model) {
+        robustnessWarning = model;
+    }
+
     public boolean isReady() {
-        return (formulae != null) && (robustness != null) && (simulations != null) && (settings != null);
+        return (formulae != null) && (robustness != null) && (simulations != null) && (settings != null)
+                && (robustnessWarning != null) && (simulationsWarning != null);
     }
 
     public LoadedExperiment getExperiment() {
@@ -154,6 +168,8 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         project.getExperiments().remove(currentName);
         current = new ExperimentNames();
         currentName = null;
+        robustnessWarning.check();
+        simulationsWarning.check();
         return true;
     }
 

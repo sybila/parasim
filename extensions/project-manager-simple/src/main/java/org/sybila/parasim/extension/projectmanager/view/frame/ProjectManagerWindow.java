@@ -34,6 +34,8 @@ import org.sybila.parasim.extension.projectmanager.model.components.FormulaModel
 import org.sybila.parasim.extension.projectmanager.model.components.RobustnessModel;
 import org.sybila.parasim.extension.projectmanager.model.components.SimulationModel;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
+import org.sybila.parasim.extension.projectmanager.model.warning.UsedControler;
+import org.sybila.parasim.extension.projectmanager.model.warning.UsedWarningModel;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.extension.projectmanager.view.experiment.ExperimentSettings;
 import org.sybila.parasim.extension.projectmanager.view.formulae.FormulaeList;
@@ -288,6 +290,16 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         experimentModel.registerSimulationsManager(simulationsManager);
         simulationModel.registerSettings(simulations);
 
+        UsedWarningModel simulationWarning = new UsedWarningModel(new WarningLabel(simulationPanel), new UsedControler() {
+
+            @Override
+            public boolean isUsed(String name) {
+                return project.getSimulationSpaces().isUsedInExperiment(name);
+            }
+        });
+        experimentModel.registerSimulationsWarning(simulationWarning);
+        simulationModel.registerWarningLabel(simulationWarning);
+
 
         JPanel robustnessPanel = setUpComponentPanel("Robustness");
         RobustnessSettings robustness = new RobustnessSettings(robustnessModel, names);
@@ -296,6 +308,17 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         robustnessPanel.add(robustnessManager, BorderLayout.PAGE_END);
         experimentModel.registerRobustnessManager(robustnessManager);
         robustnessModel.registerSettings(robustness);
+
+        UsedWarningModel robustnessWarning = new UsedWarningModel(new WarningLabel(robustnessPanel), new UsedControler() {
+
+            @Override
+            public boolean isUsed(String name) {
+                return project.getInitialSamplings().isUsedInExperiment(name);
+            }
+        });
+        experimentModel.regiseterRobustnessWarning(robustnessWarning);
+        robustnessModel.registerWarningLabel(robustnessWarning);
+
 
         setUpProjectPanel();
         projectPanel.add(experimentPanel, getConstraints(0));
