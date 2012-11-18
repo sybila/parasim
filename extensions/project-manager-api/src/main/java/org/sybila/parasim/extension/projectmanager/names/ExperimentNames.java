@@ -120,7 +120,7 @@ public class ExperimentNames {
     public boolean isFilled() {
         return ((formulaName != null) && (initialSpaceName != null)
                 && (simulationSpaceName != null) && (precisionConfigurationName != null)
-                && (initialSamplingName != null) && (verificationResultName != null)
+                && (initialSamplingName != null)
                 && (modelName != null) && (iterationLimit > 0) && (timeout > 0));
     }
 

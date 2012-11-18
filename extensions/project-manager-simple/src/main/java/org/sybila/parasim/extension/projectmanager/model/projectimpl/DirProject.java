@@ -393,28 +393,22 @@ public class DirProject implements Project {
             return null;
         }
 
-        OrthogonalSpace initSpace = initialSpaceList.get(experiment.getInitialSpaceName());
-        if (initSpace == null) {
-            return null;
-        }
-        InitialSampling sampling = samplingList.get(experiment.getInitialSamplingName());
-        if (sampling == null) {
-            return null;
-        }
-        OrthogonalSpace simSpace = simulationSpaceList.get(experiment.getSimulationSpaceName());
-        if (simSpace == null) {
-            return null;
-        }
-        PrecisionConfiguration precision = precisionList.get(experiment.getPrecisionConfigurationName());
-        if (precision == null) {
-            return null;
-        }
-        Formula formula = formulae.get(experiment.getFormulaName());
-        if (formula == null) {
+        if (!experiment.isFilled()) {
             return null;
         }
 
-        return new LoadedExperimentImpl(odeSystem, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit(), results.getFile(experiment.getVerificationResultName()));
+        OrthogonalSpace initSpace = initialSpaceList.get(experiment.getInitialSpaceName());
+        InitialSampling sampling = samplingList.get(experiment.getInitialSamplingName());
+        OrthogonalSpace simSpace = simulationSpaceList.get(experiment.getSimulationSpaceName());
+        PrecisionConfiguration precision = precisionList.get(experiment.getPrecisionConfigurationName());
+        Formula formula = formulae.get(experiment.getFormulaName());
+
+        String resultName = experiment.getVerificationResultName();
+        if (resultName != null) {
+            return new LoadedExperimentImpl(odeSystem, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit(), results.getFile(resultName));
+        } else {
+            return new LoadedExperimentImpl(odeSystem, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit());
+        }
     }
 
     @Override
