@@ -6,7 +6,7 @@ package org.sybila.parasim.extension.projectmanager.model.components;
  */
 public interface ExperimentAvailableListener {
 
-    public void experimentReady();
+    public void experimentReady(boolean results);
 
     public void invalidate();
 }

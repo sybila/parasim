@@ -35,4 +35,6 @@ public interface Project {
     public void save() throws ResourceException;
 
     public LoadedExperiment getExperiment(ExperimentNames experiment);
+
+    public boolean hasResult(ExperimentNames experiment);
 }

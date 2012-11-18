@@ -43,7 +43,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
 
     private void checkExperiment() {
         if (current != null && current.isFilled()) {
-            experimentListener.experimentReady();
+            experimentListener.experimentReady(project.hasResult(current));
         } else {
             experimentListener.invalidate();
         }

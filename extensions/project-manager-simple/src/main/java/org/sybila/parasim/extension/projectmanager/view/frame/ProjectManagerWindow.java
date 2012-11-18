@@ -60,9 +60,10 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     private Project project = null;
     //
     private ProjectLoader projectCreator, projectLoader;
-    private Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
+    private final Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
     private JPanel projectPanel = null;
     private ExperimentModel experimentModel;
+    private final ExperimentAvailableListener experimentModelListener;
 
     public ProjectManagerWindow() {
         projectCreator = new ProjectImporter();
@@ -118,11 +119,13 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
                 }
             }
         };
-        showAction = new AbstractAction("Show Results") {
+        showAction = new AbstractAction("Show Last Results") {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                if (launcher != null) {
+                    launcher.showResult(experimentModel.getExperiment());
+                }
             }
         };
         quitAction = new AbstractAction("Quit") {
@@ -138,6 +141,21 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         saveAction.setEnabled(false);
         launchAction.setEnabled(false);
         showAction.setEnabled(false);
+
+        experimentModelListener = new ExperimentAvailableListener() {
+
+            @Override
+            public void experimentReady(boolean results) {
+                launchAction.setEnabled(true);
+                showAction.setEnabled(results);
+            }
+
+            @Override
+            public void invalidate() {
+                launchAction.setEnabled(false);
+                showAction.setEnabled(false);
+            }
+        };
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -247,18 +265,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         Set<String> robustnessNames = new HashSet<>(project.getInitialSamplings().getNames());
         robustnessNames.retainAll(project.getInitialSpaces().getNames());
 
-        experimentModel = new ExperimentModel(project, new ExperimentAvailableListener() {
-
-            @Override
-            public void experimentReady() {
-                launchAction.setEnabled(true);
-            }
-
-            @Override
-            public void invalidate() {
-                launchAction.setEnabled(false);
-            }
-        });
+        experimentModel = new ExperimentModel(project, experimentModelListener);
         FormulaModel formulaModel = new FormulaModel(project, experimentModel);
         SimulationModel simulationModel = new SimulationModel(project, experimentModel);
         RobustnessModel robustnessModel = new RobustnessModel(project, experimentModel);
@@ -381,7 +388,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
                     @Override
                     public void showResult(LoadedExperiment target) {
-                        throw new UnsupportedOperationException("Not supported yet.");
+                        JOptionPane.showMessageDialog(null, "Results showed.");
                     }
                 });
             }

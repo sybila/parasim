@@ -417,6 +417,15 @@ public class DirProject implements Project {
     }
 
     @Override
+    public boolean hasResult(ExperimentNames experiment) {
+        if (experiment.getVerificationResultName() == null) {
+            return false;
+        }
+        File result = results.getFile(experiment.getVerificationResultName());
+        return (result.isFile());
+    }
+
+    @Override
     public ResourceList<ExperimentNames> getExperiments() {
         return experiments;
     }
