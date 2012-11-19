@@ -24,6 +24,13 @@ package org.sybila.parasim.model.math;
  */
 public interface VariableRenderer {
 
+    public static final VariableRenderer NAME = new VariableRenderer() {
+        @Override
+        public String render(Variable variable) {
+            return variable.getName();
+        }
+    };
+
     String render(Variable variable);
 
 }

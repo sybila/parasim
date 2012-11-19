@@ -65,7 +65,17 @@ public final class Constant implements Expression<Constant> {
 
     @Override
     public String toFormula() {
-        return value >= 0 ? Float.toString(value) : "(" + Float.toString(value) + ")";
+        return toFormula(new StringBuilder()).toString();
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder) {
+        return value >= 0 ? builder.append(value) : builder.append("(").append(value).append(")");
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer) {
+        return toFormula(builder);
     }
 
     @Override

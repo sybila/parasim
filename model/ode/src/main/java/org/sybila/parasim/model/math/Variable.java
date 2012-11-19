@@ -199,12 +199,22 @@ public class Variable implements Expression<Variable>, Indexable {
 
     @Override
     public final String toFormula() {
-        return substitution == null ? name : Float.toString(substitution.getValue());
+        return toFormula(VariableRenderer.NAME);
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        return substitution == null ? renderer.render(this) : Float.toString(substitution.getValue());
+        return toFormula(new StringBuilder(), renderer).toString();
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder) {
+        return toFormula(builder, VariableRenderer.NAME);
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer) {
+        return substitution == null ? builder.append(renderer.render(this)) : builder.append(substitution.getValue());
     }
 
     @Override

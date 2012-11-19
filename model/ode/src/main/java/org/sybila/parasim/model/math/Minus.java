@@ -71,40 +71,6 @@ public final class Minus extends BinaryOperator<Minus> {
     }
 
     @Override
-    public String toFormula() {
-        StringBuilder builder = new StringBuilder();
-        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
-            builder.append("(").append(getLeft().toFormula()).append(")");
-        } else {
-            builder.append(getLeft().toFormula());
-        }
-        builder.append(" ").append(getSymbol()).append(" ");
-        if (getRight() instanceof BinaryOperator) {
-            builder.append("(").append(getRight().toFormula()).append(")");
-        } else {
-            builder.append(getRight().toFormula());
-        }
-        return builder.toString();
-    }
-
-    @Override
-    public String toFormula(VariableRenderer renderer) {
-        StringBuilder builder = new StringBuilder();
-        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
-            builder.append("(").append(getLeft().toFormula(renderer)).append(")");
-        } else {
-            builder.append(getLeft().toFormula(renderer));
-        }
-        builder.append(" ").append(getSymbol()).append(" ");
-        if (getRight() instanceof BinaryOperator) {
-            builder.append("(").append(getRight().toFormula(renderer)).append(")");
-        } else {
-            builder.append(getRight().toFormula(renderer));
-        }
-        return builder.toString();
-    }
-
-    @Override
     protected int getPriority() {
         return 0;
     }

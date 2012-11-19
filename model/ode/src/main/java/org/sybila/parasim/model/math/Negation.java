@@ -72,12 +72,23 @@ public class Negation implements Expression<Negation> {
 
     @Override
     public String toFormula() {
-        return "-(" + expression.toFormula() + ")";
+        return toFormula(new StringBuilder()).toString();
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        return "-(" + expression.toFormula(renderer) + ")";
+        return toFormula(new StringBuilder(), renderer).toString();
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder) {
+        return toFormula(builder, VariableRenderer.NAME);
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer) {
+        builder.append("-(");
+        return expression.toFormula(builder, renderer).append(")");
     }
 
     @Override

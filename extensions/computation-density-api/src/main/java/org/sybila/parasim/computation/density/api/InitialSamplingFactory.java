@@ -75,7 +75,10 @@ public class InitialSamplingFactory implements XMLRepresentableFactory<InitialSa
                     int s = Integer.parseInt(child.getAttributes().getNamedItem(ATTRIBUTE_SAMPLING).getTextContent());
                     String name = child.getAttributes().getNamedItem(ATTRIBUTE_NAME).getTextContent();
                     paramSampling.put(name, s);
-                    toRelease.add(odeSystem.getAvailableParameters().get(name));
+                    Parameter parameter = odeSystem.getAvailableParameters().get(name);
+                    if (parameter.isSubstituted()) {
+                        toRelease.add(odeSystem.getAvailableParameters().get(name));
+                    }
                     break;
                 }
                 default:

@@ -123,7 +123,10 @@ public class OrthogonalSpaceFactory implements
         }
         Collection<Expression> parametersToRelease = new ArrayList<>(paramMax.size());
         for (String paramName: paramMax.keySet()) {
-            parametersToRelease.add(odeSystem.getAvailableParameters().get(paramName));
+            Parameter parameter = odeSystem.getAvailableParameters().get(paramName);
+            if (parameter.isSubstituted()) {
+                parametersToRelease.add(odeSystem.getAvailableParameters().get(paramName));
+            }
         }
         OdeSystem releasedOdeSystem = odeSystem.release(parametersToRelease);
 

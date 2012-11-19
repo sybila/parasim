@@ -4,21 +4,22 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.math;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import org.sybila.parasim.model.trajectory.Point;
@@ -114,35 +115,15 @@ public final class Parameter implements Expression<Parameter>, Indexable {
 
     @Override
     public Parameter release(Expression... expressions) {
-        int indexBefore = 0;
-        boolean release = false;
-        for (Expression e: expressions) {
-            if (e instanceof Indexable && ((Indexable)e).getOriginalIndex() < originalIndex) {
-                indexBefore++;
-            }
-            if (e.equals(this)) {
-                release = true;
-            }
-        }
-        if (release && isSubstituted()) {
-            return new Parameter(name, index+indexBefore, originalIndex);
-        } else if(indexBefore != 0) {
-            if (substitution == null) {
-                return new Parameter(name, index+indexBefore, originalIndex);
-            } else {
-                return new Parameter(name, index+indexBefore, originalIndex, substitution);
-            }
-        } else {
-            return this;
-        }
+        return release(Arrays.asList(expressions));
     }
 
     @Override
     public Parameter release(Collection<Expression> expressions) {
         int indexBefore = 0;
         boolean release = false;
-        for (Expression e: expressions) {
-            if (e instanceof Indexable && ((Indexable)e).getOriginalIndex() < originalIndex) {
+        for (Expression e : expressions) {
+            if (e instanceof Indexable && ((Indexable) e).getOriginalIndex() < originalIndex) {
                 indexBefore++;
             }
             if (e.equals(this)) {
@@ -150,12 +131,12 @@ public final class Parameter implements Expression<Parameter>, Indexable {
             }
         }
         if (release && isSubstituted()) {
-            return new Parameter(name, index+indexBefore, originalIndex);
-        } else if(indexBefore != 0) {
+            return new Parameter(name, index + indexBefore, originalIndex);
+        } else if (indexBefore != 0) {
             if (substitution == null) {
-                return new Parameter(name, index+indexBefore, originalIndex);
+                return new Parameter(name, index + indexBefore, originalIndex);
             } else {
-                return new Parameter(name, index+indexBefore, originalIndex, substitution);
+                return new Parameter(name, index + indexBefore, originalIndex, substitution);
             }
         } else {
             return this;
@@ -164,53 +145,19 @@ public final class Parameter implements Expression<Parameter>, Indexable {
 
     @Override
     public Parameter substitute(SubstitutionValue... substitutionValues) {
-        int indexBefore = 0;
-        SubstitutionValue toSubstitute = null;
-        for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof ParameterValue)) {
-                if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
-                    indexBefore++;
-                }
-                continue;
-            }
-            ParameterValue paramValue = (ParameterValue) v;
-            if (paramValue.getExpression().equals(this)) {
-                toSubstitute = paramValue;
-            }
-            if (paramValue.getExpression().getIndex() < index) {
-                indexBefore++;
-            }
-        }
-        if (toSubstitute != null) {
-            return new Parameter(name, index - indexBefore, originalIndex, toSubstitute);
-        } else if (indexBefore != 0) {
-            if (this.substitution == null) {
-                return new Parameter(name, index - indexBefore, originalIndex);
-            } else {
-                return new Parameter(name, index - indexBefore, originalIndex, substitution);
-            }
-        } else {
-            return this;
-        }
+        return substitute(Arrays.asList(substitutionValues));
     }
 
     @Override
     public Parameter substitute(Collection<SubstitutionValue> substitutionValues) {
         int indexBefore = 0;
         SubstitutionValue toSubstitute = null;
-        for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof ParameterValue)) {
-                if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
-                    indexBefore++;
-                }
-                continue;
-            }
-            ParameterValue paramValue = (ParameterValue) v;
-            if (paramValue.getExpression().equals(this)) {
-                toSubstitute = paramValue;
-            }
-            if (paramValue.getExpression().getIndex() < index) {
+        for (SubstitutionValue v : substitutionValues) {
+            if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getOriginalIndex() < originalIndex) {
                 indexBefore++;
+            }
+            if (v.getExpression().equals(this)) {
+                toSubstitute = (ParameterValue) v;
             }
         }
         if (toSubstitute != null) {
@@ -228,12 +175,22 @@ public final class Parameter implements Expression<Parameter>, Indexable {
 
     @Override
     public String toFormula() {
-        return substitution == null ? name : (substitution.getValue() >= 0 ? Float.toString(substitution.getValue()) : "(" + Float.toString(substitution.getValue()) + ")");
+        return toFormula(new StringBuilder()).toString();
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        return substitution == null ? name : (substitution.getValue() >= 0 ? Float.toString(substitution.getValue()) : "(" + Float.toString(substitution.getValue()) + ")");
+        return toFormula();
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder) {
+        return substitution == null ? builder.append(name) : (substitution.getValue() >= 0 ? builder.append(substitution.getValue()) : builder.append("(").append(substitution.getValue()).append(")"));
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer) {
+        return toFormula(builder);
     }
 
     @Override

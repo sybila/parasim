@@ -45,6 +45,10 @@ public interface Expression<E extends Expression> {
 
     String toFormula(VariableRenderer renderer);
 
+    StringBuilder toFormula(StringBuilder builder);
+
+    StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer);
+
     public static interface TraverseFunction<T> {
 
         T apply(Expression expression, T... subs);

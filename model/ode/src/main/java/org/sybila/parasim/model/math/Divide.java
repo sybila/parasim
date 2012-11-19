@@ -67,36 +67,35 @@ public final class Divide extends BinaryOperator<Divide> {
 
     @Override
     public String toFormula() {
-        StringBuilder builder = new StringBuilder();
-        if (getLeft() instanceof BinaryOperator) {
-            builder.append("(").append(getLeft().toFormula()).append(")");
-        } else {
-            builder.append(getLeft().toFormula());
-        }
-        builder.append(" ").append(getSymbol()).append(" ");
-        if (getRight() instanceof BinaryOperator) {
-            builder.append("(").append(getRight().toFormula()).append(")");
-        } else {
-            builder.append(getRight().toFormula());
-        }
-        return builder.toString();
+        return toFormula(new StringBuilder()).toString();
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        StringBuilder builder = new StringBuilder();
+        return toFormula(new StringBuilder(), renderer).toString();
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder) {
+        return toFormula(builder, VariableRenderer.NAME);
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer) {
         if (getLeft() instanceof BinaryOperator) {
-            builder.append("(").append(getLeft().toFormula(renderer)).append(")");
+            builder.append("(");
+            getLeft().toFormula(builder, renderer).append(")");
         } else {
-            builder.append(getLeft().toFormula(renderer));
+            getLeft().toFormula(builder, renderer);
         }
         builder.append(" ").append(getSymbol()).append(" ");
         if (getRight() instanceof BinaryOperator) {
-            builder.append("(").append(getRight().toFormula(renderer)).append(")");
+            builder.append("(");
+            getRight().toFormula(builder, renderer).append(")");
         } else {
-            builder.append(getRight().toFormula(renderer));
+            getRight().toFormula(builder, renderer);
         }
-        return builder.toString();
+        return builder;
     }
 
     @Override

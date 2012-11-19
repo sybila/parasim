@@ -45,4 +45,9 @@ public final class ParameterValue implements SubstitutionValue<Parameter> {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return parameter.getName() + ": " + value;
+    }
+
 }

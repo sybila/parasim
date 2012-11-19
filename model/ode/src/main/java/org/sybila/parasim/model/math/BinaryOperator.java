@@ -71,36 +71,35 @@ public abstract class BinaryOperator<E extends BinaryOperator> implements Expres
 
     @Override
     public String toFormula() {
-        StringBuilder builder = new StringBuilder();
-        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
-            builder.append("(").append(getLeft().toFormula()).append(")");
-        } else {
-            builder.append(getLeft().toFormula());
-        }
-        builder.append(" ").append(getSymbol()).append(" ");
-        if (getRight() instanceof BinaryOperator && ((BinaryOperator) getRight()).getPriority() < getPriority()) {
-            builder.append("(").append(getRight().toFormula()).append(")");
-        } else {
-            builder.append(getRight().toFormula());
-        }
-        return builder.toString();
+        return toFormula(new StringBuilder()).toString();
     }
 
     @Override
     public String toFormula(VariableRenderer renderer) {
-        StringBuilder builder = new StringBuilder();
-        if (getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() < getPriority()) {
-            builder.append("(").append(getLeft().toFormula(renderer)).append(")");
+        return toFormula(new StringBuilder(), renderer).toString();
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder) {
+        return toFormula(builder, VariableRenderer.NAME);
+    }
+
+    @Override
+    public StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer) {
+        if ((getLeft() instanceof BinaryOperator && ((BinaryOperator) getLeft()).getPriority() > getPriority()) || getLeft().getClass().equals(getClass()) || !(getLeft() instanceof BinaryOperator)) {
+            getLeft().toFormula(builder, renderer);
         } else {
-            builder.append(getLeft().toFormula(renderer));
+            builder.append("(");
+            getLeft().toFormula(builder, renderer).append(")");
         }
         builder.append(" ").append(getSymbol()).append(" ");
-        if (getRight() instanceof BinaryOperator && ((BinaryOperator) getRight()).getPriority() < getPriority()) {
-            builder.append("(").append(getRight().toFormula(renderer)).append(")");
+        if ((getRight() instanceof BinaryOperator && ((BinaryOperator) getRight()).getPriority() > getPriority()) || getRight().getClass().equals(getClass()) || !(getRight() instanceof BinaryOperator)) {
+            getRight().toFormula(builder, renderer);
         } else {
-            builder.append(getRight().toFormula(renderer));
+            builder.append("(");
+            getRight().toFormula(builder, renderer).append(")");
         }
-        return builder.toString();
+        return builder;
     }
 
     abstract protected BinaryOperator create(Expression left, Expression right);
