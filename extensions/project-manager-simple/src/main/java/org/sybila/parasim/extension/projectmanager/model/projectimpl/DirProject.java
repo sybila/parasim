@@ -12,6 +12,7 @@ import org.sybila.parasim.application.model.LoadedExperiment;
 import org.sybila.parasim.application.model.LoadedExperimentImpl;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.extension.projectmanager.model.OdeUtils;
 import org.sybila.parasim.extension.projectmanager.model.project.ExperimentResourceList;
 import org.sybila.parasim.extension.projectmanager.model.project.FormulaResourceList;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
@@ -403,16 +404,17 @@ public class DirProject implements Project {
         }
 
         OrthogonalSpace initSpace = initialSpaceList.get(experiment.getInitialSpaceName());
+        OdeSystem system = initSpace.getOdeSystem();
         InitialSampling sampling = samplingList.get(experiment.getInitialSamplingName());
-        OrthogonalSpace simSpace = simulationSpaceList.get(experiment.getSimulationSpaceName());
+        OrthogonalSpace simSpace = OdeUtils.reSystemSpace(simulationSpaceList.get(experiment.getSimulationSpaceName()), system);
         PrecisionConfiguration precision = precisionList.get(experiment.getPrecisionConfigurationName());
         Formula formula = formulae.get(experiment.getFormulaName());
 
         String resultName = experiment.getVerificationResultName();
         if (resultName != null) {
-            return new LoadedExperimentImpl(odeSystem, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit(), results.getFile(resultName));
+            return new LoadedExperimentImpl(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit(), results.getFile(resultName));
         } else {
-            return new LoadedExperimentImpl(odeSystem, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit());
+            return new LoadedExperimentImpl(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit());
         }
     }
 
