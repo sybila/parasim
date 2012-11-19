@@ -11,7 +11,11 @@
 
 From the root directory:
 
-    ./build-all.sh clean [deploy|install|package] -P[applications|core|extensions|license|model|parent|util]
+    ./build-all.sh clean [deploy|install|package]
+
+or:
+
+    mvn clean [deploy|install|package] -P[applications|core|extensions|license|model|parent|util]
 
 ## Executing
 
@@ -24,6 +28,8 @@ On unix-like operation systes parasim may be executed from command line using th
 * `-c <file>`, `--confing <file>` Specify parasim configuration file (other than default).
 * `-e <file>`, `--experiment <file>` (**mandatory**) Specify file containing experiment specification ([see experiment file format](https://github.com/sybila/parasim/wiki/Experiment-File-Format)).
 * `-r`, `--result` Do not execute experiment, only print result contained in file specified by experiment file (see above). **Note:** This will result in error when the result file is not present.
+* `-csv <file>`, `--csv <file>` Specify destination file for CSV export.
+* `-b`, `--batch` Disable result plotting.
 
 ### Examples
 ```bash
