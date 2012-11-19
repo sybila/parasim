@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="4">
+	<model>
+		<listOfCompartments>
+			<compartment id="uVol" size="1"/>
+		</listOfCompartments>
+		<listOfSpecies>
+			<species id="S" compartment="uVol" initialConcentration="95"/>
+			<species id="I" compartment="uVol" initialConcentration="5"/>
+			<species id="R" compartment="uVol" initialConcentration="0"/>
+		</listOfSpecies>
+		<listOfParameters>
+			<parameter id="flow" value="0.1"/>
+			<parameter id="infectivity" value="0.01"/>
+			<parameter id="recovery" value="0.1"/>
+		</listOfParameters>
+		<listOfReactions>
+			<reaction id="infection" reversible="false">
+				<listOfReactants>
+					<speciesReference species="S"/>
+				</listOfReactants>
+				<listOfProducts>
+					<speciesReference species="I"/>
+				</listOfProducts>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> infectivity </ci>
+							<ci> S </ci>
+							<ci> I </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="recovery_reaction" reversible="false">
+				<listOfReactants>
+					<speciesReference species="I"/>
+				</listOfReactants>
+				<listOfProducts>
+					<speciesReference species="R"/>
+				</listOfProducts>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> I </ci>
+							<ci> recovery </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="inflow" reversible="false">
+				<listOfProducts>
+					<speciesReference species="S"/>
+				</listOfProducts>
+				<listOfModifiers>
+					<modifierSpeciesReference species="I"/>
+					<modifierSpeciesReference species="R"/>
+				</listOfModifiers>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> flow </ci>
+							<apply>
+								<plus/>
+								<ci> S </ci>
+								<ci> I </ci>
+								<ci> R </ci>
+							</apply>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="outS" reversible="false">
+				<listOfReactants>
+					<speciesReference species="S"/>
+				</listOfReactants>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> S </ci>
+							<ci> flow </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="outR" reversible="false">
+				<listOfReactants>
+					<speciesReference species="R"/>
+				</listOfReactants>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> R </ci>
+							<ci> flow </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="outI" reversible="false">
+				<listOfReactants>
+					<speciesReference species="I"/>
+				</listOfReactants>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> I </ci>
+							<ci> flow </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+		</listOfReactions>
+	</model>
+</sbml>
