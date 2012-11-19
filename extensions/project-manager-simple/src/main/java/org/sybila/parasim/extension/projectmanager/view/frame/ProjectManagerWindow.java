@@ -335,13 +335,19 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         if (robustnessName == null && !project.getInitialSamplings().getNames().isEmpty()) {
             robustnessName = project.getInitialSamplings().getNames().iterator().next();
         }
-        experimentsManager.setSelectedName(experimentName);
-        experimentModel.selectionChanged(experimentName);
-        simulationsManager.setSelectedName(simulationsName);
-        simulationModel.selectionChanged(simulationsName);
-        robustnessManager.setSelectedName(robustnessName);
-        robustnessModel.selectionChanged(robustnessName);
 
+        if (experimentName != null) {
+            experimentsManager.setSelectedName(experimentName);
+            experimentModel.selectionChanged(experimentName);
+        }
+        if (simulationsName != null) {
+            simulationsManager.setSelectedName(simulationsName);
+            simulationModel.selectionChanged(simulationsName);
+        }
+        if (robustnessName != null) {
+            robustnessManager.setSelectedName(robustnessName);
+            robustnessModel.selectionChanged(robustnessName);
+        }
 
         setUpProjectPanel();
         projectPanel.add(experimentPanel, getConstraints(0));
