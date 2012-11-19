@@ -38,7 +38,7 @@ import static org.testng.Assert.assertFalse;
  */
 public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest {
 
-    @Test
+    @Test(enabled=false)
     public void testNumberOfTrajectoriesAfterSpawn() {
         // initial sampling
         final SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), DIMENSION), 4);

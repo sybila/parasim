@@ -83,7 +83,7 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
             final Trajectory thisTrajectory = this;
             reference = new TrajectoryReference() {
 
-                private Trajectory referencedTrajectory = thisTrajectory;
+                private volatile Trajectory referencedTrajectory = thisTrajectory;
 
                 @Override
                 public Trajectory getTrajectory() {

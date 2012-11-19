@@ -52,7 +52,7 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
             List<T> trajectories = new ArrayList<>(data.size());
             Status[] statuses = new Status[data.size()];
             for (int i = 0; i < data.size(); i++) {
-                synchronized(data.getTrajectory(i).getFirstPoint()) {
+                synchronized(data.getTrajectory(i).getReference().getTrajectory().getFirstPoint()) {
                     if (data.getTrajectory(i).getReference().getTrajectory().getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
                         statuses[i] = Status.OK;
                         trajectories.add((T)data.getTrajectory(i).getReference().getTrajectory());

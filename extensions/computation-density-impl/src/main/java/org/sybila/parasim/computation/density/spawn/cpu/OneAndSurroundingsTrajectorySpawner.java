@@ -21,6 +21,7 @@ package org.sybila.parasim.computation.density.spawn.cpu;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhoodWrapper;
 public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawner {
 
     private final Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<>();
+
+    private final Map<Point, Trajectory> alreadySpawnedPrimaryTrajectories = new HashMap<>();
 
     @Override
     protected SpawnedResult spawnTrajectories(Configuration configuration, Trajectory trajectory, Trajectory neighbor, Distance distance) {
@@ -82,7 +85,12 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         // reorganize
 
         Collection<TrajectoryWithNeighborhood> spawnedCol = new ArrayList<>();
-        spawnedCol.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(newPrimary, new ListDataBlock<>(neighborTrajectories)));
-        return new SpawnedResult(spawnedCol, spawnedSecondaryTrajectories);
+        synchronized(alreadySpawnedPrimaryTrajectories) {
+            if (!alreadySpawnedPrimaryTrajectories.containsKey(newPrimary.getFirstPoint())) {
+                spawnedCol.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(newPrimary, new ListDataBlock<>(neighborTrajectories)));
+                alreadySpawnedPrimaryTrajectories.put(newPrimary.getFirstPoint(), newPrimary);
+            }
+        }
+        return new SpawnedResult(spawnedCol, spawnedCol.isEmpty() ? Collections.EMPTY_LIST : spawnedSecondaryTrajectories);
     }
 }
