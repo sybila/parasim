@@ -1,0 +1,536 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="4">
+  <model id="model">
+    <listOfCompartments>
+      <compartment id="only" name="only"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="c1" initialConcentration="0" compartment="only"/>
+      <species id="c1dm2" initialConcentration="0" compartment="only"/>
+      <species id="c1dmt1" initialConcentration="0" compartment="only"/>
+      <species id="m2" initialConcentration="0" compartment="only"/>
+      <species id="m2_c1" initialConcentration="0" compartment="only"/>
+      <species id="m2_t2" initialConcentration="0" compartment="only"/>
+      <species id="m2_t2_star" initialConcentration="0" compartment="only"/>
+      <species id="m2p" initialConcentration="0" compartment="only"/>
+      <species id="mt1" initialConcentration="0" compartment="only"/>
+      <species id="mt1_t2" initialConcentration="0" compartment="only"/>
+      <species id="mt1_t2_m2p" initialConcentration="0" compartment="only"/>
+      <species id="t2" initialConcentration="0" compartment="only"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="d_m2" value="0.01"/>
+      <parameter id="d_m2t2star" value="0.01"/>
+      <parameter id="d_t2" value="0.01"/>
+      <parameter id="k_iso_m2t2" value="2E-8"/>
+      <parameter id="kact_eff_m2" value="3620"/>
+      <parameter id="kcat_m2c1" value="0.0045"/>
+      <parameter id="kcat_mt1c1" value="0.00197"/>
+      <parameter id="ki_mt1t2" value="4.9E-9"/>
+      <parameter id="kiso_m2t2" value="33"/>
+      <parameter id="km_mt1c1" value="2.9E-6"/>
+      <parameter id="koff_m2c1" value="0.0021"/>
+      <parameter id="koff_m2t2" value="6.3"/>
+      <parameter id="koff_mt1t2m2p" value="0.0047"/>
+      <parameter id="kon_m2c1" value="2600"/>
+      <parameter id="kon_m2t2" value="5900000"/>
+      <parameter id="kon_mt1t2" value="3540000"/>
+      <parameter id="kon_mt1t2m2p" value="140000"/>
+      <parameter id="kshed_eff" value="2800"/>
+      <parameter id="p_c1" value="5E-10"/>
+      <parameter id="p_m2p" value="8E-10"/>
+      <parameter id="p_mt1" value="1E-9"/>
+      <parameter id="p_t2" value="1.6E-10"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="c1_reaction">
+        <listOfProducts>
+          <speciesReference species="c1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <plus/>
+                <apply>
+                  <minus/>
+                  <ci> p_c1 </ci>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> kon_m2c1 </ci>
+                      <ci> m2 </ci>
+                    </apply>
+                    <ci> c1 </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> koff_m2c1 </ci>
+                  <ci> m2_c1 </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> kcat_mt1c1 </ci>
+                    <ci> km_mt1c1 </ci>
+                  </apply>
+                  <ci> mt1 </ci>
+                </apply>
+                <ci> c1 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="c1dm2_reaction">
+        <listOfProducts>
+          <speciesReference species="c1dm2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kcat_m2c1 </ci>
+              <ci> m2_c1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="c1dmt1_reaction">
+        <listOfProducts>
+          <speciesReference species="c1dmt1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <apply>
+                <times/>
+                <apply>
+                  <divide/>
+                  <ci> kcat_mt1c1 </ci>
+                  <ci> km_mt1c1 </ci>
+                </apply>
+                <ci> mt1 </ci>
+              </apply>
+              <ci> c1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="m2_reaction">
+        <listOfProducts>
+          <speciesReference species="m2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <plus/>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <minus/>
+                    <apply>
+                      <plus/>
+                      <apply>
+                        <minus/>
+                        <apply>
+                          <times/>
+                          <apply>
+                            <times/>
+                            <ci> kact_eff_m2 </ci>
+                            <ci> mt1 </ci>
+                          </apply>
+                          <ci> mt1_t2_m2p </ci>
+                        </apply>
+                        <apply>
+                          <times/>
+                          <apply>
+                            <times/>
+                            <ci> kon_m2t2 </ci>
+                            <ci> m2 </ci>
+                          </apply>
+                          <ci> t2 </ci>
+                        </apply>
+                      </apply>
+                      <apply>
+                        <times/>
+                        <ci> koff_m2t2 </ci>
+                        <ci> m2_t2 </ci>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <times/>
+                      <apply>
+                        <times/>
+                        <ci> kon_m2c1 </ci>
+                        <ci> m2 </ci>
+                      </apply>
+                      <ci> c1 </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> koff_m2c1 </ci>
+                    <ci> m2_c1 </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> kcat_m2c1 </ci>
+                  <ci> m2_c1 </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> d_m2 </ci>
+                <ci> m2 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="m2_c1_reaction">
+        <listOfProducts>
+          <speciesReference species="m2_c1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> kon_m2c1 </ci>
+                    <ci> m2 </ci>
+                  </apply>
+                  <ci> c1 </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> koff_m2c1 </ci>
+                  <ci> m2_c1 </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kcat_m2c1 </ci>
+                <ci> m2_c1 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="m2_t2_reaction">
+        <listOfProducts>
+          <speciesReference species="m2_t2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <apply>
+                <minus/>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> kon_m2t2 </ci>
+                      <ci> m2 </ci>
+                    </apply>
+                    <ci> t2 </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> koff_m2t2 </ci>
+                    <ci> m2_t2 </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> kiso_m2t2 </ci>
+                  <ci> m2_t2 </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> k_iso_m2t2 </ci>
+                <ci> m2_t2_star </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="m2_t2_star_reaction">
+        <listOfProducts>
+          <speciesReference species="m2_t2_star"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <ci> kiso_m2t2 </ci>
+                  <ci> m2_t2 </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> k_iso_m2t2 </ci>
+                  <ci> m2_t2_star </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> d_m2t2star </ci>
+                <ci> m2_t2_star </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="m2p_reaction">
+        <listOfProducts>
+          <speciesReference species="m2p"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <apply>
+                <minus/>
+                <ci> p_m2p </ci>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> kon_mt1t2m2p </ci>
+                    <ci> mt1_t2 </ci>
+                  </apply>
+                  <ci> m2p </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> koff_mt1t2m2p </ci>
+                <ci> mt1_t2_m2p </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="mt1_reaction">
+        <listOfProducts>
+          <speciesReference species="mt1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <apply>
+                <minus/>
+                <apply>
+                  <minus/>
+                  <ci> p_mt1 </ci>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> kshed_eff </ci>
+                      <ci> mt1 </ci>
+                    </apply>
+                    <ci> mt1 </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> kon_mt1t2 </ci>
+                    <ci> mt1 </ci>
+                  </apply>
+                  <ci> t2 </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> kon_mt1t2 </ci>
+                  <ci> ki_mt1t2 </ci>
+                </apply>
+                <ci> mt1_t2 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="mt1_t2_reaction">
+        <listOfProducts>
+          <speciesReference species="mt1_t2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <apply>
+                <minus/>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> kon_mt1t2 </ci>
+                      <ci> mt1 </ci>
+                    </apply>
+                    <ci> t2 </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> kon_mt1t2 </ci>
+                      <ci> ki_mt1t2 </ci>
+                    </apply>
+                    <ci> mt1_t2 </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> kon_mt1t2m2p </ci>
+                    <ci> mt1_t2 </ci>
+                  </apply>
+                  <ci> m2p </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> koff_mt1t2m2p </ci>
+                <ci> mt1_t2_m2p </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="mt1_t2_m2p_reaction">
+        <listOfProducts>
+          <speciesReference species="mt1_t2_m2p"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <minus/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> kon_mt1t2m2p </ci>
+                    <ci> mt1_t2 </ci>
+                  </apply>
+                  <ci> m2p </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> koff_mt1t2m2p </ci>
+                  <ci> mt1_t2_m2p </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> kact_eff_m2 </ci>
+                  <ci> mt1 </ci>
+                </apply>
+                <ci> mt1_t2_m2p </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="t2_reaction">
+        <listOfProducts>
+          <speciesReference species="t2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <plus/>
+                <apply>
+                  <minus/>
+                  <apply>
+                    <plus/>
+                    <apply>
+                      <minus/>
+                      <ci> p_t2 </ci>
+                      <apply>
+                        <times/>
+                        <apply>
+                          <times/>
+                          <ci> kon_m2t2 </ci>
+                          <ci> m2 </ci>
+                        </apply>
+                        <ci> t2 </ci>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <times/>
+                      <ci> koff_m2t2 </ci>
+                      <ci> m2_t2 </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <times/>
+                      <ci> kon_mt1t2 </ci>
+                      <ci> mt1 </ci>
+                    </apply>
+                    <ci> t2 </ci>
+                  </apply>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <times/>
+                    <ci> kon_mt1t2 </ci>
+                    <ci> ki_mt1t2 </ci>
+                  </apply>
+                  <ci> mt1_t2 </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> d_t2 </ci>
+                <ci> t2 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

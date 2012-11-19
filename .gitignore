@@ -6,3 +6,7 @@ nbactions.xml
 octave-core
 experiments/*/*result.xml
 experiments/*/result*.xml
+*~
+.RData
+.Rhistory
+*.csv

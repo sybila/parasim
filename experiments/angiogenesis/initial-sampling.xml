@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+    contributors by the @authors tag.
+
+    This file is part of Parasim.
+
+    Parasim is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
+    <variable name="c1" sampling="5"/>
+    <variable name="c1dm2" sampling="5"/>
+    <variable name="c1dmt1" sampling="5"/>
+    <variable name="m2" sampling="5"/>
+    <variable name="m2_c1" sampling="1"/>
+    <variable name="m2_t2" sampling="1"/>
+    <variable name="m2_t2_star" sampling="1"/>
+    <variable name="m2p" sampling="1"/>
+    <variable name="mt1" sampling="1"/>
+    <variable name="mt1_t2" sampling="1"/>
+    <variable name="mt1_t2_m2p" sampling="1"/>
+    <variable name="t2" sampling="1"/>
+</initial-sampling>
