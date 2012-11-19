@@ -29,7 +29,7 @@ public class ResultPlotterConfiguration {
 
     private int plotterWindowHeight = 500;
     private int plotterWindowWidth = 750;
-    private float minimumDifference = 0.001f;
+    private float minimumDifference = 1E-15f;
     private int statusFontSize = 12;
     private int statusDecimalDigits = 3;
     private boolean showGuides = true;
