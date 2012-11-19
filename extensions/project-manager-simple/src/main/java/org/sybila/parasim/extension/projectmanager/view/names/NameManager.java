@@ -218,6 +218,9 @@ public class NameManager extends JPanel {
     public void setSelectedName(String name) {
         lock.lock();
         items.setSelectedItem(name);
+        if (name != null) {
+            setKnownName();
+        }
         lock.unlock();
     }
 
