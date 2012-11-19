@@ -19,6 +19,9 @@
  */
 package org.sybila.parasim.model.verification.result;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
@@ -148,22 +151,32 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         return result;
     }
 
+    @Override
     public VerificationResult merge(VerificationResult toMerge) {
         if (toMerge == null) {
             throw new IllegalArgumentException("The parameter [toMerge] is null.");
         }
-        Robustness[] newRobustnesses = new Robustness[size() + toMerge.size()];
-        Point[] newPoints = new Point[size() + toMerge.size()];
+        Map<Point, Robustness> robustnesses = new HashMap<>(size());
         // copy this data
         for (int i=0; i<size(); i++) {
-            newPoints[i] = getPoint(i);
-            newRobustnesses[i] = getRobustness(i);
+            if (!robustnesses.containsKey(getPoint(i))) {
+                robustnesses.put(getPoint(i), getRobustness(i));
+            }
         }
         // copy other data
         for (int i=0; i<toMerge.size(); i++) {
-            newPoints[size() + i] = toMerge.getPoint(i);
-            newRobustnesses[size() + i] = toMerge.getRobustness(i);
+            if (!robustnesses.containsKey(toMerge.getPoint(i))) {
+                robustnesses.put(toMerge.getPoint(i), toMerge.getRobustness(i));
+            }
         }
-        return new ArrayVerificationResult(size() + toMerge.size(), newPoints, newRobustnesses);
+        Point[] newPoints = new Point[robustnesses.size()];
+        Robustness[] newRobustnesses = new Robustness[robustnesses.size()];
+        int index = 0;
+        for (Entry<Point, Robustness> entry : robustnesses.entrySet()) {
+            newPoints[index] = entry.getKey();
+            newRobustnesses[index] = entry.getValue();
+            index++;
+        }
+        return new ArrayVerificationResult(robustnesses.size(), newPoints, newRobustnesses);
     }
 }

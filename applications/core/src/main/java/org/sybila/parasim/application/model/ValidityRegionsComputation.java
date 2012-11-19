@@ -20,7 +20,9 @@
 package org.sybila.parasim.application.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.cycledetection.api.CycleDetectorFactory;
@@ -183,6 +185,10 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             return null;
         }
         SpawnedDataBlock result = null;
+        Set<Trajectory> originalSecondaryTrajectories = new HashSet<>(spawned.getSecondaryTrajectories().size());
+        for (Trajectory t: spawned.getSecondaryTrajectories()) {
+            originalSecondaryTrajectories.add(t);
+        }
         int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 20), Runtime.getRuntime().availableProcessors());
         int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
         for (int i=0; i<toSpawn; i++) {
@@ -190,10 +196,14 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             int batchEnd = Math.min(batchSize * (i + 1), spawned.size());
             List<TrajectoryWithNeighborhood> localSpawned = new ArrayList<>(batchSize);
             List<Trajectory> localSecondarySpawned = new ArrayList<>();
+            Set<Trajectory> localSecondarySpawnedCache = new HashSet<>();
             for (int j=batchStart; j<batchEnd; j++) {
                 localSpawned.add(spawned.getTrajectory(j));
                 for (Trajectory secondary: spawned.getTrajectory(j).getNeighbors()) {
-                    localSecondarySpawned.add(secondary);
+                    if (originalSecondaryTrajectories.contains(secondary) && !localSecondarySpawnedCache.contains(secondary)) {
+                        localSecondarySpawned.add(secondary);
+                        localSecondarySpawnedCache.add(secondary);
+                    }
                 }
             }
             if (result == null) {

@@ -61,7 +61,10 @@ public class ParasimOptions {
             Option version = new Option("v", "version", false, "show version");
             Option cvs = new Option("csv", "csv", true, "specify CSV file");
             cvs.setArgName("file");
-            options = new Options().addOption(config).addOption(experiment).addOption(result).addOption(help).addOption(version).addOption(cvs);
+            Option batch = new Option("b", "batch", false, "skip result plotter");
+            options = new Options().addOption(config).addOption(experiment)
+                    .addOption(result).addOption(help).addOption(version)
+                    .addOption(cvs).addOption(batch);
         }
         return options;
     }
@@ -91,6 +94,10 @@ public class ParasimOptions {
 
     public String getExperimentFile() {
         return line.getOptionValue("e");
+    }
+
+    public boolean isBatch() {
+        return line.hasOption("b");
     }
 
     public boolean isResultOnly() {

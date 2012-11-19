@@ -38,7 +38,7 @@ import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhoodWrapper;
  */
 public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawner {
 
-    private Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<>();
+    private final Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<>();
 
     @Override
     protected SpawnedResult spawnTrajectories(Configuration configuration, Trajectory trajectory, Trajectory neighbor, Distance distance) {
@@ -68,11 +68,13 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
                 if (!configuration.getInitialSpace().isIn(newTrajectory.getFirstPoint())) {
                     continue;
                 }
-                if (alreadySpawnedCollisionTrajectories.containsKey(newTrajectory.getFirstPoint())) {
-                    newTrajectory = alreadySpawnedCollisionTrajectories.get(newTrajectory.getFirstPoint());
-                } else {
-                    alreadySpawnedCollisionTrajectories.put(newTrajectory.getFirstPoint(), newTrajectory);
-                    spawnedSecondaryTrajectories.add(newTrajectory);
+                synchronized(alreadySpawnedCollisionTrajectories) {
+                    if (alreadySpawnedCollisionTrajectories.containsKey(newTrajectory.getFirstPoint())) {
+                        newTrajectory = alreadySpawnedCollisionTrajectories.get(newTrajectory.getFirstPoint());
+                    } else {
+                        alreadySpawnedCollisionTrajectories.put(newTrajectory.getFirstPoint(), newTrajectory);
+                        spawnedSecondaryTrajectories.add(newTrajectory);
+                    }
                 }
                 neighborTrajectories.add(newTrajectory);
             }

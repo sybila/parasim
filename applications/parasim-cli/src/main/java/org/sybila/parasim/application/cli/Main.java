@@ -139,7 +139,11 @@ public class Main {
         }
 
         // plot result
-        plotResult(result);
+        if (!options.isBatch()) {
+            plotResult(result);
+        } else {
+            manager.shutdown();
+        }
     }
 
     private static void showResult() throws XMLException, IOException {
@@ -150,7 +154,11 @@ public class Main {
             LOGGER.error("Unable to load result.", xmle);
             System.exit(1);
         }
-        plotResult(input.getRoot());
+        if (!options.isBatch()) {
+            plotResult(input.getRoot());
+        } else {
+            manager.shutdown();
+        }
         if (options.getCsvFile() != null) {
             ResultUtils.toCSV(input.getRoot(), experiment.getOdeSystem(), new File(options.getCsvFile()));
         }

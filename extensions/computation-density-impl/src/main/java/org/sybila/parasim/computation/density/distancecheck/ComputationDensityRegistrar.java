@@ -24,12 +24,12 @@ import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceC
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.computation.density.spawn.cpu.OneAndSurroundingsTrajectorySpawner;
 import org.sybila.parasim.core.annotations.Provide;
-import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
+import org.sybila.parasim.execution.api.annotations.ComputationScope;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@ComputationInstanceScope
+@ComputationScope
 public class ComputationDensityRegistrar {
 
     @Provide
