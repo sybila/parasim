@@ -17,17 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core;
+package org.sybila.parasim.core.extension.loader;
 
-import java.util.Collection;
+import org.apache.log4j.spi.LoggingEvent;
+import org.sybila.parasim.core.extension.logging.LoggingListener;
 
-/**
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- */
-public interface ServiceStorage {
+public class TestedLoggingListener implements LoggingListener {
 
-    <T> Collection<T> load(Class<T> service) throws ServiceStorageException;
+    public static int count;
 
-    <T> void store(Class<T> service, T implementation) throws ServiceStorageException;
+    @Override
+    public void log(LoggingEvent event) {
+        count++;
+    }
 
 }

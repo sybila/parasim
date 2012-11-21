@@ -67,15 +67,17 @@ public final class ManagerImpl implements Manager {
         @Override
         protected void append(LoggingEvent le) {
         }
+        @Override
         public void close() {
         }
+        @Override
         public boolean requiresLayout() {
             return false;
         }
     };
     private ApplicationContext applicationContext;
     private Map<Class<? extends Annotation>, Collection<Class<?>>> extensionsByScope;
-    private Map<Context, Collection<Extension>> extensionsByContext = new ConcurrentHashMap<Context, Collection<Extension>>();
+    private Map<Context, Collection<Extension>> extensionsByContext = new ConcurrentHashMap<>();
     private ServiceStorage serviceStorage = new ServiceStorageImpl();
     private boolean running = false;
 
@@ -127,8 +129,10 @@ public final class ManagerImpl implements Manager {
 
     public <T> void bindService(final Class<T> service, final Class<? extends T> implementation) {
         try {
-            serviceStorage.store(service, implementation);
-        } catch (ServiceStorageException e) {
+            T instance = createInstance(implementation);
+            inject(new ExtensionImpl(instance, applicationContext));
+            serviceStorage.store(service, instance);
+        } catch (Exception e) {
             LOGGER.warn("There is an error during storing service ["+service.getName()+"]", e);
         }
     }
@@ -140,14 +144,17 @@ public final class ManagerImpl implements Manager {
         fire(value, context);
     }
 
+    @Override
     public Context getRootContext() {
         return applicationContext;
     }
 
+    @Override
     public void finalizeContext(Context context) {
         finalizeContext(context, true);
     }
 
+    @Override
     public void fire(Object event, Context context) {
         if (event == null) {
             throw new IllegalArgumentException("The parameter [event] is null.");
@@ -172,6 +179,7 @@ public final class ManagerImpl implements Manager {
         }
     }
 
+    @Override
     public void initializeContext(Context context) {
         try {
             // register instance cleaners
@@ -198,6 +206,7 @@ public final class ManagerImpl implements Manager {
 
     }
 
+    @Override
     public void inject(Extension extension) {
         // inject fields
         for(InjectionPoint point: extension.getInjectionPoints()) {
@@ -213,6 +222,7 @@ public final class ManagerImpl implements Manager {
         }
     }
 
+    @Override
     public boolean isRunning() {
         return running;
     }
@@ -227,6 +237,7 @@ public final class ManagerImpl implements Manager {
         }
     }
 
+    @Override
     public <T> T resolve(Class<T> type, Class<? extends Annotation> qualifier, Context context) {
         Class<? extends Annotation> nonProxyQualifier = (Class<? extends Annotation>) (Proxy.isProxyClass(qualifier) ? qualifier.getInterfaces()[0] : qualifier);
         T result = context.resolve(type, nonProxyQualifier);
@@ -247,6 +258,7 @@ public final class ManagerImpl implements Manager {
         return result;
     }
 
+    @Override
     public void shutdown() {
         try {
             fire(new ManagerStopping(), applicationContext);
@@ -269,6 +281,7 @@ public final class ManagerImpl implements Manager {
         }
     }
 
+    @Override
     public void start() {
         fire(new ManagerStarted(), applicationContext);
         if (LOGGER.isDebugEnabled()) {
@@ -329,7 +342,7 @@ public final class ManagerImpl implements Manager {
     }
 
     private Collection<Extension> createExtensions(final Collection<Class<?>> extensionClasses, Context context) throws Exception {
-        List<Extension> created = new ArrayList<Extension>();
+        List<Extension> created = new ArrayList<>();
         if (extensionClasses == null) {
             return created;
         }
@@ -354,9 +367,10 @@ public final class ManagerImpl implements Manager {
     }
 
     private void fireProcessing(ApplicationContext applicationContext) throws Exception {
-        final Collection<Class<?>> newExtensions = new ArrayList<Class<?>>();
-        final Collection<Class<? extends Context>> newContexts = new ArrayList<Class<? extends Context>>();
+        final Collection<Class<?>> newExtensions = new ArrayList<>();
+        final Collection<Class<? extends Context>> newContexts = new ArrayList<>();
         fire(new ManagerProcessing() {
+            @Override
             public void extension(Class<?> extension) {
                 if (extension == null) {
                     throw new IllegalArgumentException("The parameter [extension] is null.");
@@ -364,6 +378,7 @@ public final class ManagerImpl implements Manager {
                 newExtensions.add(extension);
             }
 
+            @Override
             public Manager getManager() {
                 return ManagerImpl.this;
             }
@@ -383,7 +398,7 @@ public final class ManagerImpl implements Manager {
     }
 
     private Map<Class<? extends Annotation>, Collection<Class<?>>> getScopedExtensions(final Collection<Class<?>> extensionClasses) {
-        Map<Class<? extends Annotation>, Collection<Class<?>>> scopedExtensions = new HashMap<Class<? extends Annotation>, Collection<Class<?>>>();
+        Map<Class<? extends Annotation>, Collection<Class<?>>> scopedExtensions = new HashMap<>();
         for (Class<?> extension: extensionClasses) {
             Class<? extends Annotation> scope = getScope(extension);
             if (!scopedExtensions.containsKey(scope)) {

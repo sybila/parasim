@@ -17,17 +17,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core;
+package org.sybila.parasim.core.extension.logging;
 
 import java.util.Collection;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
 
-/**
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- */
-public interface ServiceStorage {
+public class ServiceAppender extends AppenderSkeleton {
 
-    <T> Collection<T> load(Class<T> service) throws ServiceStorageException;
+    private static volatile Collection<LoggingListener> listeners;
 
-    <T> void store(Class<T> service, T implementation) throws ServiceStorageException;
+    private volatile boolean enabled = true;
+
+    @Override
+    protected void append(LoggingEvent event) {
+        if (enabled && listeners != null) {
+            for (LoggingListener listener: listeners) {
+                listener.log(event);
+            }
+        }
+    }
+
+    @Override
+    public void close() {
+        enabled = false;
+    }
+
+    @Override
+    public boolean requiresLayout() {
+        return false;
+    }
+
+    static void setListeners(Collection<LoggingListener> listeners) {
+        ServiceAppender.listeners = listeners;
+    }
 
 }

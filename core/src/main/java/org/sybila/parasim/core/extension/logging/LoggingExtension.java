@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.util.Properties;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.LoggerFactory;
+import org.sybila.parasim.core.Instance;
+import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
 import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
@@ -35,20 +38,28 @@ import org.sybila.parasim.core.extension.configuration.api.event.ConfigurationLo
  */
 public class LoggingExtension {
 
+    @Inject
+    private Instance<LoggingConfiguration> configuration;
+
     public void configureLogging(@Observes ConfigurationLoaded event, ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException, FileNotFoundException, IOException {
-        LoggingConfiguration configuration = new LoggingConfiguration();
+        LoggingConfiguration c = new LoggingConfiguration();
         ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("logging");
         if (extensionDescriptor != null) {
-            mapper.map(extensionDescriptor, configuration);
+            mapper.map(extensionDescriptor, c);
         }
         Properties prop = new Properties();
-        prop.load(configuration.getConfigFile().openStream());
-        PropertyConfigurator.configure(configuration.getConfigFile());
-        if (configuration.getLevel() != null && !configuration.getLevel().isEmpty()) {
-            prop.setProperty("log4j.rootLogger", configuration.getLevel() + ", stdout");
+        prop.load(c.getConfigFile().openStream());
+        PropertyConfigurator.configure(c.getConfigFile());
+        if (c.getLevel() != null && !c.getLevel().isEmpty()) {
+            prop.setProperty("log4j.rootLogger", c.getLevel() + ", stdout, parasim");
         }
         PropertyConfigurator.configure(prop);
         LoggerFactory.getLogger(getClass()).debug("logging configured");
+        configuration.set(c);
+    }
+
+    public void registerLoggingListeners(@Observes Manager started, Manager manager) {
+        ServiceAppender.setListeners(manager.service(LoggingListener.class));
     }
 
 }

@@ -17,17 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core;
+package org.sybila.parasim.core.extension.loader;
 
-import java.util.Collection;
+import java.util.concurrent.Callable;
+import org.sybila.parasim.core.Instance;
+import org.sybila.parasim.core.Manager;
+import org.sybila.parasim.core.annotations.Inject;
+import org.testng.Assert;
 
-/**
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- */
-public interface ServiceStorage {
+public class ManagerNotNullCallable implements Callable<Void> {
 
-    <T> Collection<T> load(Class<T> service) throws ServiceStorageException;
+    @Inject
+    private Instance<Manager> manager;
 
-    <T> void store(Class<T> service, T implementation) throws ServiceStorageException;
+    @Override
+    public Void call() throws Exception {
+        Assert.assertNotNull(manager);
+        Assert.assertNotNull(manager.get());
+        return null;
+    }
 
 }

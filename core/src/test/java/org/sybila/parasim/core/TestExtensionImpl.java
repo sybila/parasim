@@ -19,8 +19,6 @@
  */
 package org.sybila.parasim.core;
 
-import org.sybila.parasim.core.spi.InstanceCleaner;
-import java.util.ArrayList;
 import org.sybila.parasim.core.annotations.Inject;
 import org.sybila.parasim.core.annotations.Observes;
 import org.sybila.parasim.core.annotations.Provide;

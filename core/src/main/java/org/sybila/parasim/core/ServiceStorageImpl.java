@@ -19,7 +19,6 @@
  */
 package org.sybila.parasim.core;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +47,7 @@ public class ServiceStorageImpl implements ServiceStorage {
 
     @Override
     @GuardedBy(value="service")
-    public <T> void store(Class<T> service, Class<? extends T> implementation) throws ServiceStorageException {
+    public <T> void store(Class<T> service, T implementation) throws ServiceStorageException {
         synchronized (service) {
             List<Class<?>> implementations = classes.get(service);
             List<T> serviceInstances = (List<T>) instances.get(service);
@@ -58,25 +57,13 @@ public class ServiceStorageImpl implements ServiceStorage {
                 serviceInstances = new ArrayList<>();
                 instances.put(service, serviceInstances);
             }
-            implementations.add(implementation);
+            implementations.add(implementation.getClass());
             try {
-                serviceInstances.add(createInstance(implementation));
+                serviceInstances.add(implementation);
             } catch (Exception e) {
-                throw new ServiceStorageException("The service <" + implementation.getName() + "> of type <" + service.getName() + "> can't be stored.", e);
+                throw new ServiceStorageException("The service <" + implementation.getClass().getName() + "> of type <" + service.getName() + "> can't be stored.", e);
             }
         }
-    }
-
-    private <T> T createInstance(Class<T> type) throws Exception {
-        for (Constructor<?> constructor: type.getDeclaredConstructors()) {
-            if (constructor.getParameterTypes().length == 0) {
-               if (!constructor.isAccessible()) {
-                   constructor.setAccessible(true);
-               }
-               return (T) constructor.newInstance();
-            }
-        }
-        throw new InvocationException("There is no empty constructor in class " + type.getName());
     }
 
 }

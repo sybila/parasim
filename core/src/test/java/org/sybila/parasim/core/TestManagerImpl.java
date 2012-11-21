@@ -26,11 +26,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.concurrent.Callable;
 import org.sybila.parasim.core.annotations.Scope;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.core.annotations.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.sybila.parasim.core.annotations.Any;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.core.annotations.Observes;
@@ -39,7 +38,6 @@ import org.sybila.parasim.core.context.AbstractContext;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
 import org.sybila.parasim.core.event.ManagerStopping;
-import org.sybila.parasim.core.spi.InstanceCleaner;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
@@ -70,6 +68,22 @@ public class TestManagerImpl {
         assertNotEquals((long) 0, managerStopping, "The manager stopping time is <" + managerStopping + ">.");
         assertTrue(managerProcessing < managerStarted);
         assertTrue(managerStarted < managerStopping);
+    }
+
+    @Test
+    public void testCallableServices() throws Exception {
+        Manager manager = null;
+        try {
+            manager = ManagerImpl.create();
+            manager.start();
+            for (Callable callable: manager.service(Callable.class)) {
+                callable.call();
+            }
+        } finally {
+            if (manager == null) {
+                manager.shutdown();
+            }
+        }
     }
 
     @Test
@@ -191,6 +205,7 @@ class TestedFreshProvidingExtension {
         final int x = counter++;
         return new Number() {
 
+            @Override
             public int get() {
                 return x;
             }
@@ -207,6 +222,7 @@ class TestedStaticProvidingExtension {
         final int x = counter++;
         return new Number() {
 
+            @Override
             public int get() {
                 return x;
             }
@@ -219,6 +235,7 @@ class TestedFieldProvidingExtension {
     @Provide
     private Number number = new Number() {
 
+        @Override
         public int get() {
             return 0;
         }
@@ -236,6 +253,7 @@ class TestedScopedStaticProvidingExtension {
         final int x = counter++;
         return new Number() {
 
+            @Override
             public int get() {
                 return x;
             }
@@ -266,6 +284,7 @@ class TestContext extends AbstractContext {
         super(instanceStorage);
     }
 
+    @Override
     public Class<? extends Annotation> getScope() {
         return TestScope.class;
     }

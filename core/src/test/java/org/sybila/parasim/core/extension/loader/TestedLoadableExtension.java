@@ -23,6 +23,7 @@
  */
 package org.sybila.parasim.core.extension.loader;
 
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.sybila.parasim.core.Instance;
@@ -37,6 +38,7 @@ import org.sybila.parasim.core.extension.configuration.impl.TestExtensionDescrip
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
 import org.sybila.parasim.core.extension.interceptor.TestInterceptorExtension;
 import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
+import org.sybila.parasim.core.extension.logging.LoggingListener;
 import org.sybila.parasim.core.spi.Interceptor;
 
 /**
@@ -60,10 +62,13 @@ public class TestedLoadableExtension implements LoadableExtension {
         TestExtensionDescriptorMapperImpl.mapper = mapper;
     }
 
+    @Override
     public void register(ExtensionBuilder builder) {
         try {
             builder.extension(TestedLoadableExtension.class);
             builder.service(Interceptor.class, TestInterceptorExtension.TestInterceptor.class);
+            builder.service(Callable.class, ManagerNotNullCallable.class);
+            builder.service(LoggingListener.class, TestedLoggingListener.class);
             TestExtensionLoaderExtension.extensionRegistered = System.currentTimeMillis();
             Thread.sleep(50);
         } catch (InterruptedException ex) {
