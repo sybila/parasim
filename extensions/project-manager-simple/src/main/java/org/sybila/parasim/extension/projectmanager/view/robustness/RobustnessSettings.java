@@ -135,7 +135,6 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
         @Override
         public void actionPerformed(ActionEvent ae) {
             rows.get(name).setVisible(box.isSelected());
-            System.out.println(ae.getSource());
             fireChanges();
         }
     }
