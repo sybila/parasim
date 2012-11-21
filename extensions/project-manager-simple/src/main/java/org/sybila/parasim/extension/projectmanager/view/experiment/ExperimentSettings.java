@@ -94,9 +94,9 @@ public class ExperimentSettings extends JPanel {
         setLayout(new GridBagLayout());
         add(TableConstraints.getRowLabel("Timeout"), getLeftConstraints(0));
         add(TableConstraints.getRowLabel("Iteration limit"), getLeftConstraints(1));
-        add(TableConstraints.getRowLabel("Formula"), getLeftConstraints(2));
-        add(TableConstraints.getRowLabel("Simulation settings"), getLeftConstraints(3));
-        add(TableConstraints.getRowLabel("Robustness settings"), getLeftConstraints(4));
+        add(TableConstraints.getRowLabel("Property"), getLeftConstraints(2));
+        add(TableConstraints.getRowLabel("Simulation configuration"), getLeftConstraints(3));
+        add(TableConstraints.getRowLabel("Perturbation configuration"), getLeftConstraints(4));
 
         add(timeoutField, getRightConstraints(0));
         add(iterationField, getRightConstraints(1));

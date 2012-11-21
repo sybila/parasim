@@ -280,7 +280,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         experimentModel.registerExperimentSettings(experiments);
 
         FormulaeList formulae = new FormulaeList(formulaModel, experiments.getFormulaeNameList());
-        addBorder(formulae, "Formula");
+        addBorder(formulae, "Properties ");
         experimentModel.registerFormulaeManager(formulae);
 
         JPanel simulationPanel = setUpComponentPanel("Simulation");
@@ -302,7 +302,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         simulationModel.registerWarningLabel(simulationWarning);
 
 
-        JPanel robustnessPanel = setUpComponentPanel("Robustness");
+        JPanel robustnessPanel = setUpComponentPanel("Perturbation");
         RobustnessSettings robustness = new RobustnessSettings(robustnessModel, names);
         robustnessPanel.add(robustness, BorderLayout.CENTER);
         NameManager robustnessManager = new NameManager(robustnessModel, experiments.getRobustnessNameList());

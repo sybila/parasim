@@ -44,7 +44,7 @@ public class FormulaModel implements FormulaeListModel {
     @Override
     public boolean remove(String name) {
         if (project.getFormulae().isUsedInExperiment(name) && JOptionPane.NO_OPTION
-                == JOptionPane.showConfirmDialog(null, "This formula is used in one or more experiments."
+                == JOptionPane.showConfirmDialog(null, "This property is used in one or more experiments."
                 + " Do you really want to delete it?", "Confirm Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
             return false;
         }
@@ -57,7 +57,7 @@ public class FormulaModel implements FormulaeListModel {
     public boolean rename(String name, String newName) {
         checkName(name);
         if (!project.getFormulae().rename(name, newName)) {
-            JOptionPane.showMessageDialog(null, "Unable to rename formula `" + name + "' to `" + newName + "'.", "Rename Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Unable to rename property `" + name + "' to `" + newName + "'.", "Rename Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -73,7 +73,7 @@ public class FormulaModel implements FormulaeListModel {
         if (project.getFormulae().add(result.second(), result.first())) {
             return result.second();
         }
-        JOptionPane.showMessageDialog(null, "Unable to import formula `" + result.second() + "' from `" + result.first().toString() + "'.", "Formula Import Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Unable to import property `" + result.second() + "' from `" + result.first().toString() + "'.", "Formula Import Error", JOptionPane.ERROR_MESSAGE);
         return null;
     }
 }
