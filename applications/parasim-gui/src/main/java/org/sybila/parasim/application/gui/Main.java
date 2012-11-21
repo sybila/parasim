@@ -21,8 +21,8 @@
  */
 package org.sybila.parasim.application.gui;
 
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,34 +57,10 @@ public class Main {
         final Manager manager = ManagerImpl.create();
         manager.start();
         ProjectManager projectManager = manager.resolve(ProjectManager.class, Default.class, manager.getRootContext());
-        projectManager.addWindowListener(new WindowListener() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-            }
-
+        projectManager.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 manager.shutdown();
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
             }
         });
         projectManager.setExperimentListener(new ExperimentListener() {
