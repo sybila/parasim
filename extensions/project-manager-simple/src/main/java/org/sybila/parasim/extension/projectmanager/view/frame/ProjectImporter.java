@@ -72,7 +72,8 @@ public class ProjectImporter implements ProjectLoader {
         modelChooser = new ListeningFileChooser();
         modelChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         modelChooser.setAcceptAllFileFilterUsed(false);
-        modelChooser.addChoosableFileFilter(new FileNameExtensionFilter("SBML files", "sbml", "xml"));
+        modelChooser.addChoosableFileFilter(new FileNameExtensionFilter("SBML files", "sbml"));
+        modelChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML files", "xml"));
         modelChooser.addSelectedFileChangedListener(changeListener);
         modelChooser.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Select Model File"));
         importer.add(modelChooser);
