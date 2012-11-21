@@ -15,9 +15,9 @@ public class WarningLabel {
 
     public WarningLabel(Container parent) {
         label = new JLabel("This configuration is used in an experiment.");
-        label.setIcon(IconSource.getWarningIcon());
+        label.setIcon(IconSource.getInfoIcon());
         parent.add(label, BorderLayout.PAGE_START);
-        label.setForeground(Color.ORANGE);
+        label.setForeground(Color.GRAY);
         label.setVisible(false);
     }
 

@@ -40,6 +40,10 @@ public final class IconSource {
         return UIManager.getIcon("OptionPane.warningIcon");
     }
 
+    public static Icon getInfoIcon() {
+        return UIManager.getIcon("OptionPane.informationIcon");
+    }
+
     public static Action getNewAction(ActionListener listener) {
         return getAction("FileView.fileIcon", "New project", listener);
     }
