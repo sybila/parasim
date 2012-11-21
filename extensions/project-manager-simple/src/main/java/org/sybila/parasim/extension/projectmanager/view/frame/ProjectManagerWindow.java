@@ -116,8 +116,9 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (launcher != null) {
-                    launcher.performExperiment(experimentModel.getExperiment());
+                if (launcher != null && checkDangerousAction()) {
+                    LoadedExperiment experiment = experimentModel.getExperiment();
+                    launcher.performExperiment(experiment);
                 }
             }
         };
@@ -125,7 +126,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (launcher != null) {
+                if (launcher != null && checkDangerousAction()) {
                     launcher.showResult(experimentModel.getExperiment());
                 }
             }
@@ -237,12 +238,19 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         return project.isSaved();
     }
 
+    private boolean checkDangerousAction() {
+        return checkSaved("It is recommended to save project before the following action, as it may cause data loss. Do you wish to save this project?");
+    }
+
     private boolean checkSaved() {
+        return checkSaved("This project is not saved. If you continue with this operation, some data may be lost. Do you wish to save this project?");
+    }
+
+    private boolean checkSaved(String message) {
         if (isSaved()) {
             return true;
         }
-        int choice = JOptionPane.showConfirmDialog(this, "This project is not saved. If you continue with this operation,"
-                + " some data may be lost. Do you wish to save this project?", "Unsaved Project", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int choice = JOptionPane.showConfirmDialog(this, message, "Unsaved Project", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         switch (choice) {
             case JOptionPane.YES_OPTION:
                 saveAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "saveclose"));
