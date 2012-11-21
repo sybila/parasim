@@ -25,16 +25,16 @@ public class ExperimentNames {
     }
 
     public ExperimentNames(ExperimentNames source) {
-        formulaName = source.formulaName;
-        initialSpaceName = source.initialSpaceName;
-        simulationSpaceName = source.simulationSpaceName;
-        precisionConfigurationName = source.precisionConfigurationName;
-        initialSamplingName = source.initialSamplingName;
-        verificationResultName = source.verificationResultName;
-        modelName = source.modelName;
-        annotation = source.annotation;
-        iterationLimit = source.iterationLimit;
-        timeout = source.timeout;
+        formulaName = source.getFormulaName();
+        initialSpaceName = source.getInitialSpaceName();
+        simulationSpaceName = source.getSimulationSpaceName();
+        precisionConfigurationName = source.getPrecisionConfigurationName();
+        initialSamplingName = source.getInitialSamplingName();
+        verificationResultName = source.getVerificationResultName();
+        modelName = source.getModelName();
+        annotation = source.getAnnotation();
+        iterationLimit = source.getIterationLimit();
+        timeout = source.getTimeout();
     }
 
     public String getModelName() {
