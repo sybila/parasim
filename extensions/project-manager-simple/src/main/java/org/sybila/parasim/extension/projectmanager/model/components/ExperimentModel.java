@@ -159,7 +159,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     @Override
     public void newName() {
         currentName = null;
-        current = new ExperimentNames();
+        current = new ExperimentNames(current);
     }
 
     @Override
