@@ -263,9 +263,15 @@ public class DirProject implements Project {
             target.setModelName(odeName);
             ExperimentNamesResource resource = new ExperimentNamesResource(file);
             resource.setRoot(target);
+            try {
+                resource.store();
+            } catch (ResourceException re) {
+                LOGGER.warn("Unable to store new experiment.", re);
+                files.deleteFile(name);
+                return false;
+            }
             resources.put(name, resource);
             addExperiments(target);
-            saved = false;
             return true;
         }
 
@@ -312,11 +318,18 @@ public class DirProject implements Project {
             }
 
             ExperimentNamesResource resource = new ExperimentNamesResource(target);
-            ExperimentNamesResource src = resources.remove(name);
+            ExperimentNamesResource src = resources.get(name);
             resource.setRoot(src.getRoot());
+            try {
+                resource.store();
+            } catch (ResourceException re) {
+                LOGGER.warn("Unable to store experiment to new file.", re);
+                files.deleteFile(newName);
+                return false;
+            }
+            resources.remove(name);
             resources.put(newName, resource);
             files.deleteFile(name);
-            saved = false;
             return true;
         }
 

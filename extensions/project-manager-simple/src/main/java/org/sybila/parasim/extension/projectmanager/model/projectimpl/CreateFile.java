@@ -29,7 +29,7 @@ public abstract class CreateFile implements ResourceAction {
     }
 
     protected File getFile() {
-        if (!isViable()) {
+        if (name == null) {
             return null;
         }
         return manager.getFile(name);

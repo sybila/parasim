@@ -126,21 +126,34 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
 
     private class AddAction extends CreateFile {
 
-        private E target;
+        private Resource resource;
 
         public AddAction(E target, String name) {
             super(files, name);
-            this.target = target;
+            if (super.isViable()) {
+                resource = new Resource(getXMLResource(getFile()));
+                resource.get().setRoot(target);
+                try {
+                    resource.get().store();
+                } catch (XMLException xmle) {
+                    LOGGER.warn("Unable to store new resource.", xmle);
+                    resource = null;
+                    revert();
+                }
+            }
+
+        }
+
+        @Override
+        public boolean isViable() {
+            return super.isViable() && (resource != null);
         }
 
         @Override
         public void commit() {
-            if (isNotUsed()) {
+            if (isNotUsed() && isViable()) {
                 super.commit();
-                Resource resource = new Resource(getXMLResource(getFile()));
-                resource.get().setRoot(target);
                 resources.put(getName(), resource);
-                saved = false;
             }
         }
     }
@@ -187,22 +200,36 @@ public abstract class XMLResourceList<E extends XMLRepresentable> implements Exp
     private class RenameAction extends CreateFile {
 
         private String oldName;
+        private Resource resource;
 
         public RenameAction(String oldName, String name) {
             super(files, name);
+            if (super.isViable()) {
+                Resource old = resources.get(oldName);
+                resource = new Resource(getXMLResource(getFile()), old);
+                resource.get().setRoot(old.get().getRoot());
+                try {
+                    resource.get().store();
+                } catch (XMLException xmle) {
+                    LOGGER.warn("Unable to store resource to new file.", xmle);
+                    resource = null;
+                    revert();
+                }
+            }
             this.oldName = oldName;
         }
 
         @Override
+        public boolean isViable() {
+            return super.isViable() && (resource != null);
+        }
+
+        @Override
         public void commit() {
-            if (isNotUsed()) {
+            if (isNotUsed() && isViable()) {
                 super.commit();
-                Resource old = resources.get(oldName);
-                Resource resource = new Resource(getXMLResource(getFile()), old);
-                resource.get().setRoot(old.get().getRoot());
                 resources.put(getName(), resource);
                 removeAndRename(oldName, getName());
-                saved = false;
             }
         }
     }
