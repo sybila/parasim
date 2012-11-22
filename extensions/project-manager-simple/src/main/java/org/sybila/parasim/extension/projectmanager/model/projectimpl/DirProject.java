@@ -205,6 +205,33 @@ public class DirProject implements Project {
             files = new FileManager(dir, ExperimentSuffixes.EXPERIMENT);
         }
 
+        private void checkExperimentNames(ExperimentNames names) {
+            String formula = names.getFormulaName();
+            if (formula != null && formulae.get(formula) == null) {
+                names.setFormulaName(null);
+            }
+
+            String sampling = names.getInitialSamplingName();
+            if (sampling != null && samplingList.get(sampling) == null) {
+                names.setInitialSamplingName(null);
+            }
+
+            String initSpace = names.getInitialSpaceName();
+            if (initSpace != null && initialSpaceList.get(initSpace) == null) {
+                names.setInitialSpaceName(null);
+            }
+
+            String simSpace = names.getSimulationSpaceName();
+            if (simSpace != null && simulationSpaceList.get(simSpace) == null) {
+                names.setSimulationSpaceName(null);
+            }
+
+            String precision = names.getPrecisionConfigurationName();
+            if (precision != null && precisionList.get(precision) == null) {
+                names.setPrecisionConfigurationName(null);
+            }
+        }
+
         public void loadResources() {
             resources.clear();
             for (String name : files.getFiles()) {
@@ -212,8 +239,13 @@ public class DirProject implements Project {
                     ExperimentNamesResource resource = new ExperimentNamesResource(files.getFile(name));
                     try {
                         resource.load();
-                        resources.put(name, resource);
-                        addExperiments(resource.getRoot());
+                        if (resource.getRoot().getModelName().equals(odeName)) {
+                            resources.put(name, resource);
+                            checkExperimentNames(resource.getRoot());
+                            addExperiments(resource.getRoot());
+                        } else {
+                            LOGGER.warn("Experiment file `" + files.getFile(name) + "' contains different model name.");
+                        }
                     } catch (ResourceException re) {
                         LOGGER.warn("Unable to load `" + files.getFile(name) + "'.", re);
                     }
