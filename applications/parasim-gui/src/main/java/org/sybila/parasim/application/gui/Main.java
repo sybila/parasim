@@ -42,7 +42,6 @@ import org.sybila.parasim.model.xml.XMLResource;
 import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
-import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
@@ -96,12 +95,6 @@ public class Main {
             public void click(MouseOnResultListener.ResultEvent event) {
                 Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getFormula(), experiment.getPrecisionConfiguration(), experiment.getSimulationSpace());
                 manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
-            }
-        });
-        plotter.addPlotterWindowListener(new PlotterWindowListener() {
-            @Override
-            public void windowClosed(PlotterWindowListener.PlotterWindowEvent event) {
-                manager.shutdown();
             }
         });
         plotter.plot();
