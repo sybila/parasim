@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sybila.parasim.computation.cycledetection.api.CycleDetectorFactory;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.api.annotations.InitialSpace;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
@@ -94,8 +93,6 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     @Inject
     private DistanceChecker distanceChecker;
     @Inject
-    private CycleDetectorFactory cycleDetectorFactory;
-    @Inject
     private ComputationEmitter emitter;
 
     @Inject
@@ -151,7 +148,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             if (spawned.getSecondaryTrajectories().size() > 0) {
                 simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
             }
-            VerifiedDataBlock<TrajectoryWithNeighborhood> verified = verifier.verify(cycleDetectorFactory.detect(simulated), property);
+            VerifiedDataBlock<TrajectoryWithNeighborhood> verified = verifier.verify(simulated, property);
             if (result == null) {
                 result = new VerifiedDataBlockResultAdapter(verified);
             } else {
@@ -159,7 +156,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             }
             if (iterationLimit != 0 && currentIteration == iterationLimit) {
                 if (simulatedSecondary != null) {
-                    VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(cycleDetectorFactory.detect(simulatedSecondary), property);
+                    VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
                     result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
                 }
                 LOGGER.warn("["+threadId.currentId()+"] iteration limit <" + iterationLimit + "> reached");

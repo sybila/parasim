@@ -27,6 +27,7 @@ import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
 import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.computation.verification.api.Verifier;
+import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.Property;
@@ -42,6 +43,43 @@ public class SimpleVerifier<P extends Property> implements Verifier<P> {
     public SimpleVerifier(MonitorFactory<P> monitorFactory) {
         Validate.notNull(monitorFactory);
         this.monitorFactory = monitorFactory;
+    }
+
+    @Override
+    public <T extends Trajectory> VerifiedDataBlock<T> verify(final DataBlock<T> trajectories, P property) {
+        final Robustness[] robustnesses = new Robustness[trajectories.size()];
+        int counter = 0;
+        for (Trajectory trajectory: trajectories) {
+            robustnesses[counter] = verify(trajectory, property);
+            counter++;
+        }
+        return new VerifiedDataBlock<T>() {
+
+            @Override
+            public LimitedPointDistanceMetric getDistanceMetric(int index) {
+                return robustnesses[index];
+            }
+
+            @Override
+            public Robustness getRobustness(int index) {
+                return robustnesses[index];
+            }
+
+            @Override
+            public T getTrajectory(int index) {
+                return (T) trajectories.getTrajectory(index).getReference().getTrajectory();
+            }
+
+            @Override
+            public int size() {
+                return trajectories.size();
+            }
+
+            @Override
+            public Iterator<T> iterator() {
+                return trajectories.iterator();
+            }
+        };
     }
 
     @Override
