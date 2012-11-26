@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
-	<variable name="predator" sampling="10"/>
-	<variable name="prey" sampling="10"/>
-</initial-sampling>

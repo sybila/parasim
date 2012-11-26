@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<space xmlns="http://www.sybila.org/parasim/space">
-	<variable name="predator" min="20" max="90"/>
-	<variable name="prey" min="20" max="90"/>
-</space>
