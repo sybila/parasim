@@ -24,7 +24,7 @@ public class TestExperimentNamesStorage {
         result.setPrecisionConfigurationName("Max Mccook");
         result.setInitialSamplingName("Odessa Juliano");
         result.setVerificationResultName("Ted Pin");
-        result.setTimeout(480000);
+        result.setTimeoutAmount(480000);
         result.setIterationLimit(25);
         result.setAnnotation("A test experiment.");
         return result;

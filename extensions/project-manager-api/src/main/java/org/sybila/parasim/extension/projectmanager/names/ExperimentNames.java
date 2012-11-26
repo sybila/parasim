@@ -1,6 +1,7 @@
 package org.sybila.parasim.extension.projectmanager.names;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 
 /**
@@ -11,7 +12,8 @@ public class ExperimentNames {
 
     private String formulaName, initialSpaceName, simulationSpaceName, precisionConfigurationName, initialSamplingName, verificationResultName, modelName, annotation;
     private int iterationLimit = 0;
-    private long timeout = 0;
+    private long timeoutAmount = 0;
+    private TimeUnit timeUnit = TimeUnit.MINUTES;
 
     public ExperimentNames() {
         formulaName = null;
@@ -34,7 +36,7 @@ public class ExperimentNames {
         modelName = source.getModelName();
         annotation = source.getAnnotation();
         iterationLimit = source.getIterationLimit();
-        timeout = source.getTimeout();
+        timeoutAmount = source.getTimeoutAmount();
     }
 
     public String getModelName() {
@@ -93,12 +95,20 @@ public class ExperimentNames {
         this.simulationSpaceName = simulationSpaceName;
     }
 
-    public long getTimeout() {
-        return timeout;
+    public long getTimeoutAmount() {
+        return timeoutAmount;
     }
 
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
+    public void setTimeoutAmount(long timeoutAmount) {
+        this.timeoutAmount = timeoutAmount;
+    }
+
+    public TimeUnit getTimeoutUnit() {
+        return timeUnit;
+    }
+
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
     }
 
     public String getVerificationResultName() {
@@ -121,7 +131,7 @@ public class ExperimentNames {
         return ((formulaName != null) && (initialSpaceName != null)
                 && (simulationSpaceName != null) && (precisionConfigurationName != null)
                 && (initialSamplingName != null)
-                && (modelName != null) && (iterationLimit > 0) && (timeout > 0));
+                && (modelName != null) && (iterationLimit > 0) && (timeoutAmount > 0));
     }
 
     @Override
@@ -154,7 +164,7 @@ public class ExperimentNames {
         if (!getVerificationResultName().equals(target.getVerificationResultName())) {
             return false;
         }
-        if (getTimeout() != target.getTimeout()) {
+        if (getTimeoutAmount() != target.getTimeoutAmount()) {
             return false;
         }
         if (getIterationLimit() != target.getIterationLimit()) {
@@ -176,7 +186,7 @@ public class ExperimentNames {
         result = result * prime + getPrecisionConfigurationName().hashCode();
         result = result * prime + getInitialSamplingName().hashCode();
         result = result * prime + getVerificationResultName().hashCode();
-        result = result * prime + Long.valueOf(getTimeout()).hashCode();
+        result = result * prime + Long.valueOf(getTimeoutAmount()).hashCode();
         result = result * prime + getIterationLimit();
         result = result * prime + getAnnotation().hashCode();
         return result;
@@ -217,10 +227,16 @@ public class ExperimentNames {
             result.setVerificationResultName(getAndRemoveSuffix(properties, RESULT_PRP, ExperimentSuffixes.VERIFICATION_RESULT));
             String property = null;
             try {
-                property = getAndValidate(properties, TIMEOUT_PRP);
-                result.setTimeout(Long.valueOf(property));
+                property = getAndValidate(properties, TIMEOUT_AMOUNT_PRP);
+                result.setTimeoutAmount(Long.valueOf(property));
             } catch (NumberFormatException nfe) {
                 throw new ResourceException("Wrong number format of timeout: " + property, nfe);
+            }
+            try {
+                property = getAndValidate(properties, TIMEOUT_UNIT_PRP);
+                result.setTimeUnit(TimeUnit.valueOf(property.toUpperCase()));
+            } catch(RuntimeException e) {
+                throw new ResourceException("Wrong timeout unit: " + property, e);
             }
             try {
                 property = getAndValidate(properties, ITERATION_PRP);
@@ -247,7 +263,8 @@ public class ExperimentNames {
             setIfNotNull(result, PRECISION_PRP, names.getPrecisionConfigurationName(), ExperimentSuffixes.PRECISION_CONFIGURATION);
             setIfNotNull(result, SAMPLING_PRP, names.getInitialSamplingName(), ExperimentSuffixes.INITIAL_SAMPLING);
             setIfNotNull(result, RESULT_PRP, names.getVerificationResultName(), ExperimentSuffixes.VERIFICATION_RESULT);
-            result.setProperty(TIMEOUT_PRP, Long.toString(names.getTimeout()));
+            result.setProperty(TIMEOUT_AMOUNT_PRP, Long.toString(names.getTimeoutAmount()));
+            result.setProperty(TIMEOUT_UNIT_PRP, names.getTimeoutUnit().toString());
             result.setProperty(ITERATION_PRP, Integer.toString(names.getIterationLimit()));
             if (names.getAnnotation() != null && !names.getAnnotation().isEmpty()) {
                 result.setProperty(ANNOTATION_PRP, names.getAnnotation());
@@ -266,7 +283,8 @@ public class ExperimentNames {
     private static final String PRECISION_PRP = "simulation.precision.file";
     private static final String SAMPLING_PRP = "density.sampling.file";
     private static final String RESULT_PRP = "result.output.file";
-    private static final String TIMEOUT_PRP = "timeout";
+    private static final String TIMEOUT_AMOUNT_PRP = "timeout.amount";
+    private static final String TIMEOUT_UNIT_PRP = "timeout.unit";
     private static final String ITERATION_PRP = "iteration.limit";
     private static final String ANNOTATION_PRP = "annotation";
 }

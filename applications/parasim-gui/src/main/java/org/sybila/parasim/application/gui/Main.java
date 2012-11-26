@@ -26,8 +26,8 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.ExperimentLauncher;
-import org.sybila.parasim.application.model.LoadedExperiment;
 import org.sybila.parasim.application.model.TrajectoryAnalysisComputation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.core.Manager;
@@ -64,7 +64,7 @@ public class Main {
         });
         projectManager.setExperimentListener(new ExperimentListener() {
             @Override
-            public void performExperiment(LoadedExperiment experiment) {
+            public void performExperiment(Experiment experiment) {
                 try {
                     executeExperiment(manager, experiment);
                 } catch (IOException e) {
@@ -73,7 +73,7 @@ public class Main {
             }
 
             @Override
-            public void showResult(LoadedExperiment experiment) {
+            public void showResult(Experiment experiment) {
                 XMLResource<VerificationResult> input = experiment.getVerificationResultResource();
                 try {
                     input.load();
@@ -87,7 +87,7 @@ public class Main {
         projectManager.setVisible(true);
     }
 
-    private static void plotResult(final Manager manager, final LoadedExperiment experiment, VerificationResult result) throws XMLException {
+    private static void plotResult(final Manager manager, final Experiment experiment, VerificationResult result) throws XMLException {
         PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
         final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
         plotter.addMouseOnResultListener(new MouseOnResultListener() {
@@ -100,7 +100,7 @@ public class Main {
         plotter.plot();
     }
 
-    private static void executeExperiment(Manager manager, LoadedExperiment experiment) throws IOException {
+    private static void executeExperiment(Manager manager, Experiment experiment) throws IOException {
         // launch experiment
         VerificationResult result = null;
         try {

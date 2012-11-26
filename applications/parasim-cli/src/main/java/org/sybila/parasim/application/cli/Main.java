@@ -34,7 +34,6 @@ import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
 import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLResource;
@@ -165,22 +164,13 @@ public class Main {
     }
 
     private static void plotResult(VerificationResult result) throws XMLException {
-        if (experiment.getSimulationSpaceResource().getRoot() == null) {
-            experiment.getSimulationSpaceResource().load();
-        };
-        if (experiment.getPrecisionConfigurationResources().getRoot() == null) {
-            experiment.getPrecisionConfigurationResources().load();
-        }
-        if (experiment.getSTLFormulaResource().getRoot() == null) {
-            experiment.getSTLFormulaResource().setVariableMapping(new OdeVariableMapping(experiment.getOdeSystem()));
-            experiment.getSTLFormulaResource().load();
-        }
+
         PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
         final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
         plotter.addMouseOnResultListener(new MouseOnResultListener() {
             @Override
             public void click(ResultEvent event) {
-                Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getSTLFormulaResource().getRoot(), experiment.getPrecisionConfigurationResources().getRoot(), experiment.getSimulationSpaceResource().getRoot());
+                Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getFormula(), experiment.getPrecisionConfiguration(), experiment.getSimulationSpace());
                 manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
             }
         });

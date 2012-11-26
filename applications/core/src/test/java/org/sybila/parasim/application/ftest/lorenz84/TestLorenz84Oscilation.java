@@ -83,33 +83,26 @@ public class TestLorenz84Oscilation {
     @Test
     public void testSimple() throws IOException, InterruptedException, ExecutionException {
         Experiment experiment = loadExperiment();
-        experiment.getSTLFormulaResource().load();
-        experiment.getPrecisionConfigurationResources().load();
         Point initialPoint = new ArrayPoint(0f, 0f, 0f, 0f, 1.75f, 0.5625f);
         VerificationResult timeNeeded = getManager().resolve(ComputationContainer.class, Default.class, getManager().getRootContext()).compute(new RobustnessComputation(
                 initialPoint,
-                experiment.getSTLFormulaResource().getRoot().getTimeNeeded(),
+                experiment.getFormula().getTimeNeeded(),
                 experiment.getOdeSystem(),
-                experiment.getPrecisionConfigurationResources().getRoot(),
-                experiment.getSimulationSpaceResource().getRoot(),
-                experiment.getSTLFormulaResource().getRoot())).full().get();
+                experiment.getPrecisionConfiguration(),
+                experiment.getSimulationSpace(),
+                experiment.getFormula())).full().get();
         VerificationResult simulationTime = getManager().resolve(ComputationContainer.class, Default.class, getManager().getRootContext()).compute(new RobustnessComputation(
                 initialPoint,
-                experiment.getSimulationSpaceResource().getRoot().getMaxBounds().getTime(),
+                experiment.getSimulationSpace().getMaxBounds().getTime(),
                 experiment.getOdeSystem(),
-                experiment.getPrecisionConfigurationResources().getRoot(),
-                experiment.getSimulationSpaceResource().getRoot(),
-                experiment.getSTLFormulaResource().getRoot())).full().get();
+                experiment.getPrecisionConfiguration(),
+                experiment.getSimulationSpace(),
+                experiment.getFormula())).full().get();
         Assert.assertEquals(timeNeeded.getRobustness(0).getValue(), simulationTime.getRobustness(0).getValue(), 0.005f, "Analysis shouldn't be dependent on simulation length.");
     }
 
     protected final Experiment loadExperiment() throws IOException {
-        Experiment experiment =  ExperimentImpl.fromPropertiesFile(TestLorenz84Oscilation.class.getClassLoader().getResource("org/sybila/parasim/application/ftest/lorenz84/experiment-oscil.properties").getFile());
-        experiment.getSTLFormulaResource().setVariableMapping(new OdeVariableMapping(experiment.getOdeSystem()));
-        experiment.getSTLFormulaResource().load();
-        experiment.getPrecisionConfigurationResources().load();
-        experiment.getSimulationSpaceResource().load();
-        return experiment;
+        return ExperimentImpl.fromPropertiesFile(TestLorenz84Oscilation.class.getClassLoader().getResource("org/sybila/parasim/application/ftest/lorenz84/experiment-oscil.properties").getFile());
     }
 
     protected static class RobustnessComputation extends AbstractComputation<VerificationResult> {

@@ -19,12 +19,13 @@
  */
 package org.sybila.parasim.application.model;
 
+import java.util.concurrent.TimeUnit;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.verification.result.VerificationResult;
-import org.sybila.parasim.model.verification.stl.FormulaResource;
+import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.xml.XMLResource;
 
 /**
@@ -35,19 +36,22 @@ public interface Experiment {
 
     OdeSystem getOdeSystem();
 
-    FormulaResource getSTLFormulaResource();
+    Formula getFormula();
 
-    XMLResource<OrthogonalSpace> getInitialSpaceResource();
+    OrthogonalSpace getInitialSpace();
 
-    XMLResource<OrthogonalSpace> getSimulationSpaceResource();
+    OrthogonalSpace getSimulationSpace();
 
-    XMLResource<PrecisionConfiguration> getPrecisionConfigurationResources();
+    PrecisionConfiguration getPrecisionConfiguration();
 
-    XMLResource<InitialSampling> getInitialSamplingResource();
+    InitialSampling getInitialSampling();
 
     int getIterationLimit();
 
-    long getTimeoutInMilliSeconds();
+    long getTimeoutAmount();
+
+    TimeUnit getTimeoutUnit();
 
     XMLResource<VerificationResult> getVerificationResultResource();
+
 }

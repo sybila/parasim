@@ -1,6 +1,6 @@
 package org.sybila.parasim.extension.projectmanager.model.project;
 
-import org.sybila.parasim.application.model.LoadedExperiment;
+import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
@@ -14,27 +14,27 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
  */
 public interface Project {
 
-    public OdeSystem getOdeSystem();
+    OdeSystem getOdeSystem();
 
-    public String getProjectName();
+    String getProjectName();
 
-    public FormulaResourceList getFormulae();
+    FormulaResourceList getFormulae();
 
-    public ExperimentResourceList<OrthogonalSpace> getSimulationSpaces();
+    ExperimentResourceList<OrthogonalSpace> getSimulationSpaces();
 
-    public ExperimentResourceList<PrecisionConfiguration> getPrecisionsConfigurations();
+    ExperimentResourceList<PrecisionConfiguration> getPrecisionsConfigurations();
 
-    public ExperimentResourceList<OrthogonalSpace> getInitialSpaces();
+    ExperimentResourceList<OrthogonalSpace> getInitialSpaces();
 
-    public ExperimentResourceList<InitialSampling> getInitialSamplings();
+    ExperimentResourceList<InitialSampling> getInitialSamplings();
 
-    public ResourceList<ExperimentNames> getExperiments();
+    ResourceList<ExperimentNames> getExperiments();
 
-    public boolean isSaved();
+    boolean isSaved();
 
-    public void save() throws ResourceException;
+    void save() throws ResourceException;
 
-    public LoadedExperiment getExperiment(ExperimentNames experiment);
+    Experiment getExperiment(ExperimentNames experiment);
 
-    public boolean hasResult(ExperimentNames experiment);
+    boolean hasResult(ExperimentNames experiment);
 }

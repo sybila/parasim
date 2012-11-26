@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.LoadedExperiment;
-import org.sybila.parasim.application.model.LoadedExperimentImpl;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectmanager.model.OdeUtils;
@@ -48,9 +48,9 @@ public class DirProject implements Project {
         }
 
         @Override
-        public void setTimeout(long timeout) {
-            if (timeout != getTimeout()) {
-                content.setTimeout(timeout);
+        public void setTimeoutAmount(long timeout) {
+            if (timeout != getTimeoutAmount()) {
+                content.setTimeoutAmount(timeout);
                 saved = false;
             }
         }
@@ -176,8 +176,8 @@ public class DirProject implements Project {
         }
 
         @Override
-        public long getTimeout() {
-            return content.getTimeout();
+        public long getTimeoutAmount() {
+            return content.getTimeoutAmount();
         }
 
         @Override
@@ -436,7 +436,7 @@ public class DirProject implements Project {
     }
 
     @Override
-    public LoadedExperiment getExperiment(ExperimentNames experiment) {
+    public Experiment getExperiment(ExperimentNames experiment) {
         if (!experiment.isFilled()) {
             return null;
         }
@@ -457,9 +457,9 @@ public class DirProject implements Project {
 
         String resultName = experiment.getVerificationResultName();
         if (resultName != null) {
-            return new LoadedExperimentImpl(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit(), results.getFile(resultName));
+            return new LoadedExperiment(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeoutAmount(), experiment.getTimeoutUnit(), experiment.getIterationLimit(), results.getFile(resultName));
         } else {
-            return new LoadedExperimentImpl(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeout(), experiment.getIterationLimit());
+            return new LoadedExperiment(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeoutAmount(), experiment.getTimeoutUnit(), experiment.getIterationLimit());
         }
     }
 

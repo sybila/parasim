@@ -1,7 +1,7 @@
 package org.sybila.parasim.extension.projectmanager.model.components;
 
 import javax.swing.JOptionPane;
-import org.sybila.parasim.application.model.LoadedExperiment;
+import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.model.warning.UsedWarningModel;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
@@ -146,7 +146,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
                 && (robustnessWarning != null) && (simulationsWarning != null);
     }
 
-    public LoadedExperiment getExperiment() {
+    public Experiment getExperiment() {
         if (current == null) {
             return null;
         }
@@ -208,7 +208,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         current = values;
         currentName = name;
 
-        settings.setValues(new Pair<>(new ExperimentSettingsValues(values.getIterationLimit(), values.getTimeout()), values.getAnnotation()));
+        settings.setValues(new Pair<>(new ExperimentSettingsValues(values.getIterationLimit(), values.getTimeoutAmount()), values.getAnnotation()));
         settings.getFormulaeNameList().selectName(values.getFormulaName());
         settings.getSimulationsNameList().selectName(values.getSimulationSpaceName());
         settings.getRobustnessNameList().selectName(values.getInitialSamplingName());
@@ -218,7 +218,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     @Override
     public void valuesChanged(ExperimentSettingsValues values) {
         current.setIterationLimit(values.getIterationLimit());
-        current.setTimeout(values.getTimeout());
+        current.setTimeoutAmount(values.getTimeout());
         checkExperiment();
     }
 

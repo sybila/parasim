@@ -24,7 +24,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import org.sybila.parasim.application.model.LoadedExperiment;
+import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.extension.projectmanager.api.ExperimentListener;
 import org.sybila.parasim.extension.projectmanager.api.ProjectManager;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
@@ -118,7 +118,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (launcher != null && checkDangerousAction()) {
-                    LoadedExperiment experiment = experimentModel.getExperiment();
+                    Experiment experiment = experimentModel.getExperiment();
                     launcher.performExperiment(experiment);
                 }
             }
@@ -441,12 +441,12 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
                 manager.setExperimentListener(new ExperimentListener() {
 
                     @Override
-                    public void performExperiment(LoadedExperiment target) {
+                    public void performExperiment(Experiment target) {
                         JOptionPane.showMessageDialog(null, "Experiment performed.");
                     }
 
                     @Override
-                    public void showResult(LoadedExperiment target) {
+                    public void showResult(Experiment target) {
                         JOptionPane.showMessageDialog(null, "Results showed.");
                     }
                 });
