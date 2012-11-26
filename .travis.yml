@@ -1,8 +1,0 @@
-branches:
-  only:
-    - 'master'
-    
-language: java
-
-script: ./build-in-steps.sh clean install
-
