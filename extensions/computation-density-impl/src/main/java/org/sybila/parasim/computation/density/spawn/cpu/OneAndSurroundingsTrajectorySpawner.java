@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.computation.density.spawn.cpu;
 
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,9 +41,9 @@ import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhoodWrapper;
  */
 public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawner {
 
-    private final Map<Point, Trajectory> alreadySpawnedCollisionTrajectories = new HashMap<>();
+    private final Map<Point, WeakReference<Trajectory>> alreadySpawnedCollisionTrajectories = new HashMap<>();
 
-    private final Map<Point, Trajectory> alreadySpawnedPrimaryTrajectories = new HashMap<>();
+    private final Map<Point, WeakReference<Trajectory>> alreadySpawnedPrimaryTrajectories = new HashMap<>();
 
     @Override
     protected SpawnedResult spawnTrajectories(Configuration configuration, Trajectory trajectory, Trajectory neighbor, Distance distance) {
@@ -73,9 +75,14 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
                 }
                 synchronized(alreadySpawnedCollisionTrajectories) {
                     if (alreadySpawnedCollisionTrajectories.containsKey(newTrajectory.getFirstPoint())) {
-                        newTrajectory = alreadySpawnedCollisionTrajectories.get(newTrajectory.getFirstPoint());
+                        WeakReference<Trajectory> reference = alreadySpawnedCollisionTrajectories.get(newTrajectory.getFirstPoint());
+                        if (reference.get() != null) {
+                            newTrajectory = reference.get() instanceof TrajectoryWithNeighborhood ? ((TrajectoryWithNeighborhood) reference.get()).withoutNeighbors() : reference.get();
+                        } else {
+                            alreadySpawnedCollisionTrajectories.put(newTrajectory.getFirstPoint(), new WeakReferenceWithEquals<>(newTrajectory));
+                        }
                     } else {
-                        alreadySpawnedCollisionTrajectories.put(newTrajectory.getFirstPoint(), newTrajectory);
+                        alreadySpawnedCollisionTrajectories.put(newTrajectory.getFirstPoint(), new WeakReferenceWithEquals<>(newTrajectory));
                         spawnedSecondaryTrajectories.add(newTrajectory);
                     }
                 }
@@ -88,9 +95,44 @@ public class OneAndSurroundingsTrajectorySpawner extends AbstractTrajectorySpawn
         synchronized(alreadySpawnedPrimaryTrajectories) {
             if (!alreadySpawnedPrimaryTrajectories.containsKey(newPrimary.getFirstPoint())) {
                 spawnedCol.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(newPrimary, new ListDataBlock<>(neighborTrajectories)));
-                alreadySpawnedPrimaryTrajectories.put(newPrimary.getFirstPoint(), newPrimary);
+                alreadySpawnedPrimaryTrajectories.put(newPrimary.getFirstPoint(), new WeakReferenceWithEquals<>(newPrimary));
             }
         }
         return new SpawnedResult(spawnedCol, spawnedCol.isEmpty() ? Collections.EMPTY_LIST : spawnedSecondaryTrajectories);
+    }
+
+    private static class WeakReferenceWithEquals<T> extends WeakReference<T> {
+
+        public WeakReferenceWithEquals(T referent) {
+            super(referent);
+        }
+
+        public WeakReferenceWithEquals(T referent, ReferenceQueue<? super T> q) {
+            super(referent, q);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof WeakReferenceWithEquals)) {
+                return false;
+            }
+            WeakReferenceWithEquals other = (WeakReferenceWithEquals) obj;
+            if (this.get() == null && other.get() == null) {
+                return true;
+            }
+            if (this.get() == null || other.get() == null) {
+                return false;
+            }
+            return this.get().equals(other.get());
+        }
+
+        @Override
+        public int hashCode() {
+            if (this.get() == null) {
+                return 113 * WeakReferenceWithEquals.class.hashCode();
+            }
+            return 23 * this.get().hashCode();
+        }
+
     }
 }

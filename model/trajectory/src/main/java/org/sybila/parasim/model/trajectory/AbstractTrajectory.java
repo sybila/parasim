@@ -19,6 +19,9 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -73,6 +76,7 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
         return length;
     }
 
+    @Override
     public DataBlock<Trajectory> getNeighbors() {
         return neighborhood;
     }
@@ -107,6 +111,15 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
     @Override
     public TrajectoryIterator iterator(int index) {
         return new SimpleTrajectoryIterator(this, index);
+    }
+
+    @Override
+    public Trajectory withoutNeighbors() {
+        List<Point> points = new ArrayList<>(getLength());
+        for (Point p: this) {
+            points.add(p);
+        }
+        return new ListTrajectory(points);
     }
 
     protected final void setLength(int length) {

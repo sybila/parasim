@@ -23,4 +23,6 @@ public interface TrajectoryWithNeighborhood extends Trajectory {
 
     DataBlock<Trajectory> getNeighbors();
 
+    Trajectory withoutNeighbors();
+
 }

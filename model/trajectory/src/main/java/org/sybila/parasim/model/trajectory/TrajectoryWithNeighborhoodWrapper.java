@@ -94,4 +94,9 @@ public class TrajectoryWithNeighborhoodWrapper implements TrajectoryWithNeighbor
         return trajectory.iterator(index);
     }
 
+    @Override
+    public Trajectory withoutNeighbors() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
