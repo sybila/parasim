@@ -33,6 +33,8 @@ import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.extension.progresslogger.api.LoggerWindow;
+import org.sybila.parasim.extension.progresslogger.api.ProgressLogger;
 import org.sybila.parasim.extension.projectmanager.api.ExperimentListener;
 import org.sybila.parasim.extension.projectmanager.api.ProjectManager;
 import org.sybila.parasim.model.computation.Computation;
@@ -42,6 +44,7 @@ import org.sybila.parasim.model.xml.XMLResource;
 import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
+import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
@@ -55,18 +58,23 @@ public class Main {
     public static void main(String[] args) throws IOException, Exception {
         final Manager manager = ManagerImpl.create();
         manager.start();
+        ProgressLogger progressLogger = manager.resolve(ProgressLogger.class, Default.class, manager.getRootContext());
+        final LoggerWindow loggerWindow = progressLogger.getLoggerWindow();
         ProjectManager projectManager = manager.resolve(ProjectManager.class, Default.class, manager.getRootContext());
         projectManager.addWindowListener(new WindowAdapter() {
+
             @Override
             public void windowClosed(WindowEvent e) {
+                loggerWindow.dispose();
                 manager.shutdown();
             }
         });
         projectManager.setExperimentListener(new ExperimentListener() {
+
             @Override
             public void performExperiment(Experiment experiment) {
                 try {
-                    executeExperiment(manager, experiment);
+                    executeExperiment(manager, experiment, loggerWindow);
                 } catch (IOException e) {
                     LOGGER.error("Unable to execute experiment.", e);
                 }
@@ -85,30 +93,41 @@ public class Main {
             }
         });
         projectManager.setVisible(true);
+        loggerWindow.setVisible(true);
     }
 
     private static void plotResult(final Manager manager, final Experiment experiment, VerificationResult result) throws XMLException {
         PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
         final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
         plotter.addMouseOnResultListener(new MouseOnResultListener() {
+
             @Override
             public void click(MouseOnResultListener.ResultEvent event) {
                 Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getFormula(), experiment.getPrecisionConfiguration(), experiment.getSimulationSpace());
                 manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
             }
         });
+        plotter.addPlotterWindowListener(new PlotterWindowListener() {
+
+            @Override
+            public void windowClosed(PlotterWindowListener.PlotterWindowEvent event) {
+                manager.shutdown();
+            }
+        });
         plotter.plot();
     }
 
-    private static void executeExperiment(Manager manager, Experiment experiment) throws IOException {
+    private static void executeExperiment(Manager manager, Experiment experiment, LoggerWindow logger) throws IOException {
         // launch experiment
         VerificationResult result = null;
+        logger.simulationStarted();
         try {
             result = ExperimentLauncher.launch(manager, experiment);
         } catch (Exception e) {
             LOGGER.error("Can't launch the experiment.", e);
             System.exit(1);
         }
+        logger.simulationStopped();
 
         //save result
         XMLResource<VerificationResult> output = experiment.getVerificationResultResource();

@@ -23,4 +23,8 @@ public interface SimpleWindow {
     public void removeWindowListener(WindowListener listener);
 
     public WindowListener[] getWindowListeners();
+
+    public void dispose();
+
+    public boolean isDisplayable();
 }
