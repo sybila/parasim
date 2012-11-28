@@ -25,7 +25,7 @@ public class LoggerWindowImpl extends JFrame implements LoggerWindow {
         time = new TimePanel();
 
         setSize(400, 300);
-        setLocation(450, 0);
+        setLocation(850, 50);
 
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
