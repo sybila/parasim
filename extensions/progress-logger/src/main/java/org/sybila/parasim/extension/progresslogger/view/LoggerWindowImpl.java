@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.util.Date;
 import javax.swing.JFrame;
 import org.apache.log4j.spi.LoggingEvent;
+import org.sybila.parasim.application.ui.ParasimIconFactory;
 import org.sybila.parasim.extension.progresslogger.api.LoggerOutput;
 import org.sybila.parasim.extension.progresslogger.api.LoggerWindow;
 
@@ -26,6 +27,7 @@ public class LoggerWindowImpl extends JFrame implements LoggerWindow {
 
         setSize(400, 300);
         setLocation(850, 50);
+        setIconImage(ParasimIconFactory.getInstance().getIcon());
 
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
