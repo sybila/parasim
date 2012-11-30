@@ -34,8 +34,8 @@
         <dependency>
             <groupId>org.sbml</groupId>
             <artifactId>jsbml</artifactId>
-            <classifier>with-dependencies</classifier>
-            <version>0.8-rc1</version>
+            <version>0.8</version>
+            <classifier>with-dependencies-without-log4j</classifier>
         </dependency>
     </dependencies>
 
