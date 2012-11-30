@@ -92,8 +92,8 @@ public class Main {
                 }
             }
         });
-        projectManager.setVisible(true);
         loggerWindow.setVisible(true);
+        projectManager.setVisible(true);
     }
 
     private static void plotResult(final Manager manager, final Experiment experiment, VerificationResult result) throws XMLException {
