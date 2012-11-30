@@ -18,7 +18,7 @@ public class FloatTextField extends CommitFormattedTextField {
     private String name;
 
     public FloatTextField(String name, Model model) {
-        super(DecimalFormat.getNumberInstance());
+        super(new DecimalFormat("0.####E0"));
         if (model == null) {
             throw new IllegalArgumentException("Argument (model) is null.");
         }
