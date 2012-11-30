@@ -39,6 +39,7 @@
                 <module>extensions/performence-api</module>
                 <module>extensions/performence-conf</module>
                 <module>extensions/performence-impl</module>
+                <module>extensions/progress-logger</module>
                 <module>extensions/project-manager-api</module>
                 <module>extensions/project-manager-simple</module>
                 <module>extensions/remote-api</module>
