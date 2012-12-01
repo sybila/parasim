@@ -64,7 +64,10 @@ public class Main {
             @Override
             public void windowClosed(WindowEvent e) {
                 loggerWindow.dispose();
-                manager.shutdown();
+                if (manager.isRunning()) {
+                    manager.shutdown();
+                }
+                System.exit(0);
             }
         });
         projectManager.setExperimentListener(new ExperimentListener() {
