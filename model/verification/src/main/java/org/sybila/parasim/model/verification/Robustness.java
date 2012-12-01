@@ -19,12 +19,42 @@
  */
 package org.sybila.parasim.model.verification;
 
+import org.sybila.parasim.model.trajectory.LimitedDistance;
 import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
+import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Robustness extends LimitedPointDistanceMetric {
+
+    public static final Robustness UNDEFINED = new Robustness() {
+
+        @Override
+        public float getTime() {
+            throw new UnsupportedOperationException("Undefined");
+        }
+
+        @Override
+        public float getValue() {
+            throw new UnsupportedOperationException("Undefined");
+        }
+
+        @Override
+        public Robustness invert() {
+            return UNDEFINED;
+        }
+
+        @Override
+        public LimitedDistance distance(float[] first, float[] second) {
+            throw new UnsupportedOperationException("Undefined");
+        }
+
+        @Override
+        public LimitedDistance distance(Point first, Point second) {
+            throw new UnsupportedOperationException("Undefined");
+        }
+    };
 
     float getTime();
 

@@ -20,29 +20,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<result xmlns="http://www.sybila.org/parasim/verification-result">
-<point>
-<dim>-0.15</dim>
-<dim>12.3</dim>
-<dim>53.1</dim>
-<robustness>0.125</robustness>
+<result xmlns="http://www.sybila.org/parasim/verification-result" dimension="3">
+<point id="1" robustness="0.125">
+<data>
+<dimension>-0.15</dimension>
+<dimension>12.3</dimension>
+<dimension>53.1</dimension>
+</data>
 </point>
-<point>
-<dim>89.005</dim>
-<dim>-74.102</dim>
-<dim>376.4</dim>
-<robustness>-0.145</robustness>
+<point id="2" robustness="-0.145">
+<data>
+<dimension>89.005</dimension>
+<dimension>-74.102</dimension>
+<dimension>376.4</dimension>
+</data>
 </point>
-<point>
-<dim>538.01</dim>
-<dim>-35.002</dim>
-<dim>55.12</dim>
-<robustness>-54</robustness>
+<point id="3" robustness="-54">
+<data>
+<dimension>538.01</dimension>
+<dimension>-35.002</dimension>
+<dimension>55.12</dimension>
+</data>
 </point>
-<point>
-<dim>124.1</dim>
-<dim>25.35</dim>
-<dim>-0.005</dim>
-<robustness>12.8</robustness>
+<point id="4" robustness="-0.005">
+<data>
+<dimension>124.1</dimension>
+<dimension>25.35</dimension>
+<dimension>-0.005</dimension>
+</data>
 </point>
 </result>

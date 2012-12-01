@@ -19,36 +19,59 @@
  */
 package org.sybila.parasim.computation.verification.api;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointWithNeigborhoodWrapper;
+import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 
 /**
- * Adapter from {@link VerifiedDataBlock} to {@link VerificationResult}.
+ * Adapter from {@link VerifiedDataBlock} to {@link org.sybila.parasim.model.verification.result.VerificationResult}.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class VerifiedDataBlockResultAdapter<T extends Trajectory> extends AbstractVerificationResult {
 
-    private VerifiedDataBlock<T> data;
+    private PointWithNeighborhood[] points;
+    private Robustness[] robustnesses;
 
     public VerifiedDataBlockResultAdapter(VerifiedDataBlock<T> data) {
-        this.data = data;
+        int index = 0;
+        points = new PointWithNeighborhood[data.size()];
+        robustnesses = new Robustness[data.size()];
+        for (Trajectory t: data) {
+            if (t instanceof TrajectoryWithNeighborhood && ((TrajectoryWithNeighborhood) t).getNeighbors().size() > 0) {
+                Collection<Point> neighbors = new ArrayList<>();
+                for (Trajectory n: ((TrajectoryWithNeighborhood) t).getNeighbors()) {
+                    neighbors.add(n.getFirstPoint());
+                }
+                PointWithNeighborhood point = new PointWithNeigborhoodWrapper(t.getFirstPoint(), neighbors);
+                points[index] = point;
+            } else {
+                points[index] = new PointWithNeigborhoodWrapper(t.getFirstPoint(), Collections.EMPTY_LIST);
+            }
+            robustnesses[index] = data.getRobustness(index);
+            index++;
+        }
     }
 
     @Override
     public int size() {
-        return data.size();
+        return points.length;
     }
 
     @Override
-    public Point getPoint(int index) {
-        return data.getTrajectory(index).getReference().getTrajectory().getFirstPoint();
+    public PointWithNeighborhood getPoint(int index) {
+        return points[index];
     }
 
     @Override
     public Robustness getRobustness(int index) {
-        return data.getRobustness(index);
+        return robustnesses[index];
     }
 }

@@ -4,23 +4,31 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.verification.result;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointWithNeigborhoodWrapper;
+import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.sybila.parasim.model.xml.FloatFactory;
@@ -37,38 +45,80 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
 
     public static final String RESULT_NAME = "result";
     public static final String POINT_NAME = "point";
-    public static final String DIMENSION_NAME = "dim";
+    public static final String ID_NAME = "id";
+    public static final String DIMENSION_NAME = "dimension";
+    public static final String DATA_NAME = "data";
     public static final String ROBUSTNESS_NAME = "robustness";
+    public static final String NEIGHBORS_NAME = "neighbors";
 
+    @Override
     public VerificationResult getObject(Node source) throws XMLFormatException {
         NodeList children = source.getChildNodes();
 
         int size = children.getLength();
         if (size == 0) {
-            return new ArrayVerificationResult(0, new Point[0], new Robustness[0]);
+            return new ArrayVerificationResult(0, new PointWithNeighborhood[0], new Robustness[0]);
         }
 
-        Point[] points = new Point[size];
-        Robustness[] robustness = new Robustness[size];
-        int dimension = children.item(0).getChildNodes().getLength() - 1; //one of attributes is robustness
+        Map<Point, Robustness> robustnesses = new HashMap<>();
+        Map<Integer, Point> memory = new HashMap<>();
+        Map<Point, Collection<Integer>> neighbors = new HashMap<>();
+        int dimension = Integer.parseInt(source.getAttributes().getNamedItem(DIMENSION_NAME).getNodeValue());
 
         for (int i = 0; i < size; i++) {
-            NodeList dimNodes = children.item(i).getChildNodes();
-            if (dimNodes.getLength() != dimension + 1) { //Necessary
-                throw new XMLFormatException("Unexpected number of dimensions.");
-            }
-            try {
-                float[] dims = new float[dimension];
-                for (int j = 0; j < dimension; j++) {
-                    dims[j] = FloatFactory.getObject(dimNodes.item(j).getFirstChild());
+            Node pointNode = children.item(i);
+            float[] dims = null;
+            Collection<Integer> currentNeighbors = null;
+            for (int j = 0; j < pointNode.getChildNodes().getLength(); j++) {
+                switch (pointNode.getChildNodes().item(j).getNodeName()) {
+                    case DATA_NAME:
+                        Node dataNode = pointNode.getChildNodes().item(j);
+                        if (dataNode.getChildNodes().getLength() != dimension) {
+                            throw new XMLFormatException("Unexpected number of dimensions.");
+                        }
+                        dims = new float[dimension];
+                        for (int d = 0; d < dataNode.getChildNodes().getLength(); d++) {
+                            dims[d] = FloatFactory.getObject(dataNode.getChildNodes().item(d).getFirstChild());
+                        }
+                        break;
+                    case NEIGHBORS_NAME:
+                        currentNeighbors = new ArrayList<>();
+                        Node neighborsNode = pointNode.getChildNodes().item(j);
+                        for (int n = 0; n < neighborsNode.getChildNodes().getLength(); n++) {
+                            Node neighborNode = neighborsNode.getChildNodes().item(n);
+                            currentNeighbors.add(Integer.parseInt(neighborNode.getAttributes().getNamedItem(ID_NAME).getNodeValue()));
+                        }
+                        break;
                 }
-                robustness[i] = new SimpleRobustness(FloatFactory.getObject(dimNodes.item(dimension).getFirstChild()));
-                points[i] = new ArrayPoint(0, dims, 0, dimension);
-            } catch (NumberFormatException nfe) {
-                throw new XMLFormatException("Illegible number.", nfe);
+                Point point = new ArrayPoint(0, dims);
+                if (pointNode.getAttributes().getNamedItem(ROBUSTNESS_NAME) != null) {
+                    robustnesses.put(point, new SimpleRobustness(FloatFactory.getObject(pointNode.getAttributes().getNamedItem(ROBUSTNESS_NAME))));
+                }
+                if (currentNeighbors != null) {
+                    neighbors.put(point, currentNeighbors);
+                }
             }
         }
 
-        return new ArrayVerificationResult(size, points, robustness);
+        PointWithNeighborhood[] points = new PointWithNeighborhood[robustnesses.size()];
+        Robustness[] robustnessesFinal = new Robustness[robustnesses.size()];
+        int index = 0;
+        for (Entry<Point, Robustness> entry : robustnesses.entrySet()) {
+            PointWithNeighborhood point;
+            if (neighbors.containsKey(entry.getKey())) {
+                Collection<Point> neighborhood = new ArrayList<>();
+                for (Integer id : neighbors.get(entry.getKey())) {
+                    neighborhood.add(memory.get(id));
+                }
+                point = new PointWithNeigborhoodWrapper(entry.getKey(), neighborhood);
+            } else {
+                point = new PointWithNeigborhoodWrapper(entry.getKey(), Collections.EMPTY_LIST);
+            }
+            points[index] = point;
+            robustnessesFinal[index] = entry.getValue();
+            index++;
+        }
+
+        return new ArrayVerificationResult(robustnesses.size(), points, robustnessesFinal);
     }
 }

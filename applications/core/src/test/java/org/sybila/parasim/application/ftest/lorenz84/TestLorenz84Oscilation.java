@@ -20,6 +20,7 @@
 package org.sybila.parasim.application.ftest.lorenz84;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.ExperimentImpl;
@@ -40,12 +41,13 @@ import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.computation.AbstractComputation;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointTrajectory;
+import org.sybila.parasim.model.trajectory.PointWithNeigborhoodWrapper;
+import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
@@ -154,8 +156,8 @@ public class TestLorenz84Oscilation {
                 }
 
                 @Override
-                public Point getPoint(int index) {
-                    return trajectory.getFirstPoint();
+                public PointWithNeighborhood getPoint(int index) {
+                    return new PointWithNeigborhoodWrapper(trajectory.getFirstPoint(), Collections.EMPTY_LIST);
                 }
 
                 @Override

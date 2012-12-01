@@ -20,7 +20,7 @@
 package org.sybila.parasim.model.verification.result;
 
 import org.sybila.parasim.model.Mergeable;
-import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 
@@ -41,7 +41,7 @@ public interface VerificationResult extends XMLRepresentable, Mergeable<Verifica
      * @param index Index of specified point.
      * @return Coordinates of point with specified index.
      */
-    public Point getPoint(int index);
+    public PointWithNeighborhood getPoint(int index);
 
     //public boolean getValidity(int index);
     /**

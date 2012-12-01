@@ -25,11 +25,25 @@
            xmlns="http://www.sybila.org/parasim/verification-result"
            elementFormDefault="qualified">
 
+    <xs:complexType name="data">
+        <xs:sequence>
+            <xs:element name="dimension" type="xs:token" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="neighbors">
+        <xs:sequence>
+            <xs:element name="point" type="point" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="point">
         <xs:sequence>
-            <xs:element name="dim" type="xs:token" maxOccurs="unbounded"/>
-            <xs:element name="robustness" type="xs:token" maxOccurs="1"/>
+            <xs:element name="data" type="data" minOccurs="0" maxOccurs="1" />
+            <xs:element name="neighbors" type="neighbors" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
+        <xs:attribute name="robustness" type="xs:token" />
+        <xs:attribute name="id" type="xs:integer" use="required" />
     </xs:complexType>
 
     <xs:element name="result">
@@ -37,6 +51,7 @@
             <xs:sequence>
                 <xs:element name="point" type="point" maxOccurs="unbounded"/>
             </xs:sequence>
+            <xs:attribute name="dimension" type="xs:integer" use="required" />
         </xs:complexType>
     </xs:element>
 </xs:schema>

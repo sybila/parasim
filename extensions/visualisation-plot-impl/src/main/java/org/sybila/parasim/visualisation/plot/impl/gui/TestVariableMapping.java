@@ -31,7 +31,8 @@ import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.ode.SimpleOdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
-import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointWithNeigborhoodWrapper;
+import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
@@ -73,8 +74,8 @@ class TestVariableMapping {
         int yDim = yCoords.length;
         int zDim = zCoords.length;
 
-        List<Point> points = new ArrayList<Point>();
-        List<Float> robustness = new ArrayList<Float>();
+        List<PointWithNeighborhood> points = new ArrayList<>();
+        List<Float> robustness = new ArrayList<>();
 
         final double prob = 0.4;
 
@@ -82,7 +83,7 @@ class TestVariableMapping {
             for (int j = 0; j < yDim; j++) {
                 for (int k = 0; k < zDim; k++) {
                     if (Math.random() < prob) {
-                        points.add(new ArrayPoint(0, xCoords[i], yCoords[j], zCoords[k]));
+                        points.add(new PointWithNeigborhoodWrapper(new ArrayPoint(0, xCoords[i], yCoords[j], zCoords[k])));
                         robustness.add(xCoords[i] + yCoords[j] + zCoords[k] - 1.5f);
                     }
                 }
@@ -90,7 +91,7 @@ class TestVariableMapping {
         }
 
         int dim = points.size();
-        Point[] pointArray = new Point[dim];
+        PointWithNeighborhood[] pointArray = new PointWithNeighborhood[dim];
         points.toArray(pointArray);
         Robustness[] robustArray = new Robustness[dim];
         for (int i = 0; i < dim; i++) {

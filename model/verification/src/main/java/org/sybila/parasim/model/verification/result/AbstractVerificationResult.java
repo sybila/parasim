@@ -27,6 +27,7 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -92,28 +93,53 @@ public abstract class AbstractVerificationResult implements VerificationResult {
 
     @Override
     public Element toXML(Document doc) {
-        Element target = doc.createElement(VerificationResultFactory.RESULT_NAME);
+        Map<Point, Integer> verified = new HashMap<>();
+        Map<Point, Integer> other = new HashMap<>();
+        int index = 0;
         for (int i = 0; i < size(); i++) {
-            target.appendChild(pointToXML(doc, i));
+            verified.put(getPoint(i), index);
+            index++;
+            for (Point n: getPoint(i).getNeighbors()) {
+                other.put(n, index);
+                index++;
+            }
+        }
+
+        Element target = doc.createElement(VerificationResultFactory.RESULT_NAME);
+        target.setAttribute(VerificationResultFactory.DIMENSION_NAME, (this.size() > 0 ? Integer.toString(this.getPoint(0).getDimension()) : Integer.toString(0)));
+        for (int i = 0; i < size(); i++) {
+            target.appendChild(pointToXML(doc, getPoint(i), getRobustness(i), verified, other));
+        }
+        for (Point point: other.keySet()) {
+            target.appendChild(pointToXML(doc, point, null, verified, other));
         }
 
         return target;
     }
 
-    private Element pointToXML(Document doc, int index) {
-        Point p = getPoint(index);
-        float r = getRobustness(index).getValue();
+    private Element pointToXML(Document doc, Point point, Robustness robustness, Map<Point, Integer> verifiedIndexes, Map<Point, Integer> otherIndexes) {
 
         Element target = doc.createElement(VerificationResultFactory.POINT_NAME);
-        for (int i = 0; i < p.getDimension(); i++) {
+        target.setAttribute(VerificationResultFactory.ID_NAME, verifiedIndexes.containsKey(point) ? verifiedIndexes.get(point).toString() : otherIndexes.get(point).toString());
+        Element data = doc.createElement(VerificationResultFactory.DATA_NAME);
+        target.appendChild(data);
+        for (int i = 0; i < point.getDimension(); i++) {
             Element dim = doc.createElement(VerificationResultFactory.DIMENSION_NAME);
-            dim.appendChild(doc.createTextNode(Float.toString(p.getValue(i))));
-            target.appendChild(dim);
+            dim.appendChild(doc.createTextNode(Float.toString(point.getValue(i))));
+            data.appendChild(dim);
         }
-        Element rob = doc.createElement(VerificationResultFactory.ROBUSTNESS_NAME);
-        rob.appendChild(doc.createTextNode(Float.toString(r)));
-        target.appendChild(rob);
-
+        if (point instanceof PointWithNeighborhood && !((PointWithNeighborhood) point).getNeighbors().isEmpty()) {
+            Element neighbors = doc.createElement(VerificationResultFactory.NEIGHBORS_NAME);
+            target.appendChild(neighbors);
+            for (Point n: ((PointWithNeighborhood) point).getNeighbors()) {
+                Element neighbor = doc.createElement(VerificationResultFactory.POINT_NAME);
+                neighbor.setAttribute(VerificationResultFactory.ID_NAME, verifiedIndexes.containsKey(n) ? verifiedIndexes.get(n).toString() : otherIndexes.get(n).toString());
+                neighbors.appendChild(neighbor);
+            }
+        }
+        if (robustness != null) {
+            target.setAttribute(VerificationResultFactory.ROBUSTNESS_NAME, Float.toString(robustness.getValue()));
+        }
         return target;
     }
 
@@ -156,7 +182,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         if (toMerge == null) {
             throw new IllegalArgumentException("The parameter [toMerge] is null.");
         }
-        Map<Point, Robustness> robustnesses = new HashMap<>(size());
+        Map<PointWithNeighborhood, Robustness> robustnesses = new HashMap<>(size());
         // copy this data
         for (int i=0; i<size(); i++) {
             if (!robustnesses.containsKey(getPoint(i))) {
@@ -169,10 +195,10 @@ public abstract class AbstractVerificationResult implements VerificationResult {
                 robustnesses.put(toMerge.getPoint(i), toMerge.getRobustness(i));
             }
         }
-        Point[] newPoints = new Point[robustnesses.size()];
+        PointWithNeighborhood[] newPoints = new PointWithNeighborhood[robustnesses.size()];
         Robustness[] newRobustnesses = new Robustness[robustnesses.size()];
         int index = 0;
-        for (Entry<Point, Robustness> entry : robustnesses.entrySet()) {
+        for (Entry<PointWithNeighborhood, Robustness> entry : robustnesses.entrySet()) {
             newPoints[index] = entry.getKey();
             newRobustnesses[index] = entry.getValue();
             index++;
