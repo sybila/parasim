@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0.M4</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
 
@@ -131,6 +131,6 @@
         <connection>scm:git:git://github.com/sybila/parasim.git</connection>
         <developerConnection>scm:git:git@github.com:sybila/parasim.git</developerConnection>
         <url>https://github.com/sybila/parasim</url>
-      <tag>HEAD</tag>
+      <tag>1.0.0.M4</tag>
   </scm>
 </project>
