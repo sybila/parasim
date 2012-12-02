@@ -110,13 +110,6 @@ public class Main {
                 manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
             }
         });
-        plotter.addPlotterWindowListener(new PlotterWindowListener() {
-
-            @Override
-            public void windowClosed(PlotterWindowListener.PlotterWindowEvent event) {
-                manager.shutdown();
-            }
-        });
         plotter.plot();
     }
 
