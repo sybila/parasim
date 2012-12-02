@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
-	<variable name="pRB" sampling="10"/>
-	<variable name="E2F1" sampling="10"/>
-</initial-sampling>

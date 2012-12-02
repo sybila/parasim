@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<space xmlns="http://www.sybila.org/parasim/space">
-	<time min="0" max="400"/>
-	<variable name="pRB" min="0" max="15"/>
-	<variable name="E2F1" min="0" max="15"/>
-</space>
