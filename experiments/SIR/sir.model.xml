@@ -8,9 +8,11 @@
 			<species id="S" compartment="uVol" initialConcentration="95"/>
 			<species id="I" compartment="uVol" initialConcentration="5"/>
 			<species id="R" compartment="uVol" initialConcentration="0"/>
-			<species id="infectivity" compartment="uVol" initialConcentration="0.01" constant="true"/>
-			<species id="recovery_rate" compartment="uVol" initialConcentration="0.1" constant="true"/>
 		</listOfSpecies>
+		<listOfParameters>
+			<parameter id="infectivity" value="0.01"/>
+			<parameter id="recovery" value="0.1"/>
+		</listOfParameters>
 		<listOfReactions>
 			<reaction id="infection" reversible="false">
 				<listOfReactants>
@@ -19,9 +21,6 @@
 				<listOfProducts>
 					<speciesReference species="I"/>
 				</listOfProducts>
-				<listOfModifiers>
-					<modifierSpeciesReference species="infectivity"/>
-				</listOfModifiers>
 				<kineticLaw>
 					<math xmlns="http://www.w3.org/1998/Math/MathML">
 						<apply>
@@ -33,22 +32,19 @@
 					</math>
 				</kineticLaw>
 			</reaction>
-			<reaction id="recovery" reversible="false">
+			<reaction id="recovery_reaction" reversible="false">
 				<listOfReactants>
 					<speciesReference species="I"/>
 				</listOfReactants>
 				<listOfProducts>
 					<speciesReference species="R"/>
 				</listOfProducts>
-				<listOfModifiers>
-					<modifierSpeciesReference species="recovery_rate"/>
-				</listOfModifiers>
 				<kineticLaw>
 					<math xmlns="http://www.w3.org/1998/Math/MathML">
 						<apply>
 							<times/>
 							<ci> I </ci>
-							<ci> recovery_rate </ci>
+							<ci> recovery </ci>
 						</apply>
 					</math>
 				</kineticLaw>

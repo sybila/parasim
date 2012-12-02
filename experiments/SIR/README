@@ -1,0 +1,9 @@
+Basic epidemiologic SIR model with the following flow:
+
+	S -> I -> R
+
+dS = -infectivity*S*I
+dI = infectivity*S*I - recovery*I
+dR = recovery*I
+
+(S -- suspectible, I -- infected, R -- recovered)

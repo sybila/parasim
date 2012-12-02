@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<space xmlns="http://www.sybila.org/parasim/space">
-	<variable name="S" min="95" max="95"/>
-	<variable name="I" min="5" max="5"/>
-	<variable name="R" min="0" max="0"/>
-	<variable name="infectivity" min="0" max="0.1"/>
-	<variable name="recovery_rate" min="0" max="1"/>
-</space>

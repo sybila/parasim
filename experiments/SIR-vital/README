@@ -1,0 +1,11 @@
+Epidemiologic SIR model with vital dynamics. Flow:
+
+	v
+	S -> I -> R
+	v    v    v
+
+dS = flow*(S+I+R) - infectivity*S*I - flow*S
+dI = infectivity*S*I - recovery*I - flow*I
+dR = recovery*I - flow*R
+
+(S -- suspectible, I -- infected, R -- recovered)
