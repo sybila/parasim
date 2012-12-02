@@ -1,0 +1,84 @@
+\documentclass{minimal}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+
+\tikzset{>=stealth',
+	event/.style={
+    	rectangle, 
+    	rounded corners, 
+    	fill=green!20,
+    	draw=black, very thick,
+    	text width=9em, 
+    	minimum height=3em, 
+    	text centered, 
+    	on chain},
+  	line/.style={draw, thick, <-},
+	class/.style={
+    	rectangle, 
+    	rounded corners, 
+    	fill=black!10,
+    	draw=black, very thick,
+    	text width=8em, 
+    	minimum height=3em, 
+    	text centered,
+		on chain},
+	package/.style={
+		rectangle,
+		draw=black!50, dashed,
+		rounded corners,
+		inner sep=0.3cm,
+		on chain},
+  	every join/.style={->, thick,shorten >=1pt}, 	
+ 	scope/.style={decorate},
+	code/.style={
+		rectangle,
+		draw=black!50, dashed,
+		rounded corners,
+		text width=10em,
+    	minimum height=3em, 
+    	text centered,
+		node distance=7cm}
+}
+\begin{document}
+\begin{tikzpicture}  	[node distance=.5cm,start chain=going below]
+	\node[event, join] (processing) {PROCESSING};
+	\node[code, left of=processing] (code-create) {Manager.create()};
+	\node[package] (processing-package) {
+		\begin{tikzpicture}
+		\begin{scope}[solid, start branch=venstre, every join/.style={->, thick, shorten <=1pt}]
+			\node[class] (enrichment) {enrichment};
+			\node[class, on chain=going left] (configuration) {configuration};
+			\node[class, on chain=going below] (lifecycle) {lifecycle};
+			\node[class, on chain=going right] (extension-loader) {extension loader};
+			\node[class, on chain=going right] (interceptors) {interceptors};
+			\node[class, on chain=going above] (logging) {logging};
+		\end{scope}
+		\end{tikzpicture}
+	};
+	\node[event, join] (before-app-context) {BEFORE\\application context};
+	\node[code, left of=before-app-context] (code-start) {Manager.start()};
+	\node[event, join] (started) {STARTED};
+	\node[package, join, inner sep=0.5cm, text width=15em, text centered] (other-extensions) {user defined extensions};
+	\node[package, join, inner sep=0.5cm, text width=15em, text centered] (main-app) {main application code};
+	\node[event, join] (stopping) {STOPPING};
+	\node[event, join] (after-app-context) {AFTER\\application context};
+	\node[code, left of=stopping] (code-shutdown) {Manager.shutdown()};
+
+	\begin{scope}[->, thick, shorten <=1pt] 
+		\draw	(processing)	-> (processing-package);
+	\end{scope}
+
+	\begin{scope}[->, dashed, shorten <=1pt] 
+		\draw	(code-create)	-> (processing);
+		\draw	(code-start)	-> (before-app-context);
+		\draw	(code-shutdown)	-> (stopping);
+	\end{scope}
+
+%	\draw[scope, decoration={brace}] let \p1=(before-app-context.north), \p2=(after-app-context.south) in
+%		($(2, \y1)$) -- ($(2, \y2)$) node[scopenode] {application scope};
+\end{tikzpicture}
+
+\end{document}
