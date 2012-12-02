@@ -4,24 +4,26 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.application.gui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.Experiment;
@@ -118,31 +120,49 @@ public class Main {
         plotter.plot();
     }
 
-    private static void executeExperiment(Manager manager, Experiment experiment, LoggerWindow logger) throws IOException {
-        // launch experiment
-        VerificationResult result = null;
-        logger.simulationStarted();
-        try {
-            result = ExperimentLauncher.launch(manager, experiment);
-        } catch (Exception e) {
-            LOGGER.error("Can't launch the experiment.", e);
-            System.exit(1);
-        }
-        logger.simulationStopped();
+    private static void executeExperiment(final Manager manager, final Experiment experiment, final LoggerWindow logger) throws IOException {
+        new SwingWorker<VerificationResult, Object>() {
 
-        //save result
-        XMLResource<VerificationResult> output = experiment.getVerificationResultResource();
-        if (output != null) {
-            output.setRoot(result);
-            try {
-                output.store();
-            } catch (XMLException xmle) {
-                LOGGER.error("Unable to store result.", xmle);
-                System.exit(1);
+            @Override
+            public VerificationResult doInBackground() {
+                // launch experiment
+                VerificationResult result = null;
+                logger.simulationStarted();
+                try {
+                    result = ExperimentLauncher.launch(manager, experiment);
+                } catch (Exception e) {
+                    LOGGER.error("Can't launch the experiment.", e);
+                    System.exit(1);
+                }
+                logger.simulationStopped();
+
+                //save result
+                XMLResource<VerificationResult> output = experiment.getVerificationResultResource();
+                if (output != null) {
+                    output.setRoot(result);
+                    try {
+                        output.store();
+                    } catch (XMLException xmle) {
+                        LOGGER.error("Unable to store result.", xmle);
+                        System.exit(1);
+                    }
+                }
+                return result;
             }
-        }
 
-        // plot result
-        plotResult(manager, experiment, result);
+            @Override
+            protected void done() {
+                try {
+                    // plot result
+                    plotResult(manager, experiment, get());
+                } catch (InterruptedException ie) {
+                    LOGGER.error("Simulation was interrupted.", ie);
+                } catch (ExecutionException ee) {
+                    LOGGER.error("Simulation was aborted.", ee);
+                } catch (XMLException xmle) {
+                    LOGGER.error("XML exception during simulation.", xmle);
+                }
+            }
+        }.execute();
     }
 }
