@@ -44,7 +44,6 @@ import org.sybila.parasim.model.xml.XMLResource;
 import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
-import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
