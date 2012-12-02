@@ -47,6 +47,7 @@ public class LoggerWindowImpl extends JFrame implements LoggerWindow {
         setSize(400, 300);
         setLocation(850, 50);
         setIconImage(ParasimIconFactory.getInstance().getIcon());
+        setTitle("PARASIM Log");
 
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
