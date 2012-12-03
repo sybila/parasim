@@ -36,6 +36,7 @@ import javax.swing.event.DocumentListener;
 import org.sybila.parasim.extension.projectmanager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectmanager.view.OdeSystemFactory;
 import org.sybila.parasim.extension.projectmanager.view.TableConstraints;
+import org.sybila.parasim.extension.projectmanager.view.TimeField;
 import org.sybila.parasim.extension.projectmanager.view.names.NameChooser;
 import org.sybila.parasim.extension.projectmanager.view.names.NameChooserModel;
 import org.sybila.parasim.extension.projectmanager.view.names.NameList;
@@ -76,7 +77,8 @@ public class ExperimentSettings extends JPanel {
     private SimpleLock lock = new SimpleLock();
     //
     private NameChooser formulae, simulation, robustness;
-    private CommitFormattedTextField iterationField, timeoutField;
+    private CommitFormattedTextField iterationField;
+    private final TimeField timeoutF;
     private JTextArea annotation;
 
     public ExperimentSettings(ExperimentSettingsModel experimentModel, Set<String> formulaeNames, Set<String> simulationsNames, Set<String> robustnessNames) {
@@ -97,17 +99,12 @@ public class ExperimentSettings extends JPanel {
                 fireChanges();
             }
         });
-        timeoutField = new CommitFormattedTextField(new Long(0));
-        timeoutField.addCommitListener(new ActionListener() {
+        timeoutF = new TimeField();
+        timeoutF.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                long value = ((Number) timeoutField.getValue()).longValue();
-                if (value < 0) {
-                    timeoutField.setValue(0);
-                }
                 fireChanges();
-
             }
         });
 
@@ -118,7 +115,7 @@ public class ExperimentSettings extends JPanel {
         add(TableConstraints.getRowLabel("Simulation configuration"), getLeftConstraints(3));
         add(TableConstraints.getRowLabel("Perturbation configuration"), getLeftConstraints(4));
 
-        add(timeoutField, getRightConstraints(0));
+        add(timeoutF, getRightConstraints(0));
         add(iterationField, getRightConstraints(1));
         formulae = new NameChooser(model.getFormulaChooser(), formulaeNames);
         add(formulae, getRightConstraints(2));
@@ -185,16 +182,15 @@ public class ExperimentSettings extends JPanel {
 
     public Pair<ExperimentSettingsValues, String> getValues() {
         Number iteration = (Number) iterationField.getValue();
-        Number timeout = (Number) timeoutField.getValue();
-        return new Pair(new ExperimentSettingsValues(iteration.intValue(), timeout.longValue(), TimeUnit.MINUTES), getAnnotation()); //TODO
+        Pair<Long, TimeUnit> timeout = timeoutF.getValues();
+        return new Pair(new ExperimentSettingsValues(iteration.intValue(), timeout.first(), timeout.second()), getAnnotation());
     }
 
     public void setValues(Pair<ExperimentSettingsValues, String> target) {
         lock.lock();
         annotation.setText(target.second());
-        timeoutField.setValue(target.first().getTimeout());
         iterationField.setValue(target.first().getIterationLimit());
-        //TODO
+        timeoutF.setValues(new Pair<>(target.first().getTimeout(), target.first().getTimeoutUnit()));
         lock.unlock();
     }
 
