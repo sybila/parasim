@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.extension.projectmanager.view.experiment;
 
@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -185,7 +186,7 @@ public class ExperimentSettings extends JPanel {
     public Pair<ExperimentSettingsValues, String> getValues() {
         Number iteration = (Number) iterationField.getValue();
         Number timeout = (Number) timeoutField.getValue();
-        return new Pair(new ExperimentSettingsValues(iteration.intValue(), timeout.longValue()), getAnnotation());
+        return new Pair(new ExperimentSettingsValues(iteration.intValue(), timeout.longValue(), TimeUnit.MINUTES), getAnnotation()); //TODO
     }
 
     public void setValues(Pair<ExperimentSettingsValues, String> target) {
@@ -193,6 +194,7 @@ public class ExperimentSettings extends JPanel {
         annotation.setText(target.second());
         timeoutField.setValue(target.first().getTimeout());
         iterationField.setValue(target.first().getIterationLimit());
+        //TODO
         lock.unlock();
     }
 

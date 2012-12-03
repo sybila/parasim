@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.extension.projectmanager.model.components;
 
@@ -227,7 +227,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         current = values;
         currentName = name;
 
-        settings.setValues(new Pair<>(new ExperimentSettingsValues(values.getIterationLimit(), values.getTimeoutAmount()), values.getAnnotation()));
+        settings.setValues(new Pair<>(new ExperimentSettingsValues(values.getIterationLimit(), values.getTimeoutAmount(), values.getTimeoutUnit()), values.getAnnotation()));
         settings.getFormulaeNameList().selectName(values.getFormulaName());
         settings.getSimulationsNameList().selectName(values.getSimulationSpaceName());
         settings.getRobustnessNameList().selectName(values.getInitialSamplingName());
@@ -238,6 +238,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
     public void valuesChanged(ExperimentSettingsValues values) {
         current.setIterationLimit(values.getIterationLimit());
         current.setTimeoutAmount(values.getTimeout());
+        current.setTimeoutUnit(values.getTimeoutUnit());
         checkExperiment();
     }
 
