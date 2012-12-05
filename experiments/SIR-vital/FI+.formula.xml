@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+<future>
+<interval>
+<lower type="closed">0.0</lower>
+<upper type="closed">75.0</upper>
+</interval>
+<predicate>
+<variable multiplier="1.0">I</variable>
+<greater/>
+<value>0.0</value>
+</predicate>
+</future>
+</formula>
