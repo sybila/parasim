@@ -97,9 +97,9 @@ public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
                 }
             }
             // check whether the window end has been reached
-//            if (!windowEndReached) {
-//                return precomputed;
-//            }
+            if (!windowEndReached) {
+                return precomputed;
+            }
             // remove useless points
             while (!lemireDeque.isEmpty() && lemireDeque.peekFirst().getTime() < currentTime + interval.getLowerBound()) {
                 lemireDeque.remove();
