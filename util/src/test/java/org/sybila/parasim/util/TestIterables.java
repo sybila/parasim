@@ -17,29 +17,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.verification.stl.cpu;
+package org.sybila.parasim.util;
 
-import org.sybila.parasim.computation.verification.api.Monitor;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestOrMonitor extends AbstractBinaryPropositionalMonitorTest {
+public class TestIterables {
 
     @Test
-    public void testOrMonitor() {
-        super.testMonitor();
-    }
-
-    @Override
-    protected Monitor createMonitor(Monitor left, Monitor right) {
-        return new OrMonitor(EMPTY_PROPERTY, left, right);
-    }
-
-    @Override
-    protected float function(float left, float right) {
-        return Math.max(left, right);
+    public void testConcat() {
+        List<Integer> first = Arrays.asList(1, 2);
+        List<Integer> second = Arrays.asList(3, 4, 5);
+        List<Integer> third = Collections.EMPTY_LIST;
+        List<Integer> fourth = Collections.EMPTY_LIST;
+        List<Integer> fifth = Arrays.asList(6, 7, 8, 9, 10);
+        List<Integer> sixth = Collections.EMPTY_LIST;
+        Iterator<Integer> result = Iterables.concat(first, second, third, fourth, fifth, sixth).iterator();
+        for (int i=1; i<=10; i++) {
+            Integer found = result.next();
+            Assert.assertNotNull(found);
+            Assert.assertEquals(found, new Integer(i));
+        }
     }
 
 }

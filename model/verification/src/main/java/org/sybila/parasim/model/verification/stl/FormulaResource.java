@@ -23,7 +23,9 @@ import java.io.File;
 import java.net.URL;
 
 import java.util.Collection;
+import java.util.List;
 import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.verification.Signal;
 import org.sybila.parasim.model.xml.FileXMLResource;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLFormatException;
@@ -77,6 +79,11 @@ public class FormulaResource extends FileXMLResource<Formula> {
 
         @Override
         public Collection<Integer> getVariableIndexes() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public List<Signal> getSignals() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }

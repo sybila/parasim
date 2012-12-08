@@ -19,11 +19,15 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Signal;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,6 +47,12 @@ import org.w3c.dom.Element;
  *
  */
 public class LinearPredicate extends Predicate {
+
+    @Override
+    public List<Signal> getSignals() {
+        return Collections.unmodifiableList(Arrays.asList((Signal) this));
+    }
+
     /** Type of relational operator in the predicate */
     public static enum Type implements XMLRepresentable {
         /** Left side is equal to the right side */
@@ -111,6 +121,18 @@ public class LinearPredicate extends Predicate {
         return value;
     }
 
+    private float getLeftSideValue(float[] p) {
+        float value = 0;
+        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
+            if (term.getKey() >= p.length) {
+                throw new IllegalArgumentException(
+                        "The point has too few dimensions to be evaluated.");
+            }
+            value += p[term.getKey()] * term.getValue();
+        }
+        return value;
+    }
+
     /**
      * Creates a new linear predicate.
      *
@@ -142,7 +164,7 @@ public class LinearPredicate extends Predicate {
     }
 
     @Override
-    public boolean getValidity(Point p) {
+    public boolean isValid(Point p) {
         return isValid(getLeftSideValue(p), constant);
     }
 
@@ -153,6 +175,20 @@ public class LinearPredicate extends Predicate {
          * determines its sign from the point validity
          */
         float leftSide = getLeftSideValue(p);
+        float diff = Math.abs(leftSide - constant);
+        if (!isValid(leftSide, constant)) {
+            diff = -diff;
+        }
+        return diff;
+    }
+
+    @Override
+    public float getValue(float[] point) {
+        /*
+         * computes absolute difference between left and right sides and then
+         * determines its sign from the point validity
+         */
+        float leftSide = getLeftSideValue(point);
         float diff = Math.abs(leftSide - constant);
         if (!isValid(leftSide, constant)) {
             diff = -diff;

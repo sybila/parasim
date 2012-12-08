@@ -19,6 +19,9 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.List;
+import org.sybila.parasim.model.verification.Signal;
+
 /**
  * A simple abstract class representing a general unary operator.
  *
@@ -48,5 +51,10 @@ public abstract class UnaryFormula extends AbstractFormula {
             throw new IllegalArgumentException("Index must be 0.");
         }
         return subFormula;
+    }
+
+    @Override
+    public List<Signal> getSignals() {
+        return getSubformula(0).getSignals();
     }
 }

@@ -86,4 +86,5 @@ public class UntilFormula extends BinaryFormula implements TemporalFormula {
         result = result * prime + getInterval().hashCode();
         return result;
     }
+
 }

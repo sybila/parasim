@@ -27,6 +27,7 @@ import org.sybila.parasim.computation.verification.cpu.AbstractMonitor;
 import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.verification.Signal;
 import org.sybila.parasim.model.verification.SimpleRobustness;
 
 /**
@@ -38,6 +39,11 @@ public class AbstractMonitorTest {
         @Override
         public float getTimeNeeded() {
             return 0;
+        }
+
+        @Override
+        public List<Signal> getSignals() {
+            return Collections.EMPTY_LIST;
         }
     };
 

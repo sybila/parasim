@@ -20,7 +20,7 @@
 package org.sybila.parasim.model.verification.stl;
 
 import java.util.Collection;
-import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.verification.Signal;
 
 /**
  * A general predicate evaluable in a Point of a Trajectory.
@@ -28,27 +28,11 @@ import org.sybila.parasim.model.trajectory.Point;
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public abstract class Predicate extends AbstractFormula {
+public abstract class Predicate extends AbstractFormula implements Signal {
 
     public Predicate(Collection<Integer> variableIndexes) {
         super(variableIndexes);
     }
-
-    /**
-     * Returns the boolean validity of this predicate in given point.
-     *
-     * @param p Point in which to validate this predicate.
-     * @return Boolean validity of predicate in given point.
-     */
-    public abstract boolean getValidity(Point p);
-
-    /**
-     * Returns the qualitative value of this predicate in given point.
-     *
-     * @param p Point in which to evaluate this predicate.
-     * @return Qualitative value of predicate in given point.
-     */
-    public abstract float getValue(Point p);
 
     @Override
     public int getArity() {

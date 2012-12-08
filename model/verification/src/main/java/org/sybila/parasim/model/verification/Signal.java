@@ -17,54 +17,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.verification.buchi;
+package org.sybila.parasim.model.verification;
 
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
- *
- * @author Sven Drazan <sven@mail.muni.cz>
+ * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class Transition {
-
-    private int from, to;  /* origin and target state */
-
-    private Evaluable guard; /* condition guarding the transition */
-
-
-    public Transition(int from, int to, Evaluable guard) {
-        this.from = from;
-        this.to = to;
-        this.guard = guard;
-    }
-
-    boolean enabled(Point p) {
-        if (guard == null) {
-            /* Some transitions have empty guards which are always true */
-            return true;
-        } else {
-            return guard.valid(p);
-        }
-    }
+public interface Signal {
 
     /**
-     * @return the origin state
+     * Returns the qualitative value of this signal in given point.
+     *
+     * @param point Point in which to evaluate this signal.
+     * @return Qualitative value of signal in given point.
      */
-    public int getFrom() {
-        return from;
-    }
+    float getValue(Point point);
 
     /**
-     * @return the target state
+     * Returns the qualitative value of this signal in given point.
+     *
+     * @param point Point in which to evaluate this signal.
+     * @return Qualitative value of signal in given point.
      */
-    public int getTo() {
-        return to;
-    }
+    float getValue(float[] point);
 
     /**
-     * @return the guard
+     * Returns the boolean validity of this signal in given point.
+     *
+     * @param p Point in which to validate this predicate.
+     * @return Boolean validity of predicate in given point.
      */
-    public Evaluable getGuard() {
-        return guard;
-    }
+    boolean isValid(Point p);
+
 }

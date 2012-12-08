@@ -34,20 +34,20 @@ public abstract class AbstractBinaryPropositionalMonitor extends AbstractMonitor
 
     private final Monitor left;
     private final Monitor right;
-    private final Collection<Integer> consideredDimensions;
+    private final Property property;
 
-    public AbstractBinaryPropositionalMonitor(Property property, Monitor left, Monitor right, Collection<Integer> consideredDimensions) {
+    public AbstractBinaryPropositionalMonitor(Property property, Monitor left, Monitor right) {
         super(property);
         Validate.notNull(left);
         Validate.notNull(right);
         this.left = left;
         this.right = right;
-        this.consideredDimensions = consideredDimensions;
+        this.property = property;
     }
 
     @Override
     public Robustness getRobustness(int index) {
-        return evaluate(left.getRobustness(index), right.getRobustness(index), consideredDimensions);
+        return evaluate(left.getRobustness(index), right.getRobustness(index), property);
     }
 
     @Override
@@ -60,6 +60,6 @@ public abstract class AbstractBinaryPropositionalMonitor extends AbstractMonitor
         return Math.min(left.size(), right.size());
     }
 
-    protected abstract Robustness evaluate(Robustness left, Robustness right, Collection<Integer> consideredDimensions);
+    protected abstract Robustness evaluate(Robustness left, Robustness right, Property property);
 
 }

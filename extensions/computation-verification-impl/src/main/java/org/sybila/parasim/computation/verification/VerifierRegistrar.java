@@ -45,7 +45,7 @@ public class VerifierRegistrar {
 
     @Provide
     public STLVerifier provideVerifier(VerificationConfiguration configuration) {
-        return new SimpleSTLVerifier(new STLMonitorFactory(configuration.filterDimensions()));
+        return new SimpleSTLVerifier(new STLMonitorFactory());
     }
 
 }

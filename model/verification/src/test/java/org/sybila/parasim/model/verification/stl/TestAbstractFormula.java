@@ -29,7 +29,10 @@ import java.util.Arrays;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import org.sybila.parasim.model.verification.Signal;
+import org.sybila.parasim.util.Iterables;
 import org.testng.annotations.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,6 +96,15 @@ public class TestAbstractFormula {
         public float getTimeNeeded() {
             throw new IllegalUseException("Time");
         }
+
+        @Override
+        public List<Signal> getSignals() {
+            List<Signal> signals = new ArrayList<>();
+            for (int i=0; i<getArity(); i++) {
+                signals.addAll(getSubformula(i).getSignals());
+            }
+            return signals;
+        }
     }
 
     private class SimpleFormula implements Formula {
@@ -143,6 +155,11 @@ public class TestAbstractFormula {
         public Collection<Integer> getVariableIndexes() {
             return new ArrayList<>();
         }
+
+        @Override
+        public List<Signal> getSignals() {
+            throw new IllegalUseException("Signals");
+        }
     }
 
     private class SimpleUnaryFormula implements Formula {
@@ -180,6 +197,11 @@ public class TestAbstractFormula {
         @Override
         public Collection<Integer> getVariableIndexes() {
             return phi.getVariableIndexes();
+        }
+
+        @Override
+        public List<Signal> getSignals() {
+            return phi.getSignals();
         }
     }
 

@@ -42,16 +42,13 @@ public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
 
     private final List<Robustness> robustnesses;
     private final Monitor suMonitor;
-    private final Collection<Integer> consideredDimensions;
 
-    public AbstractUnaryTemporalMonitor(Property property, Monitor subMonitor, FormulaInterval interval, Collection<Integer> consideredDimensions) {
+    public AbstractUnaryTemporalMonitor(Property property, Monitor subMonitor, FormulaInterval interval) {
         super(property);
         Validate.notNull(interval);
         Validate.notNull(subMonitor);
-        Validate.notNull(consideredDimensions);
         this.suMonitor = subMonitor;
         this.robustnesses = precomputeRobustness(subMonitor, interval);
-        this.consideredDimensions = consideredDimensions;
     }
 
     @Override
@@ -106,7 +103,7 @@ public abstract class AbstractUnaryTemporalMonitor extends AbstractMonitor {
             }
             // get the first robustness in deque
             Robustness found = lemireDeque.peekFirst();
-            precomputed.add(new SimpleRobustness(found.getValue(), currentTime, consideredDimensions));
+            precomputed.add(new SimpleRobustness(found.getValue(), currentTime, getProperty()));
             currentIndex++;
             currentTime = current.next().getTime();
             if (memory != null) {

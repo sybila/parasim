@@ -19,7 +19,6 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
-import java.util.ArrayList;
 import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
 import org.sybila.parasim.model.verification.stl.TimeInterval;
@@ -35,7 +34,7 @@ public class TestUntilMonitor extends AbstractMonitorTest {
     public void testUntilMonitor() {
         Monitor left = createTestMonitor(1, 2, 3, 4, 3, 2, -10);
         Monitor right = createTestMonitor(2, 1, -10, 3, 9, 0, 0);
-        Monitor until = new UntilMonitor(EMPTY_PROPERTY, left, right, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED), new ArrayList<Integer>());
+        Monitor until = new UntilMonitor(EMPTY_PROPERTY, left, right, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
         Monitor expected = createTestMonitor(1, 2, 3);
         assertEquals(until.size(), expected.size());
         for (int i=0; i<expected.size(); i++) {

@@ -19,7 +19,6 @@
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
-import java.util.Collection;
 import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.model.verification.Property;
 import org.sybila.parasim.model.verification.Robustness;
@@ -30,13 +29,13 @@ import org.sybila.parasim.model.verification.SimpleRobustness;
  */
 public class OrMonitor extends AbstractBinaryPropositionalMonitor {
 
-    public OrMonitor(Property property, Monitor left, Monitor right, Collection<Integer> consideredDimensions) {
-        super(property, left, right, consideredDimensions);
+    public OrMonitor(Property property, Monitor left, Monitor right) {
+        super(property, left, right);
     }
 
     @Override
-    protected Robustness evaluate(Robustness left, Robustness right, Collection<Integer> consideredDimensions) {
-        return new SimpleRobustness(Math.max(left.getValue(), right.getValue()), left.getTime(), consideredDimensions);
+    protected Robustness evaluate(Robustness left, Robustness right, Property property) {
+        return new SimpleRobustness(Math.max(left.getValue(), right.getValue()), left.getTime(), property);
     }
 
 }

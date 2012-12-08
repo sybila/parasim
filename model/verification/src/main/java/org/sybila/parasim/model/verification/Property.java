@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.model.verification;
 
+import java.util.List;
+
 /**
  * Represents some way of specifing a property of an OdeSystem.
  *
@@ -39,5 +41,7 @@ public interface Property {
      * @return Time or trajectory length needed to evaluate formula.
      */
     float getTimeNeeded();
+
+    List<Signal> getSignals();
 
 }

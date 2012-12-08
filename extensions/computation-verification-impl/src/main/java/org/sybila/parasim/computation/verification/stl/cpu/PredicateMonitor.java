@@ -37,20 +37,18 @@ public class PredicateMonitor extends AbstractMonitor {
 
     private final Predicate predicate;
     private final Trajectory trajectory;
-    private final Collection<Integer> consideredDimensions;
 
-    public PredicateMonitor(Property property, Trajectory trajectory, Predicate predicate, Collection<Integer> consideredDimensions) {
+    public PredicateMonitor(Property property, Trajectory trajectory, Predicate predicate) {
         super(property);
         Validate.notNull(trajectory);
         Validate.notNull(predicate);
         this.predicate = predicate;
         this.trajectory = trajectory;
-        this.consideredDimensions = consideredDimensions;
     }
 
     @Override
     public Robustness getRobustness(int index) {
-        return new SimpleRobustness(predicate.getValue(trajectory.getPoint(index)), trajectory.getPoint(index).getTime(), consideredDimensions);
+        return new SimpleRobustness(predicate.getValue(trajectory.getPoint(index)), trajectory.getPoint(index).getTime(), getProperty());
     }
 
     @Override

@@ -19,7 +19,8 @@
  */
 package org.sybila.parasim.model.verification;
 
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.trajectory.EuclideanMetric;
 import org.sybila.parasim.model.trajectory.LimitedDistance;
@@ -34,7 +35,8 @@ public final class SimpleRobustness implements Robustness {
 
     private final float time;
     private final float value;
-    private final Collection<Integer> considiredDimensions;
+    private final Property property;
+    private final Signal[] signals;
     private Robustness inverted;
     private static final PointDistanceMetric<Distance> EUCLIDEAN_METRIC = new EuclideanMetric();
 
@@ -46,15 +48,24 @@ public final class SimpleRobustness implements Robustness {
         this(value, time, null);
     }
 
-    public SimpleRobustness(float value, float time, Collection<Integer> consideredDimensions) {
-        this(value, time, consideredDimensions, null);
+    public SimpleRobustness(float value, float time, Property property) {
+        this(value, time, property, null);
     }
 
-    private SimpleRobustness(float value, float time, Collection<Integer> consideredDimensions, Robustness inverted) {
+    private SimpleRobustness(float value, float time, Property property, Robustness inverted) {
         this.value = value;
         this.inverted = inverted;
         this.time = time;
-        this.considiredDimensions = consideredDimensions;
+        this.property = property;
+        if (property != null) {
+            Set<Signal> ss = new HashSet<>();
+            for (Signal s: property.getSignals()) {
+                ss.add(s);
+            }
+            signals = ss.toArray(new Signal[ss.size()]);
+        } else {
+            signals = null;
+        }
     }
 
     @Override
@@ -73,7 +84,7 @@ public final class SimpleRobustness implements Robustness {
             return this;
         }
         if (inverted == null) {
-            inverted = new SimpleRobustness(-value, time, considiredDimensions, this);
+            inverted = new SimpleRobustness(-value, time, property, this);
         }
         return inverted;
     }
@@ -81,7 +92,7 @@ public final class SimpleRobustness implements Robustness {
     @Override
     public LimitedDistance distance(float[] first, float[] second) {
         Distance distance = null;
-        if (considiredDimensions == null) {
+        if (signals == null) {
             distance = EUCLIDEAN_METRIC.distance(first, second);
         } else {
             if (first == null) {
@@ -94,8 +105,8 @@ public final class SimpleRobustness implements Robustness {
                 throw new IllegalArgumentException("Dimensions of two points should be equal.");
             }
             double sqrDist = 0;
-            for (int dim: considiredDimensions) {
-                sqrDist += Math.pow(first[dim] - second[dim], 2);
+            for (Signal signal: signals) {
+                sqrDist += Math.pow(signal.getValue(first) - signal.getValue(second), 2);
             }
             distance = new SimpleDistance((float) Math.sqrt(sqrDist));
         }
@@ -115,7 +126,7 @@ public final class SimpleRobustness implements Robustness {
     @Override
     public LimitedDistance distance(Point first, Point second) {
         Distance distance;
-        if (considiredDimensions == null) {
+        if (signals == null) {
             distance = EUCLIDEAN_METRIC.distance(first, second);
         } else {
             if (first == null) {
@@ -128,8 +139,8 @@ public final class SimpleRobustness implements Robustness {
                 throw new IllegalArgumentException("Dimensions of two points should be equal.");
             }
             double sqrDist = 0;
-            for (int dim: considiredDimensions) {
-                sqrDist += Math.pow(first.getValue(dim) - second.getValue(dim), 2);
+            for (Signal signal: signals) {
+                sqrDist += Math.pow(signal.getValue(first) - signal.getValue(second), 2);
             }
             distance = new SimpleDistance((float) Math.sqrt(sqrDist));
         }

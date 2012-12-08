@@ -39,7 +39,7 @@ public class UntilMonitor extends AbstractMonitor {
     private final Monitor left;
     private final Monitor right;
 
-    public UntilMonitor(Property property, Monitor left, Monitor right, FormulaInterval interval, Collection<Integer> consideredDimensions) {
+    public UntilMonitor(Property property, Monitor left, Monitor right, FormulaInterval interval) {
         super(property);
         if (left == null) {
             throw new IllegalArgumentException("The parameter [left] is null.");
@@ -52,7 +52,7 @@ public class UntilMonitor extends AbstractMonitor {
         }
         this.left = left;
         this.right = right;
-        robustnesses = precompute(left, right, interval, consideredDimensions);
+        robustnesses = precompute(left, right, interval, property);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class UntilMonitor extends AbstractMonitor {
         return robustnesses.size();
     }
 
-    private List<Robustness> precompute(Monitor left, Monitor right, FormulaInterval interval, Collection<Integer> consideredDimensions) {
+    private List<Robustness> precompute(Monitor left, Monitor right, FormulaInterval interval, Property property) {
         int current = 0;
         boolean finished = false;
         List<Robustness> precomputed = new ArrayList<>();
@@ -97,7 +97,7 @@ public class UntilMonitor extends AbstractMonitor {
             if (left.getRobustness(windowEnd).getTime() < currentTime + interval.getUpperBound() && windowEnd == shortestSize - 1) {
                 break;
             }
-            precomputed.add(new SimpleRobustness(currentRobustness, left.getRobustness(current).getTime(), consideredDimensions));
+            precomputed.add(new SimpleRobustness(currentRobustness, left.getRobustness(current).getTime(), property));
             current++;
         }
         return precomputed;
