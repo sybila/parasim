@@ -28,6 +28,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -75,6 +76,9 @@ public class StyledLoggerOutput extends JScrollPane implements LoggerOutput {
 
         JTextPane pane = new JTextPane(output);
         pane.setEditable(false);
+        DefaultCaret caret = new DefaultCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        pane.setCaret(caret);
         setViewportView(pane);
     }
 
@@ -85,6 +89,9 @@ public class StyledLoggerOutput extends JScrollPane implements LoggerOutput {
 
     @Override
     public void simulationStart(Date time) {
+        if (output.getLength() != 0) {
+            appendNewLine();
+        }
         append("Simulation started.", Level.INFO, time);
     }
 
@@ -106,6 +113,14 @@ public class StyledLoggerOutput extends JScrollPane implements LoggerOutput {
         append(build.toString(), level);
     }
 
+    private void appendNewLine() {
+        try {
+            output.insertString(output.getLength(), "\n", output.getStyle(DEFAULT_STYLE));
+        } catch (BadLocationException ble) {
+            throw new IllegalStateException("End of document is a bad location.", ble);
+        }
+    }
+
     private void append(String message, Level level) {
         Style style = output.getStyle(level.toString());
         if (style == null) {
@@ -113,7 +128,7 @@ public class StyledLoggerOutput extends JScrollPane implements LoggerOutput {
         }
         try {
             output.insertString(output.getLength(), message, style);
-            output.insertString(output.getLength(), "\n", style);
+            appendNewLine();
         } catch (BadLocationException ble) {
             throw new IllegalStateException("End of document is bad location.", ble);
         }
