@@ -77,7 +77,7 @@ public class DirProject implements Project {
 
         @Override
         public void setIterationLimit(int iterationLimit) {
-            if (iterationLimit != iterationLimit) {
+            if (iterationLimit != getIterationLimit()) {
                 content.setIterationLimit(iterationLimit);
                 saved = false;
             }
