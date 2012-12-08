@@ -126,7 +126,7 @@ public class Main {
                     LOGGER.error("Can't launch the experiment.", e);
                     System.exit(1);
                 }
-                logger.simulationStopped();
+                logger.simulationStopped(result.getGlobalRobustness());
 
                 //save result
                 XMLResource<VerificationResult> output = experiment.getVerificationResultResource();
