@@ -27,6 +27,7 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.sybila.parasim.application.ui.ParasimIconFactory;
 import org.sybila.parasim.extension.progresslogger.api.LoggerOutput;
 import org.sybila.parasim.extension.progresslogger.api.LoggerWindow;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
  *
@@ -64,9 +65,9 @@ public class LoggerWindowImpl extends JFrame implements LoggerWindow {
     }
 
     @Override
-    public void simulationStopped() {
+    public void simulationStopped(Robustness globalRobustness) {
         time.stopSimulation();
-        output.simulationStop(new Date());
+        output.simulationStop(new Date(), globalRobustness);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class LoggerWindowImpl extends JFrame implements LoggerWindow {
 
     @Override
     public void dispose() {
-        simulationStopped();
+        simulationStopped(Robustness.UNDEFINED);
         super.dispose();
     }
 
@@ -89,7 +90,7 @@ public class LoggerWindowImpl extends JFrame implements LoggerWindow {
                 window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 window.setVisible(true);
                 window.simulationStarted();
-                window.simulationStopped();
+                window.simulationStopped(Robustness.UNDEFINED);
             }
         });
     }

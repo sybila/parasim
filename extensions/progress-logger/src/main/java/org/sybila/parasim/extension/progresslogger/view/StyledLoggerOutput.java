@@ -37,6 +37,7 @@ import javax.swing.text.StyledDocument;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.sybila.parasim.extension.progresslogger.api.LoggerOutput;
+import org.sybila.parasim.model.verification.Robustness;
 
 /**
  *
@@ -96,8 +97,8 @@ public class StyledLoggerOutput extends JScrollPane implements LoggerOutput {
     }
 
     @Override
-    public void simulationStop(Date time) {
-        append("Simulation stopped.", Level.INFO, time);
+    public void simulationStop(Date time, Robustness globalRobustness) {
+        append("Simulation stopped. Global robustness: " + globalRobustness.toString(), Level.INFO, time);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class StyledLoggerOutput extends JScrollPane implements LoggerOutput {
                 output.append("Info message", Level.INFO, new Date());
                 output.append("Warning message", Level.WARN, new Date());
                 output.append("Error message", Level.ERROR, new Date());
-                output.simulationStop(new Date());
+                output.simulationStop(new Date(), Robustness.UNDEFINED);
                 output.append("Fatal error", Level.FATAL, new Date());
             }
         });
