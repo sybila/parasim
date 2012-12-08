@@ -34,20 +34,25 @@ public interface VerificationResult extends XMLRepresentable, Mergeable<Verifica
      * Return number of points with robustness values.
      * @return Number of points.
      */
-    public int size();
+    int size();
 
     /**
      * Return coordinates of a given point.
      * @param index Index of specified point.
      * @return Coordinates of point with specified index.
      */
-    public PointWithNeighborhood getPoint(int index);
+    PointWithNeighborhood getPoint(int index);
 
-    //public boolean getValidity(int index);
     /**
      * Return property robustness value in a specified point.
      * @param index Index of specified point.
      * @return Property robustness value in point with given index.
      */
-    public Robustness getRobustness(int index);
+    Robustness getRobustness(int index);
+
+    /**
+     * Return the robustness summarized for all points.
+     */
+    Robustness getGlobalRobustness();
+
 }

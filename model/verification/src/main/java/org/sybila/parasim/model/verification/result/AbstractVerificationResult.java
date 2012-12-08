@@ -20,8 +20,10 @@
 package org.sybila.parasim.model.verification.result;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
@@ -29,6 +31,7 @@ import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,6 +42,8 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public abstract class AbstractVerificationResult implements VerificationResult {
+
+    private Robustness totalRobustness;
 
     /**
      * Return smallest space including all points comprising this result.
@@ -107,6 +112,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
 
         Element target = doc.createElement(VerificationResultFactory.RESULT_NAME);
         target.setAttribute(VerificationResultFactory.DIMENSION_NAME, (this.size() > 0 ? Integer.toString(this.getPoint(0).getDimension()) : Integer.toString(0)));
+        target.setAttribute(VerificationResultFactory.ROBUSTNESS_NAME, Float.toString(getGlobalRobustness().getValue()));
         for (int i = 0; i < size(); i++) {
             target.appendChild(pointToXML(doc, getPoint(i), getRobustness(i), verified, other));
         }
@@ -204,5 +210,43 @@ public abstract class AbstractVerificationResult implements VerificationResult {
             index++;
         }
         return new ArrayVerificationResult(robustnesses.size(), newPoints, newRobustnesses);
+    }
+
+    @Override
+    public Robustness getGlobalRobustness() {
+        if (totalRobustness == null) {
+            Set<Point> notRoots = new HashSet<>();
+            Map<Point, Robustness> robustnesses = new HashMap<>();
+            for (int i=0; i<size(); i++) {
+                for (Point n: getPoint(i).getNeighbors()) {
+                    notRoots.add(n);
+                }
+                robustnesses.put(getPoint(i), getRobustness(i));
+            }
+            float computed = 0;
+            Map<Point, Robustness> cache = new HashMap<>();
+            for (int i=0; i<size(); i++) {
+                if (!notRoots.contains(getPoint(i))) {
+                    computed += calculateGlobalRobustness(getPoint(i), robustnesses, cache).getValue();
+                }
+            }
+            totalRobustness = new SimpleRobustness(computed / (size() - notRoots.size()));
+        }
+        return totalRobustness;
+    }
+
+    protected Robustness calculateGlobalRobustness(final Point point, final Map<Point, Robustness> robustnesses, final Map<Point, Robustness> cache) {
+        if (!(point instanceof PointWithNeighborhood)) {
+            return robustnesses.get(point);
+        }
+        if (cache.containsKey(point)) {
+            return cache.get(point);
+        }
+        float robustness = robustnesses.get(point).getValue();
+        for (Point neighbor: ((PointWithNeighborhood) point).getNeighbors()) {
+            robustness += calculateGlobalRobustness(neighbor, robustnesses, cache).getValue();
+        }
+        robustness = robustness / (1 + ((PointWithNeighborhood) point).getNeighbors().size());
+        return new SimpleRobustness(robustness);
     }
 }
