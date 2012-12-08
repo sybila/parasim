@@ -4,30 +4,32 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.visualisation.plot.impl.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ import org.sybila.parasim.model.ode.OdeVariableMapping;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
+import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
@@ -104,6 +107,7 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         extent = (new SpaceUtils(conf)).provideWithPadding(AbstractVerificationResult.getEncompassingSpace(result, odeSystem));
 
         init(conf, pointAppearance, conf.getPlotterWindowWidth(), conf.getPlotterWindowHeight());
+        initRobustnessLabel(result.getGlobalRobustness(), conf);
 
         metaLayers = pointSource;
         //initially, (0,1) are chosen//
@@ -150,31 +154,56 @@ public class ProjectionPlotter extends JFrame implements Plotter {
         initAxes(conf, strings.getString("x_axis"), strings.getString("y_axis"));
         initCanvas(appearance, conf);
         addWindowListener(new WindowListener() {
+
             @Override
             public void windowOpened(WindowEvent e) {
             }
+
             @Override
             public void windowClosing(WindowEvent e) {
             }
+
             @Override
             public void windowClosed(WindowEvent e) {
-                for (PlotterWindowListener listener: plotterWindowListeners) {
+                for (PlotterWindowListener listener : plotterWindowListeners) {
                     listener.windowClosed(PlotterWindowListener.PlotterWindowEvent.CLOSED);
                 }
             }
+
             @Override
             public void windowIconified(WindowEvent e) {
             }
+
             @Override
             public void windowDeiconified(WindowEvent e) {
             }
+
             @Override
             public void windowActivated(WindowEvent e) {
             }
+
             @Override
             public void windowDeactivated(WindowEvent e) {
             }
-        } );
+        });
+    }
+
+    private void initRobustnessLabel(Robustness robustness, ResultPlotterConfiguration conf) {
+        JPanel robustnessPanel = new JPanel();
+        robustnessPanel.setLayout(new BoxLayout(robustnessPanel, BoxLayout.LINE_AXIS));
+
+        JLabel label = new JLabel("Global robustness: ");
+        JLabel robustnessLabel = new JLabel(robustness.toString());
+        Font font = label.getFont().deriveFont(15f);
+        label.setFont(font);
+        robustnessLabel.setFont(font);
+        Color robustnessColor = (robustness.getValue() > 0) ? conf.getPointColorValid() : conf.getPointColorInvalid();
+        robustnessLabel.setForeground(robustnessColor.darker());
+
+        robustnessPanel.add(label);
+        robustnessPanel.add(robustnessLabel);
+        robustnessPanel.setBorder(new EmptyBorder(5, 15, 0, 5));
+        add(robustnessPanel, BorderLayout.PAGE_START);
     }
 
     private void initCanvas(PointRenderer appearance, ResultPlotterConfiguration conf) {
@@ -187,32 +216,19 @@ public class ProjectionPlotter extends JFrame implements Plotter {
                 status.setValue(yAxis.getSelected(), y);
             }
         });
-        canvasPane.addMouseListener(new MouseListener() {
+        canvasPane.addMouseListener(new MouseAdapter() {
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 // call 'click on result' listeners
                 float[] pointData = new float[extent.getDimension()];
-                for (int dim=0; dim<axisSliders.length; dim++) {
+                for (int dim = 0; dim < axisSliders.length; dim++) {
                     pointData[dim] = status.getValue(dim);
                 }
                 MouseOnResultListener.ResultEvent event = new SimpleResultEvent(new ArrayPoint(0, pointData), null);
-                for (MouseOnResultListener listener: mouseOnResultListeners) {
+                for (MouseOnResultListener listener : mouseOnResultListeners) {
                     listener.click(event);
                 }
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
             }
         });
         hRule = new Rule(conf, Rule.Orientation.HORIZONTAL);
