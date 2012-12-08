@@ -21,6 +21,6 @@
 
 -->
 <initial-sampling xmlns="http://www.sybila.org/parasim/initial-sampling">
-    <parameter name="F" sampling="5"/>
-    <parameter name="G" sampling="5"/>
+    <parameter name="F" sampling="2"/>
+    <parameter name="G" sampling="2"/>
 </initial-sampling>

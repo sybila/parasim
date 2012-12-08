@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <space xmlns="http://www.sybila.org/parasim/space">
 <time max="0.0" min="0.0"/>
-<variable max="100.0" min="0" name="predator"/>
-<variable max="100.0" min="0" name="prey"/>
+<variable max="100.0" min="1" name="predator"/>
+<variable max="100.0" min="1" name="prey"/>
 </space>
