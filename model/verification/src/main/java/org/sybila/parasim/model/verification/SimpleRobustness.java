@@ -103,7 +103,7 @@ public final class SimpleRobustness implements Robustness {
         return new LimitedDistance() {
             @Override
             public boolean isValid() {
-                return finalDistance.value() <= Math.abs(value);
+                return finalDistance.value() < Math.abs(value);
             }
             @Override
             public float value() {
@@ -137,7 +137,7 @@ public final class SimpleRobustness implements Robustness {
         return new LimitedDistance() {
             @Override
             public boolean isValid() {
-                return finalDistance.value() <= Math.abs(value);
+                return finalDistance.value() < Math.abs(value);
             }
             @Override
             public float value() {
