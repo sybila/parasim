@@ -97,6 +97,7 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
                 if (currentNeighbors != null) {
                     neighbors.put(point, currentNeighbors);
                 }
+                memory.put(Integer.parseInt(pointNode.getAttributes().getNamedItem(ID_NAME).getNodeValue()), point);
             }
         }
 
