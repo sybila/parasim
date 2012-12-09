@@ -28,8 +28,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.context.Context;
 import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
+import org.sybila.parasim.execution.api.ComputationContext;
 import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.ExecutionResult;
@@ -47,29 +47,34 @@ public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<
     private final java.util.concurrent.Executor runnableExecutor;
     private final Computation computation;
     private final BlockingQueue<Future<L>> futures;
+    private final ContextEvent<ComputationContext> parentContextEvent;
+    private final ComputationContext parentContext;
 
-    public SharedMemoryExecution(final Collection<ComputationId> computationIds, final java.util.concurrent.Executor runnableExecutor, final Computation<L> computation, final Enrichment enrichment, final ContextEvent<ComputationInstanceContext> contextEvent, final Context parentContext, final BlockingQueue<Future<L>> futures) {
+    public SharedMemoryExecution(final Collection<ComputationId> computationIds, final java.util.concurrent.Executor runnableExecutor, final Computation<L> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> parentContextEvent, final ContextEvent<ComputationInstanceContext> instanceContextEvent, final ComputationContext parentContext, final BlockingQueue<Future<L>> futures) {
         Validate.notNull(runnableExecutor);
         Validate.notNull(computation);
         Validate.notNull(enrichment);
-        Validate.notNull(contextEvent);
+        Validate.notNull(instanceContextEvent);
         Validate.notNull(parentContext);
+        Validate.notNull(parentContextEvent);
         Validate.notNull(computationIds);
         Validate.notNull(futures);
 
         this.runnableExecutor = runnableExecutor;
         this.computation = computation;
         this.futures = futures;
+        this.parentContextEvent = parentContextEvent;
+        this.parentContext = parentContext;
 
         executions = new ArrayList<>(computationIds.size());
 
         for (ComputationId computationId: computationIds) {
-            executions.add(new SequentialExecution<>(computationId, runnableExecutor, computation.cloneComputation(), enrichment, contextEvent, parentContext));
+            executions.add(new SequentialExecution<>(computationId, runnableExecutor, computation.cloneComputation(), enrichment, instanceContextEvent, parentContext));
         }
     }
 
-    public static <Result extends Mergeable<Result>> Execution<Result> of(final Collection<ComputationId> computationIds, final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationInstanceContext> contextEvent, final Context parentContext, final BlockingQueue<Future<Result>> futures) {
-        return new SharedMemoryExecution<>(computationIds, runnableExecutor, computation, enrichment, contextEvent, parentContext, futures);
+    public static <Result extends Mergeable<Result>> Execution<Result> of(final Collection<ComputationId> computationIds, final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> parentContextEvent, final ContextEvent<ComputationInstanceContext> instanceContextEvent, final ComputationContext parentContext, final BlockingQueue<Future<Result>> futures) {
+        return new SharedMemoryExecution<>(computationIds, runnableExecutor, computation, enrichment, parentContextEvent, instanceContextEvent, parentContext, futures);
     }
 
     @Override
@@ -107,6 +112,7 @@ public class SharedMemoryExecution<L extends Mergeable<L>> implements Execution<
                     return result;
                 } finally {
                     computation.destroy();
+                    parentContextEvent.finalize(parentContext);
                 }
             }
         });

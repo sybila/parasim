@@ -51,7 +51,7 @@ import static org.testng.Assert.*;
 public abstract class AbstractSimulatorTest<Conf extends Configuration> {
 
     private Conf configuration;
-    private Map<Integer, OdeSystem> odeSystems = new HashMap<Integer, OdeSystem>();
+    private Map<Integer, OdeSystem> odeSystems = new HashMap<>();
     private Map<OdeSystem, Conf> confs = new HashMap<>();
     private Simulator<Conf> simulator;
 
@@ -96,7 +96,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration> {
             for(Point p : result.getTrajectory(s)) {
             }
             assertTrue(result.getTrajectory(s).getLength() > 0);
-            assertEquals(Status.TIMEOUT, result.getStatus(s));
+            assertEquals(result.getStatus(s), Status.OK);
         }
     }
 

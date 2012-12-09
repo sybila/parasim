@@ -66,7 +66,7 @@ public class SharedMemoryExecutorImpl extends AbstractExecutor implements Shared
         BlockingQueue<Future<L>> futures = new ArrayBlockingQueue<>(getConfiguration().getQueueSize());
         context.getStorage().add(ComputationEmitter.class, Default.class, new SharedMemoryComputationEmitter<>(runnableExecutor, getEnrichment(), getComputationInstanceContextEvent(), context, maxId, futures));
         executeMethodsByAnnotation(getEnrichment(), context, computation, Before.class);
-        return new SharedMemoryExecution<>(ids,runnableExecutor,computation,getEnrichment(),getComputationInstanceContextEvent(), context, futures);
+        return new SharedMemoryExecution<>(ids,runnableExecutor,computation,getEnrichment(), getComputationContextEvent(), getComputationInstanceContextEvent(), context, futures);
     }
 
 }

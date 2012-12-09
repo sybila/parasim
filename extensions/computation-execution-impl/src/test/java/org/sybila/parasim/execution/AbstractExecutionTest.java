@@ -85,6 +85,7 @@ public class AbstractExecutionTest {
         public MergeableString(String original) {
             super(original);
         }
+        @Override
         public MergeableString merge(MergeableString toMerge) {
             return new MergeableString(get() + toMerge.get());
         }
@@ -96,6 +97,7 @@ public class AbstractExecutionTest {
             super(load);
         }
 
+        @Override
         public MergeableInteger merge(MergeableInteger toMerge) {
             return new MergeableInteger(get() + toMerge.get());
         }
@@ -111,6 +113,7 @@ public class AbstractExecutionTest {
             this.message = message;
             this.delay = delay;
         }
+        @Override
         public MergeableString call() {
             try {
                 Thread.sleep(delay);
@@ -119,6 +122,7 @@ public class AbstractExecutionTest {
             }
             return new MergeableString(threadId.currentId() + message);
         }
+        @Override
         public Computation<MergeableString> cloneComputation() {
             return new TestStringComputation(message, delay);
         }

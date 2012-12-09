@@ -79,10 +79,12 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             private float[] steps;
             private PrecisionConfiguration precisionConfiguration = new PrecisionConfiguration() {
 
+                @Override
                 public int getDimension() {
                     return odeSystem.getVariables().size();
                 }
 
+                @Override
                 public float getMaxAbsoluteError(int dim) {
                     if (maxAbsoluteError == null) {
                         maxAbsoluteError = new float[getDimension()];
@@ -93,16 +95,19 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     return maxAbsoluteError[dim];
                 }
 
+                @Override
                 public float getMaxRelativeError() {
                     return (float) 0.1;
                 }
 
+                @Override
                 public Element toXML(Document doc) {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
 
+                @Override
                 public float getTimeStep() {
-                    return 0.01f;
+                    return 0.1f;
                 }
             };
 
@@ -113,7 +118,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
 
             @Override
             public int getMaxNumberOfIterations() {
-                return 100;
+                return 1000;
             }
 
             @Override
@@ -121,6 +126,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 return odeSystem;
             }
 
+            @Override
             public OrthogonalSpace getSpace() {
                 if (space == null) {
                     float[] minBounds = new float[getDimension()];
@@ -131,7 +137,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                     for (int dim = 0; dim < getDimension(); dim++) {
                         maxBounds[dim] = (dim + 1) * 10000;
                     }
-                    space = new OrthogonalSpaceImpl(new ArrayPoint(0, minBounds), new ArrayPoint((float) 100, maxBounds), getOdeSystem());
+                    space = new OrthogonalSpaceImpl(new ArrayPoint(0, minBounds), new ArrayPoint((float) 10, maxBounds), getOdeSystem());
                 }
                 return space;
             }
@@ -147,6 +153,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 return steps;
             }
 
+            @Override
             public PrecisionConfiguration getPrecisionConfiguration() {
                 return precisionConfiguration;
             }
