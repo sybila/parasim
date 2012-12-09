@@ -23,6 +23,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ import org.sybila.parasim.extension.progresslogger.api.ProgressLogger;
 import org.sybila.parasim.extension.projectmanager.api.ExperimentListener;
 import org.sybila.parasim.extension.projectmanager.api.ProjectManager;
 import org.sybila.parasim.model.computation.Computation;
+import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLResource;
@@ -123,8 +125,9 @@ public class Main {
                 try {
                     result = ExperimentLauncher.launch(manager, experiment);
                 } catch (Exception e) {
-                    LOGGER.error("Can't launch the experiment.", e);
-                    System.exit(1);
+                    LOGGER.error("Error during simulation.", e);
+                    logger.simulationStopped(Robustness.UNDEFINED);
+                    return null;
                 }
                 logger.simulationStopped(result.getGlobalRobustness());
 
@@ -135,8 +138,7 @@ public class Main {
                     try {
                         output.store();
                     } catch (XMLException xmle) {
-                        LOGGER.error("Unable to store result.", xmle);
-                        System.exit(1);
+                        LOGGER.warn("Unable to store result.", xmle);
                     }
                 }
                 return result;
@@ -146,7 +148,12 @@ public class Main {
             protected void done() {
                 try {
                     // plot result
-                    plotResult(manager, experiment, get());
+                    VerificationResult result = get();
+                    if (result != null) {
+                        plotResult(manager, experiment, result);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Simulation could not be completed.", "Simulation Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 } catch (InterruptedException ie) {
                     LOGGER.error("Simulation was interrupted.", ie);
                 } catch (ExecutionException ee) {

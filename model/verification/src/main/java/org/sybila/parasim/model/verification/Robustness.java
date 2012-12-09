@@ -54,6 +54,11 @@ public interface Robustness extends LimitedPointDistanceMetric {
         public LimitedDistance distance(Point first, Point second) {
             throw new UnsupportedOperationException("Undefined");
         }
+
+        @Override
+        public String toString() {
+            return "Not defined.";
+        }
     };
 
     float getTime();
