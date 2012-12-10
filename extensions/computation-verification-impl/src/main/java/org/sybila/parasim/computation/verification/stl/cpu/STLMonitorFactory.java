@@ -36,7 +36,7 @@ public class STLMonitorFactory implements MonitorFactory<Formula> {
     @Override
     public Monitor createMonitor(Trajectory trajectory, Formula property) {
         if (trajectory.getLastPoint().getTime() < property.getTimeNeeded()) {
-            throw new IllegalArgumentException("The formula " + property + " needs the trajectory simulated at least to time " + property.getTimeNeeded() + ", " + trajectory.getLastPoint().getTime() + " given.");
+            throw new IllegalArgumentException("The formula " + property + " needs the trajectory simulated at least to time " + property.getTimeNeeded() + ", " + trajectory.getLastPoint().getTime() + " given for trajectory with initial point "+trajectory.getFirstPoint()+".");
         }
         switch(property.getType()) {
             case AND:

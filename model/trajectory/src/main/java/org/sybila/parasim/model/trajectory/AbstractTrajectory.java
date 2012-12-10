@@ -29,7 +29,19 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
 
     private final int dimension;
     private int length;
-    private TrajectoryReference reference;
+    private final TrajectoryReference reference = new TrajectoryReference() {
+        private volatile Trajectory referencedTrajectory = AbstractTrajectory.this;
+
+        @Override
+        public Trajectory getTrajectory() {
+            return referencedTrajectory;
+        }
+
+        @Override
+        public void setTrajectory(Trajectory trajectory) {
+            referencedTrajectory = trajectory;
+        }
+    };
     private final DataBlock<Trajectory> neighborhood;
 
     public AbstractTrajectory(int dimension, int length) {
@@ -83,23 +95,6 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
 
     @Override
     public TrajectoryReference getReference() {
-        if (reference == null) {
-            final Trajectory thisTrajectory = this;
-            reference = new TrajectoryReference() {
-
-                private volatile Trajectory referencedTrajectory = thisTrajectory;
-
-                @Override
-                public Trajectory getTrajectory() {
-                    return referencedTrajectory;
-                }
-
-                @Override
-                public void setTrajectory(Trajectory trajectory) {
-                    referencedTrajectory = trajectory;
-                }
-            };
-        }
         return reference;
     }
 
@@ -116,7 +111,7 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
     @Override
     public Trajectory withoutNeighbors() {
         List<Point> points = new ArrayList<>(getLength());
-        for (Point p: this) {
+        for (Point p: this.getReference().getTrajectory()) {
             points.add(p);
         }
         return new ListTrajectory(points);
