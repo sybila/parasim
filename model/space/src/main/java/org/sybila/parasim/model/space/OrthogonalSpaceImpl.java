@@ -20,6 +20,7 @@
 package org.sybila.parasim.model.space;
 
 import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,8 +31,9 @@ import org.w3c.dom.Element;
  */
 public class OrthogonalSpaceImpl implements OrthogonalSpace {
 
-    private Point maxBounds;
-    private Point minBounds;
+    private final Point maxBounds;
+    private final Point minBounds;
+    private final Point size;
     private final OdeSystem odeSystem;
 
     public OrthogonalSpaceImpl(Point minBounds, Point maxBounds, OdeSystem odeSystem) {
@@ -47,14 +49,17 @@ public class OrthogonalSpaceImpl implements OrthogonalSpace {
         if (minBounds.getDimension() != maxBounds.getDimension()) {
             throw new IllegalArgumentException("The dimension of [minBounds] and [maxBounds] doesn't match.");
         }
+        float[] sizeData = new float[minBounds.getDimension()];
         for (int i = 0; i < minBounds.getDimension(); i++) {
             if (minBounds.getValue(i) > maxBounds.getValue(i)) {
                 throw new IllegalArgumentException("The min bound " + minBounds + " in dimension <" + i + "> is greater than max bound " + maxBounds + ".");
             }
+            sizeData[i] = Math.abs(minBounds.getValue(i) - maxBounds.getValue(i));
         }
         this.minBounds = minBounds;
         this.maxBounds = maxBounds;
         this.odeSystem = odeSystem;
+        this.size = new ArrayPoint(Math.abs(minBounds.getTime() - maxBounds.getTime()), sizeData);
     }
 
     @Override
@@ -70,6 +75,11 @@ public class OrthogonalSpaceImpl implements OrthogonalSpace {
     @Override
     public Point getMinBounds() {
         return minBounds;
+    }
+
+    @Override
+    public Point getSize() {
+        return size;
     }
 
     @Override

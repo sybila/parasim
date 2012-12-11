@@ -237,7 +237,11 @@ public abstract class AbstractVerificationResult implements VerificationResult {
 
     protected Robustness calculateGlobalRobustness(final Point point, final Map<Point, Robustness> robustnesses, final Map<Point, Robustness> cache) {
         if (!(point instanceof PointWithNeighborhood)) {
-            return robustnesses.get(point);
+            if (!robustnesses.containsKey(point)) {
+                return Robustness.UNDEFINED;
+            } else {
+                return robustnesses.get(point);
+            }
         }
         if (cache.containsKey(point)) {
             return cache.get(point);

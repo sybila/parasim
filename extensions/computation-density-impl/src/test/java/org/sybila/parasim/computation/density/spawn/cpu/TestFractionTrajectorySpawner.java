@@ -36,7 +36,7 @@ import static org.testng.Assert.assertFalse;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest {
+public class TestFractionTrajectorySpawner extends AbstractTrajectorySpawnerTest {
 
     @Test(enabled=false)
     public void testNumberOfTrajectoriesAfterSpawn() {
@@ -88,7 +88,7 @@ public class TestOneAndSurroundingsSpawner extends AbstractTrajectorySpawnerTest
 
     @Override
     protected TrajectorySpawner createTrajectorySpawner() {
-        return new OneAndSurroundingsTrajectorySpawner();
+        return new FractionTrajectorySpawner();
     }
 
 }

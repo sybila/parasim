@@ -17,19 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.model.space;
+package org.sybila.parasim.computation.density.spawn.cpu;
 
-import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.ArrayPoint;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface OrthogonalSpace extends Space {
+public class ArrayFractionPoint extends ArrayPoint {
 
-    public Point getMaxBounds();
+    private final FractionPoint fractionPoint;
 
-    public Point getMinBounds();
+    public ArrayFractionPoint(FractionPoint fractionPoint, float time, float... data) {
+        super(time, data);
+        this.fractionPoint = fractionPoint;
+    }
 
-    public Point getSize();
-
+    public FractionPoint getFractionPoint() {
+        return fractionPoint;
+    }
 }

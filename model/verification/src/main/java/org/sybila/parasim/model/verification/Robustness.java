@@ -32,12 +32,12 @@ public interface Robustness extends LimitedPointDistanceMetric {
 
         @Override
         public float getTime() {
-            throw new UnsupportedOperationException("Undefined");
+            return Float.NaN;
         }
 
         @Override
         public float getValue() {
-            throw new UnsupportedOperationException("Undefined");
+            return Float.NaN;
         }
 
         @Override

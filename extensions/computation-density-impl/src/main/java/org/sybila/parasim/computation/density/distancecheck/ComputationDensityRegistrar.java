@@ -22,7 +22,7 @@ package org.sybila.parasim.computation.density.distancecheck;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
-import org.sybila.parasim.computation.density.spawn.cpu.OneAndSurroundingsTrajectorySpawner;
+import org.sybila.parasim.computation.density.spawn.cpu.FractionTrajectorySpawner;
 import org.sybila.parasim.core.annotations.Provide;
 import org.sybila.parasim.execution.api.annotations.ComputationScope;
 
@@ -34,7 +34,8 @@ public class ComputationDensityRegistrar {
 
     @Provide
     public TrajectorySpawner provideSpawner() {
-        return new OneAndSurroundingsTrajectorySpawner();
+        return new FractionTrajectorySpawner();
+//        return new OneAndSurroundingsTrajectorySpawner();
     }
 
     @Provide

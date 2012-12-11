@@ -37,7 +37,7 @@ public class ArrayPoint extends AbstractPoint {
             throw new IllegalArgumentException("The parameter [data] is NULL.");
         }
         if (startIndex < 0 || startIndex >= data.length) {
-            throw new IllegalArgumentException("The start index is out of the range [0, " + (data.length - 1) + "].");
+            throw new IllegalArgumentException("The start index ["+startIndex+"] is out of the range [0, " + (data.length - 1) + "].");
         }
         if (data.length - startIndex < dimension) {
             throw new IllegalArgumentException("The length of piece of the array doesn't correspond to the dimension.");
@@ -49,7 +49,7 @@ public class ArrayPoint extends AbstractPoint {
     @Override
     public float getValue(int index) {
         if (index < 0 || index >= getDimension()) {
-            throw new IllegalArgumentException("The index is out of the range [0, " + (getDimension() - 1) + "].");
+            throw new IllegalArgumentException("The index ["+index+"] is out of the range [0, " + (getDimension() - 1) + "].");
         }
         return data[startIndex + index];
     }

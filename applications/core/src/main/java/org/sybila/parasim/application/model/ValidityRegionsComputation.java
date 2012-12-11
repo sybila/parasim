@@ -169,16 +169,8 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 //                        System.out.println("\t" + distanceChecked.getTrajectory(t).getNeighbors().getTrajectory(n).getFirstPoint() + ": " + distanceChecked.getDistance(t, n).value() + ": " + distanceChecked.getDistance(t, n).isValid());
 //                    }
 //                }
-                List<Trajectory> secondaryToDrop = new ArrayList<>();
-                for (int t=0; t<distanceChecked.size(); t++) {
-                    for (int n=0; n<distanceChecked.getTrajectory(t).getNeighbors().size(); n++) {
-                        if (distanceChecked.getDistance(t, n).isValid()) {
-                            secondaryToDrop.add(distanceChecked.getTrajectory(t).getNeighbors().getTrajectory(n).getReference().getTrajectory());
-                        }
-                    }
-                }
-                if (!secondaryToDrop.isEmpty()) {
-                    VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(new ListDataBlock<>(secondaryToDrop), property);
+                if (simulatedSecondary.size() != 0) {
+                    VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
                     result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
                 }
                 spawned = emit(spawner.spawn(spawned.getConfiguration(), distanceChecked));
