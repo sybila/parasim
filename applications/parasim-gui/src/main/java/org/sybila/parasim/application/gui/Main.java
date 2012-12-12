@@ -43,6 +43,7 @@ import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLResource;
+import org.sybila.parasim.util.SimpleLock;
 import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
@@ -55,6 +56,18 @@ import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    //
+    private static boolean simulationRunning = false;
+    private static final SimpleLock loadingResults = new SimpleLock();
+
+    private static boolean checkExperiments() {
+        if (!loadingResults.isAccessible()) {
+            return JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null,
+                    "One or more results are already loading. If it is taking a while, it may be due to the result file size. Do you really want to load another result?",
+                    "Results Loading", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        }
+        return true;
+    }
 
     public static void main(String[] args) throws IOException, Exception {
         final Manager manager = ManagerImpl.create();
@@ -77,17 +90,25 @@ public class Main {
 
             @Override
             public void performExperiment(Experiment experiment) {
-                try {
+                if (simulationRunning) {
+                    JOptionPane.showMessageDialog(null,
+                            "An analysis is already running. Parasim employs all available computer resources, "
+                            + "therefore, there is no reason for launching another analysis at this time. "
+                            + "If you want to execute several analyses, consider using parasim CLI interface in batch mode.",
+                            "Analysis Already Running", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    simulationRunning = true;
                     executeExperiment(manager, experiment, loggerWindow);
-                } catch (IOException e) {
-                    LOGGER.error("Unable to execute experiment.", e);
                 }
             }
 
             @Override
             public void showResult(Experiment experiment) {
-                LOGGER.info("Results are loading.");
-                loadAndShowResult(manager, experiment);
+                if (checkExperiments()) {
+                    LOGGER.info("Results are loading...");
+                    loadingResults.lock();
+                    loadAndShowResult(manager, experiment);
+                }
             }
         });
         loggerWindow.setVisible(true);
@@ -108,7 +129,7 @@ public class Main {
         plotter.plot();
     }
 
-    private static void executeExperiment(final Manager manager, final Experiment experiment, final LoggerWindow logger) throws IOException {
+    private static void executeExperiment(final Manager manager, final Experiment experiment, final LoggerWindow logger) {
         new SwingWorker<VerificationResult, Object>() {
 
             @Override
@@ -140,6 +161,7 @@ public class Main {
 
             @Override
             protected void done() {
+                simulationRunning = false;
                 try {
                     // plot result
                     VerificationResult result = get();
@@ -174,9 +196,11 @@ public class Main {
 
             @Override
             protected void done() {
+                loadingResults.unlock();
                 try {
                     VerificationResult result = get();
                     if (result != null) {
+                        LOGGER.info("Results loaded.");
                         plotResult(manager, experiment, result);
                     } else {
                         JOptionPane.showMessageDialog(null, "Unable to load result.", "Result Error", JOptionPane.ERROR);
