@@ -86,21 +86,15 @@ public class Main {
 
             @Override
             public void showResult(Experiment experiment) {
-                XMLResource<VerificationResult> input = experiment.getVerificationResultResource();
-                try {
-                    input.load();
-                    plotResult(manager, experiment, input.getRoot());
-                } catch (XMLException e) {
-                    LOGGER.error("Unable to show result.", e);
-                    System.exit(1);
-                }
+                LOGGER.info("Results are loading.");
+                loadAndShowResult(manager, experiment);
             }
         });
         loggerWindow.setVisible(true);
         projectManager.setVisible(true);
     }
 
-    private static void plotResult(final Manager manager, final Experiment experiment, VerificationResult result) throws XMLException {
+    private static void plotResult(final Manager manager, final Experiment experiment, VerificationResult result) {
         PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
         final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
         plotter.addMouseOnResultListener(new MouseOnResultListener() {
@@ -158,8 +152,39 @@ public class Main {
                     LOGGER.error("Simulation was interrupted.", ie);
                 } catch (ExecutionException ee) {
                     LOGGER.error("Simulation was aborted.", ee);
+                }
+            }
+        }.execute();
+    }
+
+    private static void loadAndShowResult(final Manager manager, final Experiment experiment) {
+        new SwingWorker<VerificationResult, Object>() {
+
+            @Override
+            protected VerificationResult doInBackground() {
+                XMLResource<VerificationResult> resource = experiment.getVerificationResultResource();
+                try {
+                    resource.load();
                 } catch (XMLException xmle) {
-                    LOGGER.error("XML exception during simulation.", xmle);
+                    LOGGER.error("Unable to load verifiaction result.", xmle);
+                    return null;
+                }
+                return resource.getRoot();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    VerificationResult result = get();
+                    if (result != null) {
+                        plotResult(manager, experiment, result);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Unable to load result.", "Result Error", JOptionPane.ERROR);
+                    }
+                } catch (InterruptedException ie) {
+                    LOGGER.error("Result loading was interrupted.", ie);
+                } catch (ExecutionException ee) {
+                    LOGGER.error("Result loading was aborted.", ee);
                 }
             }
         }.execute();
