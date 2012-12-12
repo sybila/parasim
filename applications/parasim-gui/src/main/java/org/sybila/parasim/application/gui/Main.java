@@ -115,18 +115,35 @@ public class Main {
         projectManager.setVisible(true);
     }
 
-    private static void plotResult(final Manager manager, final Experiment experiment, VerificationResult result) {
-        PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
-        final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
-        plotter.addMouseOnResultListener(new MouseOnResultListener() {
+    private static void plotResult(final Manager manager, final Experiment experiment, final VerificationResult result) {
+        final PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
+        new SwingWorker<Plotter, Object>() {
 
             @Override
-            public void click(MouseOnResultListener.ResultEvent event) {
-                Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getFormula(), experiment.getPrecisionConfiguration(), experiment.getSimulationSpace());
-                manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
+            protected Plotter doInBackground() {
+                final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
+                plotter.addMouseOnResultListener(new MouseOnResultListener() {
+
+                    @Override
+                    public void click(MouseOnResultListener.ResultEvent event) {
+                        Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getFormula(), experiment.getPrecisionConfiguration(), experiment.getSimulationSpace());
+                        manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
+                    }
+                });
+                return plotter;
             }
-        });
-        plotter.plot();
+
+            @Override
+            protected void done() {
+                try {
+                    get().plot();
+                } catch (InterruptedException ie) {
+                    LOGGER.error("Plotter cannot be displayed.", ie);
+                } catch (ExecutionException ee) {
+                    LOGGER.error("Plotter cannot be displayed.", ee);
+                }
+            }
+        }.execute();
     }
 
     private static void executeExperiment(final Manager manager, final Experiment experiment, final LoggerWindow logger) {
