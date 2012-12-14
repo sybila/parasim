@@ -4,31 +4,28 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.extension.projectmanager.view.robustness;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.extension.projectmanager.model.InitialSamplingFactory;
-import org.sybila.parasim.extension.projectmanager.model.NamedInitialSampling;
 import org.sybila.parasim.extension.projectmanager.model.NamedOrthogonalSpace;
 import org.sybila.parasim.extension.projectmanager.model.OdeInsideFactory;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
 import org.sybila.parasim.extension.projectmanager.model.OrthogonalSpaceFactory;
-import org.sybila.parasim.extension.projectmanager.model.SimpleNamedInitialSampling;
 import org.sybila.parasim.extension.projectmanager.model.SimpleNamedOrthogonalSpace;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -53,37 +50,30 @@ public class RobustnessSettingsValuesFactory extends OdeInsideFactory {
         return (a - b) > 1E-5;
     }
 
-    private boolean isDifferent(int sampleNum, Pair<Float, Float> bounds, float defaultValue) {
-        if (sampleNum != 1) {
-            return true;
-        }
+    private boolean isDifferent(Pair<Float, Float> bounds, float defaultValue) {
         if (isDifferent(bounds.first(), bounds.second())) {
             return true;
         }
         return isDifferent(defaultValue, bounds.first());
     }
 
-    public RobustnessSettingsValues get(InitialSampling initialSampling, OrthogonalSpace initialSpace) {
-        NamedInitialSampling sampling = samplingFactory.get(initialSampling);
+    public RobustnessSettingsValues get(OrthogonalSpace initialSpace) {
         NamedOrthogonalSpace space = spaceFactory.get(initialSpace);
 
-        Map<String, Integer> sampleValues = new HashMap<>();
         Map<String, Pair<Float, Float>> spaceValues = new HashMap<>();
 
-        for (String name : sampling.getVariables()) {
-            int sampleNum = sampling.getSamples(name);
+        for (String name : space.getVariables()) {
             Pair<Float, Float> bounds = space.getValues(name);
             Float defaultValue = new OdeSystemNames(getOdeSystem()).getValue(name);
-            if (defaultValue == null || isDifferent(sampleNum, bounds, defaultValue)) {
-                sampleValues.put(name, sampleNum);
+            if (defaultValue == null || isDifferent(bounds, defaultValue)) {
                 spaceValues.put(name, bounds);
             }
         }
 
-        return new RobustnessSettingsValues(new SimpleNamedInitialSampling(sampleValues), new SimpleNamedOrthogonalSpace(spaceValues));
+        return new RobustnessSettingsValues(new SimpleNamedOrthogonalSpace(spaceValues));
     }
 
-    public Pair<InitialSampling, OrthogonalSpace> get(RobustnessSettingsValues values) {
-        return new Pair<>(samplingFactory.get(values.getInitialSampling()), spaceFactory.get(values.getInitialSpace()));
+    public OrthogonalSpace get(RobustnessSettingsValues values) {
+        return spaceFactory.get(values.getInitialSpace());
     }
 }

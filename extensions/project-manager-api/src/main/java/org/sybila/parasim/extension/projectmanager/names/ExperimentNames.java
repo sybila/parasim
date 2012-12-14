@@ -29,7 +29,7 @@ import org.sybila.parasim.extension.projectmanager.project.ResourceException;
  */
 public class ExperimentNames {
 
-    private String formulaName, initialSpaceName, simulationSpaceName, precisionConfigurationName, initialSamplingName, verificationResultName, modelName, annotation;
+    private String formulaName, initialSpaceName, simulationSpaceName, precisionConfigurationName, verificationResultName, modelName, annotation;
     private int iterationLimit = 0;
     private long timeoutAmount = 0;
     private TimeUnit timeUnit = TimeUnit.MINUTES;
@@ -39,7 +39,6 @@ public class ExperimentNames {
         initialSpaceName = null;
         simulationSpaceName = null;
         precisionConfigurationName = null;
-        initialSamplingName = null;
         verificationResultName = null;
         modelName = null;
         annotation = null;
@@ -50,7 +49,6 @@ public class ExperimentNames {
         initialSpaceName = source.getInitialSpaceName();
         simulationSpaceName = source.getSimulationSpaceName();
         precisionConfigurationName = source.getPrecisionConfigurationName();
-        initialSamplingName = source.getInitialSamplingName();
         verificationResultName = source.getVerificationResultName();
         modelName = source.getModelName();
         annotation = source.getAnnotation();
@@ -73,14 +71,6 @@ public class ExperimentNames {
 
     public void setFormulaName(String formulaName) {
         this.formulaName = formulaName;
-    }
-
-    public String getInitialSamplingName() {
-        return initialSamplingName;
-    }
-
-    public void setInitialSamplingName(String initialSamplingName) {
-        this.initialSamplingName = initialSamplingName;
     }
 
     public String getInitialSpaceName() {
@@ -150,7 +140,6 @@ public class ExperimentNames {
     public boolean isFilled() {
         return ((formulaName != null) && (initialSpaceName != null)
                 && (simulationSpaceName != null) && (precisionConfigurationName != null)
-                && (initialSamplingName != null)
                 && (modelName != null) && (iterationLimit > 0) && (timeoutAmount > 0));
     }
 
@@ -176,9 +165,6 @@ public class ExperimentNames {
             return false;
         }
         if (!getPrecisionConfigurationName().equals(target.getPrecisionConfigurationName())) {
-            return false;
-        }
-        if (!getInitialSamplingName().equals(target.getInitialSamplingName())) {
             return false;
         }
         if (!getVerificationResultName().equals(target.getVerificationResultName())) {
@@ -207,7 +193,6 @@ public class ExperimentNames {
         result = result * prime + getInitialSpaceName().hashCode();
         result = result * prime + getSimulationSpaceName().hashCode();
         result = result * prime + getPrecisionConfigurationName().hashCode();
-        result = result * prime + getInitialSamplingName().hashCode();
         result = result * prime + getVerificationResultName().hashCode();
         result = result * prime + Long.valueOf(getTimeoutAmount()).hashCode();
         result = result * prime + getIterationLimit();
@@ -247,7 +232,6 @@ public class ExperimentNames {
             result.setInitialSpaceName(getAndRemoveSuffix(properties, INITSPACE_PRP, ExperimentSuffixes.INITIAL_SPACE));
             result.setSimulationSpaceName(getAndRemoveSuffix(properties, SIMSPACE_PRP, ExperimentSuffixes.SIMULATION_SPACE));
             result.setPrecisionConfigurationName(getAndRemoveSuffix(properties, PRECISION_PRP, ExperimentSuffixes.PRECISION_CONFIGURATION));
-            result.setInitialSamplingName(getAndRemoveSuffix(properties, SAMPLING_PRP, ExperimentSuffixes.INITIAL_SAMPLING));
             result.setVerificationResultName(getAndRemoveSuffix(properties, RESULT_PRP, ExperimentSuffixes.VERIFICATION_RESULT));
             String property = null;
             try {
@@ -285,7 +269,6 @@ public class ExperimentNames {
             setIfNotNull(result, INITSPACE_PRP, names.getInitialSpaceName(), ExperimentSuffixes.INITIAL_SPACE);
             setIfNotNull(result, SIMSPACE_PRP, names.getSimulationSpaceName(), ExperimentSuffixes.SIMULATION_SPACE);
             setIfNotNull(result, PRECISION_PRP, names.getPrecisionConfigurationName(), ExperimentSuffixes.PRECISION_CONFIGURATION);
-            setIfNotNull(result, SAMPLING_PRP, names.getInitialSamplingName(), ExperimentSuffixes.INITIAL_SAMPLING);
             setIfNotNull(result, RESULT_PRP, names.getVerificationResultName(), ExperimentSuffixes.VERIFICATION_RESULT);
             result.setProperty(TIMEOUT_AMOUNT_PRP, Long.toString(names.getTimeoutAmount()));
             result.setProperty(TIMEOUT_UNIT_PRP, names.getTimeoutUnit().toString());
@@ -305,7 +288,6 @@ public class ExperimentNames {
     private static final String INITSPACE_PRP = "space.initial.file";
     private static final String SIMSPACE_PRP = "space.simulation.file";
     private static final String PRECISION_PRP = "simulation.precision.file";
-    private static final String SAMPLING_PRP = "density.sampling.file";
     private static final String RESULT_PRP = "result.output.file";
     private static final String TIMEOUT_AMOUNT_PRP = "timeout.amount";
     private static final String TIMEOUT_UNIT_PRP = "timeout.unit";

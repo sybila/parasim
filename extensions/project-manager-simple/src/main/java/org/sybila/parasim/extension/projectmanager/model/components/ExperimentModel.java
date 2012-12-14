@@ -103,7 +103,6 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
                 // user SHOULD know this invalidates experiment
                 checkName(name);
                 current.setInitialSpaceName(name);
-                current.setInitialSamplingName(name);
                 checkExperiment();
                 robustnessWarning.check();
             }
@@ -230,7 +229,7 @@ public class ExperimentModel implements ExperimentSettingsModel, NameManagerMode
         settings.setValues(new Pair<>(new ExperimentSettingsValues(values.getIterationLimit(), values.getTimeoutAmount(), values.getTimeoutUnit()), values.getAnnotation()));
         settings.getFormulaeNameList().selectName(values.getFormulaName());
         settings.getSimulationsNameList().selectName(values.getSimulationSpaceName());
-        settings.getRobustnessNameList().selectName(values.getInitialSamplingName());
+        settings.getRobustnessNameList().selectName(values.getInitialSpaceName());
         checkExperiment();
     }
 

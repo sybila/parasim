@@ -40,7 +40,6 @@ public class TestExperimentNamesStorage {
         result.setInitialSpaceName("Hugh Knudtson");
         result.setSimulationSpaceName("Jamie Gills");
         result.setPrecisionConfigurationName("Max Mccook");
-        result.setInitialSamplingName("Odessa Juliano");
         result.setVerificationResultName("Ted Pin");
         result.setTimeoutAmount(480000);
         result.setTimeoutUnit(TimeUnit.MILLISECONDS);

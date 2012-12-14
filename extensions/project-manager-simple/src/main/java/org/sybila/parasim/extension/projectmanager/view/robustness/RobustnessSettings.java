@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.extension.projectmanager.view.robustness;
 
@@ -35,13 +35,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
-import org.sybila.parasim.extension.projectmanager.model.SimpleNamedInitialSampling;
 import org.sybila.parasim.extension.projectmanager.model.SimpleNamedOrthogonalSpace;
 import org.sybila.parasim.extension.projectmanager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectmanager.view.OdeSystemFactory;
@@ -66,8 +62,6 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
 
         private JLabel rowLabel;
         private CommitFormattedTextField min, max;
-        private JSpinner samples;
-        private SpinnerNumberModel samplesModel;
 
         public Row(String name) {
             rowLabel = TableConstraints.getRowLabel(name);
@@ -93,22 +87,12 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
                     fireChanges();
                 }
             });
-            samplesModel = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
-            samplesModel.addChangeListener(new ChangeListener() {
-
-                @Override
-                public void stateChanged(ChangeEvent ce) {
-                    fireChanges();
-                }
-            });
-            samples = new JSpinner(samplesModel);
         }
 
         public void setVisible(boolean visibility) {
             rowLabel.setVisible(visibility);
             min.setVisible(visibility);
             max.setVisible(visibility);
-            samples.setVisible(visibility);
         }
 
         public boolean isVisible() {
@@ -117,9 +101,8 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
 
         public void add(Container container, int y) {
             container.add(rowLabel, TableConstraints.getRowConstraints(y));
-            container.add(samples, TableConstraints.getCellConstraints(1, y));
-            container.add(min, TableConstraints.getCellConstraints(2, y));
-            container.add(max, TableConstraints.getCellConstraints(3, y));
+            container.add(min, TableConstraints.getCellConstraints(1, y));
+            container.add(max, TableConstraints.getCellConstraints(2, y));
         }
 
         public float getMin() {
@@ -130,14 +113,9 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
             return ((Number) max.getValue()).floatValue();
         }
 
-        public int getSamples() {
-            return samplesModel.getNumber().intValue();
-        }
-
-        public void setValues(float min, float max, int samples) {
+        public void setValues(float min, float max) {
             this.min.setValue(min);
             this.max.setValue(max);
-            this.samplesModel.setValue(samples);
         }
     }
 
@@ -219,22 +197,17 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
     }
 
     public RobustnessSettings(RobustnessSettingsModel robustnessModel, OdeSystemNames odeNames) {
-        if (robustnessModel == null) {
-            throw new IllegalArgumentException("Argument (model) is null.");
-        }
+        Validate.notNull(robustnessModel);
+        Validate.notNull(odeNames);
         model = robustnessModel;
-        if (odeNames == null) {
-            throw new IllegalArgumentException("Argument (ode names) is null.");
-        }
         names = odeNames;
 
         filterUnvalued(names.getVariables());
         filterUnvalued(names.getParameters());
 
         perturbationTable = new JPanel(new GridBagLayout());
-        perturbationTable.add(TableConstraints.getHeaderLabelWithToolTip("Samples", "Number of Samples"), TableConstraints.getHeaderConstraints(1));
-        perturbationTable.add(TableConstraints.getHeaderLabelWithToolTip("Minimum", "Sampling Interval Minimum"), TableConstraints.getHeaderConstraints(2));
-        perturbationTable.add(TableConstraints.getHeaderLabelWithToolTip("Maximum", "Sampling Interval Maximum"), TableConstraints.getHeaderConstraints(3));
+        perturbationTable.add(TableConstraints.getHeaderLabelWithToolTip("Minimum", "Sampling Interval Minimum"), TableConstraints.getHeaderConstraints(1));
+        perturbationTable.add(TableConstraints.getHeaderLabelWithToolTip("Maximum", "Sampling Interval Maximum"), TableConstraints.getHeaderConstraints(2));
         int y = 1;
         for (String name : odeNames.getVariables()) {
             addRow(name, y);
@@ -279,7 +252,7 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
         newRow.setVisible(unvalued.contains(name));
         if (!unvalued.contains(name)) {
             float val = names.getValue(name);
-            newRow.setValues(val, val, 1);
+            newRow.setValues(val, val);
         }
     }
 
@@ -291,25 +264,22 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
 
     @Override
     public RobustnessSettingsValues getValues() {
-        Map<String, Integer> sampling = new HashMap<>();
         Map<String, Pair<Float, Float>> space = new HashMap<>();
         for (Map.Entry<String, Row> row : rows.entrySet()) {
             if (row.getValue().isVisible()) {
-                sampling.put(row.getKey(), row.getValue().getSamples());
                 space.put(row.getKey(), new Pair(row.getValue().getMin(), row.getValue().getMax()));
             }
         }
-        return new RobustnessSettingsValues(new SimpleNamedInitialSampling(sampling), new SimpleNamedOrthogonalSpace(space));
+        return new RobustnessSettingsValues(new SimpleNamedOrthogonalSpace(space));
     }
 
     private boolean setValues(String name, RobustnessSettingsValues values) {
         lock.lock();
         Pair<Float, Float> bounds = values.getInitialSpace().getValues(name);
-        int samples = values.getInitialSampling().getSamples(name);
         Row row = rows.get(name);
         boolean nonEmpty = (bounds != null);
         if (nonEmpty) {
-            row.setValues(bounds.first(), bounds.second(), samples);
+            row.setValues(bounds.first(), bounds.second());
         } else {
             if (unvalued.contains(name)) {
                 throw new IllegalArgumentException("New values do not cover all parameters withou value.");
@@ -357,17 +327,12 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
     }
 
     public static RobustnessSettingsValues getTestValues() {
-        Map<String, Integer> sampling = new HashMap<>();
         Map<String, Pair<Float, Float>> space = new HashMap<>();
-
-        sampling.put("S", 1);
-        sampling.put("I", 1);
-        sampling.put("R", 1);
 
         space.put("S", new Pair<>(95f, 95f));
         space.put("I", new Pair<>(5f, 5f));
         space.put("R", new Pair<>(0f, 0f));
 
-        return new RobustnessSettingsValues(new SimpleNamedInitialSampling(sampling), new SimpleNamedOrthogonalSpace(space));
+        return new RobustnessSettingsValues(new SimpleNamedOrthogonalSpace(space));
     }
 }

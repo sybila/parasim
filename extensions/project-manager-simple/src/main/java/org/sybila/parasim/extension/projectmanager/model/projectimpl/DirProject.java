@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.LoadedExperiment;
+import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectmanager.model.OdeUtils;
@@ -79,18 +80,6 @@ public class DirProject implements Project {
         public void setIterationLimit(int iterationLimit) {
             if (iterationLimit != getIterationLimit()) {
                 content.setIterationLimit(iterationLimit);
-                saved = false;
-            }
-        }
-
-        @Override
-        public void setInitialSamplingName(String initialSamplingName) {
-            if (!initialSamplingName.equals(getInitialSamplingName())) {
-                if (getInitialSamplingName() != null) {
-                    samplingList.removeExperiment(getInitialSamplingName());
-                }
-                samplingList.addExperiment(initialSamplingName);
-                content.setInitialSamplingName(initialSamplingName);
                 saved = false;
             }
         }
@@ -172,11 +161,6 @@ public class DirProject implements Project {
         }
 
         @Override
-        public String getInitialSamplingName() {
-            return content.getInitialSamplingName();
-        }
-
-        @Override
         public String getInitialSpaceName() {
             return content.getInitialSpaceName();
         }
@@ -242,11 +226,6 @@ public class DirProject implements Project {
                 names.setFormulaName(null);
             }
 
-            String sampling = names.getInitialSamplingName();
-            if (sampling != null && samplingList.get(sampling) == null) {
-                names.setInitialSamplingName(null);
-            }
-
             String initSpace = names.getInitialSpaceName();
             if (initSpace != null && initialSpaceList.get(initSpace) == null) {
                 names.setInitialSpaceName(null);
@@ -293,9 +272,6 @@ public class DirProject implements Project {
         private void addExperiments(ExperimentNames target) {
             if (target.getFormulaName() != null) {
                 formulae.addExperiment(target.getFormulaName());
-            }
-            if (target.getInitialSamplingName() != null) {
-                samplingList.addExperiment(target.getInitialSamplingName());
             }
             if (target.getInitialSpaceName() != null) {
                 initialSpaceList.addExperiment(target.getInitialSpaceName());
@@ -352,9 +328,6 @@ public class DirProject implements Project {
                 if (target.getFormulaName() != null) {
                     formulae.removeExperiment(target.getFormulaName());
                 }
-                if (target.getInitialSamplingName() != null) {
-                    samplingList.removeExperiment(target.getInitialSamplingName());
-                }
                 if (target.getInitialSpaceName() != null) {
                     initialSpaceList.removeExperiment(target.getInitialSpaceName());
                 }
@@ -409,7 +382,6 @@ public class DirProject implements Project {
     private final String odeName;
     private final FileManager results;
     private final DirFormulaeList formulae;
-    private final XMLResourceList<InitialSampling> samplingList;
     private final XMLResourceList<PrecisionConfiguration> precisionList;
     private final XMLResourceList<OrthogonalSpace> initialSpaceList;
     private final XMLResourceList<OrthogonalSpace> simulationSpaceList;
@@ -441,7 +413,6 @@ public class DirProject implements Project {
 
         results = new FileManager(directory, ExperimentSuffixes.VERIFICATION_RESULT);
         formulae = new DirFormulaeList(this);
-        samplingList = new InitialSamplingResourceList(this);
         precisionList = new PrecisionConfigurationResourceList(this);
         initialSpaceList = new InitialSpaceResourceList(this);
         simulationSpaceList = new SimulationSpaceResourceList(this);
@@ -450,7 +421,6 @@ public class DirProject implements Project {
 
     public void loadResources() {
         formulae.loadResources();
-        samplingList.loadResources();
         precisionList.loadResources();
         initialSpaceList.loadResources();
         simulationSpaceList.loadResources();
@@ -481,10 +451,11 @@ public class DirProject implements Project {
 
         OrthogonalSpace initSpace = initialSpaceList.get(experiment.getInitialSpaceName());
         OdeSystem system = initSpace.getOdeSystem();
-        InitialSampling sampling = samplingList.get(experiment.getInitialSamplingName());
         OrthogonalSpace simSpace = OdeUtils.reSystemSpace(simulationSpaceList.get(experiment.getSimulationSpaceName()), system);
         PrecisionConfiguration precision = precisionList.get(experiment.getPrecisionConfigurationName());
         Formula formula = formulae.get(experiment.getFormulaName());
+
+        InitialSampling sampling = new ArrayInitialSampling(odeSystem, 1);
 
         String resultName = experiment.getVerificationResultName();
         if (resultName != null) {
@@ -511,11 +482,6 @@ public class DirProject implements Project {
     @Override
     public FormulaResourceList getFormulae() {
         return formulae;
-    }
-
-    @Override
-    public ExperimentResourceList<InitialSampling> getInitialSamplings() {
-        return samplingList;
     }
 
     @Override
@@ -546,9 +512,6 @@ public class DirProject implements Project {
         if (!simulationSpaceList.isSaved()) {
             return false;
         }
-        if (!samplingList.isSaved()) {
-            return false;
-        }
         if (!precisionList.isSaved()) {
             return false;
         }
@@ -559,7 +522,6 @@ public class DirProject implements Project {
     public void save() throws ResourceException {
         initialSpaceList.save();
         simulationSpaceList.save();
-        samplingList.save();
         precisionList.save();
         experiments.save();
         saved = true;

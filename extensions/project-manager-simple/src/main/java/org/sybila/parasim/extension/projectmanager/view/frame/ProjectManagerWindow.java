@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.extension.projectmanager.view.frame;
 
@@ -294,8 +294,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         OdeSystemNames names = new OdeSystemNames(project.getOdeSystem());
         Set<String> simulationsNames = new HashSet<>(project.getSimulationSpaces().getNames());
         simulationsNames.retainAll(project.getPrecisionsConfigurations().getNames());
-        Set<String> robustnessNames = new HashSet<>(project.getInitialSamplings().getNames());
-        robustnessNames.retainAll(project.getInitialSpaces().getNames());
+        Set<String> robustnessNames = new HashSet<>(project.getInitialSpaces().getNames());
 
         experimentModel = new ExperimentModel(project, experimentModelListener);
         FormulaModel formulaModel = new FormulaModel(project, experimentModel);
@@ -344,7 +343,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
 
             @Override
             public boolean isUsed(String name) {
-                return project.getInitialSamplings().isUsedInExperiment(name);
+                return project.getInitialSpaces().isUsedInExperiment(name);
             }
         });
         experimentModel.regiseterRobustnessWarning(robustnessWarning);
@@ -357,13 +356,13 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
             experimentName = project.getExperiments().getNames().iterator().next();
             ExperimentNames experiment = project.getExperiments().get(experimentName);
             simulationsName = experiment.getSimulationSpaceName();
-            robustnessName = experiment.getInitialSamplingName();
+            robustnessName = experiment.getInitialSpaceName();
         }
         if (simulationsName == null && !project.getSimulationSpaces().getNames().isEmpty()) {
             simulationsName = project.getSimulationSpaces().getNames().iterator().next();
         }
-        if (robustnessName == null && !project.getInitialSamplings().getNames().isEmpty()) {
-            robustnessName = project.getInitialSamplings().getNames().iterator().next();
+        if (robustnessName == null && !project.getInitialSpaces().getNames().isEmpty()) {
+            robustnessName = project.getInitialSpaces().getNames().iterator().next();
         }
 
         if (experimentName != null) {
