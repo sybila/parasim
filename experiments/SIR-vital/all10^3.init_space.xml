@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<space xmlns="http://www.sybila.org/parasim/space">
+<time max="0.0" min="0.0"/>
+<parameter max="0.5" min="0.01" name="flow"/>
+<parameter max="0.05" min="0.001" name="infectivity"/>
+<parameter max="0.5" min="0.01" name="recovery"/>
+</space>
