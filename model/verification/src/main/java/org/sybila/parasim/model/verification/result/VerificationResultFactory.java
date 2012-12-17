@@ -57,12 +57,12 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
 
         int size = children.getLength();
         if (size == 0) {
-            return new ArrayVerificationResult(0, new PointWithNeighborhood[0], new Robustness[0]);
+            return new ArrayVerificationResult(new PointWithNeighborhood[0], new Robustness[0]);
         }
 
-        Map<Point, Robustness> robustnesses = new HashMap<>();
+        Map<Integer, Robustness> robustnesses = new HashMap<>();
         Map<Integer, Point> memory = new HashMap<>();
-        Map<Point, Collection<Integer>> neighbors = new HashMap<>();
+        Map<Integer, Collection<Integer>> neighbors = new HashMap<>();
         int dimension = Integer.parseInt(source.getAttributes().getNamedItem(DIMENSION_NAME).getNodeValue());
 
         for (int i = 0; i < size; i++) {
@@ -70,6 +70,7 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
             float[] dims = null;
             Collection<Integer> currentNeighbors = null;
             for (int j = 0; j < pointNode.getChildNodes().getLength(); j++) {
+                int id = Integer.parseInt(pointNode.getAttributes().getNamedItem(ID_NAME).getNodeValue());
                 switch (pointNode.getChildNodes().item(j).getNodeName()) {
                     case DATA_NAME:
                         Node dataNode = pointNode.getChildNodes().item(j);
@@ -92,34 +93,37 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
                 }
                 Point point = new ArrayPoint(0, dims);
                 if (pointNode.getAttributes().getNamedItem(ROBUSTNESS_NAME) != null) {
-                    robustnesses.put(point, new SimpleRobustness(FloatFactory.getObject(pointNode.getAttributes().getNamedItem(ROBUSTNESS_NAME))));
+                    robustnesses.put(id, new SimpleRobustness(FloatFactory.getObject(pointNode.getAttributes().getNamedItem(ROBUSTNESS_NAME))));
                 }
                 if (currentNeighbors != null) {
-                    neighbors.put(point, currentNeighbors);
+                    neighbors.put(id, currentNeighbors);
                 }
-                memory.put(Integer.parseInt(pointNode.getAttributes().getNamedItem(ID_NAME).getNodeValue()), point);
+                memory.put(id, point);
             }
         }
 
         PointWithNeighborhood[] points = new PointWithNeighborhood[robustnesses.size()];
         Robustness[] robustnessesFinal = new Robustness[robustnesses.size()];
         int index = 0;
-        for (Entry<Point, Robustness> entry : robustnesses.entrySet()) {
+        for (Entry<Integer, Robustness> entry : robustnesses.entrySet()) {
             PointWithNeighborhood point;
             if (neighbors.containsKey(entry.getKey())) {
                 Collection<Point> neighborhood = new ArrayList<>();
                 for (Integer id : neighbors.get(entry.getKey())) {
                     neighborhood.add(memory.get(id));
                 }
-                point = new PointWithNeigborhoodWrapper(entry.getKey(), neighborhood);
+                point = new PointWithNeigborhoodWrapper(memory.get(entry.getKey()), neighborhood);
             } else {
-                point = new PointWithNeigborhoodWrapper(entry.getKey(), Collections.EMPTY_LIST);
+                point = new PointWithNeigborhoodWrapper(memory.get(entry.getKey()), Collections.EMPTY_LIST);
             }
             points[index] = point;
             robustnessesFinal[index] = entry.getValue();
             index++;
         }
-
-        return new ArrayVerificationResult(robustnesses.size(), points, robustnessesFinal);
+        if (source.getAttributes().getNamedItem(ROBUSTNESS_NAME) == null) {
+            return new ArrayVerificationResult(points, robustnessesFinal);
+        } else {
+            return new ArrayVerificationResult(points, robustnessesFinal, new SimpleRobustness(FloatFactory.getObject(source.getAttributes().getNamedItem(ROBUSTNESS_NAME))));
+        }
     }
 }

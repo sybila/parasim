@@ -98,7 +98,7 @@ class TestVariableMapping {
             robustArray[i] = new SimpleRobustness(robustness.get(i));
         }
 
-        return new ArrayVerificationResult(dim, pointArray, robustArray);
+        return new ArrayVerificationResult(pointArray, robustArray);
     }
 
     public static void main(String[] args) {

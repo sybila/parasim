@@ -75,11 +75,6 @@
         </dependency>
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>remote-impl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sybila.parasim.extension</groupId>
             <artifactId>computation-cycledetection-impl</artifactId>
             <version>${project.version}</version>
         </dependency>

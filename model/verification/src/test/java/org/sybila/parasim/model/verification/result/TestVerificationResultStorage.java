@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
-import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointWithNeigborhoodWrapper;
 import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
@@ -44,7 +43,7 @@ public class TestVerificationResultStorage {
 
     @BeforeMethod
     public void initResult() {
-        result = new ArrayVerificationResult(4,
+        result = new ArrayVerificationResult(
                 new PointWithNeighborhood[]{
                     new PointWithNeigborhoodWrapper(new ArrayPoint(0f, -0.15f, 12.3f, 53.1f)),
                     new PointWithNeigborhoodWrapper(new ArrayPoint(0f, 89.005f, -74.102f, 376.4f)),

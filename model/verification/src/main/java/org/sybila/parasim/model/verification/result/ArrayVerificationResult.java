@@ -27,8 +27,6 @@ import org.sybila.parasim.model.verification.Robustness;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class ArrayVerificationResult extends AbstractVerificationResult {
-
-    private final int size;
     private final PointWithNeighborhood[] points;
     private final Robustness[] robustness;
 
@@ -39,13 +37,17 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
      * @param robustness Array containing robustness values.
      * @throws IllegalArgumentException when lengths of given arrays do not match.
      */
-    public ArrayVerificationResult(int size, PointWithNeighborhood[] points, Robustness[] robustness) {
-        if ((size != points.length) || (size != robustness.length)) {
-            throw new IllegalArgumentException("Lengths of points and robustness arrays have to match the size argument.");
+    public ArrayVerificationResult(PointWithNeighborhood[] points, Robustness[] robustness) {
+        if (robustness.length != points.length) {
+            throw new IllegalArgumentException("Lengths of points and robustness arrays don't match.");
         }
-        this.size = size;
         this.points = points;
         this.robustness = robustness;
+    }
+
+    public ArrayVerificationResult(PointWithNeighborhood[] points, Robustness[] robustness, Robustness globalRobustness) {
+        this(points, robustness);
+        setGlobalRobustness(globalRobustness);
     }
 
     @Override
@@ -60,7 +62,7 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
 
     @Override
     public int size() {
-        return size;
+        return points.length;
     }
 
     @Override
@@ -78,6 +80,6 @@ public class ArrayVerificationResult extends AbstractVerificationResult {
             newPoints[size() + i] = toMerge.getPoint(i);
             newRobustnesses[size() + i] = toMerge.getRobustness(i);
         }
-        return new ArrayVerificationResult(size() + toMerge.size(), newPoints, newRobustnesses);
+        return new ArrayVerificationResult(newPoints, newRobustnesses);
     }
 }
