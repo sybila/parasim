@@ -95,8 +95,12 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
     @Override
     public SpawnedDataBlock spawn(OrthogonalSpace space) {
         boolean[] dimensionsToSkip = new boolean[space.getDimension()];
+        boolean allSkip = true;
         for (int dim=0; dim<dimensionsToSkip.length; dim++) {
             dimensionsToSkip[dim]= space.getMinBounds().getValue(dim) == space.getMaxBounds().getValue(dim);
+            if (!dimensionsToSkip[dim]) {
+                allSkip = false;
+            }
         }
         List<TrajectoryWithNeighborhood> result = new ArrayList<>();
         Collection<FractionPoint> extremes = FractionPoint.extremes(space.getDimension(), dimensionsToSkip);
@@ -119,9 +123,11 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
             }
             result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(main, new ListDataBlock<>(neighbors)));
         }
-        FractionPoint middle = FractionPoint.maximum(space.getDimension()).middle(FractionPoint.minimum(space.getDimension()));
-        Trajectory t = new PointTrajectory(createPoint(space, middle));
-        result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(t, new ListDataBlock<>(new ArrayList<>(surroundings.values()))));
+        if (!allSkip) {
+            FractionPoint middle = FractionPoint.maximum(space.getDimension()).middle(FractionPoint.minimum(space.getDimension()));
+            Trajectory t = new PointTrajectory(createPoint(space, middle));
+            result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(t, new ListDataBlock<>(new ArrayList<>(surroundings.values()))));
+        }
         return new SpawnedDataBlockWrapper(new ListDataBlock<>(result),
                 new AbstractConfiguration(space) {
                     @Override

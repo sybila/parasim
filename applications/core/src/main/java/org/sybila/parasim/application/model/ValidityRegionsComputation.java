@@ -118,7 +118,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         }
         this.odeSystem = odeSystem;
         this.precisionConfiguration = precisionConfiguration;
-        this.simulationSpace = new OrthogonalSpaceImpl(simulationSpace.getMinBounds(), new ArrayPoint(Math.min(property.getTimeNeeded(), simulationSpace.getMaxBounds().getTime()), simulationSpace.getMaxBounds().toArray()), simulationSpace.getOdeSystem());
+        this.simulationSpace = new OrthogonalSpaceImpl(simulationSpace.getMinBounds(), new ArrayPoint(property.getTimeNeeded(), simulationSpace.getMaxBounds().toArray()), simulationSpace.getOdeSystem());
         this.originalSimulationSpace = simulationSpace;
         this.initialSpace = initialSpace;
         this.property = property;
@@ -162,7 +162,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 //                        System.out.println("\t" + distanceChecked.getTrajectory(t).getNeighbors().getTrajectory(n).getFirstPoint() + ": " + distanceChecked.getDistance(t, n).value() + ": " + distanceChecked.getDistance(t, n).isValid());
 //                    }
 //                }
-                if (simulatedSecondary.size() != 0) {
+                if (simulatedSecondary != null) {
                     VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
                     result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
                 }
