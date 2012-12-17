@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.core.Manager;
@@ -69,7 +68,7 @@ public class TestValidityRegionsComputation {
 
     @Test
     public void testComputation() throws ExecutionException, InterruptedException {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f), 0);
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f), 0);
         ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
         VerificationResult result = container.compute(computation).full().get();
         for (int i=0; i<result.size(); i++) {
@@ -81,7 +80,7 @@ public class TestValidityRegionsComputation {
     // TODO: fix test
     @Test(enabled=false)
     public void testComputation2() throws ExecutionException, InterruptedException {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createInitialSampling(), createSimulationSpace(), createInitialSpace(), createFutureFormula(2), 0);
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createSimulationSpace(), createInitialSpace(), createFutureFormula(2), 0);
         ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
         VerificationResult result = container.compute(computation).full().get();
         for (int i=0; i<result.size(); i++) {
@@ -113,27 +112,6 @@ public class TestValidityRegionsComputation {
                 new TimeInterval(0.5f, 1f, IntervalBoundaryType.CLOSED));
     }
 
-    private InitialSampling createInitialSampling() {
-        return new InitialSampling() {
-            @Override
-            public int getDimension() {
-                return 1;
-            }
-            @Override
-            public int getNumberOfSamples(int dim) {
-                return 30;
-            }
-            @Override
-            public Element toXML(Document doc) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-            @Override
-            public OdeSystem getOdeSystem() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
-    }
-
     private OrthogonalSpaceImpl createInitialSpace() {
         return new OrthogonalSpaceImpl(new ArrayPoint(0, 0), new ArrayPoint(0, 10), createOdeSystem());
     }
@@ -146,19 +124,23 @@ public class TestValidityRegionsComputation {
 
     private PrecisionConfiguration createPrecisionConfiguration() {
         return new PrecisionConfiguration() {
+            @Override
             public int getDimension() {
                 return 1;
             }
+            @Override
             public float getMaxAbsoluteError(int dim) {
                 return 0;
             }
+            @Override
             public float getMaxRelativeError() {
                 return 0;
             }
+            @Override
             public Element toXML(Document doc) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
-
+            @Override
             public float getTimeStep() {
                 return 0.01f;
             }

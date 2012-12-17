@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
 import org.sybila.parasim.computation.density.api.Configuration;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.spawn.cpu.AbstractConfiguration;
 import org.sybila.parasim.model.math.Constant;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
@@ -46,23 +44,13 @@ import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhoodWrapper;
 
 public abstract class AbstractDensityTest {
 
-    protected Configuration createConfiguration(final InitialSampling initialSampling, final OrthogonalSpace initialSpace) {
-        return new AbstractConfiguration(initialSampling, initialSpace) {
+    protected Configuration createConfiguration(final OrthogonalSpace initialSpace) {
+        return new AbstractConfiguration(initialSpace) {
             @Override
             public int getStartIndex(int index, int neighborIndex) {
                 return 0;
             }
         };
-    }
-
-    protected InitialSampling createInitialSampling(final OrthogonalSpace space, final int numOfSpawn) {
-        int[] toSpawn = new int[space.getDimension()];
-        Collection<OdeSystemVariable> vars = new ArrayList<>();
-        for (int dim=0; dim<space.getDimension(); dim++) {
-            toSpawn[dim] = numOfSpawn;
-            vars.add(new OdeSystemVariable("x" + dim, dim, new Constant(dim)));
-        }
-        return new ArrayInitialSampling(new SimpleOdeSystem(vars, Collections.EMPTY_LIST, Collections.EMPTY_LIST), toSpawn);
     }
 
     protected OrthogonalSpace createInitialSpace(final float base, final int dimension) {

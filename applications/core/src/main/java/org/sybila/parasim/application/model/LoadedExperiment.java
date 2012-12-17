@@ -21,7 +21,6 @@ package org.sybila.parasim.application.model;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -43,32 +42,29 @@ public class LoadedExperiment implements Experiment {
     private final OrthogonalSpace initSpace;
     private final OrthogonalSpace simSpace;
     private final PrecisionConfiguration precision;
-    private final InitialSampling sampling;
     private final long timeoutAmount;
     private final TimeUnit timeoutUnit;
     private final int iterations;
     private final XMLResource<VerificationResult> result;
 
-    public LoadedExperiment(OdeSystem odeSystem, Formula formula, OrthogonalSpace initialSpace, OrthogonalSpace simulationSpace, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, long timeoutAmount, TimeUnit timeoutUnit, int iterationLimit, File resultFile) {
+    public LoadedExperiment(OdeSystem odeSystem, Formula formula, OrthogonalSpace initialSpace, OrthogonalSpace simulationSpace, PrecisionConfiguration precisionConfiguration, long timeoutAmount, TimeUnit timeoutUnit, int iterationLimit, File resultFile) {
         this.odeSystem = odeSystem;
         this.formula = formula;
         this.initSpace = initialSpace;
         this.simSpace = simulationSpace;
         this.precision = precisionConfiguration;
-        this.sampling = initialSampling;
         this.timeoutAmount = timeoutAmount;
         this.timeoutUnit = timeoutUnit;
         this.iterations = iterationLimit;
         result = new VerificationResultResource(resultFile);
     }
 
-    public LoadedExperiment(OdeSystem odeSystem, Formula formula, OrthogonalSpace initialSpace, OrthogonalSpace simulationSpace, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, long timeoutAmount, TimeUnit timeoutUnit, int iterations) {
+    public LoadedExperiment(OdeSystem odeSystem, Formula formula, OrthogonalSpace initialSpace, OrthogonalSpace simulationSpace, PrecisionConfiguration precisionConfiguration, long timeoutAmount, TimeUnit timeoutUnit, int iterations) {
         this.odeSystem = odeSystem;
         this.formula = formula;
         this.initSpace = initialSpace;
         this.simSpace = simulationSpace;
         this.precision = precisionConfiguration;
-        this.sampling = initialSampling;
         this.timeoutAmount = timeoutAmount;
         this.timeoutUnit = timeoutUnit;
         this.iterations = iterations;
@@ -108,11 +104,6 @@ public class LoadedExperiment implements Experiment {
     @Override
     public Formula getFormula() {
         return formula;
-    }
-
-    @Override
-    public InitialSampling getInitialSampling() {
-        return sampling;
     }
 
     @Override

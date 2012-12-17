@@ -29,11 +29,6 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 public interface Configuration {
 
     /**
-     * @return information how the initial space is sampled
-     */
-    InitialSampling getInitialSampling();
-
-    /**
      * @return initial space
      */
     OrthogonalSpace getInitialSpace();

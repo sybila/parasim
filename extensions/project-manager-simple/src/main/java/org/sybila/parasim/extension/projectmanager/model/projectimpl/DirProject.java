@@ -30,8 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.LoadedExperiment;
-import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectmanager.model.OdeUtils;
 import org.sybila.parasim.extension.projectmanager.model.project.ExperimentResourceList;
@@ -455,13 +453,11 @@ public class DirProject implements Project {
         PrecisionConfiguration precision = precisionList.get(experiment.getPrecisionConfigurationName());
         Formula formula = formulae.get(experiment.getFormulaName());
 
-        InitialSampling sampling = new ArrayInitialSampling(odeSystem, 1);
-
         String resultName = experiment.getVerificationResultName();
         if (resultName != null) {
-            return new LoadedExperiment(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeoutAmount(), experiment.getTimeoutUnit(), experiment.getIterationLimit(), results.getFile(resultName));
+            return new LoadedExperiment(system, formula, initSpace, simSpace, precision, experiment.getTimeoutAmount(), experiment.getTimeoutUnit(), experiment.getIterationLimit(), results.getFile(resultName));
         } else {
-            return new LoadedExperiment(system, formula, initSpace, simSpace, precision, sampling, experiment.getTimeoutAmount(), experiment.getTimeoutUnit(), experiment.getIterationLimit());
+            return new LoadedExperiment(system, formula, initSpace, simSpace, precision, experiment.getTimeoutAmount(), experiment.getTimeoutUnit(), experiment.getIterationLimit());
         }
     }
 

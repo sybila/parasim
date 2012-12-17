@@ -121,10 +121,7 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
 
     protected SpawnedDataBlock initialSpawn(OrthogonalSpaceImpl space, int numSpawn) {
         TrajectorySpawner spawner = createTrajectorySpawner();
-        return spawner.spawn(
-            space,
-            createInitialSampling(space, numSpawn)
-        );
+        return spawner.spawn(space);
     }
 
     abstract protected TrajectorySpawner createTrajectorySpawner();

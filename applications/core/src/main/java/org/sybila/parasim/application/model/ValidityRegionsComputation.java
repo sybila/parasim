@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.api.annotations.InitialSpace;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
@@ -73,8 +72,6 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     @Provide
     private final PrecisionConfiguration precisionConfiguration;
     @Provide
-    private final InitialSampling initialSampling;
-    @Provide
     @SimulationSpace
     private final OrthogonalSpace simulationSpace;
     @Provide
@@ -103,15 +100,12 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     private SpawnedDataBlock spawned;
     private final OrthogonalSpace originalSimulationSpace;
 
-    public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, InitialSampling initialSampling, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
+    public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
         if (odeSystem == null) {
             throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
         if (precisionConfiguration == null) {
             throw new IllegalArgumentException("The parameter [precisionConfiguration] is null.");
-        }
-        if (initialSampling == null) {
-            throw new IllegalArgumentException("The parameter [initialSampling] is null.");
         }
         if (simulationSpace == null) {
             throw new IllegalArgumentException("The parameter [simulationSpace] is null.");
@@ -124,7 +118,6 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
         }
         this.odeSystem = odeSystem;
         this.precisionConfiguration = precisionConfiguration;
-        this.initialSampling = initialSampling;
         this.simulationSpace = new OrthogonalSpaceImpl(simulationSpace.getMinBounds(), new ArrayPoint(Math.min(property.getTimeNeeded(), simulationSpace.getMaxBounds().getTime()), simulationSpace.getMaxBounds().toArray()), simulationSpace.getOdeSystem());
         this.originalSimulationSpace = simulationSpace;
         this.initialSpace = initialSpace;
@@ -135,7 +128,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     @Override
     public VerificationResult call() throws Exception {
         if (threadId.currentId() == 0) {
-            spawned = emit(spawner.spawn(initialSpace, initialSampling));
+            spawned = emit(spawner.spawn(initialSpace));
         }
 
         VerificationResult result = null;
@@ -181,7 +174,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 
     @Override
     public Computation<VerificationResult> cloneComputation() {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, initialSampling, originalSimulationSpace, initialSpace, property, iterationLimit);
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, originalSimulationSpace, initialSpace, property, iterationLimit);
         computation.currentIteration = this.currentIteration;
         computation.spawned = this.spawned;
         return computation;

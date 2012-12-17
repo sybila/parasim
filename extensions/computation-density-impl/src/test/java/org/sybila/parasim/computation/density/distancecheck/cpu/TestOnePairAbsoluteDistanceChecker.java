@@ -43,9 +43,7 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     @Test
     public void testValidCheckedLengths() {
         final DataBlock<TrajectoryWithNeighborhood> dataBlock = createValidDataBlock();
-        Configuration configuration = createConfiguration(
-                createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
-                createInitialSpace(1, DIMENSION));
+        Configuration configuration = createConfiguration(createInitialSpace(1, DIMENSION));
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
         DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
                 configuration,
@@ -79,9 +77,7 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     public void testInvalidDistance() {
         final DataBlock<TrajectoryWithNeighborhood> dataBlock = createInvalidDataBlock();
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
-        Configuration configuration = createConfiguration(
-                createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
-                createInitialSpace(1, DIMENSION));
+        Configuration configuration = createConfiguration(createInitialSpace(1, DIMENSION));
         DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
                 configuration,
                 new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {
@@ -113,9 +109,7 @@ public class TestOnePairAbsoluteDistanceChecker extends AbstractDensityTest {
     public void testValidDistance() {
         final DataBlock<TrajectoryWithNeighborhood> dataBlock = createValidDataBlock();
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1, DIMENSION);
-        Configuration configuration = createConfiguration(
-                createInitialSampling(createInitialSpace(1, DIMENSION),DIMENSION),
-                createInitialSpace(1, DIMENSION));
+        Configuration configuration = createConfiguration(createInitialSpace(1, DIMENSION));
         DistanceCheckedDataBlock result = new OnePairDistanceChecker().check(
                 configuration,
                 new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {

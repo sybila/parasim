@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import org.sybila.parasim.computation.density.api.Configuration;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
@@ -78,7 +77,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         }
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<>(newTrajectories),
-                new AbstractConfiguration(configuration.getInitialSampling(), configuration.getInitialSpace()) {
+                new AbstractConfiguration(configuration.getInitialSpace()) {
                     @Override
                     public int getStartIndex(int index, int neighborIndex) {
                         return 0;
@@ -88,7 +87,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
     }
 
     @Override
-    public SpawnedDataBlock spawn(OrthogonalSpace space, InitialSampling initialSampling) {
+    public SpawnedDataBlock spawn(OrthogonalSpace space) {
         List<TrajectoryWithNeighborhood> result = new ArrayList<>();
         Collection<FractionPoint> extremes = FractionPoint.extremes(space);
         Map<FractionPoint, Trajectory> surroundings = new HashMap<>();
@@ -114,7 +113,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         Trajectory t = new PointTrajectory(createPoint(space, middle));
         result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(t, new ListDataBlock<>(new ArrayList<>(surroundings.values()))));
         return new SpawnedDataBlockWrapper(new ListDataBlock<>(result),
-                new AbstractConfiguration(initialSampling, space) {
+                new AbstractConfiguration(space) {
                     @Override
                     public int getStartIndex(int index, int neighborIndex) {
                         return 0;

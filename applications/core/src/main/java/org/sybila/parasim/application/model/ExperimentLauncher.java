@@ -48,7 +48,6 @@ public class ExperimentLauncher {
         ExecutionResult<VerificationResult> result = container.compute(new ValidityRegionsComputation(
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfiguration(),
-                experiment.getInitialSampling(),
                 experiment.getSimulationSpace(),
                 experiment.getInitialSpace(),
                 experiment.getFormula(),

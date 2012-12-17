@@ -21,7 +21,6 @@ package org.sybila.parasim.extension.projectmanager.view.robustness;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.sybila.parasim.extension.projectmanager.model.InitialSamplingFactory;
 import org.sybila.parasim.extension.projectmanager.model.NamedOrthogonalSpace;
 import org.sybila.parasim.extension.projectmanager.model.OdeInsideFactory;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
@@ -38,12 +37,10 @@ import org.sybila.parasim.util.Pair;
 public class RobustnessSettingsValuesFactory extends OdeInsideFactory {
 
     private final OrthogonalSpaceFactory spaceFactory;
-    private final InitialSamplingFactory samplingFactory;
 
     public RobustnessSettingsValuesFactory(OdeSystem odeSystem) {
         super(odeSystem);
         spaceFactory = new OrthogonalSpaceFactory(odeSystem);
-        samplingFactory = new InitialSamplingFactory(odeSystem);
     }
 
     private static boolean isDifferent(float a, float b) {

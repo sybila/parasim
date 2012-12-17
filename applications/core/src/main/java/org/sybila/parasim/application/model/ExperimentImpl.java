@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.Validate;
-import org.sybila.parasim.computation.density.api.InitialSampling;
-import org.sybila.parasim.computation.density.api.InitialSamplingResource;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfigurationResource;
 import org.sybila.parasim.model.ode.OdeSystem;
@@ -54,19 +52,17 @@ public class ExperimentImpl implements Experiment {
     private OrthogonalSpaceResource initialSpaceResource;
     private OrthogonalSpaceResource simulationSpaceResource;
     private PrecisionConfigurationResource precisionConfigurationResource;
-    private InitialSamplingResource initialSamplingResource;
     private VerificationResultResource verificationResultResource;
     private long timeoutAmount;
     private TimeUnit timeoutUnit;
     private int iterationLimit;
 
-    public ExperimentImpl(OdeSystem odeSystem, FormulaResource stlFormulaResource, OrthogonalSpaceResource initialSpaceResource, OrthogonalSpaceResource simulationSpaceResource, PrecisionConfigurationResource precisionConfigurationResource, InitialSamplingResource initialSamplingResource, VerificationResultResource verificationResultResource, long timeoutAmount, TimeUnit timeoutUnit, int iterationLimit) throws XMLException {
+    public ExperimentImpl(OdeSystem odeSystem, FormulaResource stlFormulaResource, OrthogonalSpaceResource initialSpaceResource, OrthogonalSpaceResource simulationSpaceResource, PrecisionConfigurationResource precisionConfigurationResource, VerificationResultResource verificationResultResource, long timeoutAmount, TimeUnit timeoutUnit, int iterationLimit) throws XMLException {
         Validate.notNull(odeSystem);
         Validate.notNull(stlFormulaResource);
         Validate.notNull(initialSpaceResource);
         Validate.notNull(simulationSpaceResource);
         Validate.notNull(precisionConfigurationResource);
-        Validate.notNull(initialSamplingResource);
         Validate.notNull(verificationResultResource);
         // setting
         this.odeSystem = odeSystem;
@@ -74,9 +70,7 @@ public class ExperimentImpl implements Experiment {
         this.initialSpaceResource = initialSpaceResource;
         this.simulationSpaceResource = simulationSpaceResource;
         this.precisionConfigurationResource = precisionConfigurationResource;
-        this.initialSamplingResource = initialSamplingResource;
         this.verificationResultResource = verificationResultResource;
-        this.initialSamplingResource.load();
         this.initialSpaceResource.load();
         this.timeoutAmount = timeoutAmount;
         this.timeoutUnit = timeoutUnit;
@@ -86,7 +80,6 @@ public class ExperimentImpl implements Experiment {
         this.stlFormulaResource.load();
         this.simulationSpaceResource.load();
         this.precisionConfigurationResource.load();
-        this.initialSamplingResource.load();
         this.initialSpaceResource.load();
     }
 
@@ -108,7 +101,6 @@ public class ExperimentImpl implements Experiment {
         Validate.notNull(experiment.getProperty("space.initial.file"), "File containg initial space is not specified. Use [space.initial.file] property in the experiment file.");
         Validate.notNull(experiment.getProperty("space.simulation.file"), "File containg simulation space is not specified. Use [space.simulation.file] property in the experiment file.");
         Validate.notNull(experiment.getProperty("simulation.precision.file"), "File containg precision setting for simulation is not specified. Use [simulation.precision.file] property in the experiment file.");
-        Validate.notNull(experiment.getProperty("density.sampling.file"), "File containg setting for initial spawning is not specified. Use [density.sampling.file] property in the experiment file.");
         Validate.notNull(experiment.getProperty("result.output.file"), "File for exporting results is not specified. Use [result.output.file] property in the experiment file.");
         OdeSystem odeSystem = SBMLOdeSystemFactory.fromFile(getFileWithAbsolutePath(experiment.getProperty("sbml.file"), experimentFile.getParentFile()));
         OrthogonalSpaceResource initialSpaceResource = new OrthogonalSpaceResource(getFileWithAbsolutePath(experiment.getProperty("space.initial.file"), experimentFile.getParentFile()), odeSystem);
@@ -120,7 +112,6 @@ public class ExperimentImpl implements Experiment {
                     initialSpaceResource,
                     new OrthogonalSpaceResource(getFileWithAbsolutePath(experiment.getProperty("space.simulation.file"), experimentFile.getParentFile()), initialSpaceResource.getRoot().getOdeSystem()),
                     new PrecisionConfigurationResource(getFileWithAbsolutePath(experiment.getProperty("simulation.precision.file"), experimentFile.getParentFile())),
-                    new InitialSamplingResource(getFileWithAbsolutePath(experiment.getProperty("density.sampling.file"), experimentFile.getParentFile()), initialSpaceResource.getRoot().getOdeSystem()),
                     new VerificationResultResource(getFileWithAbsolutePath(experiment.getProperty("result.output.file"), experimentFile.getParentFile())),
                     Long.parseLong(experiment.getProperty("timeout.amount", DEFAULT_TIMEOUT_IN_MINUTES)),
                     TimeUnit.valueOf(experiment.getProperty("timeout.unit", "minutes").toUpperCase()),
@@ -138,11 +129,6 @@ public class ExperimentImpl implements Experiment {
     @Override
     public Formula getFormula() {
         return stlFormulaResource.getRoot();
-    }
-
-    @Override
-    public InitialSampling getInitialSampling() {
-        return initialSamplingResource.getRoot();
     }
 
     @Override

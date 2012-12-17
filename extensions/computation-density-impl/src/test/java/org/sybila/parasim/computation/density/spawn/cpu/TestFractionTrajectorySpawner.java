@@ -44,9 +44,7 @@ public class TestFractionTrajectorySpawner extends AbstractTrajectorySpawnerTest
         final SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), DIMENSION), 4);
         final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1.5f, DIMENSION);
         // load configuration
-        Configuration configuration = createConfiguration(
-                initSpawned.getConfiguration().getInitialSampling(),
-                initSpawned.getConfiguration().getInitialSpace());
+        Configuration configuration = createConfiguration(initSpawned.getConfiguration().getInitialSpace());
         // distance checking
         DistanceChecker distanceChecker = new OnePairDistanceChecker();
         DistanceCheckedDataBlock distanceChecked = distanceChecker.check(configuration, new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {

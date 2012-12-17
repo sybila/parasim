@@ -20,7 +20,6 @@
 package org.sybila.parasim.application.model;
 
 import java.util.concurrent.TimeUnit;
-import org.sybila.parasim.computation.density.api.InitialSampling;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -43,8 +42,6 @@ public interface Experiment {
     OrthogonalSpace getSimulationSpace();
 
     PrecisionConfiguration getPrecisionConfiguration();
-
-    InitialSampling getInitialSampling();
 
     int getIterationLimit();
 

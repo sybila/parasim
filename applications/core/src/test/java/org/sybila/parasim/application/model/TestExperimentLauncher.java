@@ -23,30 +23,6 @@
  */
 package org.sybila.parasim.application.model;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import org.sybila.parasim.computation.density.api.ArrayInitialSampling;
-import org.sybila.parasim.computation.density.api.InitialSampling;
-import org.sybila.parasim.computation.simulation.api.ArrayPrecisionConfiguration;
-import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.sbml.SBMLOdeSystemFactory;
-import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
-import org.sybila.parasim.model.trajectory.ArrayPoint;
-import org.sybila.parasim.model.trajectory.Point;
-import org.sybila.parasim.model.verification.result.VerificationResult;
-import org.sybila.parasim.model.verification.stl.Formula;
-import org.sybila.parasim.model.verification.stl.FormulaResource;
-import org.sybila.parasim.model.xml.XMLException;
-import org.sybila.parasim.model.xml.XMLRepresentable;
-import org.sybila.parasim.model.xml.XMLResource;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-import org.testng.Assert;
-
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
