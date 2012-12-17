@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @author <a href="mailto:xdrazan@fi.muni.cz">Sven Drazan</a>
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Point extends Iterable<Float>, Serializable {
+public interface Point extends Iterable<Float>, Serializable, Comparable<Point> {
 
     boolean equals(Point point, float relativeTolerance);
 

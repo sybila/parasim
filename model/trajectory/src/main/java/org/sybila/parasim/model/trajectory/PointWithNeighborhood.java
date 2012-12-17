@@ -28,4 +28,6 @@ public interface PointWithNeighborhood extends Point {
 
     Collection<Point> getNeighbors();
 
+    Point unwrap();
+
 }

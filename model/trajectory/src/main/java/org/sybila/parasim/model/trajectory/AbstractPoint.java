@@ -159,4 +159,14 @@ public abstract class AbstractPoint implements Point {
         hash = 97 * hash + getDimension();
         return hash;
     }
+
+    @Override
+    public int compareTo(Point other) {
+        for (int dim=0; dim < Math.min(this.getDimension(), other.getDimension()); dim++) {
+            if (this.getValue(dim) != other.getValue(dim)) {
+                return (int) Math.signum(this.getValue(dim) - other.getValue(dim));
+            }
+        }
+        return this.getDimension() - other.getDimension();
+    }
 }

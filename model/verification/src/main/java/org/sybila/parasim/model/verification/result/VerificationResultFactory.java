@@ -120,10 +120,6 @@ public class VerificationResultFactory implements XMLRepresentableFactory<Verifi
             robustnessesFinal[index] = entry.getValue();
             index++;
         }
-        if (source.getAttributes().getNamedItem(ROBUSTNESS_NAME) == null) {
-            return new ArrayVerificationResult(points, robustnessesFinal);
-        } else {
-            return new ArrayVerificationResult(points, robustnessesFinal, new SimpleRobustness(FloatFactory.getObject(source.getAttributes().getNamedItem(ROBUSTNESS_NAME))));
-        }
+        return new ArrayVerificationResult(points, robustnessesFinal, new SimpleRobustness(FloatFactory.getObject(source.getAttributes().getNamedItem(ROBUSTNESS_NAME))));
     }
 }

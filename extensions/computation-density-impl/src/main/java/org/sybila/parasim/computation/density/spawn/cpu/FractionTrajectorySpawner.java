@@ -32,8 +32,10 @@ import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedD
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
-import org.sybila.parasim.computation.density.spawn.cpu.FractionPoint.Fraction;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.ArrayFractionPoint;
+import org.sybila.parasim.model.trajectory.FractionPoint;
+import org.sybila.parasim.model.trajectory.FractionPoint.Fraction;
 import org.sybila.parasim.model.trajectory.LimitedDistance;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
 import org.sybila.parasim.model.trajectory.Point;
@@ -52,6 +54,10 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
 
     @Override
     public SpawnedDataBlock spawn(Configuration configuration, DistanceCheckedDataBlock trajectories) {
+        boolean[] dimensionsToSkip = new boolean[configuration.getInitialSpace().getDimension()];
+        for (int dim=0; dim<dimensionsToSkip.length; dim++) {
+            dimensionsToSkip[dim]= configuration.getInitialSpace().getMinBounds().getValue(dim) == configuration.getInitialSpace().getMaxBounds().getValue(dim);
+        }
         // note spawned trajectories
         List<TrajectoryWithNeighborhood> newTrajectories = new ArrayList<>();
         // note secondary trajectories
@@ -63,7 +69,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
                 // check distance
                 if (!trajectories.getDistance(i, n).isValid()) {
                     Trajectory neighbor = trajectory.getNeighbors().getTrajectory(n);
-                    TrajectoryWithNeighborhood newTrajectory =  spawn(configuration, trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n));
+                    TrajectoryWithNeighborhood newTrajectory =  spawn(configuration, trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n), dimensionsToSkip);
                     if (newTrajectory == null) {
                         continue;
                     }
@@ -88,14 +94,18 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
 
     @Override
     public SpawnedDataBlock spawn(OrthogonalSpace space) {
+        boolean[] dimensionsToSkip = new boolean[space.getDimension()];
+        for (int dim=0; dim<dimensionsToSkip.length; dim++) {
+            dimensionsToSkip[dim]= space.getMinBounds().getValue(dim) == space.getMaxBounds().getValue(dim);
+        }
         List<TrajectoryWithNeighborhood> result = new ArrayList<>();
-        Collection<FractionPoint> extremes = FractionPoint.extremes(space);
+        Collection<FractionPoint> extremes = FractionPoint.extremes(space.getDimension(), dimensionsToSkip);
         Map<FractionPoint, Trajectory> surroundings = new HashMap<>();
         for (FractionPoint point: extremes) {
             Trajectory main = new PointTrajectory(createPoint(space, point));
             alreadySpawnedPrimaryTrajectories.put(point, main);
             List<Trajectory> neighbors = new ArrayList<>();
-            for (FractionPoint n: point.surround(space, new Fraction(1, 2))) {
+            for (FractionPoint n: point.surround(new Fraction(1, 2), dimensionsToSkip)) {
                 if (n.isValid()) {
                     if (surroundings.containsKey(n)) {
                         neighbors.add(surroundings.get(n));
@@ -121,7 +131,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
                 }, new ListDataBlock<>(new ArrayList<>(surroundings.values())));
     }
 
-    protected TrajectoryWithNeighborhood spawn(Configuration configuration, Trajectory trajectory, Trajectory neighbor, LimitedDistance distance) {
+    protected TrajectoryWithNeighborhood spawn(Configuration configuration, Trajectory trajectory, Trajectory neighbor, LimitedDistance distance, boolean[] skip) {
         ArrayFractionPoint tPoint = (ArrayFractionPoint) trajectory.getFirstPoint();
         ArrayFractionPoint nPoint = (ArrayFractionPoint) neighbor.getFirstPoint();
         FractionPoint middle = tPoint.getFractionPoint().middle(nPoint.getFractionPoint());
@@ -136,7 +146,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
             }
         }
         Fraction radius = tPoint.getFractionPoint().diffDistance(nPoint.getFractionPoint()).divide(2);
-        Collection<FractionPoint> surroundings = middle.surround(configuration.getInitialSpace(), radius);
+        Collection<FractionPoint> surroundings = middle.surround(radius, skip);
         List<Trajectory> neighbors = new ArrayList<>();
         for (FractionPoint point: surroundings) {
             if (!point.isValid()) {

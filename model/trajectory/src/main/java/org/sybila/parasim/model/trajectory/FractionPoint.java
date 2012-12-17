@@ -17,35 +17,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.density.spawn.cpu;
+package org.sybila.parasim.model.trajectory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.lang3.Validate;
-import org.sybila.parasim.model.space.OrthogonalSpace;
-import org.sybila.parasim.model.trajectory.ArrayPoint;
-import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class FractionPoint {
+public final class FractionPoint implements Comparable<FractionPoint> {
 
     private final Fraction[] fractions;
 
     public FractionPoint(Fraction[] fractions) {
-        Validate.notNull(fractions);
+        if (fractions == null) {
+            throw new IllegalArgumentException("The parameter [fractions] is null.");
+        }
         for (int i=0; i<fractions.length; i++) {
-            Validate.notNull(fractions[i], "Fraction on position <" + i + "> is null.");
+            if (fractions[i] == null) {
+                throw new IllegalArgumentException("Fraction on position <" + i + "> is null.");
+            }
         }
         this.fractions = fractions;
     }
 
     public FractionPoint(long[] nominators, long[] denominators) {
-        Validate.notNull(nominators);
-        Validate.notNull(denominators);
+        if (nominators == null) {
+            throw new IllegalArgumentException("The parameter [nominators] nis null.");
+        }
+        if (denominators == null) {
+            throw new IllegalArgumentException("The parameter [denominators] nis null.");
+        }
         fractions = new Fraction[nominators.length];
         for (int i=0; i<fractions.length; i++) {
             fractions[i] = new Fraction(nominators[i], denominators[i]);
@@ -62,15 +66,15 @@ public final class FractionPoint {
         return new FractionPoint(fractions);
     }
 
-    public static Collection<FractionPoint> extremes(final OrthogonalSpace space) {
-        final long[] denominators = repeat(space.getDimension(), 1);
+    public static Collection<FractionPoint> extremes(final int dimension, final boolean[] skip) {
+        final long[] denominators = repeat(dimension, 1);
         List<long[]> nominators = new ArrayList<>();
         nominators.add(new long[0]);
-        for (int dim=1; dim<=space.getDimension(); dim++) {
+        for (int dim=1; dim<=dimension; dim++) {
             List<long[]> current = new ArrayList<>();
             for (long[] n: nominators) {
                 for (long e: new long[] {0, 1}) {
-                    if (space.getSize().getValue(dim-1) == 0 && e == 1) {
+                    if (skip != null && skip[dim-1] && e == 1) {
                         continue;
                     }
                     long[] data = new long[dim];
@@ -86,6 +90,10 @@ public final class FractionPoint {
             points.add(new FractionPoint(n, denominators));
         }
         return points;
+    }
+
+    public static Collection<FractionPoint> extremes(final int dimension) {
+        return extremes(dimension, null);
     }
 
     public int getDimension() {
@@ -109,10 +117,10 @@ public final class FractionPoint {
         return this.fractions[diffDim].distance(other.fractions[diffDim]);
     }
 
-    public Collection<FractionPoint> surround(OrthogonalSpace space, Fraction radius) {
+    public Collection<FractionPoint> surround(Fraction radius, boolean[] skip) {
         List<FractionPoint> result = new ArrayList<>();
         for (int dim=0; dim<getDimension(); dim++) {
-            if (space.getSize().getValue(dim) == 0) {
+            if (skip != null && skip[dim]) {
                 continue;
             }
             Fraction[] first = toArrayCopy();
@@ -123,6 +131,10 @@ public final class FractionPoint {
             result.add(new FractionPoint(second));
         }
         return result;
+    }
+
+    public Collection<FractionPoint> surround(Fraction radius) {
+        return surround(radius, null);
     }
 
     public FractionPoint middle(FractionPoint other) {
@@ -209,7 +221,18 @@ public final class FractionPoint {
         return result;
     }
 
-    public static final class Fraction {
+    @Override
+    public int compareTo(FractionPoint other) {
+        for (int dim=0; dim<Math.min(this.getDimension(), other.getDimension()); dim++) {
+            int dimComp = this.fraction(dim).compareTo(other.fraction(dim));
+            if (dimComp != 0) {
+                return dimComp;
+            }
+        }
+        return this.getDimension() - other.getDimension();
+    }
+
+    public static final class Fraction implements Comparable<Fraction> {
 
         private final long nominator;
         private final long denominator;
@@ -326,6 +349,11 @@ public final class FractionPoint {
         @Override
         public String toString() {
             return nominator + "/" + denominator;
+        }
+
+        @Override
+        public int compareTo(Fraction other) {
+            return (int) Math.signum(this.toDouble() - other.toDouble());
         }
 
     }

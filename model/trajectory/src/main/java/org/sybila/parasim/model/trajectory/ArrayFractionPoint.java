@@ -17,9 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.density.spawn.cpu;
-
-import org.sybila.parasim.model.trajectory.ArrayPoint;
+package org.sybila.parasim.model.trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>

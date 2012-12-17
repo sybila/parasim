@@ -65,4 +65,9 @@ public class PointWithNeigborhoodWrapper extends AbstractPoint implements PointW
         return super.toString();
     }
 
+    @Override
+    public Point unwrap() {
+        return wrapped;
+    }
+
 }

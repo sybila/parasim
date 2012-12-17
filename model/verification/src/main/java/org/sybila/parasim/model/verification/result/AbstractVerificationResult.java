@@ -22,13 +22,18 @@ package org.sybila.parasim.model.verification.result;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
+import org.sybila.parasim.model.trajectory.ArrayFractionPoint;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
+import org.sybila.parasim.model.trajectory.FractionPoint;
+import org.sybila.parasim.model.trajectory.FractionPoint.Fraction;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -187,7 +192,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         }
         // Map with point as a key is performence problem, but it's the only way
         // to remove duplicities
-        Map<PointWithNeighborhood, Robustness> robustnesses = new HashMap<>(size());
+        Map<PointWithNeighborhood, Robustness> robustnesses = new TreeMap<>();
         // copy this data
         for (int i=0; i<size(); i++) {
             if (!robustnesses.containsKey(getPoint(i))) {
@@ -217,10 +222,92 @@ public abstract class AbstractVerificationResult implements VerificationResult {
 
     @Override
     public Robustness getGlobalRobustness() {
-        return Robustness.UNDEFINED;
+        if (this.totalRobustness == null) {
+            this.totalRobustness = calculateGlobalRobustness();
+        }
+        return this.totalRobustness;
     }
 
-    protected Robustness calculateGlobalRobustness(final Point point, final Map<Point, Robustness> robustnesses, final Map<Point, Robustness> cache) {
-        return Robustness.UNDEFINED;
+    protected Robustness calculateGlobalRobustness() {
+        if (size() == 0) {
+            return Robustness.UNDEFINED;
+        }
+        Map<FractionPoint, Integer> points = new TreeMap<>();
+        Map<Integer, Robustness> cache = new HashMap<>();
+        Map<Integer, Fraction> radiuses = new HashMap<>();
+        for (int i=0; i<size(); i++) {
+            FractionPoint point = getFractionPoint(i);
+            if (points.containsKey(point)) {
+                continue;
+            }
+            points.put(point, i);
+            if (getPoint(i).getNeighbors().size() > 0) {
+                for (Point p: getPoint(i).getNeighbors()) {
+                    radiuses.put(i, point.diffDistance(((ArrayFractionPoint) p).getFractionPoint()).divide(2));
+                    break;
+                }
+            }
+        }
+        float sum = 0;
+        int number = 0;
+        for (FractionPoint root: FractionPoint.extremes(getPoint(0).getDimension())) {
+            Integer rootIndex = points.get(root);
+            if (rootIndex != null) {
+                sum += calculateGlobalRobustness(rootIndex, points, radiuses, cache).getValue();
+                number++;
+            }
+        }
+        FractionPoint middle = FractionPoint.maximum(getPoint(0).getDimension()).middle(FractionPoint.minimum(getPoint(0).getDimension()));
+        Integer middleIndex = points.get(middle);
+        if (middleIndex != null) {
+            sum += calculateGlobalRobustness(middleIndex, points, radiuses, cache).getValue();
+            number++;
+        }
+        if (number == 0) {
+            return Robustness.UNDEFINED;
+        } else {
+            return new SimpleRobustness(sum / number);
+        }
     }
+
+    protected Robustness calculateGlobalRobustness(int root, Map<FractionPoint, Integer> points, Map<Integer, Fraction> radiuses, Map<Integer, Robustness> cache) {
+        Robustness fromCache = cache.get(root);
+        if (fromCache != null) {
+            return fromCache;
+        }
+        FractionPoint point = getFractionPoint(root);
+        float sum = 0;
+        int number = 0;
+        int validButNotComputed = 0;
+        Fraction radius = radiuses.get(root);
+        if (radius == null) {
+            cache.put(root, getRobustness(root));
+            return getRobustness(root);
+        }
+        for (FractionPoint p: point.surround(radius)) {
+            Integer index = points.get(p);
+            if (index == null) {
+                if (p.isValid()) {
+                    validButNotComputed++;
+                }
+                continue;
+            }
+            sum += calculateGlobalRobustness(index, points, radiuses, cache).getValue();
+            number++;
+
+        }
+        Robustness robustness = new SimpleRobustness((sum + (validButNotComputed + 1) * getRobustness(root).getValue()) / (number + validButNotComputed + 1));
+        cache.put(root, robustness);
+        return robustness;
+    }
+
+    protected FractionPoint getFractionPoint(int i) {
+        Point point = getPoint(i);
+        if (point instanceof PointWithNeighborhood) {
+            return ((ArrayFractionPoint) ((PointWithNeighborhood) point).unwrap()).getFractionPoint();
+        } else {
+            return ((ArrayFractionPoint) point).getFractionPoint();
+        }
+    }
+
 }
