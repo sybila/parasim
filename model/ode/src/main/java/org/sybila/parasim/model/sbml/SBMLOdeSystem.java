@@ -31,7 +31,6 @@ import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
