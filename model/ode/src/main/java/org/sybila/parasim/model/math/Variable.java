@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.math;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import org.sybila.parasim.model.trajectory.Point;
@@ -31,7 +32,7 @@ public class Variable implements Expression<Variable>, Indexable {
     private final String name;
     private final int index;
     private final int originalIndex;
-    private final VariableValue substitution;
+    private final SubstitutionValue<Variable> substitution;
 
     public Variable(String name, int index) {
         if (name == null) {
@@ -62,7 +63,7 @@ public class Variable implements Expression<Variable>, Indexable {
         this.substitution = null;
     }
 
-    private Variable(String name, int index, int originalIndex, VariableValue value) {
+    private Variable(String name, int index, int originalIndex, SubstitutionValue<Variable> value) {
         if (name == null) {
             throw new IllegalArgumentException("The paramater [name] is null.");
         }
@@ -97,12 +98,12 @@ public class Variable implements Expression<Variable>, Indexable {
 
     @Override
     public final float evaluate(Point point) {
-        return substitution == null ? point.getValue(index) : substitution.getValue();
+        return substitution == null ? point.getValue(index) : substitution.getSubstitution().evaluate(point);
     }
 
     @Override
     public final float evaluate(float[] point) {
-        return substitution == null ? point[index] : substitution.getValue();
+        return substitution == null ? point[index] : substitution.getSubstitution().evaluate(point);
     }
 
     public boolean isSubstituted() {
@@ -149,40 +150,20 @@ public class Variable implements Expression<Variable>, Indexable {
 
     @Override
     public Variable substitute(SubstitutionValue... substitutionValues) {
-        int indexBefore = 0;
-        for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof VariableValue)) {
-                if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
-                    indexBefore++;
-                }
-                continue;
-            }
-            VariableValue varValue = (VariableValue) v;
-            if (varValue.getExpression().equals(this)) {
-                return new Variable(name, index, originalIndex, varValue);
-            }
-            if (varValue.getExpression().getIndex() < index) {
-                indexBefore++;
-            }
-        }
-        if (indexBefore != 0) {
-            return new Variable(name, index - indexBefore, originalIndex);
-        } else {
-            return this;
-        }
+        return substitute(Arrays.asList(substitutionValues));
     }
 
     @Override
     public Variable substitute(Collection<SubstitutionValue> substitutionValues) {
         int indexBefore = 0;
         for (SubstitutionValue v: substitutionValues) {
-            if (!(v instanceof VariableValue)) {
+            if (!(v.getExpression() instanceof Variable)) {
                 if (v.getExpression() instanceof Indexable && ((Indexable) v.getExpression()).getIndex() < index) {
                     indexBefore++;
                 }
                 continue;
             }
-            VariableValue varValue = (VariableValue) v;
+            SubstitutionValue<Variable> varValue = (SubstitutionValue<Variable>) v;
             if (varValue.getExpression().equals(this)) {
                 return new Variable(name, index, originalIndex, varValue);
             }
@@ -214,7 +195,11 @@ public class Variable implements Expression<Variable>, Indexable {
 
     @Override
     public StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer) {
-        return substitution == null ? builder.append(renderer.render(this)) : builder.append(substitution.getValue());
+        if (substitution == null) {
+            return builder.append(renderer.render(this));
+        } else {
+            return substitution.getSubstitution().toFormula(builder);
+        }
     }
 
     @Override

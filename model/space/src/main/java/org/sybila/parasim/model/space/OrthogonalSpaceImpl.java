@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.space;
 
+import org.sybila.parasim.model.math.Constant;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.Point;
@@ -137,7 +138,7 @@ public class OrthogonalSpaceImpl implements OrthogonalSpace {
                 dimension = doc.createElement(OrthogonalSpaceFactory.VARIABLE_NAME);
                 dimension.setAttribute(OrthogonalSpaceFactory.ATTRIBUTE_NAME, odeSystem.getVariable(dim).getName());
                 // if the dimension can be resolved through the ODE system, don't write it
-                if (minBounds.getValue(dim) == maxBounds.getValue(dim) && odeSystem.getInitialVariableValue(odeSystem.getVariable(dim)) != null && odeSystem.getInitialVariableValue(odeSystem.getVariable(dim)).getValue() == minBounds.getValue(dim)) {
+                if (minBounds.getValue(dim) == maxBounds.getValue(dim) && odeSystem.getInitialVariableValue(odeSystem.getVariable(dim)) != null && ((Constant)odeSystem.getInitialVariableValue(odeSystem.getVariable(dim)).getSubstitution()).getValue() == minBounds.getValue(dim)) {
                     continue;
                 }
             } else {

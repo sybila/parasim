@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.sybila.parasim.model.math.Constant;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.Variable;
@@ -136,8 +137,8 @@ public class OrthogonalSpaceFactory implements
             if (releasedOdeSystem.isVariable(dim)) {
                 Variable var = releasedOdeSystem.getVariable(dim);
                 if (!varMin.containsKey(var.getName()) || !varMax.containsKey(var.getName())) {
-                    minArray[var.getIndex()] = releasedOdeSystem.getInitialVariableValue(var).getValue();
-                    maxArray[var.getIndex()] = releasedOdeSystem.getInitialVariableValue(var).getValue();
+                    minArray[var.getIndex()] = ((Constant) releasedOdeSystem.getInitialVariableValue(var).getSubstitution()).getValue();
+                    maxArray[var.getIndex()] = ((Constant) releasedOdeSystem.getInitialVariableValue(var).getSubstitution()).getValue();
                 } else {
                     minArray[var.getIndex()] = varMin.get(var.getName());
                     maxArray[var.getIndex()] = varMax.get(var.getName());
@@ -145,8 +146,8 @@ public class OrthogonalSpaceFactory implements
             } else if (releasedOdeSystem.isParamater(dim)) {
                 Parameter param = releasedOdeSystem.getParameter(dim);
                 if (!paramMin.containsKey(param.getName()) || !paramMax.containsKey(param.getName())) {
-                    minArray[param.getIndex()] = releasedOdeSystem.getDeclaredParamaterValue(param).getValue();
-                    maxArray[param.getIndex()] = releasedOdeSystem.getDeclaredParamaterValue(param).getValue();
+                    minArray[param.getIndex()] = ((Constant) releasedOdeSystem.getDeclaredParamaterValue(param).getSubstitution()).getValue();
+                    maxArray[param.getIndex()] = ((Constant) releasedOdeSystem.getDeclaredParamaterValue(param).getSubstitution()).getValue();
                 } else {
                     minArray[param.getIndex()] = paramMin.get(param.getName());
                     maxArray[param.getIndex()] = paramMax.get(param.getName());

@@ -27,7 +27,9 @@ import java.util.Set;
 import org.sybila.parasim.computation.simulation.api.ArrayPrecisionConfiguration;
 import org.sybila.parasim.extension.projectmanager.view.robustness.RobustnessSettingsValues;
 import org.sybila.parasim.extension.projectmanager.view.simulation.SimulationSettingsValues;
+import org.sybila.parasim.model.math.Constant;
 import org.sybila.parasim.model.math.Parameter;
+import org.sybila.parasim.model.math.SubstitutionValue;
 import org.sybila.parasim.model.math.VariableValue;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
@@ -77,14 +79,18 @@ public class OdeSystemNames {
         if (var != null) {
             VariableValue value = system.getInitialVariableValue(var);
             if (value != null) {
-                return value.getValue();
+                return ((Constant) value.getSubstitution()).getValue();
             } else {
                 return null;
             }
         }
         Parameter par = system.getAvailableParameters().get(name);
         if (par != null) {
-            return system.getDeclaredParamaterValue(par).getValue();
+            SubstitutionValue<Parameter> declared = system.getDeclaredParamaterValue(par);
+            if (declared == null) {
+                throw new IllegalStateException("There is no declared value for parameter " + par);
+            }
+            return ((Constant) declared.getSubstitution()).getValue();
         }
         throw new IllegalArgumentException("Ode system contains no variable or parameter of such value.");
     }

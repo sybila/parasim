@@ -24,7 +24,7 @@ package org.sybila.parasim.model.math;
  */
 public interface SubstitutionValue<T extends Expression> {
 
-    float getValue();
+    Expression getSubstitution();
 
     T getExpression();
 

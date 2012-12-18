@@ -21,28 +21,32 @@ package org.sybila.parasim.model.sbml;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.model.math.Constant;
-import org.sybila.parasim.model.math.Divide;
 import org.sybila.parasim.model.math.Expression;
+import org.sybila.parasim.model.math.Function;
 import org.sybila.parasim.model.math.Minus;
 import org.sybila.parasim.model.math.Negation;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Plus;
-import org.sybila.parasim.model.math.Power;
 import org.sybila.parasim.model.math.SubstitutionValue;
-import org.sybila.parasim.model.math.Times;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.math.VariableValue;
 import org.sybila.parasim.model.ode.OdeSystem;
@@ -132,58 +136,11 @@ public class SBMLOdeSystem implements OdeSystem {
         return odeSystem.substitute(parameterValues);
     }
 
-    private static Expression createExpression(ASTNode mathml, Map<String, Variable> variables, Map<String, Parameter> parameters, Map<String, Parameter> localParameters) {
-        if (mathml.isReal()) {
-            return new Constant((float) mathml.getReal());
-        }
-        if (mathml.isName()) {
-            Variable variable = variables.get(mathml.getName());
-            if (variable == null) {
-                Parameter parameter = localParameters.get(mathml.getName());
-                if (parameter == null) {
-                    parameter = parameters.get(mathml.getName());
-                    if (parameter == null) {
-                        LOGGER.warn("There is no variable or parameter called [" + mathml.getName() + "].");
-                    }
-                }
-                return parameter;
-            }
-            return variable;
-        }
-        if (mathml.isOperator() || mathml.isFunction()) {
-            if (mathml.getChildCount() == 1) {
-                return createExpression(mathml.getChild(0), variables, parameters, localParameters);
-            }
-            List<Expression> subsList = new ArrayList<>();
-            for (int i=0; i<mathml.getChildCount(); i++) {
-                Expression exp = createExpression(mathml.getChild(i), variables, parameters, localParameters);
-                if (exp != null) {
-                    subsList.add(exp);
-                }
-            }
-            Expression[] subs = new Expression[subsList.size()];
-            subsList.toArray(subs);
-            switch(mathml.getType()) {
-                case TIMES:
-                    return new Times(subs);
-                case DIVIDE:
-                    return new Divide(subs);
-                case PLUS:
-                    return new Plus(subs);
-                case MINUS:
-                    return new Minus(subs);
-                case POWER:
-                    return new Power(subs[0], subs[1]);
-                case FUNCTION_POWER:
-                    return new Power(subs[0], subs[1]);
-            }
-        }
-        throw new IllegalArgumentException("Can't create an expression from [" + mathml.toFormula() + "], its type is [" + mathml.getType() + "].");
-    }
-
+    // TODO refactor
     private static OdeSystem setup(Model model) {
         Map<String, Variable> variablesMemory = new HashMap<>();
         Map<String, Parameter> parametersMemory = new HashMap<>();
+        Map<String, Expression> globals = new HashMap<>();
         List<SubstitutionValue> substitutionValues = new ArrayList<>();
         Map<Variable, List<Expression>> positives = new HashMap<>();
         Map<Variable, List<Expression>> negatives = new HashMap<>();
@@ -196,10 +153,17 @@ public class SBMLOdeSystem implements OdeSystem {
                 LOGGER.warn("skipping species with undefined id");
                 continue;
             }
-            Variable var = new Variable(species.getName() == null || species.getName().isEmpty() ? species.getId() : species.getName(), variables.size());
+            Variable var = new Variable(species.getId(), variables.size());
             variablesMemory.put(species.getId(), var);
             variables.add(var);
-            variableValues.add(new VariableValue(var, (float) species.getInitialConcentration()));
+            if (!new Double(species.getInitialConcentration()).equals(Double.NaN)) {
+                variableValues.add(new VariableValue(var, (float) species.getInitialConcentration()));
+            } else if (!new Double(species.getInitialAmount()).equals(Double.NaN)) {
+                variableValues.add(new VariableValue(var, (float) species.getInitialAmount()));
+            } else {
+                throw new IllegalStateException("The species [" + species.getId() + "] has no defined initial concentration or amount.");
+            }
+            globals.put(species.getId(), var);
         }
         // load paramaters
         for (org.sbml.jsbml.Parameter p : model.getListOfParameters()) {
@@ -208,18 +172,66 @@ public class SBMLOdeSystem implements OdeSystem {
                 continue;
             }
             if (new Double(p.getValue()).equals(Double.NaN)) {
-                throw new IllegalStateException("The values of parameter '" + p.getId() + "' is not defined.");
+                LOGGER.warn("The value of parameter '" + p.getId() + "' is not defined, so skipping it.");
+                continue;
             }
-            Parameter param = new Parameter(p.getName() == null || p.getName().isEmpty() ? p.getId() : p.getName(), variables.size() + parametersMemory.size());
+            Parameter param = new Parameter(p.getId(), variables.size() + parametersMemory.size());
             parametersMemory.put(p.getId(), param);
             ParameterValue pv = new ParameterValue(param, (float) p.getValue());
             substitutionValues.add(pv);
             parameterValues.add(pv);
+            globals.put(p.getId(), param);
+
+        }
+        // load compartments
+        for (Compartment compartment: model.getListOfCompartments()) {
+            if (compartment.getId() == null || compartment.getId().isEmpty()) {
+                LOGGER.warn("skipping compartment with undefined id");
+                continue;
+            }
+            if (new Double(compartment.getValue()).equals(Double.NaN)) {
+                LOGGER.warn("skipping compartment ["+compartment.getId()+"] with undefined value");
+            }
+            globals.put(compartment.getId(), new Constant((float) compartment.getValue()));
+        }
+        // load functions
+        for (FunctionDefinition function: model.getListOfFunctionDefinitions()) {
+            if (function.getId() == null || function.getId().isEmpty()) {
+                LOGGER.warn("skipping function with undefined id");
+                continue;
+            }
+            Map<String, Expression> locals = new HashMap<>();
+            List<Parameter> arguments = new ArrayList<>();
+            for (int i=0; i<function.getNumArguments(); i++) {
+                String localName = function.getArgument(i).getName();
+                String globalName = function.getId() + ":" + localName;
+                Parameter argument = new Parameter(globalName, variables.size() + parametersMemory.size());
+                locals.put(localName, argument);
+                arguments.add(argument);
+            }
+            globals.put(function.getId(), new Function(function.getId(), new SBMLMathFactory().createExpression(function.getBody(), globals, locals), arguments));
+        }
+        // assignments
+        for (InitialAssignment assignment: model.getListOfInitialAssignments()) {
+            String name = assignment.getVariable();
+            Expression expression = new SBMLMathFactory().createExpression(assignment.getMath(), globals, Collections.EMPTY_MAP);
+            globals.put(name, expression);
+        }
+        // rules
+        for (Rule rule: model.getListOfRules()) {
+            if (!(rule instanceof AssignmentRule)) {
+                LOGGER.warn("only assignment rules are supported, skipping rule with metaid [" + rule.getMetaId() + "]");
+                continue;
+            }
+            AssignmentRule assignmentRule = (AssignmentRule) rule;
+            String name = assignmentRule.getVariable();
+            Expression expression = new SBMLMathFactory().createExpression(assignmentRule.getMath(), globals, Collections.EMPTY_MAP);
+            globals.put(name, expression);
         }
         // load reaction speed
         for (Reaction reaction: model.getListOfReactions()) {
-            String reactionName = reaction.getName() == null || reaction.getName().isEmpty() ? reaction.getId() : reaction.getName();
-            Map<String, Parameter> localParameters = new HashMap<>();
+            String reactionName = reaction.getId();
+            Map<String, Expression> locals = new HashMap<>();
             LOGGER.debug("parsing reaction with id = " + reaction.getId());
             if (reaction.getKineticLaw() == null)  {
                 LOGGER.warn("skipping reaction (id = '" + reaction.getId() + "') without any kinetic law");
@@ -229,7 +241,7 @@ public class SBMLOdeSystem implements OdeSystem {
                 if (p.getId() == null || p.getId().isEmpty()) {
                     LOGGER.warn("skipping local parameter with undefined id in reaction with id = " + reaction.getId() + ".");
                 }
-                String paramLocalName = p.getName() == null || p.getName().isEmpty() ? p.getId() : p.getName();
+                String paramLocalName = p.getId();
                 String paramGloabalName = reactionName + ":" + paramLocalName;
                 if (new Double(p.getValue()).equals(Double.NaN)) {
                     throw new IllegalStateException("The value of local paramater '" + paramLocalName + "' in reaction '" + reactionName + "' is not defined.");
@@ -241,11 +253,11 @@ public class SBMLOdeSystem implements OdeSystem {
                 ParameterValue pv = new ParameterValue(parameter, (float) p.getValue());
                 parameterValues.add(pv);
                 substitutionValues.add(pv);
-                localParameters.put(paramLocalName, parameter);
+                locals.put(paramLocalName, parameter);
                 parametersMemory.put(paramGloabalName, parameter);
 
             }
-            Expression kineticLaw = createExpression(reaction.getKineticLaw().getMath(), variablesMemory, parametersMemory, localParameters);
+            Expression kineticLaw = new SBMLMathFactory().createExpression(reaction.getKineticLaw().getMath(), globals, locals);
             if (kineticLaw == null) {
                 throw new IllegalStateException("Can't parse a kinetic law in reaction with id = " + reaction.getId() + ".");
             }

@@ -84,7 +84,7 @@ public final class Parameter implements Expression<Parameter>, Indexable {
         if (substitution == null) {
             throw new IllegalStateException("Can't evaliuate the parameter, because it hasn't been substituted.");
         }
-        return substitution.getValue();
+        return substitution.getSubstitution().evaluate(point);
     }
 
     @Override
@@ -92,7 +92,7 @@ public final class Parameter implements Expression<Parameter>, Indexable {
         if (substitution == null) {
             throw new IllegalStateException("Can't evaliuate the parameter, because it hasn't been substituted.");
         }
-        return substitution.getValue();
+        return substitution.getSubstitution().evaluate(point);
     }
 
     @Override
@@ -157,7 +157,7 @@ public final class Parameter implements Expression<Parameter>, Indexable {
                 indexBefore++;
             }
             if (v.getExpression().equals(this)) {
-                toSubstitute = (ParameterValue) v;
+                toSubstitute = v;
             }
         }
         if (toSubstitute != null) {
@@ -185,7 +185,11 @@ public final class Parameter implements Expression<Parameter>, Indexable {
 
     @Override
     public StringBuilder toFormula(StringBuilder builder) {
-        return substitution == null ? builder.append(name) : (substitution.getValue() >= 0 ? builder.append(substitution.getValue()) : builder.append("(").append(substitution.getValue()).append(")"));
+        if (substitution == null) {
+            return builder.append(name);
+        } else {
+            return substitution.getSubstitution().toFormula(builder);
+        }
     }
 
     @Override

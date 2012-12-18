@@ -25,14 +25,21 @@ package org.sybila.parasim.model.math;
 public final class ParameterValue implements SubstitutionValue<Parameter> {
 
     private final Parameter parameter;
-    private final float value;
+    private final Expression substitution;
 
-    public ParameterValue(Parameter paramater, float value) {
+    public ParameterValue(Parameter paramater, Expression substitution) {
         if (paramater == null) {
             throw new IllegalArgumentException("The paramater [parameter] is null.");
         }
+        if (substitution == null) {
+            throw new IllegalArgumentException("The paramater [substitution] is null.");
+        }
         this.parameter = paramater;
-        this.value = value;
+        this.substitution = substitution;;
+    }
+
+    public ParameterValue(Parameter parameter, float value) {
+        this(parameter, new Constant(value));
     }
 
     @Override
@@ -41,13 +48,13 @@ public final class ParameterValue implements SubstitutionValue<Parameter> {
     }
 
     @Override
-    public final float getValue() {
-        return value;
+    public Expression getSubstitution() {
+        return substitution;
     }
 
     @Override
     public String toString() {
-        return parameter.getName() + ": " + value;
+        return parameter.getName() + ": " + substitution.toString();
     }
 
 }

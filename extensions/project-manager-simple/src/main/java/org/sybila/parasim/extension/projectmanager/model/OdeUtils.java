@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.sybila.parasim.model.math.Constant;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -70,7 +71,7 @@ public class OdeUtils {
         float[] max = Arrays.copyOf(target.getMaxBounds().toArray(), dim);
         for (int i = target.getDimension(); i < dim; i++) {
             ParameterValue value = system.getDeclaredParamaterValue(system.getParameter(i));
-            float bound = (value != null) ? value.getValue() : 0;
+            float bound = (value != null) ? ((Constant) value.getSubstitution()).getValue() : 0;
             min[i] = bound;
             max[i] = bound;
         }

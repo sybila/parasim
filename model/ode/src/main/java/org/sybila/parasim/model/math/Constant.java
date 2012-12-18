@@ -88,4 +88,8 @@ public final class Constant implements Expression<Constant> {
         return function.apply(this);
     }
 
+    public float getValue() {
+        return value;
+    }
+
 }
