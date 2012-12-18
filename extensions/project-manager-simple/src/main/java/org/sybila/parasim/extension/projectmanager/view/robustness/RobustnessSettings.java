@@ -69,8 +69,9 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
 
         public Row(String name) {
             rowLabel = TableConstraints.getRowLabel(name);
-            min = new CommitFormattedTextField(DecimalFormat.getNumberInstance());
-            max = new CommitFormattedTextField(DecimalFormat.getNumberInstance());
+            DecimalFormat format = new DecimalFormat("0.####E0");
+            min = new CommitFormattedTextField(format);
+            max = new CommitFormattedTextField(format);
             min.addCommitListener(new ActionListener() {
 
                 @Override
