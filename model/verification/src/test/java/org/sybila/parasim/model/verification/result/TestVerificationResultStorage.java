@@ -49,7 +49,7 @@ public class TestVerificationResultStorage {
                     new PointWithNeigborhoodWrapper(new ArrayPoint(0f, 89.005f, -74.102f, 376.4f)),
                     new PointWithNeigborhoodWrapper(new ArrayPoint(0f, 538.01f, -35.002f, 55.12f)),
                     new PointWithNeigborhoodWrapper(new ArrayPoint(0f, 124.1f, 25.35f, -0.005f))},
-                new Robustness[]{new SimpleRobustness(0.125f), new SimpleRobustness(-0.145f), new SimpleRobustness(-54f), new SimpleRobustness(12.8f)});
+                new Robustness[]{new SimpleRobustness(0.125f), new SimpleRobustness(-0.145f), new SimpleRobustness(-54f), new SimpleRobustness(12.8f)}, new SimpleRobustness(0));
     }
 
     private File getTestResultFile() {

@@ -20,7 +20,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<result xmlns="http://www.sybila.org/parasim/verification-result" dimension="3">
+<result xmlns="http://www.sybila.org/parasim/verification-result" dimension="3" robustness="0">
 <point id="1" robustness="0.125">
 <data>
 <dimension>-0.15</dimension>
