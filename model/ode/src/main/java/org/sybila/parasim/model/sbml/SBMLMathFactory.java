@@ -65,6 +65,8 @@ public class SBMLMathFactory {
                     return new Power(subs[0], subs[1]);
                 case FUNCTION_POWER:
                     return new Power(subs[0], subs[1]);
+                case FUNCTION_ROOT:
+                    return new Power(subs[1], new Divide(new Constant(1), subs[0]));
                 case FUNCTION:
                     Expression expression = globals.get(mathml.getName());
                     if (expression == null) {
