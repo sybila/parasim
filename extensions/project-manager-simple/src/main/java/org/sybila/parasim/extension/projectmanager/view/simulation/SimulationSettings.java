@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.extension.projectmanager.view.simulation;
 
@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import org.sybila.parasim.computation.simulation.api.ArrayPrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
@@ -35,6 +36,7 @@ import org.sybila.parasim.extension.projectmanager.model.SimpleNamedOrthogonalSp
 import org.sybila.parasim.extension.projectmanager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectmanager.view.FloatTextField;
 import org.sybila.parasim.extension.projectmanager.view.OdeSystemFactory;
+import org.sybila.parasim.extension.projectmanager.view.ScrollPane;
 import org.sybila.parasim.extension.projectmanager.view.TableConstraints;
 import org.sybila.parasim.extension.projectmanager.view.ValueHolder;
 import org.sybila.parasim.model.ode.OdeSystem;
@@ -230,11 +232,14 @@ public class SimulationSettings extends JPanel implements ValueHolder<Simulation
         }), getRightConstraints(3));
 
         variablePanel = new VariablePanel();
+        JScrollPane variablePane = new ScrollPane(variablePanel);
         GridBagConstraints constraints = getDefaultConstraints();
         constraints.gridwidth = 2;
         constraints.gridx = 0;
         constraints.gridy = 4;
-        add(variablePanel, constraints);
+        constraints.weighty = 1;
+        constraints.weightx = 1;
+        add(variablePane, constraints);
 
         setValues(odeNames.getDefaultSimulationSettingsValues());
     }

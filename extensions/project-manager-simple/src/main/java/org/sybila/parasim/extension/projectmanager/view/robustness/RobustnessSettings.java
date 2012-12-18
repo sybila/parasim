@@ -35,12 +35,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
 import org.sybila.parasim.extension.projectmanager.model.SimpleNamedOrthogonalSpace;
 import org.sybila.parasim.extension.projectmanager.view.CommitFormattedTextField;
 import org.sybila.parasim.extension.projectmanager.view.OdeSystemFactory;
+import org.sybila.parasim.extension.projectmanager.view.ScrollPane;
 import org.sybila.parasim.extension.projectmanager.view.TableConstraints;
 import org.sybila.parasim.extension.projectmanager.view.ValueHolder;
 import org.sybila.parasim.util.Pair;
@@ -55,6 +57,8 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
     private static GridBagConstraints getConstraints() {
         GridBagConstraints result = new GridBagConstraints();
         result.fill = GridBagConstraints.BOTH;
+        result.weighty = 1;
+        result.weightx = 1;
         return result;
     }
 
@@ -217,12 +221,14 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
             addRow(name, y);
             y++;
         }
+        JScrollPane perturbationPane = new ScrollPane(perturbationTable);
 
         variables = new AnalysisChoiceBox(names.getVariables());
         parameters = new AnalysisChoiceBox(names.getParameters());
-
-        variables.setBorder(new TitledBorder("Variables"));
-        parameters.setBorder(new TitledBorder("Parameters"));
+        JScrollPane variablesPane = new ScrollPane(variables);
+        variablesPane.setBorder(new TitledBorder("Variables"));
+        JScrollPane parametersPane = new ScrollPane(parameters);
+        parametersPane.setBorder(new TitledBorder("Parameters"));
 
         setLayout(new GridBagLayout());
 
@@ -230,17 +236,17 @@ public class RobustnessSettings extends JPanel implements ValueHolder<Robustness
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 2;
-        add(perturbationTable, constraints);
+        add(perturbationPane, constraints);
 
         constraints = getConstraints();
         constraints.gridx = 0;
         constraints.gridy = 1;
-        add(variables, constraints);
+        add(variablesPane, constraints);
 
         constraints = getConstraints();
         constraints.gridx = 1;
         constraints.gridy = 1;
-        add(parameters, constraints);
+        add(parametersPane, constraints);
 
         setValues(names.getDefaultRobustnessSettingsValues());
     }
