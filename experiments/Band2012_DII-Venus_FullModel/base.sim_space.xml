@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<space xmlns="http://www.sybila.org/parasim/space">
+<time max="2000.0" min="0.0"/>
+<variable max="100.0" min="0.0" name="auxin"/>
+<variable max="1000.0" min="0.0" name="TIR1"/>
+<variable max="10.0" min="0.0" name="auxinTIR1"/>
+<variable max="100.0" min="0.0" name="auxinTIR1VENUS"/>
+<variable max="1000.0" min="0.0" name="VENUS"/>
+</space>
