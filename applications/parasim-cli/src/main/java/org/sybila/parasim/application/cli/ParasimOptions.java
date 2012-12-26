@@ -36,7 +36,7 @@ import org.apache.commons.lang.Validate;
  */
 public class ParasimOptions {
 
-    public static final String VERSION = "1.0.0-SNAPSHOT";
+    public static final String VERSION = "1.0.0.Final";
     private static Options options;
     private CommandLine line;
 
