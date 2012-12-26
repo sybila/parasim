@@ -27,12 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.ExperimentImpl;
 import org.sybila.parasim.application.model.ExperimentLauncher;
-import org.sybila.parasim.application.model.ResultUtils;
 import org.sybila.parasim.application.model.TrajectoryAnalysisComputation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.core.Manager;
 import org.sybila.parasim.core.ManagerImpl;
 import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.extension.exporter.api.ResultExporter;
+import org.sybila.parasim.extension.exporter.impl.annotations.Csv;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.xml.XMLException;
@@ -134,7 +135,7 @@ public class Main {
             }
         }
         if (options.getCsvFile() != null) {
-            ResultUtils.toCSV(result, experiment.getOdeSystem(), new File(options.getCsvFile()));
+            manager.resolve(ResultExporter.class, Csv.class, manager.getRootContext()).export(result, experiment.getOdeSystem(), new File(options.getCsvFile()));
         }
 
         // plot result
@@ -153,13 +154,13 @@ public class Main {
             LOGGER.error("Unable to load result.", xmle);
             System.exit(1);
         }
+        if (options.getCsvFile() != null) {
+            manager.resolve(ResultExporter.class, Csv.class, manager.getRootContext()).export(input.getRoot(), experiment.getOdeSystem(), new File(options.getCsvFile()));
+        }
         if (!options.isBatch()) {
             plotResult(input.getRoot());
         } else {
             manager.shutdown();
-        }
-        if (options.getCsvFile() != null) {
-            ResultUtils.toCSV(input.getRoot(), experiment.getOdeSystem(), new File(options.getCsvFile()));
         }
     }
 

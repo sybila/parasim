@@ -42,6 +42,8 @@
                 <module>extensions/progress-logger</module>
                 <module>extensions/project-manager-api</module>
                 <module>extensions/project-manager-simple</module>
+		<module>extensions/result-export-api</module>
+		<module>extensions/result-export-impl</module>
 <!--                <module>extensions/remote-api</module>
                 <module>extensions/remote-conf</module>
                 <module>extensions/remote-ftest</module>
