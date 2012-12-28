@@ -1,26 +1,30 @@
 /**
  * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
- * contributors by the @authors tag.
+ * contributors by the
+ *
+ * @authors tag.
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.extension.remote.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.rmi.Remote;
@@ -45,7 +49,6 @@ public class RemoteHostControlImpl implements RemoteHostControl {
     private boolean running = false;
     private final File target;
     private final String username;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteHostControlImpl.class);
     private static final String MAIN_CLASS = ParasimRemoteServer.class.getName();
     public static final String SECURITY_POLICY_PATH = RemoteControlImpl.class.getClassLoader().getResource("parasim.remote.security.policy").getFile();
@@ -96,7 +99,7 @@ public class RemoteHostControlImpl implements RemoteHostControl {
         String name = qualifier.getSimpleName() + "-" + clazz.getName();
         try {
             return (T) LocateRegistry.getRegistry(host.toString()).lookup(name);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new IOException("Can't lookup the service called <" + name + ">");
         }
     }
@@ -128,10 +131,15 @@ public class RemoteHostControlImpl implements RemoteHostControl {
                 builder = builder.command("-D" + propertyName + "=" + System.getProperty(propertyName));
             }
         }
-        process = builder.command(MAIN_CLASS).command(host.toString()).spawn();
+        process = builder.command(MAIN_CLASS).spawn();
         long toTimeout = System.currentTimeMillis() + unit.toMillis(time);
         while (!isRunning(true)) {
             if (System.currentTimeMillis() > toTimeout) {
+                String line;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                while ((line = reader.readLine()) != null) {
+                    System.err.println(line);
+                }
                 throw new IOException("Can't start remote host control for " + host);
             }
             try {
@@ -156,5 +164,4 @@ public class RemoteHostControlImpl implements RemoteHostControl {
     protected boolean ping() {
         return loadManager(true) != null;
     }
-
 }

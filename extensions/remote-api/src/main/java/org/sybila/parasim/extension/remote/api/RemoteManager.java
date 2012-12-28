@@ -30,21 +30,36 @@ import java.util.Collection;
  */
 public interface RemoteManager extends Remote, Serializable {
 
+    /**
+     * Tries to resolve service. It uses a root context of the manager running
+     * on the remote host.
+     *
+     * @param <T> tyoe of the wanted service
+     * @param serviceClass class of the wanted service
+     * @return collection of instances implemented the service interface
+     */
     <T extends Serializable> Collection<T> service(Class<T> serviceClass) throws RemoteException;
 
     /**
      * Tries to resolve the instance determined by a pair of the type and qualifier.
-     * It uses a root context of the manager.
+     * It uses a root context of the manager running on the remote host.
      *
      * @param <T> type of the wanted instance
      * @param type of the wanted instance
-     * @param qualifier of the wanted instance, if {@link org.sybila.parasim.core.annotations.Any} qualifier is used
+     * @param qualifier of the wanted instance, use ({@link org.sybila.parasim.core.annotations.Default} if you don't know which qualifer should be used
      * @param context where the wanted instance should be placed, if the the context
      * doesn't contain the instance the parent context is used (if it's available)
      * @return
      */
     <T extends Serializable> T resolve(Class<T> type, Class<? extends Annotation> qualifier) throws RemoteException;
 
+    /**
+     * Forces the remote manager to load the remote object via RMI.
+     * It uses a root context of the manager running on the remote host.
+     *
+     * @param type type of the remote object
+     * @param qualifier of the wanted instance, use ({@link org.sybila.parasim.core.annotations.Default} if you don't know which qualifer should be used
+     */
     void forceLoad(Class<? extends Remote> type, Class<? extends Annotation> qualifier) throws RemoteException;
 
 }

@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  */
 public class TestRemoteControl {
 
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testStart() throws Exception {
         System.setProperty("parasim.config.file", "src/test/resources/parasim.xml");
         System.setProperty("parasim.remote.target", "target/dependency/remote-impl.jar");

@@ -30,15 +30,45 @@ import java.util.concurrent.TimeUnit;
  */
 public interface RemoteHostControl {
 
+    /**
+     * @return URL of the remote host
+     */
     URI getHost();
 
+    /**
+     * @return manager for the remote host
+     */
     RemoteManager getManager();
 
+    /**
+     * Check whether the host is running.
+     *
+     * @param ping if false, the return value is resolved from cache,
+     */
     boolean isRunning(boolean ping);
 
+    /**
+     * Lookup remote object.
+     *
+     * @param <T> type of the remote object
+     * @param clazz type of the remote object
+     * @param qualifier use ({@link org.sybila.parasim.core.annotations.Default} if you don't know which qualifer should be used
+     * @return proxy for the remote object
+     * @throws IOException if there is an error during lookup process
+     */
     <T extends Remote> T lookup(Class<T> clazz, Class<? extends Annotation> qualifier) throws IOException;
 
+    /**
+     * Shutdown the remote host.
+     */
     void shutdown();
 
+    /**
+     * Start the remote host.
+     *
+     * @param timeout amount of time
+     * @param unit unit used for timeout
+     * @throws IOException if there is an error during starting the remote host
+     */
     void start(long timeout, TimeUnit unit) throws IOException;
 }

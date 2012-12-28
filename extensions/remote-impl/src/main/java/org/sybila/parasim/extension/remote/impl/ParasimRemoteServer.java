@@ -36,9 +36,10 @@ public class ParasimRemoteServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParasimRemoteServer.class);
 
     public static void main(String[] args) throws Exception {
-        if (args.length == 0) {
-            throw new IllegalArgumentException("The server has to be executed with an argument representing a target host for RMI.");
-        }
+        start();
+    }
+
+    public static void start() throws Exception {
         Manager manager = ManagerImpl.create();
         manager.start();
         manager.resolve(Registry.class, Default.class, manager.getRootContext()).bind(Default.class.getSimpleName() + "-" + RemoteManager.class.getName(), new RemoteManagerImpl(manager));
