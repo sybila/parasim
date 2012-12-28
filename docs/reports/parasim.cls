@@ -9,8 +9,8 @@
 \RequirePackage{multicol}       % multiple columns
 \RequirePackage{amsmath}        % AMS mathematics extension
 \RequirePackage{enumerate}      % enumerate customization
-\RequirePackage{algorithmic}    % typesetting for algorithms
-\RequirePackage{algorithm}      % algorithm environment
+%\RequirePackage{algorithmic}    % typesetting for algorithms
+%\RequirePackage{algorithm}      % algorithm environment
 \RequirePackage{url}			% adding URLs
 \RequirePackage{hyperref}		% hypertext
 \RequirePackage{color}			% colors
