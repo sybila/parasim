@@ -42,6 +42,7 @@ kde najdete též seznam vyřešených úkolů\footnote{\url{https://github.com/
 		\fbox{\includegraphics[width=0.9\textwidth]{1.0.0.Final/analysis3.png}}
 	\end{subfigure}
 	\caption{Ukázka vizualizace výsledku analýzy několika modelů. Zelené body označují hodnoty, kde daná vlastnost platí, v červených bodech vlastnost naopak neplatí.}
+	\label{fig:vizualizace}
 \end{figure}
 
 \section{Čtvrtá etapa}
@@ -54,16 +55,22 @@ optimalizaci výpočtu, který se již v této etapě prováděl paralelně. Z h
 	\item	odstranění referencí na data již nepotřebných odsimulovaných trajektorií, aby mohla být zpracována pomocí \textit{garbage collectoru}.
 \end{itemize}
 
+Grafické rozhraní bylo do konce čtvrté etapy uvedeno do zcela funkčního stavu (viz \figurename\,\ref{fig:gui}). Komponenta zobrazující výsledky analýzy
+byla upravena tak, aby po kliknutí na bod výsledku odsimulovala příslušnou trajektorii, což se ukázalo jako nutné v~průběhu třetí fáze (viz minulý report\footnote{
+\url{https://github.com/sybila/parasim/blob/master/docs/reports/1.0.0.M2-3.pdf?raw=true}}). Tato funkce byla naimplementována jednodušším způsobem, než se původně plánovalo,
+což však umožnilo přesunout práci na manažer pro správu projektů. Přitom je její současná podoba zcela dostačující. Zároveň bylo grafické rozhraní rozšířeno o~komponentu
+zobrazující stav analýzy, což významnou měrou přispívá k~interaktivitě aplikace.
+
 Vydaná verze z~konce čtvrté etapy je k~dispozici na stránkách našeho projektu\footnote{\url{https://github.com/sybila/parasim/zipball/1.0.0.M4}},
 kde najdete též seznam vyřešených úkolů\footnote{\url{https://github.com/sybila/parasim/issues?milestone=6&state=closed}}.
 
 \section{Pátá etapa}
 
-V páté etapě, probíhající od začátku do konce prosince, jsme pracovali na vydání finální verze aplikace, psaní testů a dokumentace\footnote{\url{https://github.com/sybila/parasim/wiki}}.
-Dále jsme se zaměřili na: 
+V páté etapě, probíhající od začátku do konce prosince, jsme pracovali na vydání finální verze aplikace, psaní testů a dokumentace\footnote{\url{https://github.com/sybila/parasim/wiki}},
+včetně tutorialu s~obrázky. Dále jsme se zaměřili na: 
 
 \begin{itemize}
-	\item	spuštění analýzy nad dalšími reálnými modely,
+	\item	spuštění analýzy nad dalšími reálnými modely (viz \figurename\,\ref{fig:vizualizace}),
 	\item	přidání globální robustnosti do analýzy,
 	\item	zjednodušení nastavení analýzy (bylo odstraněno nastavení pro počáteční rozdělení prostoru iniciálních hodnot).
 \end{itemize}
@@ -81,6 +88,7 @@ Dále jsme se zaměřili na:
 		\caption{Komponenta pro vizualizaci výsledků analýzy.}
 	\end{subfigure}
 	\caption{Screenshoty z aplikace s grafickým rozhraním.}
+	\label{fig:gui}
 \end{figure}
 
 Finální verze z konce páté etapy je k~dispozici na stránkách našeho projektu\footnote{\url{https://github.com/sybila/parasim/zipball/1.0.0.Final}},
@@ -89,16 +97,17 @@ kde najdete též seznam vyřešených úkolů\footnote{\url{https://github.com/
 \section{Shrnutí}
 
 Byl vytvořen nástroj pro analýzu dynamických systémů modelovaných pomocí
-obyčejných diferenciálních rovnic. Na rozdíl od existujících nástrojů pro simulaci chování
-dynamických systémů a monitoring temporálních vlastností nad běhy těchto systémů byl kladen důraz
-na modulární architekturu, jež umožňuje budoucí vývoj a testování
-optimalizace a paralelizace jednotlivých modulů i analytických algoritmů.
+obyčejných diferenciálních rovnic. Tento nástroj je postaven na modulární architektuře,
+která usnadňuje vstup třetí strany do vývoje nástroje. Možnost jednoduše zaměnit nové moduly
+za ty stávající umožňuje optimalizaci a paralelizaci jednotlivých analytických algoritmů,
+stejně jako zavádění úplně nových součástí nástroje.
 
-Nástroj se skládá z aplikace s grafickým rozhraním pro správu modelů, vlastností a nastavení analýzy
-a aplikace pro příkazovou řádku vhodné zejména pro dávkové spouštění. Obě aplikace umí spustit analýzu
-a zobrazit její výsledek, to i v případě, že se jedná o vícerozměrná data.
+Nástroj je tvořen dvěma aplikacemi: Grafickým rozhraním pro správu modelů, vlastností a nastavení analýzy
+a aplikací spustitelnou z~příkazové řádky vhodnou zejména pro dávkové zpracování. Obě aplikace dokáží spustit
+analýzu a zobrazit její výsledek a nastavení analýzy vytvořená v~grafickém rozrhaní dokáže přečíst i aplikace
+z~příkazové řádky.
 
-Repozitář projektu obsahuje reálné modelů s přiloženými vlastnostmi a nastaveními analýzy,
+Repozitář projektu obsahuje několik reálných modelů s~přiloženými vlastnostmi a předpřipravenými analýzami,
 nad kterými byl nástroj vyzkoušen. Kdokoliv si může analýzu nad těmito modely pustit sám, modely
 a vlastnosti dále rozšiřovat, případně přidávat další.
 
