@@ -21,7 +21,7 @@ optimalizaci a paralelizaci výpočtu a implementaci grafického rozhraní. Dál
 
 Výstupem této etapy měla být aplikace s grafickým rozhraním, pomocí které by mohl uživatel spravovat modely,
 vlastnosti, nastavení a výsledky analýzy. Vytvoření této aplikace bylo náročnější, než se očekávalo.
-Proto jsme následující čtvrtou etapu rozdělili na dvě (listopad, prosinec) a dokončení aplikace přesunuli
+Proto jsme následující čtvrtou etapu rozdělili na dvě (listopad, prosinec) a~do\-končení aplikace přesunuli
 do první z nich (listopad). 
 
 Vydaná verze z~konce třetí etapy je k~dispozici na stránkách našeho projektu\footnote{\url{https://github.com/sybila/parasim/zipball/1.0.0.M3}},
@@ -48,7 +48,7 @@ kde najdete též seznam vyřešených úkolů\footnote{\url{https://github.com/
 \section{Čtvrtá etapa}
 
 Ve čtvrté etapě, probíhající od začátku do konce listopadu, jsme pracovali na dokončení grafického rozhraní a
-optimalizaci výpočtu, který se již v této etapě prováděl paralelně. Z hlediska optimalizace šlo zejména o:
+optimalizaci výpočtu, který se již v této etapě prováděl paralelně. Z hlediska opti\-malizace šlo zejména o:
 
 \begin{itemize}
 	\item	odstranění duplicitních výpočtů, zejména zlepšíním práce cache, ve které se ukládají již odsimulované trajektorie,
@@ -97,21 +97,28 @@ kde najdete též seznam vyřešených úkolů\footnote{\url{https://github.com/
 \section{Shrnutí}
 
 Byl vytvořen nástroj pro analýzu dynamických systémů modelovaných pomocí
-obyčejných diferenciálních rovnic. Tento nástroj je postaven na modulární architektuře,
+obyčejných di\-fe\-renciálních rovnic. Tento nástroj je postaven na modulární architektuře,
 která usnadňuje vstup třetí strany do vývoje nástroje. Možnost jednoduše zaměnit nové moduly
 za ty stávající umožňuje optimalizaci a paralelizaci jednotlivých analytických algoritmů,
 stejně jako zavádění úplně nových součástí nástroje.
 
-Nástroj je tvořen dvěma aplikacemi: Grafickým rozhraním pro správu modelů, vlastností a nastavení analýzy
+Nástroj je tvořen dvěma aplikacemi: Grafickým rozhraním pro správu modelů, vlastností a~nastavení analýzy
 a aplikací spustitelnou z~příkazové řádky vhodnou zejména pro dávkové zpracování. Obě aplikace dokáží spustit
 analýzu a zobrazit její výsledek a nastavení analýzy vytvořená v~grafickém rozrhaní dokáže přečíst i aplikace
 z~příkazové řádky.
 
+Oproti původnímu plánu se upustilo od plné integrace modulu pro detekci cyklů u trajektorií. Tento modul
+je naimplementován a je plně kompatibilní s dalšími moduly, nicméně v~samotné analýze se nepoužívá.
+Pro jeho smysluplné použití je nutné trajektorie simulovat po malých časových intervalech,
+odsimulovaná data spojovat, nad daty spouštět detekci cyklu a v~případě detekovaného cyklu
+již další simulaci neprovádět. Ve stávající verzi nástroje se provádí pouze simulace pro jeden časový
+interval. Toto řešení, alespoň pro testované modely, zcela vyhovuje.
+
 Pro tento nástroj, stejně jako pro jeho architekturu byla vytvořena dokumentace, která je volně přístupná na internetu.
 Tato dokumentace obsahuje jak články určené pro uživatele, zabývající se především tím, jak stáhnout, spustit a používat
-obě aplikace, tak stránky zaměřené spíše na vývojáře, které popisují například to, jak vytvořit vlastní modul.
+obě aplikace, tak stránky zaměřené spíše na~vývojáře, které popisují například to, jak vytvořit vlastní modul.
 
-Repozitář projektu dále obsahuje několik reálných modelů s~přiloženými vlastnostmi a předpřipravenými analýzami,
+Repozitář projektu dále obsahuje několik reálných modelů s~přiloženými vlastnostmi a před\-při\-pravenými analýzami,
 nad kterými byl nástroj vyzkoušen. Kdokoliv si může analýzu nad těmito modely pustit sám, modely
 a vlastnosti dále rozšiřovat, případně přidávat další.
 
