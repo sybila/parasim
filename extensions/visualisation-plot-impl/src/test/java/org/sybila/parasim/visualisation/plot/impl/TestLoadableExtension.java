@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,30 +19,31 @@
  */
 package org.sybila.parasim.visualisation.plot.impl;
 
-import org.testng.annotations.Test;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.api.annotations.Filling;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestLoadableExtension extends AbstractVisualisationTest {
+public class TestLoadableExtension extends ParasimTest {
 
     @Test
     public void testPlotterFactoryIsLoaded() {
-        assertNotNull(getManager().resolve(PlotterFactory.class, Default.class, getManager().getRootContext()));
+        assertNotNull(getManager().resolve(PlotterFactory.class, Default.class));
     }
 
     @Test
     public void testStrictPlotterFactoryIsLoaded() {
-        assertNotNull(getManager().resolve(PlotterFactory.class, Strict.class, getManager().getRootContext()));
+        assertNotNull(getManager().resolve(PlotterFactory.class, Strict.class));
     }
 
     @Test
     public void testFillingPlotterFactoryIsLoaded() {
-        assertNotNull(getManager().resolve(PlotterFactory.class, Filling.class, getManager().getRootContext()));
+        assertNotNull(getManager().resolve(PlotterFactory.class, Filling.class));
     }
 }

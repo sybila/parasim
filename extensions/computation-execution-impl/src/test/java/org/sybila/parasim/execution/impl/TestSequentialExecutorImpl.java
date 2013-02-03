@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -21,7 +21,7 @@ package org.sybila.parasim.execution.impl;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.execution.AbstractExecutionTest;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.SequentialExecutor;
@@ -44,6 +44,6 @@ public class TestSequentialExecutorImpl extends AbstractExecutionTest {
     }
 
     protected Execution<MergeableString> createSequentialExecution(Computation computation) {
-        return getManager().resolve(SequentialExecutor.class, Default.class, getManager().getRootContext()).submit(computation);
+        return getManager().resolve(SequentialExecutor.class, Default.class).submit(computation);
     }
 }

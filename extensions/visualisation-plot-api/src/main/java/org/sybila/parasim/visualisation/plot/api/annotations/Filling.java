@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -24,7 +24,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.sybila.parasim.core.annotations.Qualifier;
+import org.sybila.parasim.core.annotation.Qualifier;
 
 /**
  * Displays some points which are not contained in verification result but

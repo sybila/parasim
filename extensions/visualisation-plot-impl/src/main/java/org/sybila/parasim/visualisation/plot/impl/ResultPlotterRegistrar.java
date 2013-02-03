@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,19 +19,13 @@
  */
 package org.sybila.parasim.visualisation.plot.impl;
 
-import org.sybila.parasim.core.Event;
-import org.sybila.parasim.core.Instance;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.annotations.Provide;
-import org.sybila.parasim.core.event.ManagerStarted;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
-import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.api.annotations.Filling;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
-import org.sybila.parasim.visualisation.plot.api.event.ResultPlotterRegistered;
 
 /**
  *
@@ -39,41 +33,30 @@ import org.sybila.parasim.visualisation.plot.api.event.ResultPlotterRegistered;
  */
 public class ResultPlotterRegistrar {
 
-    @Inject
-    private Event<ResultPlotterRegistered> event;
-    @Inject
-    private Instance<ResultPlotterConfiguration> config;
-
-    public void registerConfiguration(@Observes ManagerStarted event, ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
+    @Provide
+    public ResultPlotterConfiguration provideConfiguration(ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
         ResultPlotterConfiguration conf = new ResultPlotterConfiguration();
         ExtensionDescriptor extDesc = descriptor.getExtensionDescriptor("result_plotter");
         if (extDesc != null) {
             mapper.map(extDesc, conf);
         }
-        config.set(conf);
+        return conf;
     }
 
     @Strict
     @Provide
     public PlotterFactory registerStrict(ResultPlotterConfiguration config) {
-        fireEvent();
         return new NotFillingProjectionPlotterFactory(config);
     }
 
     @Filling
     @Provide
     public PlotterFactory registerFilling(ResultPlotterConfiguration config) {
-        fireEvent();
         return new RobustnessFillingProjectionPlotterFactory(config);
     }
 
     @Provide
     public PlotterFactory registerDefault(ResultPlotterConfiguration config) {
-        fireEvent();
         return new RobustnessFillingProjectionPlotterFactory(config);
-    }
-
-    private void fireEvent() {
-        event.fire(new ResultPlotterRegistered());
     }
 }

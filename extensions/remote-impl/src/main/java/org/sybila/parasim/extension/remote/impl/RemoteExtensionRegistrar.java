@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -30,11 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sybila.parasim.core.Instance;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.annotations.Provide;
-import org.sybila.parasim.core.event.ManagerStarted;
+import org.sybila.parasim.core.annotation.Observes;
+import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.core.event.ManagerStopping;
 import org.sybila.parasim.extension.remote.api.RemoteControl;
 import org.sybila.parasim.extension.remote.api.RemoteHostActivity;
@@ -46,14 +43,13 @@ import org.sybila.parasim.extension.remote.configuration.RemoteConfiguration;
  */
 public class RemoteExtensionRegistrar {
 
-    @Inject
-    private Instance<RemoteHostActivity> activity;
     private Registry providedRegistry;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteExtensionRegistrar.class);
 
-    public void registerRemoteHostActivity(@Observes ManagerStarted event, RemoteConfiguration configuration) {
-        activity.set(new RemoteHostActivityImpl(configuration.getTimeout(), configuration.getTimeUnit()));
+    @Provide
+    public RemoteHostActivity provideRemoteHostActivity(RemoteConfiguration configuration) {
+        return new RemoteHostActivityImpl(configuration.getTimeout(), configuration.getTimeUnit());
     }
 
     @Provide

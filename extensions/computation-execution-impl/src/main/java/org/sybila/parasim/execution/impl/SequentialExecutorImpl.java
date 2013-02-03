@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -20,12 +20,12 @@
 package org.sybila.parasim.execution.impl;
 
 import org.apache.commons.lang3.Validate;
-import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.api.ComputationContext;
-import org.sybila.parasim.execution.api.ComputationInstanceContext;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.ContextFactory;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.SequentialExecutor;
+import org.sybila.parasim.execution.api.annotations.ComputationScope;
 import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
@@ -39,16 +39,15 @@ public class SequentialExecutorImpl extends AbstractExecutor implements Sequenti
 
     private final java.util.concurrent.Executor runnableExecutor;
 
-    public SequentialExecutorImpl(ContextEvent<ComputationContext> computationContextEvent, ContextEvent<ComputationInstanceContext> computationInstanceContextEvent, Enrichment enrichment, ExecutionConfiguration configuration, java.util.concurrent.Executor runnableExecutor) {
-        super(computationContextEvent, computationInstanceContextEvent, enrichment, configuration);
+    public SequentialExecutorImpl(ContextFactory contextFactory, Enrichment enrichment, ExecutionConfiguration configuration, java.util.concurrent.Executor runnableExecutor) {
+        super(contextFactory, enrichment, configuration);
         Validate.notNull(runnableExecutor);
         this.runnableExecutor = runnableExecutor;
     }
 
     @Override
     public <L extends Mergeable<L>> Execution<L> submit(Computation<L> computation) {
-        ComputationContext context = new ComputationContext();
-        getComputationContextEvent().initialize(context);
+        Context context = getContextFactory().context(ComputationScope.class);
         executeMethodsByAnnotation(getEnrichment(), context, computation, Before.class);
         return new SequentialExecution<>(
                 new ComputationId() {
@@ -65,7 +64,6 @@ public class SequentialExecutorImpl extends AbstractExecutor implements Sequenti
                 runnableExecutor,
                 computation,
                 getEnrichment(),
-                getComputationInstanceContextEvent(),
                 context
         );
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -22,17 +22,13 @@ package org.sybila.parasim.execution;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.Instance;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.annotation.Observes;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.ContextFactory;
+import org.sybila.parasim.core.api.Resolver;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.core.event.ManagerStopping;
-import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.api.ComputationContext;
-import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.execution.api.SequentialExecutor;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
@@ -44,13 +40,6 @@ import org.sybila.parasim.execution.impl.SharedMemoryExecutorImpl;
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ExecutorRegistrar {
-
-    @Inject
-    private ContextEvent<ComputationContext> computationContextEvent;
-    @Inject
-    private ContextEvent<ComputationInstanceContext> computationInstanceContextEvent;
-    @Inject
-    private Instance<java.util.concurrent.Executor> executor;
 
     private ThreadPoolExecutor providedRunnableExecutor;
 
@@ -72,17 +61,17 @@ public class ExecutorRegistrar {
     }
 
     @Provide
-    public SequentialExecutor provideSequentialExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration) {
-        return new SequentialExecutorImpl(computationContextEvent, computationInstanceContextEvent, enrichment, configuration, runnableExecutor);
+    public SequentialExecutor provideSequentialExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration, ContextFactory contextFactory) {
+        return new SequentialExecutorImpl(contextFactory, enrichment, configuration, runnableExecutor);
     }
 
     @Provide
-    public SharedMemoryExecutor provideSharedMemoryExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration) {
-        return new SharedMemoryExecutorImpl(computationContextEvent, computationInstanceContextEvent, enrichment, configuration, runnableExecutor);
+    public SharedMemoryExecutor provideSharedMemoryExecutor(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ExecutionConfiguration configuration, ContextFactory contextFactory) {
+        return new SharedMemoryExecutorImpl(contextFactory, enrichment, configuration, runnableExecutor);
     }
 
     @Provide
-    public Executor provideExecutor(ExecutionConfiguration configuration, Manager manager) throws ClassNotFoundException {
-        return (Executor) manager.resolve(Class.forName(configuration.getDefaultExecutorClass()), Default.class, manager.getRootContext());
+    public Executor provideExecutor(ExecutionConfiguration configuration, Resolver resolver) throws ClassNotFoundException {
+        return (Executor) resolver.resolve(Class.forName(configuration.getDefaultExecutorClass()), Default.class);
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,10 +19,19 @@
  */
 package org.sybila.parasim.core.spi;
 
+import java.util.Comparator;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public interface Sortable {
+
+    public final Comparator<Sortable> COMPARATOR = new Comparator<Sortable>() {
+        @Override
+        public int compare(Sortable o1, Sortable o2) {
+            return o1.getPrecedence() - o2.getPrecedence();
+        }
+    };
 
     int getPrecedence();
 

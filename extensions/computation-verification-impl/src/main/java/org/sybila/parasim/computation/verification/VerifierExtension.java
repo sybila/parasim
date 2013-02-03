@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,14 +19,15 @@
  */
 package org.sybila.parasim.computation.verification;
 
-import org.sybila.parasim.core.LoadableExtension;
-import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
+import org.sybila.parasim.core.api.loader.ExtensionBuilder;
+import org.sybila.parasim.core.spi.LoadableExtension;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class VerifierExtension implements LoadableExtension {
 
+    @Override
     public void register(ExtensionBuilder builder) {
         builder.extension(VerifierRegistrar.class);
     }

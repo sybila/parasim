@@ -1,8 +1,9 @@
 #!/bin/sh
+PARASIM_VERSION=`grep "<version>" pom.xml | head -n 1 | tr -d '</version> '`
 JAVA_BIN=java
 SELF=`readlink -f $0`
 SELF_DIR=`dirname $SELF`
-TARGET_DIST=$SELF_DIR/applications/parasim-gui/target/parasim-gui-1.0.0-SNAPSHOT-dist.jar
+TARGET_DIST=$SELF_DIR/applications/parasim-gui/target/parasim-gui-${PARASIM_VERSION}-dist.jar
 if [ -f $TARGET_DIST ]; then
 	$JAVA_BIN -jar $TARGET_DIST "$@"
 else

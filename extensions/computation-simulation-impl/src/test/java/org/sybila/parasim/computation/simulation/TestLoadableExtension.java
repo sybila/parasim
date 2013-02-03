@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,64 +19,30 @@
  */
 package org.sybila.parasim.computation.simulation;
 
-import org.sybila.parasim.core.context.Context;
-import java.lang.annotation.Annotation;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
-import org.sybila.parasim.computation.simulation.api.Simulator;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.context.AbstractContext;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestLoadableExtension {
-
-    private Manager manager;
-
-    @BeforeMethod
-    public void startManager() throws Exception {
-        System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/computation/simulation/parasim.xml");
-        manager = ManagerImpl.create();
-        manager.start();
-        assertNotNull(manager.resolve(ExtensionDescriptorMapper.class, Default.class, manager.getRootContext()));
-    }
-
-    @AfterMethod
-    public void stopManager() {
-        manager.shutdown();
-    }
+public class TestLoadableExtension extends ParasimTest {
 
     @Test
     public void testSimulatorLoaded() {
-        Context context = new AbstractContext() {
-            @Override
-            public Class<? extends Annotation> getScope() {
-                return ComputationInstanceScope.class;
-            }
-        };
-        manager.initializeContext(context);
-        assertNotNull(manager.resolve(AdaptiveStepSimulator.class, Default.class, context));
+        Context context = getManager().context(ComputationInstanceScope.class);
+        assertNotNull(context.resolve(AdaptiveStepSimulator.class, Default.class));
     }
 
     @Test
     public void testConfigurationLoaded() {
-        Context context = new AbstractContext() {
-            @Override
-            public Class<? extends Annotation> getScope() {
-                return ComputationInstanceScope.class;
-            }
-        };
-        manager.initializeContext(context);
-        assertNotNull(manager.resolve(AdaptiveStepConfiguration.class, Default.class, context));
+        Context context = getManager().context(ComputationInstanceScope.class);
+        assertNotNull(context.resolve(AdaptiveStepConfiguration.class, Default.class));
     }
 
 }

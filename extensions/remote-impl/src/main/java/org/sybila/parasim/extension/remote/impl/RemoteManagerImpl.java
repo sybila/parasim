@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -29,8 +29,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import org.apache.commons.lang3.Validate;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Manager;
 import org.sybila.parasim.extension.remote.api.RemoteManager;
 
 /**
@@ -52,20 +52,20 @@ public class RemoteManagerImpl extends UnicastRemoteObject implements RemoteMana
 
     @Override
     public <T extends Serializable> T resolve(Class<T> type, Class<? extends Annotation> qualifier) throws RemoteException {
-        return manager.resolve(type, qualifier, manager.getRootContext());
+        return manager.resolve(type, qualifier);
     }
 
     @Override
     public void forceLoad(Class<? extends Remote> type, Class<? extends Annotation> qualifier) throws RemoteException {
         String name = qualifier.getSimpleName() + "-" + type.getName();
-        if (!new HashSet<>(Arrays.asList(manager.resolve(Registry.class, Default.class, manager.getRootContext()).list())).contains(name)) {
+        if (!new HashSet<>(Arrays.asList(manager.resolve(Registry.class, Default.class).list())).contains(name)) {
             try {
-                manager.resolve(Registry.class, Default.class, manager.getRootContext()).bind(name, manager.resolve(type, qualifier, manager.getRootContext()));
+                manager.resolve(Registry.class, Default.class).bind(name, manager.resolve(type, qualifier));
             } catch (Exception e) {
                 throw new IllegalStateException("Can't bind " + name + ".", e);
             }
         };
-        manager.resolve(type, qualifier, manager.getRootContext());
+        manager.resolve(type, qualifier);
     }
 
 }

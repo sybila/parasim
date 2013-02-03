@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -24,8 +24,8 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Resolver;
 import org.sybila.parasim.execution.api.ExecutionResult;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.verification.result.VerificationResult;
@@ -40,8 +40,8 @@ public class ExperimentLauncher {
     private ExperimentLauncher() {
     }
 
-    public static VerificationResult launch(Manager manager, Experiment experiment) throws Exception {
-        ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
+    public static VerificationResult launch(Resolver resolver, Experiment experiment) throws Exception {
+        ComputationContainer container = resolver.resolve(ComputationContainer.class, Default.class);
         for (OdeSystemVariable variable : experiment.getOdeSystem()) {
             LOGGER.info(variable.getName() + "' = " + variable.getRightSideExpression().toFormula());
         }

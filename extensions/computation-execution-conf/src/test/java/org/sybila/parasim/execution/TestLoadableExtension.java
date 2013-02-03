@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,42 +19,19 @@
  */
 package org.sybila.parasim.execution;
 
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.sybila.parasim.core.Manager;
-import org.testng.annotations.Test;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestLoadableExtension {
-
-    private Manager manager;
-
-    @BeforeMethod
-    public void startManager() throws Exception {
-        System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/execution/parasim.xml");
-        manager = ManagerImpl.create();
-        manager.start();
-        assertNotNull(manager.resolve(ExtensionDescriptorMapper.class, Default.class, manager.getRootContext()));
-    }
-
-    @AfterMethod
-    public void stopManager() {
-        manager.shutdown();
-    }
+public class TestLoadableExtension extends ParasimTest {
 
     @Test
     public void testConfigurationLoaded() {
-        assertNotNull(getManager().resolve(ExecutionConfiguration.class, Default.class, getManager().getRootContext()));
-    }
-
-    protected final Manager getManager() {
-        return manager;
+        assertNotNull(getManager().resolve(ExecutionConfiguration.class, Default.class));
     }
 }

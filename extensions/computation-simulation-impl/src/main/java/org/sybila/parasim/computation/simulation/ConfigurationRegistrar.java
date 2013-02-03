@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -25,7 +25,7 @@ import org.sybila.parasim.computation.simulation.api.ImmutableAdaptiveStepConfig
 import org.sybila.parasim.computation.simulation.api.ImmutableConfiguration;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace;
-import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;

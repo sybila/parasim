@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -25,10 +25,10 @@ import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
-import org.sybila.parasim.core.annotations.Provide;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
-import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 
 /**

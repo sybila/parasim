@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -20,22 +20,19 @@
 package org.sybila.parasim.computation.cycledetection;
 
 import org.sybila.parasim.computation.cycledetection.api.CycleDetectorFactory;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.test.ParasimTest;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestLoadableExtension {
+public class TestLoadableExtension extends ParasimTest {
 
     @Test
     public void testLoad() throws Exception {
-        Manager manager = ManagerImpl.create();
-        manager.start();
-        assertNotNull(manager.resolve(CycleDetectorFactory.class, Default.class, manager.getRootContext()));
+        assertNotNull(getManager().resolve(CycleDetectorFactory.class, Default.class));
     }
 
 }

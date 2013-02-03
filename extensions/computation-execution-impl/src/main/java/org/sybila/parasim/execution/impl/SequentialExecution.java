@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -23,13 +23,13 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import org.apache.commons.lang3.Validate;
-import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.api.ComputationContext;
-import org.sybila.parasim.execution.api.ComputationInstanceContext;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Binder;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.ExecutionResult;
+import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.computation.ComputationId;
@@ -42,31 +42,23 @@ public class SequentialExecution<L extends Mergeable<L>> implements Execution<L>
     private final FutureTask<L> task;
     private final java.util.concurrent.Executor runnableExecutor;
     private final Computation computation;
-    private final ContextEvent<ComputationContext> parentContextEvent;
+    private final Context parentContext;
     private volatile boolean running = false;
 
-    public SequentialExecution(final ComputationId computationId, final java.util.concurrent.Executor runnableExecutor, final Computation<L> computation, final Enrichment enrichment, final ContextEvent<ComputationInstanceContext> contextEvent, final ComputationContext parentContext) {
-        this(computationId, runnableExecutor, computation, enrichment, null, contextEvent, parentContext);
-    }
-
-    public SequentialExecution(final ComputationId computationId, final java.util.concurrent.Executor runnableExecutor, final Computation<L> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> parentContextEvent, final ContextEvent<ComputationInstanceContext> instanceContextEvent, final ComputationContext parentContext) {
+    public SequentialExecution(final ComputationId computationId, final java.util.concurrent.Executor runnableExecutor, final Computation<L> computation, final Enrichment enrichment, final Context parentContext) {
         Validate.notNull(runnableExecutor);
         Validate.notNull(computation);
         Validate.notNull(enrichment);
-        Validate.notNull(instanceContextEvent);
+        Validate.notNull(parentContext);
         Validate.notNull(computationId);
         this.runnableExecutor = runnableExecutor;
         this.computation = computation;
-        this.parentContextEvent = parentContextEvent;
-        this.task = new FutureTask<>(createCallable(computation, instanceContextEvent, parentContext, enrichment, computationId));
+        this.parentContext = parentContext;
+        this.task = new FutureTask<>(createCallable(computation, parentContext, enrichment, computationId));
     }
 
-    public static <Result extends Mergeable<Result>> Execution<Result> of(final ComputationId computationId, final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationInstanceContext> instanceContextEvent, final ComputationContext parentContext) {
-        return new SequentialExecution<>(computationId, runnableExecutor, computation, enrichment, instanceContextEvent, parentContext);
-    }
-
-    public static <Result extends Mergeable<Result>> Execution<Result> of(final ComputationId computationId, final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final ContextEvent<ComputationContext> parentContextEvent, final ContextEvent<ComputationInstanceContext> instanceContextEvent, final ComputationContext parentContext) {
-        return new SequentialExecution<>(computationId, runnableExecutor, computation, enrichment, instanceContextEvent, parentContext);
+    public static <Result extends Mergeable<Result>> Execution<Result> of(final ComputationId computationId, final java.util.concurrent.Executor runnableExecutor, final Computation<Result> computation, final Enrichment enrichment, final Context parentContext) {
+        return new SequentialExecution<>(computationId, runnableExecutor, computation, enrichment, parentContext);
     }
 
     @Override
@@ -87,23 +79,18 @@ public class SequentialExecution<L extends Mergeable<L>> implements Execution<L>
         return running && !task.isDone() && !task.isCancelled();
     }
 
-    protected final Callable<L> createCallable(final Computation<L> computation, final ContextEvent<ComputationInstanceContext> contextEvent, final ComputationContext parentContext, final Enrichment enrichment, final ComputationId computationId) {
+    protected final Callable<L> createCallable(final Computation<L> computation, final Context parentContext, final Enrichment enrichment, final ComputationId computationId) {
         return new Callable<L>() {
             @Override
             public L call() throws Exception {
-                ComputationInstanceContext context = new ComputationInstanceContext();
+                Context context = parentContext.context(ComputationInstanceScope.class);
                 try {
-                    contextEvent.initialize(context);
-                    context.setParent(parentContext);
-                    context.getStorage().add(ComputationId.class, Default.class, computationId);
+                    ((Binder) context).bind(ComputationId.class, Default.class, computationId);
                     enrichment.enrich(computation, context);
                     return computation.call();
                 } finally {
                     computation.destroy();
-                    contextEvent.finalize(context);
-                    if (parentContextEvent != null) {
-                        parentContextEvent.finalize(parentContext);
-                    }
+                    context.destroy();
                 }
             }
         };

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,14 +19,8 @@
  */
 package org.sybila.parasim.core.event;
 
-import org.sybila.parasim.core.Manager;
-
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ManagerProcessing {
-
-    void extension(Class<?> extension);
-
-    Manager getManager();
+public class ManagerProcessing {
 }

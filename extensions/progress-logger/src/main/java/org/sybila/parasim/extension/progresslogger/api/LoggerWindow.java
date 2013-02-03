@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.extension.progresslogger.api;
 
-import org.sybila.parasim.core.extension.logging.LoggingListener;
+import org.sybila.parasim.core.spi.logging.LoggingListener;
 import org.sybila.parasim.util.SimpleWindow;
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,11 +19,11 @@
  */
 package org.sybila.parasim.execution;
 
-import org.testng.annotations.Test;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.execution.api.SequentialExecutor;
 import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -32,11 +32,11 @@ public class TestLoadableExtension extends AbstractExecutionTest {
 
     @Test
     public void testExecutorIsLoaded() {
-        assertNotNull(getManager().resolve(Executor.class, Default.class, getManager().getRootContext()));
+        assertNotNull(getManager().resolve(Executor.class, Default.class));
     }
 
     @Test
     public void testSequentialExecutorIsLoaded() {
-        assertNotNull(getManager().resolve(SequentialExecutor.class, Default.class, getManager().getRootContext()));
+        assertNotNull(getManager().resolve(SequentialExecutor.class, Default.class));
     }
 }

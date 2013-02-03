@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -21,24 +21,21 @@ package org.sybila.parasim.computation.density;
 
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
-import org.testng.annotations.Test;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.test.ParasimTest;
 import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestLoadableExtension {
+public class TestLoadableExtension extends ParasimTest {
 
     @Test(enabled=false)
     public void testLoad() throws Exception {
         System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/computation/density/parasim.xml");
-        Manager manager = ManagerImpl.create();
-        manager.start();
-        assertNotNull(manager.resolve(TrajectorySpawner.class, Default.class, manager.getRootContext()));
-        assertNotNull(manager.resolve(DistanceChecker.class, Default.class, manager.getRootContext()));
+        assertNotNull(getManager().resolve(TrajectorySpawner.class, Default.class));
+        assertNotNull(getManager().resolve(DistanceChecker.class, Default.class));
     }
 
 }

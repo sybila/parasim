@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,7 +19,7 @@
  */
 package org.sybila.parasim.extension.exporter.impl;
 
-import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.extension.exporter.api.ResultExporter;
 import org.sybila.parasim.extension.exporter.impl.annotations.Csv;
 

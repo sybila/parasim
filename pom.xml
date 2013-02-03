@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
 
@@ -36,9 +36,6 @@
                 <module>extensions/computation-simulation-impl</module>
                 <module>extensions/computation-verification-api</module>
                 <module>extensions/computation-verification-impl</module>
-                <module>extensions/performence-api</module>
-                <module>extensions/performence-conf</module>
-                <module>extensions/performence-impl</module>
                 <module>extensions/progress-logger</module>
                 <module>extensions/project-manager-api</module>
                 <module>extensions/project-manager-simple</module>
@@ -46,7 +43,7 @@
 		<module>extensions/result-export-impl</module>
                 <module>extensions/remote-api</module>
                 <module>extensions/remote-conf</module>
-                <module>extensions/remote-ftest</module>
+<!--                <module>extensions/remote-ftest</module> -->
                 <module>extensions/remote-impl</module>
                 <module>extensions/visualisation-plot-api</module>
                 <module>extensions/visualisation-plot-impl</module>

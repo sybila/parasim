@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -27,9 +27,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
@@ -43,7 +42,6 @@ import org.sybila.parasim.model.verification.stl.FutureFormula;
 import org.sybila.parasim.model.verification.stl.IntervalBoundaryType;
 import org.sybila.parasim.model.verification.stl.LinearPredicate;
 import org.sybila.parasim.model.verification.stl.TimeInterval;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 import org.w3c.dom.Document;
@@ -52,24 +50,12 @@ import org.w3c.dom.Element;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestValidityRegionsComputation {
-
-    private Manager manager;
-
-    @BeforeMethod
-    public void startManager() throws Exception {
-        manager = ManagerImpl.create();
-        manager.start();
-    }
-
-    public void stopManager() {
-        manager.shutdown();
-    }
+public class TestValidityRegionsComputation extends ParasimTest{
 
     @Test
     public void testComputation() throws ExecutionException, InterruptedException {
         ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f), 0);
-        ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
+        ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
         VerificationResult result = container.compute(computation).full().get();
         for (int i=0; i<result.size(); i++) {
             assertTrue(result.getRobustness(i).getValue() > 0, "The robustness in index [" + i + "] (point " + result.getPoint(i) + ") should be poisitive, but was " + result.getRobustness(i).getValue());
@@ -81,7 +67,7 @@ public class TestValidityRegionsComputation {
     @Test(enabled=false)
     public void testComputation2() throws ExecutionException, InterruptedException {
         ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createSimulationSpace(), createInitialSpace(), createFutureFormula(2), 0);
-        ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext());
+        ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
         VerificationResult result = container.compute(computation).full().get();
         for (int i=0; i<result.size(); i++) {
             assertEquals(result.getPoint(i).getTime(), 0f);
@@ -99,12 +85,15 @@ public class TestValidityRegionsComputation {
         return new FutureFormula(
                 new LinearPredicate(multipliers, constant, LinearPredicate.Type.GREATER,
                     new PointVariableMapping() {
+                        @Override
                         public int getDimension() {
                             return 1;
                         }
+                        @Override
                         public Integer getKey(String variableName) {
                             return 0;
                         }
+                        @Override
                         public String getName(Integer variableKey) {
                             return "x";
                         }

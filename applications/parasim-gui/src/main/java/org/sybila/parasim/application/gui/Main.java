@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -31,9 +31,9 @@ import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.application.model.TrajectoryAnalysisComputation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Manager;
+import org.sybila.parasim.core.impl.ManagerImpl;
 import org.sybila.parasim.extension.progresslogger.api.LoggerWindow;
 import org.sybila.parasim.extension.progresslogger.api.ProgressLogger;
 import org.sybila.parasim.extension.projectmanager.api.ExperimentListener;
@@ -72,16 +72,18 @@ public class Main {
     public static void main(String[] args) throws IOException, Exception {
         final Manager manager = ManagerImpl.create();
         manager.start();
-        ProgressLogger progressLogger = manager.resolve(ProgressLogger.class, Default.class, manager.getRootContext());
+        ProgressLogger progressLogger = manager.resolve(ProgressLogger.class, Default.class);
         final LoggerWindow loggerWindow = progressLogger.getLoggerWindow();
-        ProjectManager projectManager = manager.resolve(ProjectManager.class, Default.class, manager.getRootContext());
+        ProjectManager projectManager = manager.resolve(ProjectManager.class, Default.class);
         projectManager.addWindowListener(new WindowAdapter() {
 
             @Override
-            public void windowClosed(WindowEvent e) {
+            public void windowClosed(WindowEvent event) {
                 loggerWindow.dispose();
-                if (manager.isRunning()) {
-                    manager.shutdown();
+                try {
+                    manager.destroy();
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
                 }
                 System.exit(0);
             }
@@ -116,7 +118,7 @@ public class Main {
     }
 
     private static void plotResult(final Manager manager, final Experiment experiment, final VerificationResult result) {
-        final PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
+        final PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class);
         new SwingWorker<Plotter, Object>() {
 
             @Override
@@ -127,7 +129,7 @@ public class Main {
                     @Override
                     public void click(MouseOnResultListener.ResultEvent event) {
                         Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getFormula(), experiment.getPrecisionConfiguration(), experiment.getSimulationSpace());
-                        manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
+                        manager.resolve(ComputationContainer.class, Default.class).compute(computation);
                     }
                 });
                 return plotter;

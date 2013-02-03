@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,28 +19,23 @@
  */
 package org.sybila.parasim.execution.conf;
 
-import org.sybila.parasim.core.Instance;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.annotations.Observes;
-import org.sybila.parasim.core.event.ManagerStarted;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptor;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
-import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ExecutionConfigurator {
 
-    @Inject
-    private Instance<ExecutionConfiguration> configurationInstance;
-
-    public void provideConfiguration(@Observes ManagerStarted event, ExtensionDescriptorMapper mapper, ParasimDescriptor descriptor) throws IllegalAccessException {
+    @Provide
+    public ExecutionConfiguration provideConfiguration(ExtensionDescriptorMapper mapper, ParasimDescriptor descriptor) throws IllegalAccessException {
         ExecutionConfiguration configuration = new ExecutionConfiguration();
         ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("execution");
         if (extensionDescriptor != null) {
             mapper.map(extensionDescriptor, configuration);
         }
-        configurationInstance.set(configuration);
+        return configuration;
     }
 }

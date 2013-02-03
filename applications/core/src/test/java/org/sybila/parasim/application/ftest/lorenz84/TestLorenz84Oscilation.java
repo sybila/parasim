@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -31,11 +31,10 @@ import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.annotation.Inject;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
 import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.computation.AbstractComputation;
@@ -54,8 +53,6 @@ import org.sybila.parasim.model.verification.result.AbstractVerificationResult;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.stl.Formula;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -63,37 +60,20 @@ import org.testng.annotations.Test;
  */
 @NumberOfInstances(1)
 @RunWith(executor=SharedMemoryExecutor.class)
-public class TestLorenz84Oscilation {
-
-    private static Manager manager;
-
-    @BeforeClass
-    public static void startManager() throws Exception {
-        manager = ManagerImpl.create();
-        manager.start();
-    }
-
-    public static Manager getManager() {
-        return manager;
-    }
-
-    @AfterClass
-    public static void stopManager() {
-        manager.shutdown();
-    }
+public class TestLorenz84Oscilation extends ParasimTest {
 
     @Test
     public void testSimple() throws IOException, InterruptedException, ExecutionException {
         Experiment experiment = loadExperiment();
         Point initialPoint = new ArrayPoint(0f, 0f, 0f, 0f, 1.75f, 0.5625f);
-        VerificationResult timeNeeded = getManager().resolve(ComputationContainer.class, Default.class, getManager().getRootContext()).compute(new RobustnessComputation(
+        VerificationResult timeNeeded = getManager().resolve(ComputationContainer.class, Default.class).compute(new RobustnessComputation(
                 initialPoint,
                 experiment.getFormula().getTimeNeeded(),
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfiguration(),
                 experiment.getSimulationSpace(),
                 experiment.getFormula())).full().get();
-        VerificationResult simulationTime = getManager().resolve(ComputationContainer.class, Default.class, getManager().getRootContext()).compute(new RobustnessComputation(
+        VerificationResult simulationTime = getManager().resolve(ComputationContainer.class, Default.class).compute(new RobustnessComputation(
                 initialPoint,
                 experiment.getSimulationSpace().getMaxBounds().getTime(),
                 experiment.getOdeSystem(),

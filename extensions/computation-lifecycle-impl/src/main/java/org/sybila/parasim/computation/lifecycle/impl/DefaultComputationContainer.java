@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -25,28 +25,28 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.lifecycle.api.AbortionException;
-import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Resolver;
 import org.sybila.parasim.execution.api.Execution;
 import org.sybila.parasim.execution.api.ExecutionResult;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.model.Mergeable;
+import org.sybila.parasim.model.computation.Computation;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class DefaultComputationContainer implements ComputationContainer {
 
-    private Manager manager;
+    private Resolver resolver;
     private Map<Computation, Execution> executions;
 
-    public DefaultComputationContainer(Manager manager) {
-        Validate.notNull(manager);
-        this.manager = manager;
-        this.executions = new HashMap<Computation, Execution>();
+    public DefaultComputationContainer(Resolver resolver) {
+        Validate.notNull(resolver);
+        this.resolver = resolver;
+        this.executions = new HashMap<>();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class DefaultComputationContainer implements ComputationContainer {
             }
         }
         Class<? extends Executor> executorClass = runWith == null ? Executor.class : runWith.executor();
-        Executor executor = manager.resolve(executorClass, Default.class, manager.getRootContext());
+        Executor executor = resolver.resolve(executorClass, Default.class);
         Execution execution = executor.submit(computation);
         executions.put(computation, execution);
         return execution.execute();

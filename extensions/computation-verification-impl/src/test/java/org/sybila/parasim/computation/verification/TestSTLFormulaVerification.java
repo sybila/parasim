@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -30,7 +30,8 @@ import org.sybila.parasim.computation.cycledetection.api.CycleDetector;
 import org.sybila.parasim.computation.cycledetection.api.SimpleCycleDetector;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.trajectory.ArrayDataBlock;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
@@ -54,14 +55,14 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestSTLFormulaVerification extends AbstractVerificationTest {
+public class TestSTLFormulaVerification extends ParasimTest {
 
     @Test
     public void testAnd() {
         Formula formula = new AndFormula(
                 createPredicate(createMapping(), Type.GREATER, 1),
                 createPredicate(createMapping(), Type.GREATER, 10));
-        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext());
+        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class);
         VerifiedDataBlock verified = verifier.verify(
                 new CycleDetectedDataBlockWrapper<>(new ArrayDataBlock<>(new Trajectory[] { createTrajectory(1, 2, 3) })),
                 formula);
@@ -75,7 +76,7 @@ public class TestSTLFormulaVerification extends AbstractVerificationTest {
     @Test
     public void testFuture() {
         Formula formula = new FutureFormula(createPredicate(createMapping(), Type.GREATER, 10), new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
-        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext());
+        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class);
         VerifiedDataBlock verified = verifier.verify(
                 new CycleDetectedDataBlockWrapper<>(new ArrayDataBlock<>(new Trajectory[] { createTrajectory(1, 2, 3, 11, 12, 13) })),
                 formula);
@@ -89,7 +90,7 @@ public class TestSTLFormulaVerification extends AbstractVerificationTest {
     @Test
     public void testGlobally() {
         Formula formula = new GloballyFormula(createPredicate(createMapping(), Type.GREATER, 10), new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
-        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext());
+        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class);
         VerifiedDataBlock verified = verifier.verify(
                 new CycleDetectedDataBlockWrapper<>(new ArrayDataBlock<>(new Trajectory[] { createTrajectory(1, 2, 3, 10, 11, 12) })),
                 formula);
@@ -105,7 +106,7 @@ public class TestSTLFormulaVerification extends AbstractVerificationTest {
         Formula formula = new OrFormula(
                 createPredicate(createMapping(), Type.GREATER, 1),
                 createPredicate(createMapping(), Type.GREATER, 10));
-        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext());
+        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class);
         VerifiedDataBlock verified = verifier.verify(
                 new CycleDetectedDataBlockWrapper<>(new ArrayDataBlock<>(new Trajectory[] { createTrajectory(2, 3, 4) })),
                 formula);
@@ -123,7 +124,7 @@ public class TestSTLFormulaVerification extends AbstractVerificationTest {
                 createPredicate(createMapping(), Type.LESSER, 15),
                 new TimeInterval(2, 4, IntervalBoundaryType.CLOSED)
                 );
-        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext());
+        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class);
         VerifiedDataBlock verified = verifier.verify(
                 new CycleDetectedDataBlockWrapper<>(new ArrayDataBlock<>(new Trajectory[] { createTrajectory(10, 10, 16, 12, 15, 9) })),
                 formula);
@@ -136,7 +137,7 @@ public class TestSTLFormulaVerification extends AbstractVerificationTest {
                 createPredicate(createMapping(), Type.GREATER, 4),
                 new TimeInterval(1, 100, IntervalBoundaryType.CLOSED)
                 );
-        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class, getManager().getRootContext());
+        STLVerifier verifier = getManager().resolve(STLVerifier.class, Default.class);
         Trajectory trajectory = createTrajectory(9, 8, 7, 6, 5);
         CycleDetectedDataBlock<Trajectory> toVerify = new CycleDetectedDataBlockWrapper<>(
                 new ArrayDataBlock<>(new Trajectory[] { trajectory }),

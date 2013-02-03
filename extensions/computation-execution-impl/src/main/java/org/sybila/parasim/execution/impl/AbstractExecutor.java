@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -22,11 +22,9 @@ package org.sybila.parasim.execution.impl;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import org.apache.commons.lang3.Validate;
-import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.context.Context;
-import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.api.ComputationContext;
-import org.sybila.parasim.execution.api.ComputationInstanceContext;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.ContextFactory;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.execution.api.Executor;
 import org.sybila.parasim.execution.conf.ExecutionConfiguration;
 
@@ -35,28 +33,21 @@ import org.sybila.parasim.execution.conf.ExecutionConfiguration;
  */
 public abstract class AbstractExecutor implements Executor {
 
-    private final ContextEvent<ComputationContext> computationContextEvent;
-    private final ContextEvent<ComputationInstanceContext> computationInstanceContextEvent;
+    private final ContextFactory contextFactory;
     private final Enrichment enrichment;
     private final ExecutionConfiguration configuration;
 
-    public AbstractExecutor(final ContextEvent<ComputationContext> computationContextEvent, final ContextEvent<ComputationInstanceContext> computationInstanceContextEvent, final Enrichment enrichment, final ExecutionConfiguration configuration) {
-        Validate.notNull(computationContextEvent);
-        Validate.notNull(computationInstanceContextEvent);
+    public AbstractExecutor(ContextFactory contextFactory, final Enrichment enrichment, final ExecutionConfiguration configuration) {
+        Validate.notNull(contextFactory);
         Validate.notNull(enrichment);
         Validate.notNull(configuration);
-        this.computationContextEvent = computationContextEvent;
-        this.computationInstanceContextEvent = computationInstanceContextEvent;
+        this.contextFactory = contextFactory;
         this.enrichment = enrichment;
         this.configuration = configuration;
     }
 
-    protected final ContextEvent<ComputationContext> getComputationContextEvent() {
-        return computationContextEvent;
-    }
-
-    protected final ContextEvent<ComputationInstanceContext> getComputationInstanceContextEvent() {
-        return computationInstanceContextEvent;
+    protected final ContextFactory getContextFactory() {
+        return contextFactory;
     }
 
     protected final Enrichment getEnrichment() {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -29,21 +29,21 @@ import org.sybila.parasim.application.model.ExperimentImpl;
 import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.application.model.TrajectoryAnalysisComputation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Manager;
+import org.sybila.parasim.core.impl.ManagerImpl;
 import org.sybila.parasim.extension.exporter.api.ResultExporter;
 import org.sybila.parasim.extension.exporter.impl.annotations.Csv;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.xml.XMLException;
 import org.sybila.parasim.model.xml.XMLResource;
+import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
+import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener.ResultEvent;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterFactory;
 import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener.PlotterWindowEvent;
-import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener;
-import org.sybila.parasim.visualisation.plot.api.MouseOnResultListener.ResultEvent;
 import org.sybila.parasim.visualisation.plot.api.annotations.Strict;
 
 /**
@@ -57,7 +57,7 @@ public class Main {
     private static ParasimOptions options = null;
     private static Experiment experiment = null;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         try {
             // load options
             options = ParasimOptions.create(args);
@@ -113,7 +113,7 @@ public class Main {
         }
     }
 
-    private static void executeExperiment() throws IOException {
+    private static void executeExperiment() throws Exception {
         // launch experiment
         VerificationResult result = null;
         try {
@@ -135,18 +135,18 @@ public class Main {
             }
         }
         if (options.getCsvFile() != null) {
-            manager.resolve(ResultExporter.class, Csv.class, manager.getRootContext()).export(result, experiment.getOdeSystem(), new File(options.getCsvFile()));
+            manager.resolve(ResultExporter.class, Csv.class).export(result, experiment.getOdeSystem(), new File(options.getCsvFile()));
         }
 
         // plot result
         if (!options.isBatch()) {
             plotResult(result);
         } else {
-            manager.shutdown();
+            manager.destroy();
         }
     }
 
-    private static void showResult() throws XMLException, IOException {
+    private static void showResult() throws Exception {
         XMLResource<VerificationResult> input = experiment.getVerificationResultResource();
         try {
             input.load();
@@ -155,30 +155,34 @@ public class Main {
             System.exit(1);
         }
         if (options.getCsvFile() != null) {
-            manager.resolve(ResultExporter.class, Csv.class, manager.getRootContext()).export(input.getRoot(), experiment.getOdeSystem(), new File(options.getCsvFile()));
+            manager.resolve(ResultExporter.class, Csv.class).export(input.getRoot(), experiment.getOdeSystem(), new File(options.getCsvFile()));
         }
         if (!options.isBatch()) {
             plotResult(input.getRoot());
         } else {
-            manager.shutdown();
+            manager.destroy();
         }
     }
 
     private static void plotResult(VerificationResult result) throws XMLException {
 
-        PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class, manager.getRootContext());
+        PlotterFactory strictPlotterFactory = manager.resolve(PlotterFactory.class, Strict.class);
         final Plotter plotter = strictPlotterFactory.getPlotter(result, experiment.getOdeSystem());
         plotter.addMouseOnResultListener(new MouseOnResultListener() {
             @Override
             public void click(ResultEvent event) {
                 Computation computation = new TrajectoryAnalysisComputation(plotter, event.getPoint(), experiment.getOdeSystem(), experiment.getFormula(), experiment.getPrecisionConfiguration(), experiment.getSimulationSpace());
-                manager.resolve(ComputationContainer.class, Default.class, manager.getRootContext()).compute(computation);
+                manager.resolve(ComputationContainer.class, Default.class).compute(computation);
             }
         });
         plotter.addPlotterWindowListener(new PlotterWindowListener() {
             @Override
             public void windowClosed(PlotterWindowEvent event) {
-                manager.shutdown();
+                try {
+                    manager.destroy();
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
             }
         });
         plotter.plot();

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -32,36 +32,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.sybila.parasim.execution.impl.TestSequentialExecution;
 import org.sybila.parasim.model.computation.AbstractComputation;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.extension.configuration.api.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.annotation.Inject;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.MergeableBox;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class AbstractExecutionTest {
-
-    private Manager manager;
-
-    @BeforeMethod
-    public void startManager() throws Exception {
-        System.setProperty("parasim.config.file", "src/test/resources/org/sybila/parasim/execution/parasim.xml");
-        manager = ManagerImpl.create();
-        manager.start();
-        assertNotNull(manager.resolve(ExtensionDescriptorMapper.class, Default.class, manager.getRootContext()));
-    }
-
-    @AfterMethod
-    public void stopManager() {
-        manager.shutdown();
-    }
+public class AbstractExecutionTest extends ParasimTest {
 
     protected <R extends Mergeable<R>> void testExecute(Execution<R> execution, R expected) throws InterruptedException, ExecutionException, TimeoutException {
         assertEquals(execution.execute().full().get(2, TimeUnit.SECONDS), expected);
@@ -75,10 +55,6 @@ public class AbstractExecutionTest {
             fail("The execution has been canceled, so the Future.get() method should throw exception.");
         } catch(CancellationException e) {
         }
-    }
-
-    protected final Manager getManager() {
-        return manager;
     }
 
     protected static class MergeableString extends MergeableBox<MergeableString, String> {

@@ -19,10 +19,9 @@
  */
 package org.sybila.parasim.extension.remote.ftest;
 
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.extension.configuration.api.ParasimDescriptor;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
+import org.sybila.parasim.core.test.ParasimTest;
 import org.sybila.parasim.extension.remote.api.RemoteControl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -30,18 +29,16 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class TestRemoteControl {
+public class TestRemoteControl extends ParasimTest {
 
     @Test(enabled=true)
     public void testStart() throws Exception {
         System.setProperty("parasim.config.file", "src/test/resources/parasim.xml");
         System.setProperty("parasim.remote.target", "target/dependency/remote-impl.jar");
-        Manager manager = ManagerImpl.create();
-        manager.start();
-        ParasimDescriptor descriptor = manager.resolve(ParasimDescriptor.class, Default.class, manager.getRootContext());
+        ParasimDescriptor descriptor = getManager().resolve(ParasimDescriptor.class, Default.class);
         RemoteControl control = null;
         try {
-            control = manager.resolve(RemoteControl.class, Default.class, manager.getRootContext());
+            control = getManager().resolve(RemoteControl.class, Default.class);
             Assert.assertEquals(control.getHostControls().size(), 1, "Number of remote hosts doesn't match.");
             Assert.assertTrue(control.getHostControls().iterator().next().isRunning(false), "The remote host should be running, but it isn't.");
             Assert.assertTrue(control.getHostControls().iterator().next().isRunning(true), "The remote host should be running, but it isn't.");

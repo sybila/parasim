@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -21,8 +21,8 @@ package org.sybila.parasim.execution.impl;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.annotations.Inject;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.execution.AbstractExecutionTest;
 import org.sybila.parasim.execution.api.ComputationEmitter;
 import org.sybila.parasim.execution.api.Execution;
@@ -64,12 +64,12 @@ public class TestSharedMemoryExecutorImpl extends AbstractExecutionTest {
     }
 
     protected <L extends Mergeable<L>> Execution<L> createSharedMemoryExecution(Computation<L> computation) {
-        return getManager().resolve(SharedMemoryExecutor.class, Default.class, getManager().getRootContext()).submit(computation);
+        return getManager().resolve(SharedMemoryExecutor.class, Default.class).submit(computation);
     }
 
     protected MergeableInteger createExpectedResult() {
         int expected = 0;
-        for (int i=1; i<getManager().resolve(ExecutionConfiguration.class, Default.class, getManager().getRootContext()).getNumberOfThreadsInSharedMemory(); i++) {
+        for (int i=1; i<getManager().resolve(ExecutionConfiguration.class, Default.class).getNumberOfThreadsInSharedMemory(); i++) {
             expected += i;
         }
         return new MergeableInteger(expected);

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -29,8 +29,8 @@ import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngine;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
 import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
-import org.sybila.parasim.core.annotations.Inject;
-import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.annotation.Inject;
+import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.execution.api.SharedMemoryExecutor;
 import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.Mergeable;

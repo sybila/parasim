@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -17,17 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.sybila.parasim.execution.impl;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
-import org.sybila.parasim.execution.api.ComputationContext;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.execution.api.ComputationEmitter;
-import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.computation.Computation;
 
@@ -37,16 +34,14 @@ import org.sybila.parasim.model.computation.Computation;
 public class SharedMemoryComputationEmitter<L extends Mergeable<L>> implements ComputationEmitter<L> {
 
     private final AtomicInteger maxId;
-    private final ComputationContext parentContext;
+    private final Context parentContext;
     private final java.util.concurrent.Executor runnableExecutor;
     private final Enrichment enrichment;
-    private final ContextEvent<ComputationInstanceContext> computationInstanceContextEvent;
     private final BlockingQueue<Future<L>> futures;
 
-    public SharedMemoryComputationEmitter(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, ContextEvent<ComputationInstanceContext> computationInstanceContextEvent, ComputationContext parentContext, AtomicInteger maxId, BlockingQueue<Future<L>> futures) {
+    public SharedMemoryComputationEmitter(java.util.concurrent.Executor runnableExecutor, Enrichment enrichment, Context parentContext, AtomicInteger maxId, BlockingQueue<Future<L>> futures) {
         this.runnableExecutor = runnableExecutor;
         this.enrichment = enrichment;
-        this.computationInstanceContextEvent = computationInstanceContextEvent;
         this.maxId = maxId;
         this.parentContext = parentContext;
         this.futures = futures;
@@ -59,7 +54,6 @@ public class SharedMemoryComputationEmitter<L extends Mergeable<L>> implements C
                 runnableExecutor,
                 (Computation) computation,
                 enrichment,
-                computationInstanceContextEvent,
                 parentContext).execute().full());
     }
 }

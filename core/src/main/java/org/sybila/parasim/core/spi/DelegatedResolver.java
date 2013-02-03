@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -20,8 +20,10 @@
 package org.sybila.parasim.core.spi;
 
 import java.lang.annotation.Annotation;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.context.Context;
+import java.util.Collection;
+import org.sybila.parasim.core.api.Binder;
+import org.sybila.parasim.core.api.Extension;
+import org.sybila.parasim.core.api.Resolver;
 
 /**
  * The delegated resolver is invoked when the manager can't resolve the instance
@@ -31,6 +33,6 @@ import org.sybila.parasim.core.context.Context;
  */
 public interface DelegatedResolver extends Sortable {
 
-    <T> T resolve(Manager manager, Class<T> type, Class<? extends Annotation> qualifier, Context context);
+    <T> T resolve(Resolver resolver, Binder binder, Collection<Extension> targets, Class<T> type, Class<? extends Annotation> qualifier);
 
 }

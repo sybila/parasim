@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -21,13 +21,12 @@ package org.sybila.parasim.execution.impl;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import org.sybila.parasim.core.ContextEvent;
-import org.sybila.parasim.core.annotations.Default;
-import org.sybila.parasim.core.extension.enrichment.api.Enrichment;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.execution.AbstractExecutionTest;
-import org.sybila.parasim.execution.api.ComputationContext;
-import org.sybila.parasim.execution.api.ComputationInstanceContext;
 import org.sybila.parasim.execution.api.Execution;
+import org.sybila.parasim.execution.api.annotations.ComputationScope;
 import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.computation.ComputationId;
 import org.testng.annotations.Test;
@@ -48,9 +47,7 @@ public class TestSequentialExecution extends AbstractExecutionTest {
     }
 
     protected Execution<MergeableString> createSequentialExecution(Computation computation) {
-        ComputationContext computationContext = new ComputationContext();
-        getManager().initializeContext(computationContext);
-        computationContext.setParent(getManager().getRootContext());
+        Context context = getManager().context(ComputationScope.class);
         return SequentialExecution.of(
                 new ComputationId() {
                     @Override
@@ -63,34 +60,10 @@ public class TestSequentialExecution extends AbstractExecutionTest {
                         return 0;
                     }
                 },
-                getManager().resolve(java.util.concurrent.Executor.class, Default.class, getManager().getRootContext()),
+                getManager().resolve(java.util.concurrent.Executor.class, Default.class),
                 computation,
-                getManager().resolve(Enrichment.class, Default.class, getManager().getRootContext()),
-                new ContextEvent<ComputationContext>() {
-                    @Override
-                    public void initialize(ComputationContext context) {
-                        context.setParent(getManager().getRootContext());
-                        getManager().initializeContext(context);
-                    }
-
-                    @Override
-                    public void finalize(ComputationContext context) {
-                        getManager().finalizeContext(context);
-                    }
-                },
-                new ContextEvent<ComputationInstanceContext>() {
-                    @Override
-                    public void initialize(ComputationInstanceContext context) {
-                        context.setParent(getManager().getRootContext());
-                        getManager().initializeContext(context);
-                    }
-
-                    @Override
-                    public void finalize(ComputationInstanceContext context) {
-                        getManager().finalizeContext(context);
-                    }
-                },
-                computationContext);
+                getManager().resolve(Enrichment.class, Default.class),
+                context);
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -20,8 +20,8 @@
 package org.sybila.parasim.computation.lifecycle.impl;
 
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.annotations.Provide;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.Resolver;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -29,7 +29,7 @@ import org.sybila.parasim.core.annotations.Provide;
 public class ComputationContainerRegistrar {
 
     @Provide
-    public ComputationContainer getComputationContainer(Manager manager) {
-        return new DefaultComputationContainer(manager);
+    public ComputationContainer getComputationContainer(Resolver resolver) {
+        return new DefaultComputationContainer(resolver);
     }
 }

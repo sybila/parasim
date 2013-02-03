@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -19,8 +19,8 @@
  */
 package org.sybila.parasim.extension.exporter.impl;
 
-import org.sybila.parasim.core.LoadableExtension;
-import org.sybila.parasim.core.extension.loader.api.ExtensionBuilder;
+import org.sybila.parasim.core.api.loader.ExtensionBuilder;
+import org.sybila.parasim.core.spi.LoadableExtension;
 
 public class ResultExporterExtension implements LoadableExtension {
 

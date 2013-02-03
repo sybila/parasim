@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2012, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -22,9 +22,9 @@ package org.sybila.parasim.extension.remote.impl;
 import java.rmi.registry.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sybila.parasim.core.Manager;
-import org.sybila.parasim.core.ManagerImpl;
-import org.sybila.parasim.core.annotations.Default;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.api.Manager;
+import org.sybila.parasim.core.impl.ManagerImpl;
 import org.sybila.parasim.extension.remote.api.RemoteHostActivity;
 import org.sybila.parasim.extension.remote.api.RemoteManager;
 
@@ -42,8 +42,8 @@ public class ParasimRemoteServer {
     public static void start() throws Exception {
         Manager manager = ManagerImpl.create();
         manager.start();
-        manager.resolve(Registry.class, Default.class, manager.getRootContext()).bind(Default.class.getSimpleName() + "-" + RemoteManager.class.getName(), new RemoteManagerImpl(manager));
-        manager.resolve(RemoteHostActivity.class, Default.class, manager.getRootContext()).waitUntilFinished();
+        manager.resolve(Registry.class, Default.class).bind(Default.class.getSimpleName() + "-" + RemoteManager.class.getName(), new RemoteManagerImpl(manager));
+        manager.resolve(RemoteHostActivity.class, Default.class).waitUntilFinished();
     }
 
 }
