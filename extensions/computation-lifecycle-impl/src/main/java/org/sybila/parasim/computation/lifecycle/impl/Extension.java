@@ -17,24 +17,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.computation.lifecycle.impl;
 
-import org.sybila.parasim.model.Mergeable;
+import org.sybila.parasim.core.api.loader.ExtensionBuilder;
+import org.sybila.parasim.core.spi.LoadableExtension;
 
 /**
- * The entry point to compute your computation instance. Computation container
- * is able to read annotations defined in your computation to configure its execution.
- *
- * @see org.sybila.parasim.computation.lifecycle.api.annotation.RunWith
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public class Extension implements LoadableExtension {
 
-    /**
-     * Performs the execution of the given computation instance.
-     *
-     * @param <Result> type of the result
-     * @return computed result
-     */
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.extension(Registrar.class);
+        builder.extension(ComputationScopeRegistrar.class);
+    }
 }

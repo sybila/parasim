@@ -17,32 +17,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api.annotations;
+package org.sybila.parasim.computation.lifecycle.impl;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.Executor;
 import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
+import org.sybila.parasim.computation.lifecycle.impl.common.DefaultComputationContainer;
+import org.sybila.parasim.computation.lifecycle.impl.shared.SharedMemoryExecutorImpl;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.Resolver;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 
 /**
- * Defines a configuration for the given computation.
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface RunWith {
+public class Registrar {
 
-    /**
-     * Specifies the executor used for execution.
-     *
-     * @see org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor
-     * @see org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor
-     */
-    Class<? extends Executor> executor() default SharedMemoryExecutor.class;
+    @Provide
+    public ComputationContainer provideComputationContainer(Resolver resolver) {
+        return new DefaultComputationContainer(resolver);
+    }
 
+    @Provide
+    public SharedMemoryExecutor provideSharedMemoryExecutor(Enrichment enrichment, Context context) {
+        return new SharedMemoryExecutorImpl(enrichment, context);
+    }
+
+    @Provide
+    public Executor provideExecutor(SharedMemoryExecutor executor) {
+        return executor;
+    }
 }

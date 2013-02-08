@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <name>computation-lifecycle-api</name>
-    
+
     <parent>
         <groupId>org.sybila.parasim</groupId>
         <artifactId>parasim-parent</artifactId>
@@ -24,11 +24,6 @@
         <dependency>
             <groupId>org.sybila.parasim.model</groupId>
             <artifactId>core</artifactId>
-            <version>${project.version}</version>
-        </dependency>        
-        <dependency>
-            <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-execution-api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

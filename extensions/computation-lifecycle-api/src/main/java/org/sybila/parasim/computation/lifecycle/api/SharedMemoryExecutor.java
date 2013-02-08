@@ -19,22 +19,9 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
-import org.sybila.parasim.model.Mergeable;
-
 /**
- * The entry point to compute your computation instance. Computation container
- * is able to read annotations defined in your computation to configure its execution.
+ * Interface for executors performing the execution in shared memory.
  *
- * @see org.sybila.parasim.computation.lifecycle.api.annotation.RunWith
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
-
-    /**
-     * Performs the execution of the given computation instance.
-     *
-     * @param <Result> type of the result
-     * @return computed result
-     */
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
-}
+public interface SharedMemoryExecutor extends Executor {}

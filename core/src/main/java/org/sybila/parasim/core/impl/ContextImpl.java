@@ -90,6 +90,7 @@ public class ContextImpl implements Context, Binder {
         context.bind(Resolver.class, Default.class, context);
         context.bind(EventDispatcher.class, Default.class, context);
         context.bind(ContextFactory.class, Default.class, context);
+        context.bind(Binder.class, Default.class, context);
         // providers
         Map<QualifiedType, ProvidingPoint> immediateProviders = new HashMap<>();
         for (Extension extension : context.extensions) {

@@ -17,12 +17,12 @@
     <dependencies>
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-density-api</artifactId>
+            <artifactId>computation-lifecycle-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-execution-api</artifactId>
+            <artifactId>computation-density-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

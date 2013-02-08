@@ -19,11 +19,6 @@
         <!-- model -->
         <dependency>
             <groupId>org.sybila.parasim.model</groupId>
-            <artifactId>computation</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sybila.parasim.model</groupId>
             <artifactId>ode</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -56,11 +51,6 @@
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
             <artifactId>computation-verification-impl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-execution-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

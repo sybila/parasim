@@ -23,7 +23,7 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
+import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngine;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
@@ -31,12 +31,8 @@ import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
 import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.core.annotation.Provide;
-import org.sybila.parasim.execution.api.SharedMemoryExecutor;
-import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
 import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.Mergeable.Void;
-import org.sybila.parasim.model.computation.AbstractComputation;
-import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.Point;
@@ -48,9 +44,7 @@ import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@RunWith(executor=SharedMemoryExecutor.class)
-@NumberOfInstances(1)
-public class TrajectoryAnalysisComputation extends AbstractComputation<Mergeable.Void> {
+public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryAnalysisComputation.class);
 
@@ -97,8 +91,7 @@ public class TrajectoryAnalysisComputation extends AbstractComputation<Mergeable
         this.property = property;
     }
 
-    @Override
-    public Computation<Void> cloneComputation() {
+    protected final Computation<Void> cloneComputation() {
         return new TrajectoryAnalysisComputation(plotter, point, odeSystem, property, precision, simulationSpace);
     }
 
@@ -119,6 +112,11 @@ public class TrajectoryAnalysisComputation extends AbstractComputation<Mergeable
             plotter.addPlotterWindowListener(new CleanerListener(simulationEgine, script));
         }
         return Mergeable.Void.INSTANCE;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private static class CleanerListener implements PlotterWindowListener {

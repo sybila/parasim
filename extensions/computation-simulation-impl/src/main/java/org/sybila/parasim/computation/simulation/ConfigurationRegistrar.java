@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.simulation;
 
+import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.Configuration;
 import org.sybila.parasim.computation.simulation.api.ImmutableAdaptiveStepConfiguraton;
@@ -26,7 +27,6 @@ import org.sybila.parasim.computation.simulation.api.ImmutableConfiguration;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace;
 import org.sybila.parasim.core.annotation.Provide;
-import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 

@@ -22,10 +22,12 @@ package org.sybila.parasim.application.ftest.lorenz84;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.application.model.ExperimentImpl;
+import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
-import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
@@ -35,10 +37,6 @@ import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.core.test.ParasimTest;
-import org.sybila.parasim.execution.api.SharedMemoryExecutor;
-import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
-import org.sybila.parasim.model.computation.AbstractComputation;
-import org.sybila.parasim.model.computation.Computation;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
@@ -58,12 +56,10 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@NumberOfInstances(1)
-@RunWith(executor=SharedMemoryExecutor.class)
 public class TestLorenz84Oscilation extends ParasimTest {
 
     @Test
-    public void testSimple() throws IOException, InterruptedException, ExecutionException {
+    public void testSimple() throws IOException, InterruptedException, ExecutionException, TimeoutException {
         Experiment experiment = loadExperiment();
         Point initialPoint = new ArrayPoint(0f, 0f, 0f, 0f, 1.75f, 0.5625f);
         VerificationResult timeNeeded = getManager().resolve(ComputationContainer.class, Default.class).compute(new RobustnessComputation(
@@ -72,14 +68,14 @@ public class TestLorenz84Oscilation extends ParasimTest {
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfiguration(),
                 experiment.getSimulationSpace(),
-                experiment.getFormula())).full().get();
+                experiment.getFormula())).get(40, TimeUnit.SECONDS);
         VerificationResult simulationTime = getManager().resolve(ComputationContainer.class, Default.class).compute(new RobustnessComputation(
                 initialPoint,
                 experiment.getSimulationSpace().getMaxBounds().getTime(),
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfiguration(),
                 experiment.getSimulationSpace(),
-                experiment.getFormula())).full().get();
+                experiment.getFormula())).get(40, TimeUnit.SECONDS);
         Assert.assertEquals(timeNeeded.getRobustness(0).getValue(), simulationTime.getRobustness(0).getValue(), 0.005f, "Analysis shouldn't be dependent on simulation length.");
     }
 
@@ -87,7 +83,7 @@ public class TestLorenz84Oscilation extends ParasimTest {
         return ExperimentImpl.fromPropertiesFile(TestLorenz84Oscilation.class.getClassLoader().getResource("org/sybila/parasim/application/ftest/lorenz84/experiment-oscil.properties").getFile());
     }
 
-    protected static class RobustnessComputation extends AbstractComputation<VerificationResult> {
+    protected static class RobustnessComputation implements Computation<VerificationResult> {
 
         private final float simulationTime;
         private final OrthogonalSpace originalSimulationSpace;
@@ -119,8 +115,7 @@ public class TestLorenz84Oscilation extends ParasimTest {
             this.property = property;
         }
 
-        @Override
-        public Computation<VerificationResult> cloneComputation() {
+        protected final Computation<VerificationResult> cloneComputation() {
             return new RobustnessComputation(initialPoint, simulationTime, odeSystem, precisionConfiguration, originalSimulationSpace, property);
         }
 
@@ -145,6 +140,10 @@ public class TestLorenz84Oscilation extends ParasimTest {
                     return robustness;
                 }
             };
+        }
+
+        @Override
+        public void destroy() throws Exception {
         }
 
     }

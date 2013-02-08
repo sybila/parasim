@@ -17,24 +17,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.computation.lifecycle.impl.common;
 
-import org.sybila.parasim.model.Mergeable;
+import org.sybila.parasim.computation.lifecycle.api.Executor;
+import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 
 /**
- * The entry point to compute your computation instance. Computation container
- * is able to read annotations defined in your computation to configure its execution.
- *
- * @see org.sybila.parasim.computation.lifecycle.api.annotation.RunWith
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public abstract class AbstractExecutor implements Executor {
 
-    /**
-     * Performs the execution of the given computation instance.
-     *
-     * @param <Result> type of the result
-     * @return computed result
-     */
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    private final Enrichment enrichment;
+    private final Context context;
+
+    public AbstractExecutor(Enrichment enrichment, Context context) {
+        this.enrichment = enrichment;
+        this.context = context;
+    }
+
+    protected Context getContext() {
+        return context;
+    }
+
+    protected Enrichment getEnrichment() {
+        return enrichment;
+    }
+
 }

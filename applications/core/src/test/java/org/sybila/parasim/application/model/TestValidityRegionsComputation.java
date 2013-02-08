@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.core.annotation.Default;
@@ -53,10 +55,10 @@ import org.w3c.dom.Element;
 public class TestValidityRegionsComputation extends ParasimTest{
 
     @Test
-    public void testComputation() throws ExecutionException, InterruptedException {
+    public void testComputation() throws ExecutionException, InterruptedException, TimeoutException {
         ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f), 0);
         ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
-        VerificationResult result = container.compute(computation).full().get();
+        VerificationResult result = container.compute(computation).get(40, TimeUnit.SECONDS);
         for (int i=0; i<result.size(); i++) {
             assertTrue(result.getRobustness(i).getValue() > 0, "The robustness in index [" + i + "] (point " + result.getPoint(i) + ") should be poisitive, but was " + result.getRobustness(i).getValue());
             assertEquals(result.getPoint(i).getTime(), 0f);
@@ -65,10 +67,10 @@ public class TestValidityRegionsComputation extends ParasimTest{
 
     // TODO: fix test
     @Test(enabled=false)
-    public void testComputation2() throws ExecutionException, InterruptedException {
+    public void testComputation2() throws ExecutionException, InterruptedException, TimeoutException {
         ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createSimulationSpace(), createInitialSpace(), createFutureFormula(2), 0);
         ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
-        VerificationResult result = container.compute(computation).full().get();
+        VerificationResult result = container.compute(computation).get(40, TimeUnit.SECONDS);
         for (int i=0; i<result.size(); i++) {
             assertEquals(result.getPoint(i).getTime(), 0f);
             if (result.getPoint(i).getValue(0) > 2) {

@@ -19,22 +19,25 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
-import org.sybila.parasim.model.Mergeable;
+import java.util.concurrent.ExecutionException;
 
 /**
- * The entry point to compute your computation instance. Computation container
- * is able to read annotations defined in your computation to configure its execution.
- *
- * @see org.sybila.parasim.computation.lifecycle.api.annotation.RunWith
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public interface Future<V> extends java.util.concurrent.Future<V> {
 
     /**
-     * Performs the execution of the given computation instance.
-     *
-     * @param <Result> type of the result
-     * @return computed result
+     * Returns a computation status.
      */
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    Status getStatus();
+
+    /**
+     * Returns a partial result. The partial result can be returned only
+     * when the computation has been forked to more computation instances and
+     * some of the instances has already finished.
+     *
+     * @return partial result or null if there is no partial result available
+     */
+    V getPartial() throws InterruptedException, ExecutionException;;
+
 }

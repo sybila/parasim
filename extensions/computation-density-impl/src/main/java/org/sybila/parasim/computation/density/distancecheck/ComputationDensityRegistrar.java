@@ -23,8 +23,8 @@ import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.computation.density.spawn.cpu.FractionTrajectorySpawner;
+import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.core.annotation.Provide;
-import org.sybila.parasim.execution.api.annotations.ComputationScope;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>

@@ -19,12 +19,12 @@
  */
 package org.sybila.parasim.computation.simulation;
 
+import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.api.Context;
 import org.sybila.parasim.core.test.ParasimTest;
-import org.sybila.parasim.execution.api.annotations.ComputationInstanceScope;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 

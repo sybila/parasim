@@ -27,9 +27,6 @@
                 <module>extensions/computation-cycledetection-impl</module>
                 <module>extensions/computation-density-api</module>
                 <module>extensions/computation-density-impl</module>
-                <module>extensions/computation-execution-api</module>
-                <module>extensions/computation-execution-conf</module>
-                <module>extensions/computation-execution-impl</module>
                 <module>extensions/computation-lifecycle-api</module>
                 <module>extensions/computation-lifecycle-impl</module>
                 <module>extensions/computation-simulation-api</module>
@@ -41,10 +38,10 @@
                 <module>extensions/project-manager-simple</module>
 		<module>extensions/result-export-api</module>
 		<module>extensions/result-export-impl</module>
-                <module>extensions/remote-api</module>
+<!--                <module>extensions/remote-api</module>
                 <module>extensions/remote-conf</module>
-<!--                <module>extensions/remote-ftest</module> -->
-                <module>extensions/remote-impl</module>
+                <module>extensions/remote-ftest</module>
+                <module>extensions/remote-impl</module>-->
                 <module>extensions/visualisation-plot-api</module>
                 <module>extensions/visualisation-plot-impl</module>
             </modules>
@@ -57,7 +54,6 @@
                 </property>
             </activation>
             <modules>
-                <module>model/computation</module>
                 <module>model/core</module>
                 <module>model/ode</module>
                 <module>model/space</module>

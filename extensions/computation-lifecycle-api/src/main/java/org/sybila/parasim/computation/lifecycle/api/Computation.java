@@ -19,22 +19,13 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
+import java.io.Serializable;
+import java.util.concurrent.Callable;
+import org.sybila.parasim.core.api.Destroyable;
 import org.sybila.parasim.model.Mergeable;
 
 /**
- * The entry point to compute your computation instance. Computation container
- * is able to read annotations defined in your computation to configure its execution.
- *
- * @see org.sybila.parasim.computation.lifecycle.api.annotation.RunWith
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
-
-    /**
-     * Performs the execution of the given computation instance.
-     *
-     * @param <Result> type of the result
-     * @return computed result
-     */
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+public interface Computation<Result extends Mergeable<Result>> extends Serializable, Callable<Result>, Destroyable {
 }

@@ -21,11 +21,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-execution-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.sybila.parasim.model</groupId>
             <artifactId>computation</artifactId>
             <version>${project.version}</version>

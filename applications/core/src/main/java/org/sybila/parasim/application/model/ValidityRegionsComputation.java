@@ -31,7 +31,8 @@ import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
-import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
+import org.sybila.parasim.computation.lifecycle.api.Computation;
+import org.sybila.parasim.computation.lifecycle.api.Emitter;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
@@ -42,12 +43,6 @@ import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlockResultAdapter;
 import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.core.annotation.Provide;
-import org.sybila.parasim.execution.api.ComputationEmitter;
-import org.sybila.parasim.execution.api.SharedMemoryExecutor;
-import org.sybila.parasim.execution.api.annotations.NumberOfInstances;
-import org.sybila.parasim.model.computation.AbstractComputation;
-import org.sybila.parasim.model.computation.Computation;
-import org.sybila.parasim.model.computation.ComputationId;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
@@ -61,9 +56,7 @@ import org.sybila.parasim.model.verification.stl.Formula;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-@NumberOfInstances(1)
-@RunWith(executor=SharedMemoryExecutor.class)
-public class ValidityRegionsComputation extends AbstractComputation<VerificationResult> {
+public class ValidityRegionsComputation implements Computation<VerificationResult> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidityRegionsComputation.class);
 
@@ -90,10 +83,8 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
     @Inject
     private DistanceChecker distanceChecker;
     @Inject
-    private ComputationEmitter emitter;
+    private Emitter emitter;
 
-    @Inject
-    private ComputationId threadId;
 
     private int iterationLimit;
     private int currentIteration = 0;
@@ -127,7 +118,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 
     @Override
     public VerificationResult call() throws Exception {
-        if (threadId.currentId() == 0) {
+        if (spawned == null) {
             spawned = emit(spawner.spawn(initialSpace));
         }
 
@@ -135,7 +126,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
 
         while (spawned != null) {
             currentIteration++;
-            LOGGER.info("["+threadId.currentId()+"] iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned primary and <" + spawned.getSecondaryTrajectories().size() + "> secondary trajectories.");
+            LOGGER.info("iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned primary and <" + spawned.getSecondaryTrajectories().size() + "> secondary trajectories.");
             SimulatedDataBlock<TrajectoryWithNeighborhood> simulated = simulator.simulate(simulationConfiguration, spawned);
             SimulatedDataBlock simulatedSecondary = null;
             if (spawned.getSecondaryTrajectories().size() > 0) {
@@ -152,7 +143,7 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
                     VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
                     result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
                 }
-                LOGGER.warn("["+threadId.currentId()+"] iteration limit <" + iterationLimit + "> reached");
+                LOGGER.warn("iteration limit <" + iterationLimit + "> reached");
                 break;
             } else {
                 DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
@@ -170,14 +161,6 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             }
         }
         return result;
-    }
-
-    @Override
-    public Computation<VerificationResult> cloneComputation() {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, originalSimulationSpace, initialSpace, property, iterationLimit);
-        computation.currentIteration = this.currentIteration;
-        computation.spawned = this.spawned;
-        return computation;
     }
 
     protected SpawnedDataBlock emit(SpawnedDataBlock spawned) {
@@ -215,5 +198,16 @@ public class ValidityRegionsComputation extends AbstractComputation<Verification
             }
         }
         return result;
+    }
+
+    public Computation<VerificationResult> cloneComputation() {
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, originalSimulationSpace, initialSpace, property, iterationLimit);
+        computation.currentIteration = this.currentIteration;
+        computation.spawned = this.spawned;
+        return computation;
+    }
+
+    @Override
+    public void destroy() throws Exception {
     }
 }

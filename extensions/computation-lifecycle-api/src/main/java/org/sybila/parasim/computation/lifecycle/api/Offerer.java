@@ -19,22 +19,41 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
-import org.sybila.parasim.model.Mergeable;
+import java.util.Collection;
 
 /**
- * The entry point to compute your computation instance. Computation container
- * is able to read annotations defined in your computation to configure its execution.
+ * This service provides available computation instances to the executor.
+ * It's mainly internal service and shouldn't be used outside of computation
+ * life cycle.
  *
- * @see org.sybila.parasim.computation.lifecycle.api.annotation.RunWith
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface ComputationContainer {
+public interface Offerer extends Emitter {
 
     /**
-     * Performs the execution of the given computation instance.
-     *
-     * @param <Result> type of the result
-     * @return computed result
+     * Returns times of all successful accesses via {@link #poll() } method.
      */
-    <Result extends Mergeable<Result>> Future<Result> compute(Computation<Result> computation);
+    Collection<Time> accesses();
+
+    /**
+     * Retrieves and removes the head of this queue, or null if this offerer
+     * is empty. Computation instance is returned for the execution purpose.
+     */
+    Computation poll();
+
+    /**
+     * Retrieves and removes the head of this queue, or null if this offerer
+     * is empty. Computation instance is returned for the rescheduling purpose.
+     */
+    Computation reschedule();
+
+    /**
+     * Returns the number of elements in this offerer.
+     */
+    int size();
+
+    public static interface Time {
+        long value();
+    }
+
 }
