@@ -26,6 +26,7 @@ import junit.framework.Assert;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.Emitter;
+import org.sybila.parasim.computation.lifecycle.api.Future;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.core.test.ParasimTest;
@@ -69,6 +70,26 @@ public class TestDefaultComputationContainer extends ParasimTest {
         Assert.assertEquals(expected, (int)container.compute(computation).get(5, TimeUnit.SECONDS).get());
         Assert.assertEquals(expected, (int)container.compute(computation).get().get());
     }
+
+    @Test
+    public void testInfiniteSeqFactorial() throws InterruptedException, ExecutionException, TimeoutException {
+        ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
+        Assert.assertNotNull(container);
+        int n = 10;
+        InfiniteSeqFactorialComputation computation = new InfiniteSeqFactorialComputation(n);
+        int expected = 1;
+        for (int i=2; i<=n; i++) {
+            expected *= i;
+        }
+        Future<MergeableInteger> future = container.compute(computation);
+        try {
+            future.get(1, TimeUnit.SECONDS);
+            Assert.fail(TimeoutException.class.getName() + " should be thrown.");
+        } catch (TimeoutException ignored) {
+        }
+        Assert.assertEquals(expected, (int)future.getPartial().get());
+    }
+
 
     private static class SeqFactorialComputation implements Computation<MergeableInteger> {
 
@@ -123,6 +144,40 @@ public class TestDefaultComputationContainer extends ParasimTest {
             if (n > 1 && !cloned) {
                 for (int i=1; i<n; i++) {
                     emitter.emit(new ParFactorialComputation(i, true));
+                }
+            }
+            return new MergeableInteger(n);
+        }
+
+        @Override
+        public void destroy() throws Exception {
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getName() + " ### " + n;
+        }
+
+    }
+
+    private static class InfiniteSeqFactorialComputation implements Computation<MergeableInteger> {
+
+        private final Integer n;
+
+        @Inject
+        private Emitter emitter;
+
+        public InfiniteSeqFactorialComputation(Integer n) {
+            this.n = n;
+        }
+
+        @Override
+        public MergeableInteger call() throws Exception {
+            if (n > 1) {
+                emitter.emit(new InfiniteSeqFactorialComputation(n - 1));
+            } else {
+                synchronized(this) {
+                    wait();
                 }
             }
             return new MergeableInteger(n);

@@ -39,7 +39,7 @@ public class ComputationScopeRegistrar {
 
     private ThreadPoolExecutor executorService;
 
-    public void destroyExecutorService(@Observes After event, ComputationLifecycleConfiguration configuration) throws InterruptedException {
+    public void destroyExecutorService(@Observes After event) throws InterruptedException {
         if (event.getLoad().equals(ComputationScope.class) && executorService != null) {
             executorService.shutdownNow();
         }
