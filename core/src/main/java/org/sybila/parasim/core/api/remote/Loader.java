@@ -17,16 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.api;
+package org.sybila.parasim.core.api.remote;
+
+import java.lang.annotation.Annotation;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
- * Object which controls life cycle of all extensions and context. It also provides
- * sending events among the extensions
- *
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:xpapous1@mail.muni.cz">Jan Papousek</a>
  */
-public interface Manager extends Context, ServiceRepository, ExtensionRepository {
+public interface Loader extends Remote {
 
-    Manager start();
+    void load(Class<? extends Remote> type, Class<? extends Annotation> qualifier) throws RemoteException;
 
 }

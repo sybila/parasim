@@ -120,7 +120,7 @@ public class ManagerImpl implements Manager, Binder {
     }
 
     @Override
-    public synchronized void start() {
+    public synchronized Manager start() {
         this.running = true;
         fire(new ManagerStarted());
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -133,7 +133,7 @@ public class ManagerImpl implements Manager, Binder {
                 }
             }
         });
-
+        return this;
     }
 
     @Override

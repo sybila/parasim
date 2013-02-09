@@ -17,16 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.core.api;
+package org.sybila.parasim.core.impl.remote;
 
 /**
- * Object which controls life cycle of all extensions and context. It also provides
- * sending events among the extensions
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Manager extends Context, ServiceRepository, ExtensionRepository {
+public class RemoteConfiguration {
 
-    Manager start();
+    private int port = 1099;
+
+    public int getPort() {
+        return port;
+    }
 
 }

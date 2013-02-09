@@ -21,19 +21,27 @@ package org.sybila.parasim.core.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Properties;
 import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.core.annotation.Application;
 import org.sybila.parasim.core.annotation.Observes;
 import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.Resolver;
 import org.sybila.parasim.core.api.ServiceRepository;
 import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
 import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 import org.sybila.parasim.core.api.enrichment.Enrichment;
+import org.sybila.parasim.core.api.remote.Loader;
 import org.sybila.parasim.core.event.ManagerProcessing;
 import org.sybila.parasim.core.event.ManagerStarted;
+import org.sybila.parasim.core.event.ManagerStopping;
 import org.sybila.parasim.core.impl.configuration.ExtensionDescriptorMapperImpl;
 import org.sybila.parasim.core.impl.configuration.ParasimDescriptorImpl;
 import org.sybila.parasim.core.impl.enrichment.EnrichmentImpl;
@@ -41,11 +49,18 @@ import org.sybila.parasim.core.impl.enrichment.InjectingEnricher;
 import org.sybila.parasim.core.impl.enrichment.ProvidingEnricher;
 import org.sybila.parasim.core.impl.logging.LoggingConfiguration;
 import org.sybila.parasim.core.impl.logging.ServiceAppender;
+import org.sybila.parasim.core.impl.remote.HostControlImpl;
+import org.sybila.parasim.core.impl.remote.LoaderImpl;
+import org.sybila.parasim.core.impl.remote.RemoteConfiguration;
 import org.sybila.parasim.core.spi.enrichment.Enricher;
 import org.xml.sax.SAXException;
 
 @Application
 public class CoreExtension {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CoreExtension.class);
+
+    private Registry providedRemoteRegistry;
 
     public void services(@Observes ManagerProcessing event, ServiceStorage serviceStorage) {
         serviceStorage.store(Enricher.class, new InjectingEnricher());
@@ -96,5 +111,44 @@ public class CoreExtension {
 
     public void registerLoggingListeners(@Observes ManagerStarted started, ServiceRepository serviceRepository) {
         ServiceAppender.setServiceRepository(serviceRepository);
+    }
+
+    // remote
+
+    @Provide(immediately=true)
+    public Loader provideLoader(Resolver resolver) throws RemoteException {
+        return new LoaderImpl(resolver);
+    }
+
+    @Provide
+    public RemoteConfiguration provideRemoteConfiguration(ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
+        RemoteConfiguration conf = new RemoteConfiguration();
+        ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("remote");
+        if (extensionDescriptor != null) {
+            mapper.map(extensionDescriptor, conf);
+        }
+        return conf;
+    }
+
+    @Provide
+    public Registry provideRegistry(RemoteConfiguration configuration) throws RemoteException {
+        if (System.getSecurityManager() == null) {
+            if (System.getProperty("java.security.policy") == null) {
+                System.setProperty("java.security.policy", HostControlImpl.SECURITY_POLICY_PATH);
+            }
+        }
+        providedRemoteRegistry = LocateRegistry.createRegistry(configuration.getPort());
+        return providedRemoteRegistry;
+    }
+
+    public void cleanRegistry(@Observes ManagerStopping event) {
+        if (providedRemoteRegistry != null) {
+            try {
+                UnicastRemoteObject.unexportObject(providedRemoteRegistry, true);
+                LOGGER.debug("RMI registry closed.");
+            } catch (RemoteException e) {
+                LOGGER.warn("Can't close RMI registry.", e);
+            }
+        }
     }
 }
