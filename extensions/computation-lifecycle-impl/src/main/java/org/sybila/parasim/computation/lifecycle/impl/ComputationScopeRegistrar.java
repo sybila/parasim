@@ -26,9 +26,6 @@ import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope
 import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
 import org.sybila.parasim.core.annotation.Observes;
 import org.sybila.parasim.core.annotation.Provide;
-import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
-import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
-import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 import org.sybila.parasim.core.event.After;
 
 /**
@@ -54,16 +51,6 @@ public class ComputationScopeRegistrar {
                 configuration.getKeepAliveTimeUnit(),
                 new ArrayBlockingQueue<Runnable>(configuration.getQueueSize()));
         return executorService;
-    }
-
-    @Provide
-    public ComputationLifecycleConfiguration provideConfiguration(ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
-        ComputationLifecycleConfiguration c = new ComputationLifecycleConfiguration();
-        ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("computation-lifecycle");
-        if (extensionDescriptor != null) {
-            mapper.map(extensionDescriptor, c);
-        }
-        return c;
     }
 
 }

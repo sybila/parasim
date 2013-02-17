@@ -21,9 +21,12 @@ package org.sybila.parasim.computation.lifecycle.impl.shared;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.ProgressListener;
@@ -35,6 +38,8 @@ import org.sybila.parasim.model.Mergeable;
  */
 public class SimpleStatus implements MutableStatus {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleStatus.class);
+
     private final AtomicLong remaining = new AtomicLong(0);
     private final AtomicLong done = new AtomicLong(0);
     private final AtomicLong computing = new AtomicLong(0);
@@ -42,37 +47,53 @@ public class SimpleStatus implements MutableStatus {
     private final List<ProgressListener> listeners = new ArrayList<>();
 
     @Override
-    public void compute(Future event) {
+    public void compute(UUID node, Future event) {
+        computing.incrementAndGet();
         synchronized(listeners) {
             for (ProgressListener listener: listeners) {
-                listener.computing(event);
+                listener.computing(node, event);
             }
         }
-        computing.incrementAndGet();
     }
 
     @Override
-    public void done(Mergeable event) {
+    public void done(UUID node, Mergeable event) {
         synchronized(listeners) {
             for (ProgressListener listener: listeners) {
-                listener.done(event);
+                listener.done(node, event);
             }
         }
         computing.decrementAndGet();
         done.incrementAndGet();
         if (remaining.decrementAndGet() == 0) {
-            finish(event);
+            finish(node, event);
         }
     }
 
     @Override
-    public void emit(Computation event) {
+    public void emit(UUID node, Computation event) {
+        remaining.incrementAndGet();
         synchronized(listeners) {
             for (ProgressListener listener: listeners) {
-                listener.emitted(event);
+                listener.emitted(node, event);
             }
         }
-        remaining.incrementAndGet();
+    }
+
+    @Override
+    public void reschedule(final UUID node, final Computation event) {
+        new Thread() {
+
+            @Override
+            public void run() {
+                synchronized(listeners) {
+                    for (ProgressListener listener: listeners) {
+                        listener.rescheduled(node, event);
+                    }
+                }
+            }
+
+        }.start();
     }
 
     @Override
@@ -102,10 +123,10 @@ public class SimpleStatus implements MutableStatus {
         return finished.get();
     }
 
-    private void finish(Mergeable event) {
+    private void finish(UUID node, Mergeable event) {
         synchronized(listeners) {
             for (ProgressListener listener: listeners) {
-                listener.finished(event);
+                listener.finished(node, event);
             }
         }
         finished.set(true);

@@ -19,20 +19,44 @@
  */
 package org.sybila.parasim.computation.lifecycle.impl;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
+import org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor;
 import org.sybila.parasim.computation.lifecycle.api.Executor;
+import org.sybila.parasim.computation.lifecycle.api.RemoteExecutor;
 import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
 import org.sybila.parasim.computation.lifecycle.impl.common.DefaultComputationContainer;
+import org.sybila.parasim.computation.lifecycle.impl.distributed.DistributedMemoryExecutorImpl;
+import org.sybila.parasim.computation.lifecycle.impl.distributed.RemoteExecutorImpl;
 import org.sybila.parasim.computation.lifecycle.impl.shared.SharedMemoryExecutorImpl;
+import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.core.api.Context;
 import org.sybila.parasim.core.api.Resolver;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 import org.sybila.parasim.core.api.enrichment.Enrichment;
+import org.sybila.parasim.core.impl.remote.HostControlImpl;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class Registrar {
+
+    @Provide
+    public ComputationLifecycleConfiguration provideConfiguration(ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
+        ComputationLifecycleConfiguration c = new ComputationLifecycleConfiguration();
+        ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("computation-lifecycle");
+        if (extensionDescriptor != null) {
+            mapper.map(extensionDescriptor, c);
+        }
+        return c;
+    }
 
     @Provide
     public ComputationContainer provideComputationContainer(Resolver resolver) {
@@ -45,7 +69,21 @@ public class Registrar {
     }
 
     @Provide
-    public Executor provideExecutor(SharedMemoryExecutor executor) {
-        return executor;
+    public DistributedMemoryExecutor provideDistributedMemoryExecutor(Enrichment enrichment, Context context, ComputationLifecycleConfiguration configuration) throws IOException {
+        Collection<RemoteExecutor> remoteExecutors = new ArrayList<>();
+        for (URI node: configuration.getNodes()) {
+            remoteExecutors.add(new HostControlImpl(node).lookup(RemoteExecutor.class, Default.class));
+        }
+        return new DistributedMemoryExecutorImpl(enrichment, context, remoteExecutors);
+    }
+
+    @Provide
+    public Executor provideExecutor(Resolver resolver, ComputationLifecycleConfiguration configuration) throws ClassNotFoundException {
+        return (Executor) resolver.resolve(configuration.getDefaultExecutor(), Default.class);
+    }
+
+    @Provide(immediately = true)
+    public RemoteExecutor provideRemoteExecutor(Context context) {
+        return new RemoteExecutorImpl(context);
     }
 }

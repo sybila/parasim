@@ -21,11 +21,13 @@
  */
 package org.sybila.parasim.computation.lifecycle.impl.common;
 
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
+import org.sybila.parasim.computation.lifecycle.api.annotations.Node;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.api.Context;
 import org.sybila.parasim.core.api.enrichment.Enrichment;
@@ -67,11 +69,13 @@ public class CallableFactory {
         public M call() throws Exception {
             Context instanceContext = parentContext.context(ComputationInstanceScope.class);
             try {
-                instanceContext.resolve(Enrichment.class, Default.class).enrich(computation, instanceContext);
+                Enrichment enrichment = instanceContext.resolve(Enrichment.class, Default.class);
+                enrichment.enrich(computation, instanceContext);
                 M result = computation.call();
-                status.done(result);
+                status.done(parentContext.resolve(UUID.class, Node.class), result);
                 return result;
             } finally {
+                computation.destroy();
                 instanceContext.destroy();
             }
         }

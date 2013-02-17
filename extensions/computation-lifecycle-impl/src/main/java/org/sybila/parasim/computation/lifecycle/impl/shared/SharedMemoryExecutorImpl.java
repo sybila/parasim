@@ -19,6 +19,10 @@
  */
 package org.sybila.parasim.computation.lifecycle.impl.shared;
 
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationFuture;
+import org.sybila.parasim.computation.lifecycle.impl.common.Mucker;
+import org.sybila.parasim.computation.lifecycle.impl.common.SimpleOfferer;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.Emitter;
@@ -28,6 +32,7 @@ import org.sybila.parasim.computation.lifecycle.api.Offerer;
 import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
 import org.sybila.parasim.computation.lifecycle.api.Status;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
+import org.sybila.parasim.computation.lifecycle.api.annotations.Node;
 import org.sybila.parasim.computation.lifecycle.impl.common.CallableFactory;
 import org.sybila.parasim.computation.lifecycle.impl.common.AbstractExecutor;
 import org.sybila.parasim.core.annotation.Default;
@@ -49,25 +54,27 @@ public class SharedMemoryExecutorImpl extends AbstractExecutor implements Shared
     public <M extends Mergeable<M>> Future<M> submit(Computation<M> computation) {
         // init context
         Context context = getContext().context(ComputationScope.class);
+        UUID node = UUID.randomUUID();
         // prepare services
         MutableStatus status = new SimpleStatus();
-        Offerer offerer = new SimpleOfferer(status);
+        Offerer offerer = new SimpleOfferer(node, status);
         ExecutorService executorService = context.resolve(ExecutorService.class, Default.class);
         CallableFactory callableFactory = new CallableFactory(context, status);
-        SharedMemoryFuture<M> future = new SharedMemoryFuture<>(context, status);
-        SharedMemoryMucker mucker = new SharedMemoryMucker(status, executorService, offerer, Long.MAX_VALUE, callableFactory);
+        ComputationFuture<M> future = new ComputationFuture<>(node, context, status);
+        Mucker mucker = new Mucker(node, status, executorService, offerer, Long.MAX_VALUE, callableFactory);
         // bind services
         Binder binder = context.resolve(Binder.class, Default.class);
         binder.bind(Emitter.class, Default.class, offerer);
         binder.bind(Status.class, Default.class, status);
+        binder.bind(UUID.class, Node.class, node);
         // register progress listeners
+        status.addProgressListerner(offerer);
         status.addProgressListerner(future);
         status.addProgressListerner(mucker);
         // emit computation
         offerer.emit(computation);
         // return future
         return future;
-        // TODO: destroy computation context
     }
 
 

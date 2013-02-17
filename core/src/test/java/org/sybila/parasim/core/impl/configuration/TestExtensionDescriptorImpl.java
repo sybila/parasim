@@ -24,7 +24,6 @@ import java.util.Collection;
 import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
 import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 import static org.testng.Assert.*;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.xml.sax.SAXException;
 
@@ -33,15 +32,9 @@ import org.xml.sax.SAXException;
  */
 public class TestExtensionDescriptorImpl {
 
-    private ParasimDescriptor descriptor;
-
-    @BeforeMethod
-    public void prepareDescriptor() throws IOException, SAXException {
-        descriptor = ParasimDescriptorImpl.fromXMLFile("something", "src/test/resources/org/sybila/parasim/core/impl/configuration/parasim.xml");
-    }
-
     @Test
-    public void testExtensions() {
+    public void testExtensions() throws IOException, SAXException {
+       ParasimDescriptor descriptor = ParasimDescriptorImpl.fromXMLFile("something", "src/test/resources/org/sybila/parasim/core/impl/configuration/parasim.xml");
        Collection<ExtensionDescriptor> extensions = descriptor.getExtensionDescriptors();
        assertEquals(extensions.size(), 1);
        ExtensionDescriptor extDescriptor = descriptor.getExtensionDescriptor("test");
@@ -50,6 +43,13 @@ public class TestExtensionDescriptorImpl {
        assertTrue(extDescriptor.isPropertyArray("test-array-property"));
        String[] arrayValue = new String[] {"1", "2", "3"};
        assertEquals(extDescriptor.getPropertyAsArray("test-array-property"), arrayValue);
+    }
+
+    @Test
+    public void testHyphenInExtensionName() {
+        System.setProperty("parasim.something.something.something", "something");
+        ExtensionDescriptor extensionDescriptor = new ExtensionDescriptorImpl("something-something");
+        assertEquals(extensionDescriptor.getProperty("something"), "something");
     }
 
 }

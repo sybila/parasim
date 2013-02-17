@@ -17,34 +17,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.impl.shared;
+package org.sybila.parasim.computation.lifecycle.impl.common;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 import net.jcip.annotations.GuardedBy;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.Offerer;
 import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
-import org.sybila.parasim.computation.lifecycle.impl.common.CallableFactory;
+import org.sybila.parasim.model.Mergeable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SharedMemoryMucker extends ProgressAdapter {
+public class Mucker extends ProgressAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Mucker.class);
 
     private final MutableStatus status;
     private final ExecutorService executorService;
     private final Offerer offerer;
     private final long threshold;
     private final CallableFactory callableFactory;
+    private final UUID node;
+    private final AtomicLong inExecutorService = new AtomicLong(0);
 
-    public SharedMemoryMucker(MutableStatus status, ExecutorService executorService, Offerer offerer, long threshold, CallableFactory callableFactory) {
+    public Mucker(UUID node, MutableStatus status, ExecutorService executorService, Offerer offerer, long threshold, CallableFactory callableFactory) {
+        Validate.notNull(node, "The node ID can't be null.");
         Validate.notNull(status, "Status can't be null.");
         Validate.notNull(executorService, "Executor service can't be null.");
         Validate.notNull(offerer, "Oferrer can't be null.");
         Validate.notNull(callableFactory, "Callable factory can't be null.");
         Validate.isTrue(threshold > 0, "Threshold has to a positive number.");
+        this.node = node;
         this.status = status;
         this.executorService = executorService;
         this.offerer = offerer;
@@ -54,21 +64,42 @@ public class SharedMemoryMucker extends ProgressAdapter {
 
     @Override
     @GuardedBy("this")
-    public void emitted(Computation event) {
-        trySubmit();
+    public void emitted(UUID node, Computation event) {
+        if (this.node.equals(node)) {
+            trySubmit();
+        }
     }
 
     @Override
     @GuardedBy("this")
-    public void computing(java.util.concurrent.Future event) {
-        trySubmit();
+    public void computing(UUID node, java.util.concurrent.Future event) {
+        if (this.node.equals(node)) {
+            trySubmit();
+        }
+    }
+
+    @Override
+    @GuardedBy("this")
+    public void rescheduled(UUID node, Computation event) {
+        if (this.node.equals(node)) {
+            trySubmit();
+        }
+    }
+
+    @Override
+    public void done(UUID node, Mergeable event) {
+        if (this.node.equals(node)) {
+            inExecutorService.decrementAndGet();
+            trySubmit();
+        }
     }
 
     private synchronized void trySubmit() {
-        if (status.getComputing() < threshold) {
+        if (inExecutorService.get() < threshold) {
             Computation computation = offerer.poll();
             if (computation != null) {
-               executorService.submit(callableFactory.instance(computation));
+                inExecutorService.incrementAndGet();
+                status.compute(node,executorService.submit(callableFactory.instance(computation)));
             }
         }
     }

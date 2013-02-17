@@ -19,6 +19,9 @@
  */
 package org.sybila.parasim.core.impl.remote;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -26,8 +29,18 @@ public class RemoteConfiguration {
 
     private int port = 1099;
 
+    private String host;
+
+    public RemoteConfiguration() throws UnknownHostException {
+        this.host = InetAddress.getLocalHost().getHostAddress();
+    }
+
     public int getPort() {
         return port;
+    }
+
+    public String getHost() {
+        return host;
     }
 
 }

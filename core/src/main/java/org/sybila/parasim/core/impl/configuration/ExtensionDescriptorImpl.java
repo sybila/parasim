@@ -116,6 +116,6 @@ public class ExtensionDescriptorImpl implements ExtensionDescriptor {
                  "(?<=[A-Za-z])(?=[^A-Za-z])"
               ),
               "."
-           ).toLowerCase();
+           ).replace("-", "").toLowerCase();
     }
 }

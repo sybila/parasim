@@ -22,10 +22,13 @@ package org.sybila.parasim.core.impl.remote;
 import java.lang.annotation.Annotation;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.HashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.api.Resolver;
 import org.sybila.parasim.core.api.remote.Loader;
@@ -35,15 +38,20 @@ import org.sybila.parasim.core.api.remote.Loader;
  */
 public class LoaderImpl implements Loader {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoaderImpl.class);
+
     private final Resolver resolver;
+    private final int port;
 
     // for proxies
     protected LoaderImpl() {
         this.resolver = null;
+        this.port = -1;
     }
 
-    public LoaderImpl(Resolver resolver) {
+    public LoaderImpl(Resolver resolver, int port) {
         this.resolver = resolver;
+        this.port = port;
     }
 
     @Override
@@ -51,9 +59,11 @@ public class LoaderImpl implements Loader {
         String name = nameFor(type, qualifier);
         if (!new HashSet<>(Arrays.asList(resolver.resolve(Registry.class, Default.class).list())).contains(name)) {
             try {
-                Registry registry = resolver.resolve(Registry.class, Default.class);
-                registry.rebind(name, UnicastRemoteObject.exportObject(resolver.resolve(type, qualifier)));
-            } catch (RemoteException e) {
+                Registry registry = LocateRegistry.getRegistry("localhost", port);
+                registry.bind(name, UnicastRemoteObject.exportObject(resolver.resolve(type, qualifier)));
+                LOGGER.info(name + " registered");
+            } catch (Exception e) {
+                UnicastRemoteObject.unexportObject(resolver.resolve(type, qualifier), true);
                 throw new IllegalStateException("Can't bind " + name + ".", e);
             }
         }

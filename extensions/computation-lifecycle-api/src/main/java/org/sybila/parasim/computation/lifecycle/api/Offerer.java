@@ -19,8 +19,6 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
-import java.util.Collection;
-
 /**
  * This service provides available computation instances to the executor.
  * It's mainly internal service and shouldn't be used outside of computation
@@ -28,12 +26,7 @@ import java.util.Collection;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Offerer extends Emitter {
-
-    /**
-     * Returns times of all successful accesses via {@link #poll() } method.
-     */
-    Collection<Time> accesses();
+public interface Offerer extends Emitter, ProgressListener {
 
     /**
      * Retrieves and removes the head of this queue, or null if this offerer
@@ -51,9 +44,5 @@ public interface Offerer extends Emitter {
      * Returns the number of elements in this offerer.
      */
     int size();
-
-    public static interface Time {
-        long value();
-    }
 
 }

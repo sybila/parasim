@@ -39,7 +39,7 @@ public class ProvidingEnricher implements Enricher<Object> {
     @Override
     public void enrich(Object target, Context context) {
         Binder binder = (Binder) context;
-        for (Field field : target.getClass().getDeclaredFields()) {
+        for (Field field : ReflectionUtils.getDeclaredFieldsRecursively(target.getClass())) {
             if (field.getAnnotation(Provide.class) != null) {
                 ProvidingPoint providingPoint = new ProvidingField(field, target);
                 provide(context, providingPoint);

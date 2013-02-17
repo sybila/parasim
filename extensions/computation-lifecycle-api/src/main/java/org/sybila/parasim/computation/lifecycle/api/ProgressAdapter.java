@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
+import java.util.UUID;
 import org.sybila.parasim.model.Mergeable;
 
 /**
@@ -27,18 +28,22 @@ import org.sybila.parasim.model.Mergeable;
 public class ProgressAdapter implements ProgressListener {
 
     @Override
-    public void computing(java.util.concurrent.Future event) {
+    public void computing(UUID node, java.util.concurrent.Future event) {
     }
 
     @Override
-    public void emitted(Computation event) {
+    public void emitted(UUID node, Computation event) {
     }
 
     @Override
-    public void done(Mergeable event) {
+    public void done(UUID node, Mergeable event) {
     }
 
     @Override
-    public void finished(Mergeable event) {
+    public void finished(UUID node, Mergeable event) {
+    }
+
+    @Override
+    public void rescheduled(UUID node, Computation event) {
     }
 }

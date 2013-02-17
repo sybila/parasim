@@ -19,7 +19,11 @@
  */
 package org.sybila.parasim.core.test;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +41,11 @@ public class ParasimTest {
 
     @BeforeMethod(dependsOnGroups="setup")
     protected void createManager() throws Exception {
+        beforeManagerCreated();
+        File config = getConfiguration();
+        if (config != null) {
+            System.setProperty("parasim.config.file", config.getAbsolutePath());
+        }
         manager = ManagerImpl.create(mergeExtensions(getTestExtensions(), getExtensions()));
         for (Entry<Object, Class<?>> entry: getServices().entrySet()) {
             storeService(entry.getValue(), entry.getKey());
@@ -75,6 +84,17 @@ public class ParasimTest {
     protected int getNumberOfEvents(Class<?> clazz) {
         Integer count = EventCounter.counts.get(clazz);
         return count == null ? 0: count;
+    }
+
+    protected File getConfiguration() throws IOException {
+        Enumeration<URL> configs = ParasimTest.class.getClassLoader().getResources("parasim.xml");
+        while (configs.hasMoreElements()) {
+            return new File(configs.nextElement().getFile());
+        }
+        return null;
+    }
+
+    protected void beforeManagerCreated() {
     }
 
     private Class<?>[] getTestExtensions() {

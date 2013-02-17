@@ -21,6 +21,7 @@ package org.sybila.parasim.core.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -116,12 +117,12 @@ public class CoreExtension {
     // remote
 
     @Provide(immediately=true)
-    public Loader provideLoader(Resolver resolver) throws RemoteException {
-        return new LoaderImpl(resolver);
+    public Loader provideLoader(Resolver resolver, RemoteConfiguration configuration) throws RemoteException {
+        return new LoaderImpl(resolver, configuration.getPort());
     }
 
     @Provide
-    public RemoteConfiguration provideRemoteConfiguration(ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException {
+    public RemoteConfiguration provideRemoteConfiguration(ParasimDescriptor descriptor, ExtensionDescriptorMapper mapper) throws IllegalAccessException, UnknownHostException {
         RemoteConfiguration conf = new RemoteConfiguration();
         ExtensionDescriptor extensionDescriptor = descriptor.getExtensionDescriptor("remote");
         if (extensionDescriptor != null) {
@@ -137,7 +138,9 @@ public class CoreExtension {
                 System.setProperty("java.security.policy", HostControlImpl.SECURITY_POLICY_PATH);
             }
         }
+        System.setProperty("java.rmi.server.hostname", configuration.getHost());
         providedRemoteRegistry = LocateRegistry.createRegistry(configuration.getPort());
+        LOGGER.info("a new remote registry available on " + configuration.getHost() + ":" + configuration.getPort());
         return providedRemoteRegistry;
     }
 

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
+import java.util.UUID;
 import org.sybila.parasim.model.Mergeable;
 
 /**
@@ -39,20 +40,24 @@ public interface ProgressListener {
      * The method is called when an execution of a new computation instance starts.
      * The listener is invoked before the number of computing instances is incremented.
      *
+     * @param node node where the computation instance is computing
+     * @param event future object representing a handler for the computation
      * @see Status#getComputing()
      * @see MutableStatus#compute(java.util.concurrent.Future)
      */
-    void computing(java.util.concurrent.Future event);
+    void computing(UUID node, java.util.concurrent.Future event);
 
     /**
      * The method is called when a new computation instance is emitted.
      * The listener is invoked before the number of remaining computation instances
      * is incremented.
      *
+     * @param node node where the computation instance is emitted
+     * @param event emitted computation instance
      * @see Status#getRemaining()
      * @see MutableStatus#emit(org.sybila.parasim.computation.lifecycle.api.Computation)
      */
-    void emitted(Computation event);
+    void emitted(UUID node, Computation event);
 
     /**
      * The method is called when a computation instance completes its execution.
@@ -61,10 +66,12 @@ public interface ProgressListener {
      * this method is invoked before the computation is marked as finished and
      * before {@link #finished(org.sybila.parasim.model.Mergeable) } method is called.
      *
+     * @param node node where the computation instance completes its execution
+     * @param event the result of the computation instance
      * @see Status#getDone()
      * @see MutableStatus#done(org.sybila.parasim.model.Mergeable)
      */
-    void done(Mergeable event);
+    void done(UUID node, Mergeable event);
 
     /**
      * The method is called when the last instance of the computation is done.
@@ -72,9 +79,20 @@ public interface ProgressListener {
      * are decremented, after {@link #done(org.sybila.parasim.model.Mergeable) }
      * method invocation and before the computation is marked as finished.
      *
+     * @param node node where the computation is finished
+     * @param event the computation result
      * @see Status#isFinished()
      * @see MutableStatus#done(org.sybila.parasim.model.Mergeable)
      */
-    void finished(Mergeable event);
+    void finished(UUID node, Mergeable event);
+
+    /**
+     * The method is called when an alrady emitted computation instance is rescheduled.
+     *
+     * @param node node which initiate the rescheduling
+     * @param event rescheduled computation instance
+     * @see MutableStatus#reschedule(org.sybila.parasim.computation.lifecycle.api.Computation)
+     */
+    void rescheduled(UUID node, Computation event);
 
 }

@@ -82,6 +82,14 @@ public class TestEnrichment extends ParasimTest {
     }
 
     @Test
+    public void testEnrichmentWithInheritance() {
+        ((Binder) getManager()).bind(String.class, Default.class, "HELLO");
+        ToEnrichChild toEnrich = new ToEnrichChild();
+        getManager().resolve(Enrichment.class, Default.class).enrich(toEnrich, getManager());
+        assertEquals(toEnrich.getInjected(), "HELLO");
+    }
+
+    @Test
     public void testOwnEnricher() {
         int before = integerEnriched;
         Enrichment enrichment = getManager().resolve(Enrichment.class, Default.class);
@@ -117,6 +125,21 @@ interface Number {
 interface Number2 {
 
     int get();
+}
+
+
+class ToEnrichParent {
+
+    @Inject
+    private String injected;
+
+    public String getInjected() {
+        return injected;
+    }
+}
+
+class ToEnrichChild extends ToEnrichParent {
+
 }
 
 @Qualifier

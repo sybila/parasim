@@ -25,8 +25,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang.Validate;
 
@@ -102,16 +102,16 @@ public class ParasimOptions {
         return line.hasOption("b");
     }
 
+    public boolean isServer() {
+        return line.hasOption("s");
+    }
+
     public boolean isResultOnly() {
         return line.hasOption("r");
     }
 
     public boolean isHelp() {
         return line.hasOption("h");
-    }
-
-    public boolean isServer() {
-        return line.hasOption("s");
     }
 
     public boolean isVersion() {

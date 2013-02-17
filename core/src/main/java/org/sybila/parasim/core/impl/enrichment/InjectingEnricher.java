@@ -41,7 +41,7 @@ public class InjectingEnricher implements Enricher<Object> {
         if (context == null) {
             throw new IllegalArgumentException("The parameter [context] is null.");
         }
-        for (Field field : target.getClass().getDeclaredFields()) {
+        for (Field field : ReflectionUtils.getDeclaredFieldsRecursively(target.getClass())) {
             if (field.getAnnotation(Inject.class) != null) {
                 InjectionPoint injectionPoint = new GenericInjectionPoint(field.getAnnotations(), field.getGenericType());
                 Object value = context.resolve(ReflectionUtils.getType(injectionPoint.getType()), injectionPoint.getQualifier());

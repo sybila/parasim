@@ -34,4 +34,11 @@ public interface Emitter  {
      */
     void emit(Computation computation);
 
+    /**
+     * Reschedules the given computation. The computation is passed to the executor
+     * according to its policy. The difference from {@link #emit(org.sybila.parasim.computation.lifecycle.api.Computation) }
+     * is that the given computation is already emitted.
+     */
+    void reschedule(Computation computation);
+
 }

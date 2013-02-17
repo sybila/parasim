@@ -17,35 +17,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.impl.shared;
+package org.sybila.parasim.computation.lifecycle.impl.common;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import net.jcip.annotations.GuardedBy;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.Offerer;
+import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SimpleOfferer implements Offerer {
+public class SimpleOfferer extends ProgressAdapter implements Offerer {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(SimpleOfferer.class);
 
     @GuardedBy("this")
     private final List<Computation> computations = new ArrayList<>();
-    @GuardedBy("this")
-    private final List<Time> accesses = new ArrayList<>();
     private final MutableStatus status;
+    private final UUID node;
 
-    public SimpleOfferer(MutableStatus status) {
+    public SimpleOfferer(UUID node, MutableStatus status) {
+        Validate.notNull(node);
+        Validate.notNull(status);
         this.status = status;
-    }
-
-    @Override
-    public synchronized Collection<Time> accesses() {
-        return Collections.unmodifiableCollection(accesses);
+        this.node = node;
     }
 
     @Override
@@ -53,13 +55,25 @@ public class SimpleOfferer implements Offerer {
         if (computations.isEmpty()) {
             return null;
         }
-        accesses.add(new SimpleTime(System.currentTimeMillis()));
         return computations.remove(0);
     }
 
     @Override
     public synchronized Computation reschedule() {
-        return computations.remove(0);
+        if (computations.isEmpty()) {
+            return null;
+        } else {
+            return computations.remove(0);
+        }
+    }
+
+    @Override
+    public void reschedule(Computation computation) {
+        synchronized(this) {
+            computations.add(computation);
+            LOGGER.debug("rescheduling " + computation + " => " + computations);
+        }
+        status.reschedule(node, computation);
     }
 
     @Override
@@ -69,24 +83,19 @@ public class SimpleOfferer implements Offerer {
 
     @Override
     public void emit(Computation computation) {
+        status.emit(node, computation);
+    }
+
+    @Override
+    public void emitted(UUID node, Computation event) {
         synchronized(this) {
-            computations.add(computation);
+            computations.add(event);
         }
-        status.emit(computation);
     }
 
-    protected static final class SimpleTime implements Time {
-        private final long value;
-
-        public SimpleTime(long value) {
-            this.value = value;
-        }
-
-        @Override
-        public long value() {
-            return value;
-        }
-
+    protected final UUID getNode() {
+        return node;
     }
+
 
 }

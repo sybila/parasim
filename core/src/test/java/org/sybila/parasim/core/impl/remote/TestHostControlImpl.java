@@ -22,22 +22,14 @@ package org.sybila.parasim.core.impl.remote;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.rmi.RemoteException;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.core.api.remote.HostControl;
-import org.sybila.parasim.core.api.remote.Loader;
-import org.sybila.parasim.core.test.ParasimTest;
+import org.sybila.parasim.core.test.RemoteParasimTest;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class TestHostControlImpl extends ParasimTest {
-
-    @BeforeMethod(dependsOnMethods={"startManager"})
-    public void startServer() throws RemoteException {
-        new LoaderImpl(getManager()).load(Loader.class, Default.class);
-    }
+public class TestHostControlImpl extends RemoteParasimTest {
 
     @Test
     public void testIsRunningOnLocalhost() throws URISyntaxException {

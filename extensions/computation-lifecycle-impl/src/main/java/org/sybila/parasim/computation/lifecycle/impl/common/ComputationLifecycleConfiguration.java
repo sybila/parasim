@@ -21,19 +21,23 @@
  */
 package org.sybila.parasim.computation.lifecycle.impl.common;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
+import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class ComputationLifecycleConfiguration {
+
     private int queueSize = Runtime.getRuntime().availableProcessors() * 1000;
     private int corePoolSize = Runtime.getRuntime().availableProcessors();
     private int maxPoolSize = corePoolSize * 5;
     private long keepAliveTimeAmount = 5;
     private TimeUnit keepAliveTimeUnit = TimeUnit.SECONDS;
-    private long shutdownTimeAmout = 2;
-    private TimeUnit shutdownTimeUnit = TimeUnit.SECONDS;
+    private long nodeTreshold = Runtime.getRuntime().availableProcessors() + Runtime.getRuntime().availableProcessors() / 2;
+    private URI[] nodes;
+    private String defaultExecutor = SharedMemoryExecutor.class.getName();
 
     public int getQueueSize() {
         return queueSize;
@@ -55,11 +59,16 @@ public class ComputationLifecycleConfiguration {
         return keepAliveTimeUnit;
     }
 
-    public long getShutdownTimeAmout() {
-        return shutdownTimeAmout;
+    public long getNodeTreshold() {
+        return nodeTreshold;
     }
 
-    public TimeUnit getShutdownTimeUnit() {
-        return shutdownTimeUnit;
+    public URI[] getNodes() {
+        return nodes == null ? new URI[0] : nodes;
     }
+
+    public Class<?> getDefaultExecutor() throws ClassNotFoundException {
+        return Class.forName(defaultExecutor);
+    }
+
 }

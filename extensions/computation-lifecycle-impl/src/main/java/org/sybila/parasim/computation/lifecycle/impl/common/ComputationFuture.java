@@ -17,8 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.impl.shared;
+package org.sybila.parasim.computation.lifecycle.impl.common;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -35,22 +36,24 @@ import org.sybila.parasim.model.Mergeable;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class SharedMemoryFuture<M extends Mergeable<M>> extends ProgressAdapter implements Future<M> {
+public class ComputationFuture<M extends Mergeable<M>> extends ProgressAdapter implements Future<M> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SharedMemoryFuture.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputationFuture.class);
 
     private final Context context;
     private final MutableStatus status;
+    private final UUID node;
 
     private boolean cancelled = false;
     private M partial;
 
-    public SharedMemoryFuture(Context context, MutableStatus status) {
+    public ComputationFuture(UUID node, Context context, MutableStatus status) {
         if (!context.getScope().equals(ComputationScope.class)) {
             throw new IllegalStateException("The context has to be " + ComputationScope.class.getSimpleName());
         }
         this.context = context;
         this.status = status;
+        this.node = node;
     }
 
     @Override
@@ -113,30 +116,33 @@ public class SharedMemoryFuture<M extends Mergeable<M>> extends ProgressAdapter 
     }
 
     @Override
-    public synchronized void done(Mergeable event) {
+    public synchronized void done(UUID node, Mergeable event) {
         if (partial == null) {
+            LOGGER.debug("the first partial result is " + event);
             partial = (M) event;
         } else {
+            Mergeable before = partial;
             partial = partial.merge((M) event);
+            LOGGER.debug("merging: " + before + " + " +  event + " = " + partial);
         }
     }
 
     @Override
-    public void finished(Mergeable event) {
+    public void finished(UUID node, Mergeable event) {
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    synchronized (SharedMemoryFuture.this) {
-                        SharedMemoryFuture.this.notifyAll();
+                    synchronized (ComputationFuture.this) {
+                        ComputationFuture.this.notifyAll();
                     }
                     context.destroy();
                 } catch (Exception e) {
-                    throw new IllegalStateException("Can't destroy the computation context.", e);
+                    throw new IllegalStateException("Can't destroy the computation.", e);
                 }
             }
-        }, "comptation-context-destroyer").start();
+        }, "computation-context-destroyer").start();
     }
 
 }

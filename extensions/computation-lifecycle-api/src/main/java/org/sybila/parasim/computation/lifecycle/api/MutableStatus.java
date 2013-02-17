@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
+import java.util.UUID;
 import org.sybila.parasim.model.Mergeable;
 
 /**
@@ -37,12 +38,12 @@ public interface MutableStatus extends Status {
     void addProgressListerner(ProgressListener progressListener);
 
     /**
-     * Invoke {@link ProgressListener#computing(java.util.concurrent.Future) }
-     * and increment the number of computed computation instances.
+     * Increment the number of computed computation instances and invoke
+     * {@link ProgressListener#computing(java.util.concurrent.Future) }.
      *
      * @see #getComputing()
      */
-    void compute(java.util.concurrent.Future event);
+    void compute(UUID node, java.util.concurrent.Future event);
 
     /**
      * Invoke {@link ProgressListener#done(org.sybila.parasim.model.Mergeable) }.
@@ -54,12 +55,18 @@ public interface MutableStatus extends Status {
      * @see #getDone()
      * @see #isFinished()
      */
-    void done(Mergeable event);
+    void done(UUID node, Mergeable event);
 
     /**
-     * Invoke {@link ProgressListener#emitted(org.sybila.parasim.computation.lifecycle.api.Computation) }
-     * and increment the number of remaining computation instances.
+     * Increment the number of remaining computation instances and invoke
+     * {@link ProgressListener#emitted(org.sybila.parasim.computation.lifecycle.api.Computation) }.
      */
-    void emit(Computation event);
+    void emit(UUID node, Computation event);
+
+    /**
+     * Invoke {@link ProgressListener#rescheduled(org.sybila.parasim.computation.lifecycle.api.Computation) }.
+     * This method doesn't increment any counter.
+     */
+    void reschedule(UUID node, Computation event);
 
 }

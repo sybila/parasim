@@ -129,4 +129,17 @@ public final class ReflectionUtils {
             throw new InvocationException("Can't set field value.", e);
         }
     }
+
+    public static Field[] getDeclaredFieldsRecursively(Class<?> clazz) {
+        if (clazz == null) {
+            return new Field[0];
+        } else {
+            Field[] clazzFields = clazz.getDeclaredFields();
+            Field[] parentFields = getDeclaredFieldsRecursively(clazz.getSuperclass());
+            Field[] result = new Field[clazzFields.length + parentFields.length];
+            System.arraycopy(clazzFields, 0, result, 0, clazzFields.length);
+            System.arraycopy(parentFields, 0, result, clazzFields.length, parentFields.length);
+            return result;
+        }
+    }
 }

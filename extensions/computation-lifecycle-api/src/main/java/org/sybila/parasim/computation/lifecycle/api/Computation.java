@@ -27,5 +27,5 @@ import org.sybila.parasim.model.Mergeable;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Computation<Result extends Mergeable<Result>> extends Serializable, Callable<Result>, Destroyable {
+public interface Computation<RESULT extends Mergeable<RESULT>> extends Serializable, Callable<RESULT>, Destroyable {
 }
