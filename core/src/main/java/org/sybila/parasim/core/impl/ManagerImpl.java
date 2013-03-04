@@ -41,6 +41,7 @@ import org.sybila.parasim.core.api.ExtensionRepository;
 import org.sybila.parasim.core.api.Manager;
 import org.sybila.parasim.core.api.Resolver;
 import org.sybila.parasim.core.api.ServiceRepository;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.core.api.loader.ExtensionBuilder;
 import org.sybila.parasim.core.api.loader.ExtensionLoader;
 import org.sybila.parasim.core.event.ManagerProcessing;
@@ -49,6 +50,7 @@ import org.sybila.parasim.core.event.ManagerStopping;
 import org.sybila.parasim.core.impl.loader.ExtensionBuilderImpl;
 import org.sybila.parasim.core.impl.loader.SPIExtensionLoader;
 import org.sybila.parasim.core.spi.LoadableExtension;
+import org.sybila.parasim.core.spi.enrichment.Enricher;
 
 public class ManagerImpl implements Manager, Binder {
 
@@ -181,7 +183,16 @@ public class ManagerImpl implements Manager, Binder {
 
     @Override
     public <T> Collection<T> service(Class<T> serviceClass) {
-        return serviceStorage.load(serviceClass);
+        Enrichment enrichment = resolve(Enrichment.class, Default.class);
+        if (!serviceClass.equals(Enricher.class) && enrichment != null) {
+            Collection<T> services = serviceStorage.load(serviceClass);
+            for (T s: services) {
+                enrichment.enrich(s, this);
+            }
+            return services;
+        } else {
+            return serviceStorage.load(serviceClass);
+        }
     }
 
     @Override

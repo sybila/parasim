@@ -20,6 +20,7 @@
 package org.sybila.parasim.core.impl.loader;
 
 import org.sybila.parasim.core.api.loader.ExtensionBuilder;
+import org.sybila.parasim.core.common.ReflectionUtils;
 import org.sybila.parasim.core.impl.ExtensionStorage;
 import org.sybila.parasim.core.impl.ServiceStorage;
 
@@ -43,7 +44,11 @@ public class ExtensionBuilderImpl implements ExtensionBuilder {
 
     @Override
     public <T> void service(Class<T> service, Class<? extends T> implementation) {
-        serviceStorage.store(service, (T) implementation);
+        try {
+            serviceStorage.store(service, ReflectionUtils.createInstance(implementation));
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't register service <" + implementation + ">.", e);
+        }
     }
 
 }
