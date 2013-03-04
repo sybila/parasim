@@ -49,6 +49,10 @@ public class Actions {
         return new LoadExperiment(manager, options);
     }
 
+    public LoadResult loadResults(Experiment experiment) {
+        return new LoadResult(experiment, manager, options);
+    }
+
     public Help help() {
         return new Help(manager, options);
     }

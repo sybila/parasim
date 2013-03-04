@@ -55,6 +55,9 @@ public class Main {
             if (actions.compute(experiment).isEnabled()) {
                 result = actions.compute(experiment).call();
             }
+            if (actions.loadResults(experiment).isEnabled()) {
+                result = actions.loadResults(experiment).call();
+            }
             if (actions.plotResults(result, experiment).isEnabled()) {
                 actions.plotResults(result, experiment).call();
             }

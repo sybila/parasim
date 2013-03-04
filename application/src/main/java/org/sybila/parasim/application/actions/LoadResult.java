@@ -21,30 +21,30 @@ package org.sybila.parasim.application.actions;
 
 import org.sybila.parasim.application.ParasimOptions;
 import org.sybila.parasim.application.model.Experiment;
-import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.core.api.Manager;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class ExecuteComputation extends AbstractAction<VerificationResult> {
+public class LoadResult extends AbstractAction<VerificationResult> {
 
     private final Experiment experiment;
 
-    public ExecuteComputation(Experiment experiment, Manager manager, ParasimOptions options) {
+    public LoadResult(Experiment experiment, Manager manager, ParasimOptions options) {
         super(manager, options);
         this.experiment = experiment;
     }
 
     @Override
     public boolean isEnabled() {
-        return getOptions().isTerminal() && !getOptions().isServer() && !getOptions().isHelp() && !getOptions().isResultOnly();
+        return getOptions().isResultOnly();
     }
 
     @Override
     public VerificationResult call() throws Exception {
-        return ExperimentLauncher.launch(getManager(), experiment);
+        experiment.getVerificationResultResource().load();
+        return experiment.getVerificationResultResource().getRoot();
     }
 
 }

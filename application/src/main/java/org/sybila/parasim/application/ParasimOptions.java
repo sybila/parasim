@@ -119,7 +119,7 @@ public class ParasimOptions {
     }
 
     public boolean isTerminal() {
-        return line.hasOption("t");
+        return line.hasOption("t") || getExperimentFile() != null;
     }
 
     public String getCsvFile() {
