@@ -35,7 +35,7 @@ public class StartServer extends AbstractAction<Void> {
 
     @Override
     public boolean isEnabled() {
-        return getOptions().isServer();
+        return getOptions().isServer() && !getOptions().isHelp();
     }
 
     @Override

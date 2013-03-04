@@ -44,7 +44,6 @@ public class ExperimentLauncher {
         for (OdeSystemVariable variable : experiment.getOdeSystem()) {
             LOGGER.info(variable.getName() + "' = " + variable.getRightSideExpression().toFormula());
         }
-        System.out.println(container);
         Future<VerificationResult> result = container.compute(new ValidityRegionsComputation(
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfiguration(),

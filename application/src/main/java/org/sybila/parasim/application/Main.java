@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.application;
 
+import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.actions.Actions;
@@ -38,9 +39,16 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Experiment experiment = null;
         VerificationResult result = null;
+        ParasimOptions options = ParasimOptions.create(args);
+        if (options.getConfigFile() != null) {
+            System.setProperty("parasim.config.file", options.getConfigFile());
+        }
         Manager manager = ManagerImpl.create().start();
-        Actions actions = new Actions(manager, ParasimOptions.create(args));
+        Actions actions = new Actions(manager, options);
         try {
+            if (actions.help().isEnabled()) {
+                actions.help().call();
+            }
             if (actions.loadExperiment().isEnabled()) {
                 experiment = actions.loadExperiment().call();
             }
@@ -59,6 +67,8 @@ public class Main {
             if (actions.startGuiManager().isEnabled()) {
                 actions.startGuiManager().call();
             }
+        } catch (ParseException e) {
+            actions.help().call();
         } finally {
             if (actions.shutdown().isEnabled()) {
                 actions.shutdown().call();

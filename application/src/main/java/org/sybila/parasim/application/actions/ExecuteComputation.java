@@ -39,7 +39,7 @@ public class ExecuteComputation extends AbstractAction<VerificationResult> {
 
     @Override
     public boolean isEnabled() {
-        return getOptions().isTerminal() && !getOptions().isServer();
+        return getOptions().isTerminal() && !getOptions().isServer() && !getOptions().isHelp();
     }
 
     @Override

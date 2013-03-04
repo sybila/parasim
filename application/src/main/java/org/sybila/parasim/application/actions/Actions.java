@@ -49,6 +49,10 @@ public class Actions {
         return new LoadExperiment(manager, options);
     }
 
+    public Help help() {
+        return new Help(manager, options);
+    }
+
     public PlotResults plotResults(VerificationResult result, Experiment experiment) {
         return new PlotResults(experiment, result, manager, options);
     }

@@ -60,7 +60,7 @@ public class StartGuiManager extends AbstractAction<Void> {
 
     @Override
     public boolean isEnabled() {
-        return !getOptions().isTerminal() && !getOptions().isServer();
+        return !getOptions().isTerminal() && !getOptions().isServer() && !getOptions().isHelp();
     }
 
     @Override

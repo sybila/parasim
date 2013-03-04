@@ -35,7 +35,7 @@ public class LoadExperiment extends AbstractAction<Experiment> {
 
     @Override
     public boolean isEnabled() {
-        return (getOptions().isResultOnly() || getOptions().isTerminal()) && !getOptions().isServer();
+        return (getOptions().isResultOnly() || getOptions().isTerminal()) && !getOptions().isServer() && !getOptions().isHelp();
     }
 
     @Override

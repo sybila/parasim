@@ -90,7 +90,7 @@ public class ParasimOptions {
         output.flush();
     }
 
-    public String getConfiFile() {
+    public String getConfigFile() {
         return line.getOptionValue("c");
     }
 

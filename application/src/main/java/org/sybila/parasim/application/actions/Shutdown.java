@@ -33,7 +33,7 @@ public class Shutdown extends AbstractAction<Void> {
 
     @Override
     public boolean isEnabled() {
-        return getOptions().isBatch();
+        return getOptions().isBatch() || getOptions().isHelp();
     }
 
     @Override

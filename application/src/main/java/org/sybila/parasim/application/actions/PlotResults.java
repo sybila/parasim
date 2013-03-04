@@ -49,7 +49,7 @@ public class PlotResults extends AbstractAction<Void> {
 
     @Override
     public boolean isEnabled() {
-        return !getOptions().isBatch() && getOptions().isTerminal() && !getOptions().isServer();
+        return !getOptions().isBatch() && getOptions().isTerminal() && !getOptions().isServer() && !getOptions().isHelp();
     }
 
     @Override
