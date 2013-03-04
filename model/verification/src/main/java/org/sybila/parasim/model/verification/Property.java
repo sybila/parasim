@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface Property {
+public interface Property extends Serializable {
 
     /**
      * Formulas such as Until, Future and Globaly have as a parameter

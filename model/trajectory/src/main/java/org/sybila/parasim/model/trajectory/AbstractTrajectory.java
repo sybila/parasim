@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,19 +30,7 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
 
     private final int dimension;
     private int length;
-    private final TrajectoryReference reference = new TrajectoryReference() {
-        private volatile Trajectory referencedTrajectory = AbstractTrajectory.this;
-
-        @Override
-        public Trajectory getTrajectory() {
-            return referencedTrajectory;
-        }
-
-        @Override
-        public void setTrajectory(Trajectory trajectory) {
-            referencedTrajectory = trajectory;
-        }
-    };
+    private final TrajectoryReference reference = new Reference();
     private final DataBlock<Trajectory> neighborhood;
 
     public AbstractTrajectory(int dimension, int length) {
@@ -122,5 +111,19 @@ abstract public class AbstractTrajectory implements TrajectoryWithNeighborhood {
             throw new IllegalArgumentException("The length has to be a positive number.");
         }
         this.length = length;
+    }
+
+    private class Reference implements TrajectoryReference, Serializable {
+        private volatile Trajectory referencedTrajectory = AbstractTrajectory.this;
+
+        @Override
+        public Trajectory getTrajectory() {
+            return referencedTrajectory;
+        }
+
+        @Override
+        public void setTrajectory(Trajectory trajectory) {
+            referencedTrajectory = trajectory;
+        }
     }
 }

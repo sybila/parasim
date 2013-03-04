@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.density.spawn.cpu;
 
+import java.io.Serializable;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.model.space.OrthogonalSpace;
@@ -26,7 +27,7 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class AbstractConfiguration implements Configuration {
+public abstract class AbstractConfiguration implements Configuration, Serializable {
 
     private final OrthogonalSpace initialSpace;
 

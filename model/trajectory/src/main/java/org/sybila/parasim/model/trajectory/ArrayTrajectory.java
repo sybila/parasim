@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import java.io.Serializable;
+
 /**
  * All methods from AbstractTrajectory have constant complexity thanks to the
  * inner arrays storing all point data.
@@ -97,7 +99,7 @@ public class ArrayTrajectory extends AbstractTrajectory {
         return new SimpleTrajectoryIterator(this, index);
     }
 
-    public static final class DefaultArrayPointLocator implements ArrayPointLocator {
+    public static final class DefaultArrayPointLocator implements ArrayPointLocator, Serializable {
 
         private final int dimension;
 

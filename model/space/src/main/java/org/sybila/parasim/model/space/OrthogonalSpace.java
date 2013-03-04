@@ -19,12 +19,13 @@
  */
 package org.sybila.parasim.model.space;
 
+import java.io.Serializable;
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface OrthogonalSpace extends Space {
+public interface OrthogonalSpace extends Space, Serializable {
 
     public Point getMaxBounds();
 

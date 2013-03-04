@@ -79,11 +79,11 @@ public class TestLorenz84Oscilation extends ParasimTest {
         Assert.assertEquals(timeNeeded.getRobustness(0).getValue(), simulationTime.getRobustness(0).getValue(), 0.005f, "Analysis shouldn't be dependent on simulation length.");
     }
 
-    protected final Experiment loadExperiment() throws IOException {
+    public static Experiment loadExperiment() throws IOException {
         return ExperimentImpl.fromPropertiesFile(TestLorenz84Oscilation.class.getClassLoader().getResource("org/sybila/parasim/application/ftest/lorenz84/experiment-oscil.properties").getFile());
     }
 
-    protected static class RobustnessComputation implements Computation<VerificationResult> {
+    public static class RobustnessComputation implements Computation<VerificationResult> {
 
         private final float simulationTime;
         private final OrthogonalSpace originalSimulationSpace;
@@ -123,27 +123,38 @@ public class TestLorenz84Oscilation extends ParasimTest {
         public VerificationResult call() throws Exception {
             final Trajectory trajectory = simulator.simulate(simulationConfiguration, new PointTrajectory(initialPoint));
             final Robustness robustness = verifier.verify(trajectory, property);
-            return new AbstractVerificationResult() {
-
-                @Override
-                public int size() {
-                    return 1;
-                }
-
-                @Override
-                public PointWithNeighborhood getPoint(int index) {
-                    return new PointWithNeigborhoodWrapper(trajectory.getFirstPoint(), Collections.EMPTY_LIST);
-                }
-
-                @Override
-                public Robustness getRobustness(int index) {
-                    return robustness;
-                }
-            };
+            return new SimpleVerificationResult(trajectory, robustness);
         }
 
         @Override
         public void destroy() throws Exception {
+        }
+
+    }
+
+    private static class SimpleVerificationResult extends AbstractVerificationResult {
+
+        private final Trajectory trajectory;
+        private final Robustness robustness;
+
+        public SimpleVerificationResult(Trajectory trajectory, Robustness robustness) {
+            this.trajectory = trajectory;
+            this.robustness = robustness;
+        }
+
+        @Override
+        public int size() {
+            return 1;
+        }
+
+        @Override
+        public PointWithNeighborhood getPoint(int index) {
+            return new PointWithNeigborhoodWrapper(trajectory.getFirstPoint(), Collections.EMPTY_LIST);
+        }
+
+        @Override
+        public Robustness getRobustness(int index) {
+            return robustness;
         }
 
     }

@@ -19,10 +19,12 @@
  */
 package org.sybila.parasim.model.math;
 
+import java.io.Serializable;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface SubstitutionValue<T extends Expression> {
+public interface SubstitutionValue<T extends Expression> extends Serializable {
 
     Expression getSubstitution();
 

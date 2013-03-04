@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.ode;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import org.sybila.parasim.model.math.Expression;
@@ -30,7 +31,7 @@ import org.sybila.parasim.model.math.VariableValue;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface OdeSystem extends Iterable<OdeSystemVariable> {
+public interface OdeSystem extends Iterable<OdeSystemVariable>, Serializable {
 
     /**
      * @return dimension of the ODE system including parameters.

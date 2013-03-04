@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.trajectory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +28,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class FractionPoint implements Comparable<FractionPoint> {
+public final class FractionPoint implements Comparable<FractionPoint>, Serializable {
 
     private final Fraction[] fractions;
 
@@ -232,7 +233,7 @@ public final class FractionPoint implements Comparable<FractionPoint> {
         return this.getDimension() - other.getDimension();
     }
 
-    public static final class Fraction implements Comparable<Fraction> {
+    public static final class Fraction implements Comparable<Fraction>, Serializable {
 
         private final long nominator;
         private final long denominator;

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,8 @@ public abstract class AbstractFormula implements Formula {
         if (variableIndexes == null) {
             throw new IllegalArgumentException("The parameter [variableIndexes] is null.");
         }
-        this.variableIndexes = Collections.unmodifiableCollection(variableIndexes);
+        // array list is instantiated here to ensure that the collection is serializable
+        this.variableIndexes = Collections.unmodifiableCollection(new ArrayList<>(variableIndexes));
     }
 
     @Override

@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.simulation.api;
 
+import java.io.Serializable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 
@@ -27,7 +28,7 @@ import org.sybila.parasim.model.space.OrthogonalSpace;
  *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Configuration {
+public interface Configuration extends Serializable {
 
     /**
      * Returns number of dimensions of points on all trajectories to be

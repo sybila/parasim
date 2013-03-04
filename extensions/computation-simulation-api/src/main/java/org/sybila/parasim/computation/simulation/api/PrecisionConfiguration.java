@@ -19,12 +19,13 @@
  */
 package org.sybila.parasim.computation.simulation.api;
 
+import java.io.Serializable;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface PrecisionConfiguration extends XMLRepresentable {
+public interface PrecisionConfiguration extends XMLRepresentable, Serializable {
 
     int getDimension();
 

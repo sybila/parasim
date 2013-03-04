@@ -79,6 +79,7 @@ public class SlaveMutableStatus implements MutableStatus {
         try {
             remoteStatus.emit(node, event);
         } catch (RemoteException e) {
+            e.printStackTrace();
             throw new IllegalStateException("Can't invoke the remote status.", e);
         }
         synchronized(listeners) {

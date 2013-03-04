@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification.stl;
 
+import java.io.Serializable;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 
 /**
@@ -26,7 +27,7 @@ import org.sybila.parasim.model.xml.XMLRepresentable;
  *
  * @author <a href="mailto:sven@mail.muni.cz">Sven Drazan</a>
  */
-public interface FormulaInterval extends XMLRepresentable {
+public interface FormulaInterval extends XMLRepresentable, Serializable {
 
     /**
      * Returns the lower bound of the time interval.

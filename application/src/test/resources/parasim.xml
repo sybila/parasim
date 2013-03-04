@@ -1,0 +1,11 @@
+<parasim>
+    <extension qualifier="remote">
+        <property name="host">localhost</property>
+    </extension>
+
+    <extension qualifier="computation-lifecycle">
+        <property name="nodes">
+            <value>localhost</value>
+        </property>
+    </extension>
+</parasim>

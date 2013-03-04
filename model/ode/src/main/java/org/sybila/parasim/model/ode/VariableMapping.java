@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.model.ode;
 
+import java.io.Serializable;
+
 /**
  * Maps variable names to associated objects and vice versa.
  *
@@ -28,7 +30,7 @@ package org.sybila.parasim.model.ode;
  *            Type of objects associated with variables.
  *
  */
-public interface VariableMapping<K> {
+public interface VariableMapping<K> extends Serializable {
 
     /**
      * Returns objects for names.

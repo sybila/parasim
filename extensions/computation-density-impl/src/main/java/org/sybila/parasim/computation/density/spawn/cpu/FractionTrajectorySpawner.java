@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.computation.density.spawn.cpu;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,12 +84,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         }
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<>(newTrajectories),
-                new AbstractConfiguration(configuration.getInitialSpace()) {
-                    @Override
-                    public int getStartIndex(int index, int neighborIndex) {
-                        return 0;
-                    }
-                },
+                new DelegatingConfiguration(configuration.getInitialSpace()),
                 new ListDataBlock<>(new ArrayList<>(newSecondaryTrajectories)));
     }
 
@@ -128,13 +124,10 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
             Trajectory t = new PointTrajectory(createPoint(space, middle));
             result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(t, new ListDataBlock<>(new ArrayList<>(surroundings.values()))));
         }
-        return new SpawnedDataBlockWrapper(new ListDataBlock<>(result),
-                new AbstractConfiguration(space) {
-                    @Override
-                    public int getStartIndex(int index, int neighborIndex) {
-                        return 0;
-                    }
-                }, new ListDataBlock<>(new ArrayList<>(surroundings.values())));
+        return new SpawnedDataBlockWrapper(
+                new ListDataBlock<>(result),
+                new DelegatingConfiguration(space),
+                new ListDataBlock<>(new ArrayList<>(surroundings.values())));
     }
 
     protected TrajectoryWithNeighborhood spawn(Configuration configuration, Trajectory trajectory, Trajectory neighbor, LimitedDistance distance, boolean[] skip) {
@@ -180,6 +173,19 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
             data[dim] += point.getValue(dim);
         }
         return new ArrayFractionPoint(fractionPoint, space.getMinBounds().getTime(), data);
+    }
+
+    public static class DelegatingConfiguration extends AbstractConfiguration implements Serializable {
+
+        public DelegatingConfiguration(OrthogonalSpace initialSpace) {
+            super(initialSpace);
+        }
+
+        @Override
+        public int getStartIndex(int index, int neighborIndex) {
+            return 0;
+        }
+
     }
 
 }

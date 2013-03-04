@@ -19,13 +19,14 @@
  */
 package org.sybila.parasim.model.math;
 
+import java.io.Serializable;
 import java.util.Collection;
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Expression<E extends Expression> {
+public interface Expression<E extends Expression> extends Serializable {
 
     float evaluate(Point point);
 

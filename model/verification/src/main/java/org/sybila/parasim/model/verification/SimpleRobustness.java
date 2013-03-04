@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.model.verification;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import org.sybila.parasim.model.trajectory.Distance;
@@ -31,7 +32,7 @@ import org.sybila.parasim.model.trajectory.SimpleDistance;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public final class SimpleRobustness implements Robustness {
+public final class SimpleRobustness implements Robustness, Serializable {
 
     private final float time;
     private final float value;
