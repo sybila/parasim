@@ -33,7 +33,6 @@ import org.sybila.parasim.computation.lifecycle.api.ProgressListener;
 import org.sybila.parasim.model.Mergeable;
 
 /**
- * TODO: contract
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class SimpleStatus implements MutableStatus {

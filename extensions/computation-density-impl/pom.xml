@@ -34,12 +34,6 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.sybila.parasim.extension</groupId>
-            <artifactId>computation-execution-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.sybila.parasim.extension</groupId>
             <artifactId>computation-lifecycle-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
