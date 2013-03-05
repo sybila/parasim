@@ -21,8 +21,10 @@
 
 -->
 <formula xmlns="http://www.sybila.org/parasim/stl-formula">
+<freeze index="1">
 <and>
 <or>
+<freeze index="2">
 <future>
 <interval>
 <lower type="closed">7.8</lower>
@@ -35,6 +37,7 @@
 <value>15.28</value>
 </predicate>
 </future>
+</freeze>
 <globally>
 <interval>
 <lower type="closed">0.001</lower>
@@ -49,6 +52,7 @@
 </globally>
 </or>
 <not>
+<freeze index="3">
 <until>
 <interval>
 <lower type="closed">129.34</lower>
@@ -66,6 +70,8 @@
 <value>191.25</value>
 </predicate>
 </until>
+</freeze>
 </not>
 </and>
+</freeze>
 </formula>

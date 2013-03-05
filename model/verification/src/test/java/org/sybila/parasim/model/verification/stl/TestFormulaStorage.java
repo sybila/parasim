@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.verification.stl;
 
@@ -42,6 +42,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class TestFormulaStorage {
+
     public static class SimpleMapping implements PointVariableMapping {
 
         @Override
@@ -52,21 +53,22 @@ public class TestFormulaStorage {
                 return 1;
             } else if (variableName.equals("z")) {
                 return 2;
-            } else
+            } else {
                 return null;
+            }
         }
 
         @Override
         public String getName(Integer variableKey) {
             switch (variableKey) {
-            case 0:
-                return "x";
-            case 1:
-                return "y";
-            case 2:
-                return "z";
-            default:
-                return null;
+                case 0:
+                    return "x";
+                case 1:
+                    return "y";
+                case 2:
+                    return "z";
+                default:
+                    return null;
             }
         }
 
@@ -85,7 +87,6 @@ public class TestFormulaStorage {
             return 5;
         }
     }
-
     private FormulaResource resource;
 
     private static Formula getTestFormula() {
@@ -113,18 +114,18 @@ public class TestFormulaStorage {
                 Type.EQUALS, new SimpleMapping());
 
         FormulaInterval andOrFI = new TimeInterval(7.8f, 10f, CLOSED, OPEN);
-        Formula andOrF = new FutureFormula(andOrFP, andOrFI);
+        Formula andOrF = new FreezeFormula(new FutureFormula(andOrFP, andOrFI), 2);
         FormulaInterval andOrGI = new TimeInterval(0.001f, 1.002f, OPEN, OPEN);
         Formula andOrG = new GloballyFormula(andOrGP, andOrGI);
         Formula andOr = new OrFormula(andOrF, andOrG);
 
         FormulaInterval andNotUI = new TimeInterval(129.34f, 301.22f, CLOSED,
                 CLOSED);
-        Formula andNotU = new UntilFormula(andNotUP1, andNotUP2, andNotUI);
+        Formula andNotU = new FreezeFormula(new UntilFormula(andNotUP1, andNotUP2, andNotUI), 3);
         Formula andNot = new NotFormula(andNotU);
 
         Formula and = new AndFormula(andOr, andNot);
-        return and;
+        return new FreezeFormula(and, 1);
     }
 
     private File getTestFormulaFile() {
@@ -140,7 +141,6 @@ public class TestFormulaStorage {
 
     @BeforeMethod
     public void prepareFormulaResource() {
-
     }
 
     @Test
@@ -159,7 +159,7 @@ public class TestFormulaStorage {
         }
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void tryStore() {
         File temp = null;
         try {
@@ -231,5 +231,4 @@ public class TestFormulaStorage {
 
 
     }
-
 }
