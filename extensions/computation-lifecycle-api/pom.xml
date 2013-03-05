@@ -18,11 +18,11 @@
     <dependencies>
         <dependency>
             <groupId>org.sybila.parasim.model</groupId>
-            <artifactId>computation</artifactId>
+            <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.sybila.parasim.model</groupId>
+            <groupId>org.sybila.parasim</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
