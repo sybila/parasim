@@ -113,6 +113,18 @@
                 <module>parent</module>
             </modules>
         </profile>
+        <profile>
+            <id>resources</id>
+            <activation>
+                <property>
+                    <name>build.all</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>resources</module>
+            </modules>
+        </profile>
     </profiles>
 
     <!-- SCM and distribution management -->

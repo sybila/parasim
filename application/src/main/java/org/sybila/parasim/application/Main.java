@@ -23,7 +23,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.application.actions.Actions;
-import org.sybila.parasim.application.model.Experiment;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.core.api.Manager;
 import org.sybila.parasim.core.impl.ManagerImpl;
 import org.sybila.parasim.model.verification.result.VerificationResult;

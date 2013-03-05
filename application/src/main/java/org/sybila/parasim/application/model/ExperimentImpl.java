@@ -19,6 +19,7 @@
  */
 package org.sybila.parasim.application.model;
 
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

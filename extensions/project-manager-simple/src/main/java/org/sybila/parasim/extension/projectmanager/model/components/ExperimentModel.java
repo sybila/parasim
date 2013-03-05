@@ -20,7 +20,7 @@
 package org.sybila.parasim.extension.projectmanager.model.components;
 
 import javax.swing.JOptionPane;
-import org.sybila.parasim.application.model.Experiment;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.extension.projectmanager.model.project.Project;
 import org.sybila.parasim.extension.projectmanager.model.warning.UsedWarningModel;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;

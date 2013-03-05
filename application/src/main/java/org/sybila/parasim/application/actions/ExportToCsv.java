@@ -21,7 +21,7 @@ package org.sybila.parasim.application.actions;
 
 import java.io.File;
 import org.sybila.parasim.application.ParasimOptions;
-import org.sybila.parasim.application.model.Experiment;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.core.api.Manager;
 import org.sybila.parasim.extension.exporter.api.ResultExporter;
 import org.sybila.parasim.extension.exporter.impl.annotations.Csv;

@@ -20,7 +20,7 @@
 package org.sybila.parasim.application.actions;
 
 import org.sybila.parasim.application.ParasimOptions;
-import org.sybila.parasim.application.model.Experiment;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.application.model.ExperimentImpl;
 import org.sybila.parasim.core.api.Manager;
 

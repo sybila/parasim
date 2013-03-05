@@ -26,7 +26,7 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.cli.ParseException;
 import org.sybila.parasim.application.ParasimOptions;
 import org.sybila.parasim.application.actions.Actions;
-import org.sybila.parasim.application.model.Experiment;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor;
 import org.sybila.parasim.core.annotation.Default;

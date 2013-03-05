@@ -24,10 +24,10 @@ import java.awt.EventQueue;
 import java.util.Date;
 import javax.swing.JFrame;
 import org.apache.log4j.spi.LoggingEvent;
-import org.sybila.parasim.application.ui.ParasimIconFactory;
 import org.sybila.parasim.extension.progresslogger.api.LoggerOutput;
 import org.sybila.parasim.extension.progresslogger.api.LoggerWindow;
 import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.resources.ParasimIconFactory;
 
 /**
  *

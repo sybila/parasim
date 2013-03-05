@@ -19,8 +19,8 @@
  */
 package org.sybila.parasim.extension.projectmanager.model.project;
 
-import org.sybila.parasim.application.model.Experiment;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.extension.projectmanager.names.ExperimentNames;
 import org.sybila.parasim.extension.projectmanager.project.ResourceException;
 import org.sybila.parasim.model.ode.OdeSystem;

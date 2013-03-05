@@ -43,8 +43,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import org.sybila.parasim.application.model.Experiment;
-import org.sybila.parasim.application.ui.ParasimIconFactory;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.extension.projectmanager.api.ExperimentListener;
 import org.sybila.parasim.extension.projectmanager.api.ProjectManager;
 import org.sybila.parasim.extension.projectmanager.model.OdeSystemNames;
@@ -63,6 +62,7 @@ import org.sybila.parasim.extension.projectmanager.view.formulae.FormulaeList;
 import org.sybila.parasim.extension.projectmanager.view.names.NameManager;
 import org.sybila.parasim.extension.projectmanager.view.robustness.RobustnessSettings;
 import org.sybila.parasim.extension.projectmanager.view.simulation.SimulationSettings;
+import org.sybila.parasim.resources.ParasimIconFactory;
 
 /**
  *

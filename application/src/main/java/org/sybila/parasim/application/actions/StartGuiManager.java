@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.sybila.parasim.application.ParasimOptions;
-import org.sybila.parasim.application.model.Experiment;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.application.model.TrajectoryAnalysisComputation;
 import org.sybila.parasim.computation.lifecycle.api.Computation;

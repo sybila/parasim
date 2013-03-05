@@ -27,8 +27,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.sybila.parasim.application</groupId>
-            <artifactId>core</artifactId>
+            <groupId>org.sybila.parasim.model</groupId>
+            <artifactId>verification</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybila.parasim</groupId>
+            <artifactId>resources</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

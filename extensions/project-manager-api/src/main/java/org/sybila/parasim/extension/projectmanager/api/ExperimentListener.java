@@ -19,8 +19,6 @@
  */
 package org.sybila.parasim.extension.projectmanager.api;
 
-import org.sybila.parasim.application.model.Experiment;
-
 /**
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
