@@ -21,93 +21,102 @@
 
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://www.sybila.org/parasim/stl-formula"
-	xmlns="http://www.sybila.org/parasim/stl-formula"
-	elementFormDefault="qualified">
+           targetNamespace="http://www.sybila.org/parasim/stl-formula"
+           xmlns="http://www.sybila.org/parasim/stl-formula"
+           elementFormDefault="qualified">
 
-	<xs:group name="formulae">
-		<xs:choice>
-			<xs:element name="not" type="unary_formula"/>
-			<xs:element name="or" type="binary_formula"/>
-			<xs:element name="and" type="binary_formula"/>
-			<xs:element name="future" type="unary_temporal_formula"/>
-			<xs:element name="globally" type="unary_temporal_formula"/>
-			<xs:element name="until" type="binary_temporal_formula"/>
-			<xs:element name="predicate" type="predicate"/>
-		</xs:choice>
-	</xs:group>
+    <xs:group name="formulae">
+        <xs:choice>
+            <xs:element name="not" type="unary_formula"/>
+            <xs:element name="or" type="binary_formula"/>
+            <xs:element name="and" type="binary_formula"/>
+            <xs:element name="future" type="unary_temporal_formula"/>
+            <xs:element name="globally" type="unary_temporal_formula"/>
+            <xs:element name="until" type="binary_temporal_formula"/>
+            <xs:element name="predicate" type="predicate"/>
+            <xs:element name="freeze" type="freeze_formula"/>
+        </xs:choice>
+    </xs:group>
 
-	<xs:group name="operators">
-		<xs:choice>
-			<xs:element name="equals"/>
-			<xs:element name="greater"/>
-			<xs:element name="lesser"/>
-		</xs:choice>
-	</xs:group>
+    <xs:group name="operators">
+        <xs:choice>
+            <xs:element name="equals"/>
+            <xs:element name="greater"/>
+            <xs:element name="lesser"/>
+        </xs:choice>
+    </xs:group>
 
-	<xs:complexType name="unary_formula">
-		<xs:sequence>
-			<xs:group ref="formulae" minOccurs="1" maxOccurs="1"/>
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="unary_formula">
+        <xs:sequence>
+            <xs:group ref="formulae" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="binary_formula">
-		<xs:sequence>
-			<xs:group ref="formulae" minOccurs="2" maxOccurs="2"/>
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="binary_formula">
+        <xs:sequence>
+            <xs:group ref="formulae" minOccurs="2" maxOccurs="2"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="unary_temporal_formula">
-		<xs:sequence>
-			<xs:element name="interval" type="interval"/>
-			<xs:group ref="formulae" minOccurs="1" maxOccurs="1"/>
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="unary_temporal_formula">
+        <xs:sequence>
+            <xs:element name="interval" type="interval"/>
+            <xs:group ref="formulae" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="binary_temporal_formula">
-		<xs:sequence>
-			<xs:element name="interval" type="interval"/>
-			<xs:group ref="formulae" minOccurs="2" maxOccurs="2"/>
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="binary_temporal_formula">
+        <xs:sequence>
+            <xs:element name="interval" type="interval"/>
+            <xs:group ref="formulae" minOccurs="2" maxOccurs="2"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="interval">
-		<xs:all>
-			<xs:element name="lower" type="interval_boundary" minOccurs="1"/>
-			<xs:element name="upper" type="interval_boundary" minOccurs="1"/>
-		</xs:all>
-	</xs:complexType>
+    <xs:complexType name="freeze_formula">
+        <xs:sequence>
+            <xs:group ref="formulae" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="index" type="xs:positiveInteger" use="required"/>
+    </xs:complexType>
 
-	<xs:simpleType name="interval_boundary_type">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="open"/>
-			<xs:enumeration value="closed"/>
-		</xs:restriction>
-	</xs:simpleType>
+    <xs:complexType name="interval">
+        <xs:all>
+            <xs:element name="lower" type="interval_boundary" minOccurs="1"/>
+            <xs:element name="upper" type="interval_boundary" minOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
 
-	<xs:complexType name="interval_boundary">
-		<xs:simpleContent>
-			<xs:extension base="xs:token">
-				<xs:attribute name="type" type="interval_boundary_type" use="required"/>
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
+    <xs:simpleType name="interval_boundary_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="open"/>
+            <xs:enumeration value="closed"/>
+        </xs:restriction>
+    </xs:simpleType>
 
-		<xs:complexType name="predicate_variable">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute name="multiplier" type="xs:token"/>
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
+    <xs:complexType name="interval_boundary">
+        <xs:simpleContent>
+            <xs:extension base="xs:token">
+                <xs:attribute name="type" type="interval_boundary_type" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
 
-	<xs:complexType name="predicate">
-		<xs:sequence>
-			<xs:element name="variable" type="predicate_variable" minOccurs="1" maxOccurs="unbounded"/>
-			<xs:group ref="operators" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="value" type="xs:token" minOccurs="1" maxOccurs="1"/>
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="predicate_variable">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="multiplier" type="xs:token"/>
+                <xs:attribute name="frozen" type="xs:nonNegativeInteger" default="0"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
 
-	<xs:element name="formula" type="unary_formula"/>
+    <xs:complexType name="predicate">
+        <xs:sequence>
+            <xs:element name="variable" type="predicate_variable" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:group ref="operators" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="value" type="xs:token" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="formula" type="unary_formula"/>
 </xs:schema>
