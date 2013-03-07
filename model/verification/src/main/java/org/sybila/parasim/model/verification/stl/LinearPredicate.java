@@ -286,6 +286,11 @@ public class LinearPredicate extends Predicate {
     }
 
     @Override
+    public int getStarNumber() {
+        return starNum;
+    }
+
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         boolean first = true;

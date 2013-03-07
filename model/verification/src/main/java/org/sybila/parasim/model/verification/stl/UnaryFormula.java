@@ -49,4 +49,9 @@ public abstract class UnaryFormula extends AbstractFormula {
         }
         return subFormula;
     }
+
+    @Override
+    public int getStarNumber() {
+        return subFormula.getStarNumber();
+    }
 }

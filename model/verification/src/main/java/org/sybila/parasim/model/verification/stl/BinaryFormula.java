@@ -63,4 +63,9 @@ public abstract class BinaryFormula extends AbstractFormula {
         indexes.addAll(phi2.getVariableIndexes());
         return indexes;
     }
+
+    @Override
+    public int getStarNumber() {
+        return Math.max(getSubformula(0).getStarNumber(), getSubformula(1).getStarNumber());
+    }
 }

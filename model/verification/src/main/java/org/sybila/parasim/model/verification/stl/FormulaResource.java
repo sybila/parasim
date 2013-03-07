@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.verification.stl;
 
@@ -35,7 +35,8 @@ import org.w3c.dom.Node;
 /**
  * Used to store/load Formula from/to a file.
  *
- * In order to load predicates, it has to contain mapping between variable names and indices.
+ * In order to load predicates, it has to contain mapping between variable names
+ * and indices.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  *
@@ -77,7 +78,12 @@ public class FormulaResource extends FileXMLResource<Formula> {
 
         @Override
         public Collection<Integer> getVariableIndexes() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException("Mockup container.");
+        }
+
+        @Override
+        public int getStarNumber() {
+            throw new UnsupportedOperationException("Mockup container.");
         }
     }
 
@@ -112,6 +118,7 @@ public class FormulaResource extends FileXMLResource<Formula> {
 
     /**
      * Sets variable name-to-index mapping.
+     *
      * @param mapping Mapping between model variable names and indices.
      */
     public void setVariableMapping(PointVariableMapping mapping) {

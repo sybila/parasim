@@ -96,6 +96,11 @@ public class TestAbstractFormula {
         public float getTimeNeeded() {
             throw new IllegalUseException("Time");
         }
+
+        @Override
+        public int getStarNumber() {
+            throw new IllegalUseException("Star number.");
+        }
     }
 
     private class SimpleFormula implements Formula {
@@ -148,6 +153,11 @@ public class TestAbstractFormula {
         public Collection<Integer> getVariableIndexes() {
             return new ArrayList<>();
         }
+
+        @Override
+        public int getStarNumber() {
+            throw new IllegalUseException("Star number.");
+        }
     }
 
     private class SimpleUnaryFormula implements Formula {
@@ -186,6 +196,11 @@ public class TestAbstractFormula {
         @Override
         public Collection<Integer> getVariableIndexes() {
             return phi.getVariableIndexes();
+        }
+
+        @Override
+        public int getStarNumber() {
+            throw new IllegalUseException("Star number.");
         }
     }
 
