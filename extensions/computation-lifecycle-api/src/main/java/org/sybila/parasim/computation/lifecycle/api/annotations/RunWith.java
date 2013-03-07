@@ -24,7 +24,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collection;
+import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.Executor;
+import org.sybila.parasim.computation.lifecycle.api.Selector;
 import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
 
 /**
@@ -44,5 +47,27 @@ public @interface RunWith {
      * @see org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor
      */
     Class<? extends Executor> executor() default SharedMemoryExecutor.class;
+
+    Class<? extends Selector<? extends Computation>> balancer() default DefaultSelector.class;
+
+    Class<? extends Selector<? extends Computation>> offerer() default DefaultSelector.class;
+
+    public static class DefaultGeneralSelector<C extends Computation> implements Selector<C> {
+
+        @Override
+        public C select(Collection<C> items) {
+            return items.iterator().next();
+        }
+
+    }
+
+    public static class DefaultSelector extends DefaultGeneralSelector<Computation> {
+
+        @Override
+        public Computation select(Collection<Computation> items) {
+            return super.select(items);
+        }
+
+    }
 
 }

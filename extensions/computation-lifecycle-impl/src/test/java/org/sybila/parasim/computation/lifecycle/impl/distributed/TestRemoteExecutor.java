@@ -53,7 +53,7 @@ public class TestRemoteExecutor extends RemoteParasimTest {
         computationId = UUID.randomUUID();
         status = new SimpleStatus();
         executor = getRemoteControl().lookup(RemoteExecutor.class, Default.class);
-        executor.startComputation((RemoteMutableStatus) UnicastRemoteObject.exportObject(new RemoteMutableStatusWrapper(status)), computationId);
+        executor.startComputation(ConstComputation.class, (RemoteMutableStatus) UnicastRemoteObject.exportObject(new RemoteMutableStatusWrapper(status)), computationId);
     }
 
     @Test

@@ -17,32 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.computation.density.spawn.api.annotations;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.sybila.parasim.core.annotation.Qualifier;
 
 /**
- * This service provides available computation instances to the executor.
- * It's mainly internal service and shouldn't be used outside of computation
- * life cycle.
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Offerer extends Emitter, ProgressListener {
-
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the execution purpose.
-     */
-    Computation poll();
-
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the balancing purpose.
-     */
-    Computation balance();
-
-    /**
-     * Returns the number of elements in this offerer.
-     */
-    int size();
-
+@Qualifier
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Primary {
 }

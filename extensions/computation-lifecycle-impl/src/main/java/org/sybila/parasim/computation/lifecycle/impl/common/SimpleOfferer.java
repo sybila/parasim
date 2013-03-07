@@ -30,6 +30,7 @@ import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.Offerer;
 import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
+import org.sybila.parasim.computation.lifecycle.api.Selector;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -42,38 +43,49 @@ public class SimpleOfferer extends ProgressAdapter implements Offerer {
     private final List<Computation> computations = new ArrayList<>();
     private final MutableStatus status;
     private final UUID node;
+    private final Selector<Computation> balancer;
+    private final Selector<Computation> offerer;
 
-    public SimpleOfferer(UUID node, MutableStatus status) {
+    public SimpleOfferer(UUID node, MutableStatus status, Selector<Computation> offerer, Selector<Computation> balancer) {
         Validate.notNull(node);
         Validate.notNull(status);
+        Validate.notNull(offerer);
+        Validate.notNull(balancer);
         this.status = status;
         this.node = node;
+        this.balancer = balancer;
+        this.offerer = offerer;
     }
 
     @Override
     public synchronized Computation poll() {
         if (computations.isEmpty()) {
             return null;
+        } else {
+            Computation computation = offerer.select(computations);
+            computations.remove(computation);
+            return computation;
         }
-        return computations.remove(0);
     }
 
     @Override
-    public synchronized Computation reschedule() {
+    public synchronized Computation balance() {
         if (computations.isEmpty()) {
             return null;
         } else {
-            return computations.remove(0);
+            Computation computation = balancer.select(computations);
+            computations.remove(computation);
+            return computation;
         }
     }
 
     @Override
-    public void reschedule(Computation computation) {
+    public void balance(Computation computation) {
         synchronized(this) {
             computations.add(computation);
             LOGGER.debug("rescheduling " + computation + " => " + computations);
         }
-        status.reschedule(node, computation);
+        status.balance(node, computation);
     }
 
     @Override

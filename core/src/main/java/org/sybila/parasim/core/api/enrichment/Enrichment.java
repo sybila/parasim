@@ -27,7 +27,7 @@ import org.sybila.parasim.core.api.Context;
  */
 public interface Enrichment {
 
-    void enrich(Object target, Context context);
+    <T> T enrich(T target, Context context);
 
     Object[] resolve(Method method, Context context);
 

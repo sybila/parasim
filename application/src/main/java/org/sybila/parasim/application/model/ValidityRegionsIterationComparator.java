@@ -17,32 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.application.model;
+
+import java.util.Comparator;
 
 /**
- * This service provides available computation instances to the executor.
- * It's mainly internal service and shouldn't be used outside of computation
- * life cycle.
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Offerer extends Emitter, ProgressListener {
+public class ValidityRegionsIterationComparator implements Comparator<ValidityRegionsComputation> {
 
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the execution purpose.
-     */
-    Computation poll();
-
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the balancing purpose.
-     */
-    Computation balance();
-
-    /**
-     * Returns the number of elements in this offerer.
-     */
-    int size();
+    @Override
+    public int compare(ValidityRegionsComputation o1, ValidityRegionsComputation o2) {
+        return o1.getCurrentIteration() - o2.getCurrentIteration();
+    }
 
 }

@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
  */
 public interface RemoteOfferer extends Remote {
 
-    Computation reschedule() throws RemoteException;
+    Computation balance() throws RemoteException;
 
     int size() throws RemoteException;
 

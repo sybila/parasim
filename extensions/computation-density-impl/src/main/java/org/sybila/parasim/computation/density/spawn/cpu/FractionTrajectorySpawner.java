@@ -27,11 +27,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
+import org.sybila.parasim.computation.density.spawn.api.SpawnedTrajectoriesCache;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.trajectory.ArrayFractionPoint;
@@ -50,8 +50,13 @@ import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhoodWrapper;
  */
 public class FractionTrajectorySpawner implements TrajectorySpawner {
 
-    private final Map<FractionPoint, Trajectory> alreadySpawnedCollisionTrajectories = new WeakHashMap<>();
-    private final Map<FractionPoint, Trajectory> alreadySpawnedPrimaryTrajectories = new WeakHashMap<>();
+    private final SpawnedTrajectoriesCache primaryCache;
+    private final SpawnedTrajectoriesCache secondaryCache;
+
+    public FractionTrajectorySpawner(SpawnedTrajectoriesCache primaryCache, SpawnedTrajectoriesCache secondaryCache) {
+        this.primaryCache = primaryCache;
+        this.secondaryCache = secondaryCache;
+    }
 
     @Override
     public SpawnedDataBlock spawn(Configuration configuration, DistanceCheckedDataBlock trajectories) {
@@ -103,7 +108,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         Map<FractionPoint, Trajectory> surroundings = new HashMap<>();
         for (FractionPoint point: extremes) {
             Trajectory main = new PointTrajectory(createPoint(space, point));
-            alreadySpawnedPrimaryTrajectories.put(point, main);
+            primaryCache.store(point, main);
             List<Trajectory> neighbors = new ArrayList<>();
             for (FractionPoint n: point.surround(new Fraction(1, 2), dimensionsToSkip)) {
                 if (n.isValid()) {
@@ -112,7 +117,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
                     } else {
                         Trajectory t = new PointTrajectory(createPoint(space, n));
                         surroundings.put(n, t);
-                        alreadySpawnedCollisionTrajectories.put(n, t);
+                        secondaryCache.store(n, t);
                         neighbors.add(t);
                     }
                 }
@@ -134,15 +139,9 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         ArrayFractionPoint tPoint = (ArrayFractionPoint) trajectory.getFirstPoint();
         ArrayFractionPoint nPoint = (ArrayFractionPoint) neighbor.getFirstPoint();
         FractionPoint middle = tPoint.getFractionPoint().middle(nPoint.getFractionPoint());
-        Trajectory middleTrajectory;
-        synchronized(alreadySpawnedPrimaryTrajectories) {
-            middleTrajectory = alreadySpawnedPrimaryTrajectories.get(middle);
-            if (middleTrajectory == null) {
-                middleTrajectory = new PointTrajectory(createPoint(configuration.getInitialSpace(), middle));
-                alreadySpawnedPrimaryTrajectories.put(middle, middleTrajectory);
-            } else {
-                return null;
-            }
+        Trajectory middleTrajectory = new PointTrajectory(createPoint(configuration.getInitialSpace(), middle));
+        if (!primaryCache.store(middle, middleTrajectory)) {
+            return null;
         }
         Fraction radius = tPoint.getFractionPoint().diffDistance(nPoint.getFractionPoint()).divide(2);
         Collection<FractionPoint> surroundings = middle.surround(radius, skip);
@@ -151,16 +150,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
             if (!point.isValid()) {
                 continue;
             }
-            Trajectory neigh;
-            synchronized(alreadySpawnedCollisionTrajectories) {
-                neigh = alreadySpawnedCollisionTrajectories.get(point);
-                if (neigh == null) {
-                    neigh = new PointTrajectory(createPoint(configuration.getInitialSpace(), point));
-                    alreadySpawnedCollisionTrajectories.put(point, neigh);
-                } else {
-                    neigh = neigh.getReference().getTrajectory();
-                }
-            }
+            Trajectory neigh = secondaryCache.load(point, new PointTrajectory(createPoint(configuration.getInitialSpace(), point)));
             neighbors.add(neigh);
         }
         return TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(middleTrajectory, new ListDataBlock<>(neighbors));

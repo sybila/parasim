@@ -21,11 +21,21 @@ package org.sybila.parasim.computation.lifecycle.impl.shared;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sybila.parasim.computation.lifecycle.api.Computation;
+import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
+import org.sybila.parasim.computation.lifecycle.api.Emitter;
 import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
 import org.sybila.parasim.computation.lifecycle.impl.AbstractComputationLifecycleTest;
 import org.sybila.parasim.computation.lifecycle.test.InfiniteSequentialFactorial;
+import org.sybila.parasim.computation.lifecycle.test.MultiplicativeInteger;
 import org.sybila.parasim.computation.lifecycle.test.ParallelFactorial;
 import org.sybila.parasim.computation.lifecycle.test.SequentialFactorial;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.annotation.Inject;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -48,10 +58,47 @@ public class TestSharedMemoryComputationContainer extends AbstractComputationLif
         checkInfiniteSeqFactorial(new InfiniteSequentialFactorial(10), 10);
     }
 
+    @Test
+    public void testDestroy() throws InterruptedException, ExecutionException, TimeoutException {
+        ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
+        final int n = 10;
+        container.compute(new DestroyableFactorial(n)).get();
+        Assert.assertEquals(DestroyableFactorial.DESTROYED.get(), n);
+    }
+
     @Override
     protected void beforeManagerCreated() {
         super.beforeManagerCreated();
         System.setProperty("parasim.computation.lifecycle.default.executor", SharedMemoryExecutor.class.getName());
     }
 
+    public static class DestroyableFactorial implements Computation<MultiplicativeInteger> {
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(SequentialFactorial.class);
+        private static final AtomicInteger DESTROYED = new AtomicInteger(0);
+
+        private final Integer n;
+        @Inject
+        private Emitter emitter;
+
+        public DestroyableFactorial(Integer n) {
+            this.n = n;
+        }
+
+        @Override
+        public MultiplicativeInteger call() throws Exception {
+            LOGGER.debug(this + " started");
+            if (n > 1) {
+                emitter.emit(new DestroyableFactorial(n - 1));
+            }
+            LOGGER.debug(this + " finished");
+            return new MultiplicativeInteger(n);
+        }
+
+        @Override
+        public void destroy() throws Exception {
+            DESTROYED.incrementAndGet();
+        }
+
+    }
 }

@@ -35,6 +35,8 @@ import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope
 import org.sybila.parasim.computation.lifecycle.api.annotations.Node;
 import org.sybila.parasim.computation.lifecycle.impl.common.CallableFactory;
 import org.sybila.parasim.computation.lifecycle.impl.common.AbstractExecutor;
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationUtils;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.api.Binder;
 import org.sybila.parasim.core.api.Context;
@@ -55,13 +57,18 @@ public class SharedMemoryExecutorImpl extends AbstractExecutor implements Shared
         // init context
         Context context = getContext().context(ComputationScope.class);
         UUID node = UUID.randomUUID();
+        ComputationLifecycleConfiguration configuration = context.resolve(ComputationLifecycleConfiguration.class, Default.class);
         // prepare services
         MutableStatus status = new SimpleStatus();
-        Offerer offerer = new SimpleOfferer(node, status);
+        Offerer offerer = new SimpleOfferer(
+                node,
+                status,
+                context.resolve(Enrichment.class, Default.class).enrich(ComputationUtils.getOffererSelector(computation.getClass()), context),
+                context.resolve(Enrichment.class, Default.class).enrich(ComputationUtils.getBalancerSelector(computation.getClass()), context));
         ExecutorService executorService = context.resolve(ExecutorService.class, Default.class);
         CallableFactory callableFactory = new CallableFactory(context, status);
         ComputationFuture<M> future = new ComputationFuture<>(node, context, status);
-        Mucker mucker = new Mucker(node, status, executorService, offerer, Long.MAX_VALUE, callableFactory);
+        Mucker mucker = new Mucker(node, status, executorService, offerer, configuration.getNodeThreshold(), callableFactory);
         // bind services
         Binder binder = context.resolve(Binder.class, Default.class);
         binder.bind(Emitter.class, Default.class, offerer);
@@ -76,7 +83,5 @@ public class SharedMemoryExecutorImpl extends AbstractExecutor implements Shared
         // return future
         return future;
     }
-
-
 
 }

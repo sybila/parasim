@@ -86,7 +86,7 @@ public class TestFractionTrajectorySpawner extends AbstractTrajectorySpawnerTest
 
     @Override
     protected TrajectorySpawner createTrajectorySpawner() {
-        return new FractionTrajectorySpawner();
+        return new FractionTrajectorySpawner(new SpawnedTrajectoriesCacheImpl(), new SpawnedTrajectoriesCacheImpl());
     }
 
 }

@@ -33,12 +33,17 @@ public class ComputationLifecycleConfiguration {
     private int maxPoolSize = corePoolSize * 5;
     private long keepAliveTimeAmount = 5;
     private TimeUnit keepAliveTimeUnit = TimeUnit.SECONDS;
-    private long nodeTreshold = Runtime.getRuntime().availableProcessors() + Runtime.getRuntime().availableProcessors() / 2;
+    private long nodeThreshold = Runtime.getRuntime().availableProcessors() + Runtime.getRuntime().availableProcessors() / 2;
+    private float balancerThreshold = 1.5f;
     private URI[] nodes;
     private String defaultExecutor = SharedMemoryExecutor.class.getName();
 
     public int getQueueSize() {
         return queueSize;
+    }
+
+    public float getBalancerThreshold() {
+        return balancerThreshold;
     }
 
     public int getCorePoolSize() {
@@ -57,8 +62,8 @@ public class ComputationLifecycleConfiguration {
         return keepAliveTimeUnit;
     }
 
-    public long getNodeTreshold() {
-        return nodeTreshold;
+    public long getNodeThreshold() {
+        return nodeThreshold;
     }
 
     public URI[] getNodes() {

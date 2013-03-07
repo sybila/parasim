@@ -55,5 +55,5 @@ public interface RemoteMutableStatus extends Remote {
 
     void emit(UUID node, Computation computation) throws RemoteException;
 
-    void reschedule(UUID node, Computation computation) throws RemoteException;
+    void balance(UUID node, Computation computation) throws RemoteException;
 }

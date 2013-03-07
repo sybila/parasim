@@ -41,7 +41,9 @@ import org.sybila.parasim.computation.lifecycle.api.RemoteQueue;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.computation.lifecycle.impl.common.AbstractExecutor;
 import org.sybila.parasim.computation.lifecycle.impl.common.ComputationFuture;
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
 import org.sybila.parasim.computation.lifecycle.impl.shared.SimpleStatus;
+import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.api.Context;
 import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.model.Mergeable;
@@ -76,12 +78,12 @@ public class DistributedMemoryExecutorImpl extends AbstractExecutor implements D
             exportedRemoteStatus = (RemoteMutableStatus) UnicastRemoteObject.exportObject(remoteStatus);
             // start the computation on slave nodes
             for (RemoteExecutor executor: remoteExecutors) {
-                    executor.startComputation(exportedRemoteStatus, computationId);
+                    executor.startComputation(computation.getClass(), exportedRemoteStatus, computationId);
                     remoteQueues.put(executor.getId(), executor.getQueue(computationId));
             }
             // prepare services
             ComputationFuture<M> future = new ComputationFuture<>(computationId, context, status);
-            DistributedMemoryMucker mucker = new DistributedMemoryMucker(remoteQueues);
+            DistributedMemoryMucker mucker = new DistributedMemoryMucker(context.resolve(ComputationLifecycleConfiguration.class, Default.class).getBalancerThreshold(), remoteQueues);
             // register progress listeners
             status.addProgressListerner(mucker);
             status.addProgressListerner(new RemoteComputationDestroyer(remoteStatus, computationId));

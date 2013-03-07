@@ -44,6 +44,6 @@ public class ProgressAdapter implements ProgressListener {
     }
 
     @Override
-    public void rescheduled(UUID node, Computation event) {
+    public void balanced(UUID node, Computation event) {
     }
 }

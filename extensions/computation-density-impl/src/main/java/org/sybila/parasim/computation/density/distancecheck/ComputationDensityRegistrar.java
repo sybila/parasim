@@ -21,8 +21,12 @@ package org.sybila.parasim.computation.density.distancecheck;
 
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
 import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
+import org.sybila.parasim.computation.density.spawn.api.SpawnedTrajectoriesCache;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
+import org.sybila.parasim.computation.density.spawn.api.annotations.Primary;
+import org.sybila.parasim.computation.density.spawn.api.annotations.Secondary;
 import org.sybila.parasim.computation.density.spawn.cpu.FractionTrajectorySpawner;
+import org.sybila.parasim.computation.density.spawn.cpu.SpawnedTrajectoriesCacheImpl;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.core.annotation.Provide;
 
@@ -33,8 +37,20 @@ import org.sybila.parasim.core.annotation.Provide;
 public class ComputationDensityRegistrar {
 
     @Provide
-    public TrajectorySpawner provideSpawner() {
-        return new FractionTrajectorySpawner();
+    @Primary
+    public SpawnedTrajectoriesCache providePrimaryCache() {
+        return new SpawnedTrajectoriesCacheImpl();
+    }
+
+    @Provide
+    @Secondary
+    public SpawnedTrajectoriesCache provideSecondaryCache() {
+        return new SpawnedTrajectoriesCacheImpl();
+    }
+
+    @Provide
+    public TrajectorySpawner provideSpawner(@Primary SpawnedTrajectoriesCache primaryCache, @Secondary SpawnedTrajectoriesCache secondaryCache) {
+        return new FractionTrajectorySpawner(primaryCache, secondaryCache);
     }
 
     @Provide

@@ -44,8 +44,9 @@ public class DistributedMemoryMucker extends ProgressAdapter {
 
     private final Map<UUID, RemoteDescriptor> descriptors;
     private final SortedSet<RemoteDescriptor> sortedDescriptors;
+    private final float balancerThreshold;
 
-    public DistributedMemoryMucker(Map<UUID, RemoteQueue> queues) {
+    public DistributedMemoryMucker(float balancerThreshold, Map<UUID, RemoteQueue> queues) {
         Validate.notNull(queues, "The map with queues can't be null.");
         Validate.isTrue(!queues.isEmpty(), "The map with queues can't be empty.");
         this.descriptors = new HashMap<>(queues.size());
@@ -53,6 +54,7 @@ public class DistributedMemoryMucker extends ProgressAdapter {
             this.descriptors.put(entry.getKey(), new RemoteDescriptor(entry.getValue(), entry.getKey()));
         }
         this.sortedDescriptors = new TreeSet<>(descriptors.values());
+        this.balancerThreshold = balancerThreshold;
     }
 
     @Override
@@ -76,13 +78,13 @@ public class DistributedMemoryMucker extends ProgressAdapter {
     protected void reschedule() {
         final RemoteDescriptor busy = sortedDescriptors.last();
         final RemoteDescriptor notBusy = sortedDescriptors.first();
-        if (busy.size.get() > 1 && busy.size.get() > 1.5 * notBusy.size.get()) {
+        if (busy.size.get() > 1 && busy.size.get() > balancerThreshold * notBusy.size.get()) {
             LOGGER.debug("starting balancing from [" + busy.size + "] to [" + notBusy.size + "]");
             try {
-                Computation toBalance = busy.queue.reschedule();
+                Computation toBalance = busy.queue.balance();
                 LOGGER.debug("balancing " + toBalance);
                 if (toBalance != null) {
-                    notBusy.queue.reschedule(toBalance);
+                    notBusy.queue.balance(toBalance);
                 }
                 LOGGER.debug("balanced " + toBalance);
             } catch (RemoteException e) {
