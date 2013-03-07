@@ -4,40 +4,39 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.verification.stl;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.commons.lang3.ArrayUtils;
 
 import org.sybila.parasim.model.ode.PointVariableMapping;
+import org.sybila.parasim.model.trajectory.Distance;
+import org.sybila.parasim.model.trajectory.EuclideanMetric;
 import org.sybila.parasim.model.trajectory.Point;
-import org.sybila.parasim.model.verification.Signal;
+import org.sybila.parasim.model.trajectory.PointDistanceMetric;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Comprises of an inequality, i.e.:
- * <ul>
- * <li>relational operator</li>
- * <li>left side -- a linear combination of variables,</li>
- * <li>right side -- a constant</li>
+ * Comprises of an inequality, i.e.: <ul> <li>relational operator</li> <li>left
+ * side -- a linear combination of variables,</li> <li>right side -- a
+ * constant</li>
  *
  * Validity is determined as the validity of inequality in the given point.
  * Value is determined as difference between right and left side, which is
@@ -48,54 +47,84 @@ import org.w3c.dom.Element;
  */
 public class LinearPredicate extends Predicate {
 
-    @Override
-    public List<Signal> getSignals() {
-        return Collections.unmodifiableList(Arrays.asList((Signal) this));
-    }
-
-    /** Type of relational operator in the predicate */
+    /**
+     * Type of relational operator in the predicate
+     */
     public static enum Type implements XMLRepresentable {
-        /** Left side is equal to the right side */
-        EQUALS,
-        /** Left side is greater than the right side */
-        GREATER,
-        /** Left side is lesser than the right side */
-        LESSER;
 
         /**
-         * @param left
-         *            Left side of inequality.
-         * @param right
-         *            Right side of inequality.
+         * Left side is equal to the right side
+         */
+        EQUALS() {
+
+            @Override
+            public boolean isValid(float left, float right) {
+                return left == right;
+            }
+
+            @Override
+            public String toString() {
+                return "=";
+            }
+
+            @Override
+            public float getValue(float left, float right) {
+                return 0;
+            }
+        },
+        /**
+         * Left side is greater than the right side
+         */
+        GREATER() {
+
+            @Override
+            public boolean isValid(float left, float right) {
+                return left > right;
+            }
+
+            @Override
+            public String toString() {
+                return ">";
+            }
+        },
+        /**
+         * Left side is lesser than the right side
+         */
+        LESSER() {
+
+            @Override
+            public boolean isValid(float left, float right) {
+                return left < right;
+            }
+
+            @Override
+            public String toString() {
+                return "<";
+            }
+        };
+
+        /**
+         * @param left Left side of inequality.
+         * @param right Right side of inequality.
          * @return Validity of inequality with given sides and this operator.
          */
-        public boolean isValid(float left, float right) {
-            switch (this) {
-            case EQUALS:
-                return left == right;
-            case GREATER:
-                return left > right;
-            case LESSER:
-                return left < right;
-            default:
-                assert false;
-                return false;
-            }
-        }
+        public abstract boolean isValid(float left, float right);
 
-        @Override
-        public String toString() {
-            switch (this) {
-            case EQUALS:
-                return "=";
-            case GREATER:
-                return ">";
-            case LESSER:
-                return "<";
-            default:
-                assert false;
-                return null;
+        /**
+         * @param left Left side of inequality.
+         * @param right Right side of inequality.
+         * @return Value of inequality with given sides and this operator.
+         */
+        public float getValue(float left, float right) {
+            /*
+             * computes absolute difference between left and right sides and
+             * then determines its sign from the point validity
+             */
+            float value = Math.abs(left - right);
+            if (!isValid(left, right)) {
+                value = -value;
             }
+            return value;
         }
 
         @Override
@@ -103,11 +132,18 @@ public class LinearPredicate extends Predicate {
             return doc.createElement(name().toLowerCase(Locale.ENGLISH));
         }
     }
-
+    private static final PointDistanceMetric<Distance> EUCLIDEAN_DISTANCE = new EuclideanMetric();
+    //
     private Map<Integer, Float> terms;
-    private float constant;
+    private float constant, denominator;
     private PointVariableMapping mapping;
     private Type type;
+
+    private static Distance getLength(float[] array) {
+        float[] empty = new float[array.length];
+        Arrays.fill(empty, 0);
+        return EUCLIDEAN_DISTANCE.distance(array, empty);
+    }
 
     private float getLeftSideValue(Point p) {
         float value = 0;
@@ -136,15 +172,11 @@ public class LinearPredicate extends Predicate {
     /**
      * Creates a new linear predicate.
      *
-     * @param multipliers
-     *            List of left-side multipliers, each with associated variable
-     *            index.
-     * @param constant
-     *            Right-side value.
-     * @param type
-     *            Type of relational operator.
-     * @param variables
-     *            Mapping between variable and indices.
+     * @param multipliers List of left-side multipliers, each with associated
+     * variable index.
+     * @param constant Right-side value.
+     * @param type Type of relational operator.
+     * @param variables Mapping between variable and indices.
      */
     public LinearPredicate(Map<Integer, Float> multipliers, float constant,
             Type type, PointVariableMapping variables) {
@@ -157,6 +189,7 @@ public class LinearPredicate extends Predicate {
         this.constant = constant;
         mapping = variables;
         this.type = type;
+        denominator = getLength(ArrayUtils.toPrimitive(terms.values().toArray(new Float[0]))).value();
     }
 
     private boolean isValid(float leftSide, float rightSide) {
@@ -170,43 +203,31 @@ public class LinearPredicate extends Predicate {
 
     @Override
     public float getValue(Point p) {
-        /*
-         * computes absolute difference between left and right sides and then
-         * determines its sign from the point validity
-         */
-        float leftSide = getLeftSideValue(p);
-        float diff = Math.abs(leftSide - constant);
-        if (!isValid(leftSide, constant)) {
-            diff = -diff;
-        }
-        return diff;
+        return getValue(getLeftSideValue(p));
     }
 
     @Override
     public float getValue(float[] point) {
-        /*
-         * computes absolute difference between left and right sides and then
-         * determines its sign from the point validity
-         */
-        float leftSide = getLeftSideValue(point);
-        float diff = Math.abs(leftSide - constant);
-        if (!isValid(leftSide, constant)) {
-            diff = -diff;
-        }
-        return diff;
+        return getValue(getLeftSideValue(point));
+    }
+
+    /**
+     * Computes value from left side.
+     */
+    private float getValue(float leftSide) {
+        return type.getValue(leftSide, constant) / denominator;
     }
 
     @Override
     public Element toXML(Document doc) {
-        Element predicate = doc
-                .createElement(LinearPredicateFactory.PREDICATE_NAME);
-        /* Linear combination */
+        Element predicate = doc.createElement(LinearPredicateFactory.PREDICATE_NAME);
+        /*
+         * Linear combination
+         */
         for (Map.Entry<Integer, Float> term : terms.entrySet()) {
-            Element var = doc
-                    .createElement(LinearPredicateFactory.VARIABLE_NAME);
+            Element var = doc.createElement(LinearPredicateFactory.VARIABLE_NAME);
             var.appendChild(doc.createTextNode(mapping.getName(term.getKey())));
-            var.setAttribute(LinearPredicateFactory.MULTIPLIER_ATTRIBUTE, term
-                    .getValue().toString());
+            var.setAttribute(LinearPredicateFactory.MULTIPLIER_ATTRIBUTE, term.getValue().toString());
             predicate.appendChild(var);
         }
 
@@ -240,19 +261,25 @@ public class LinearPredicate extends Predicate {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
+        if (obj == this) {
             return true;
-        if ((obj instanceof LinearPredicate))
+        }
+        if ((obj instanceof LinearPredicate)) {
             return false;
+        }
         LinearPredicate target = (LinearPredicate) obj;
-        if (constant != target.constant)
+        if (constant != target.constant) {
             return false;
-        if (terms.equals(target.terms))
+        }
+        if (terms.equals(target.terms)) {
             return false;
-        if (!mapping.equals(target.mapping))
+        }
+        if (!mapping.equals(target.mapping)) {
             return false;
-        if (!type.equals(target.type))
+        }
+        if (!type.equals(target.type)) {
             return false;
+        }
         return true;
     }
 
@@ -265,5 +292,4 @@ public class LinearPredicate extends Predicate {
         result = prime * result + type.hashCode();
         return result;
     }
-
 }

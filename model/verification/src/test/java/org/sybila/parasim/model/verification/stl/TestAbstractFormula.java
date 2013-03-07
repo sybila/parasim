@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.model.verification.stl;
 
@@ -29,10 +29,7 @@ import java.util.Arrays;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import org.sybila.parasim.model.verification.Signal;
-import org.sybila.parasim.util.Iterables;
 import org.testng.annotations.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,15 +41,18 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public class TestAbstractFormula {
+
     private static final FormulaType TYPE = FormulaType.AND;
 
     private class IllegalUseException extends RuntimeException {
+
         public IllegalUseException(String message) {
             super(message);
         }
     }
 
     private class NaryFormula extends AbstractFormula {
+
         private Formula[] subf;
         private FormulaType type;
 
@@ -96,18 +96,10 @@ public class TestAbstractFormula {
         public float getTimeNeeded() {
             throw new IllegalUseException("Time");
         }
-
-        @Override
-        public List<Signal> getSignals() {
-            List<Signal> signals = new ArrayList<>();
-            for (int i=0; i<getArity(); i++) {
-                signals.addAll(getSubformula(i).getSignals());
-            }
-            return signals;
-        }
     }
 
     private class SimpleFormula implements Formula {
+
         private int num;
 
         public SimpleFormula(int number) {
@@ -136,8 +128,9 @@ public class TestAbstractFormula {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof SimpleFormula))
+            if (!(obj instanceof SimpleFormula)) {
                 return false;
+            }
             return (num == ((SimpleFormula) obj).num);
         }
 
@@ -155,14 +148,10 @@ public class TestAbstractFormula {
         public Collection<Integer> getVariableIndexes() {
             return new ArrayList<>();
         }
-
-        @Override
-        public List<Signal> getSignals() {
-            throw new IllegalUseException("Signals");
-        }
     }
 
     private class SimpleUnaryFormula implements Formula {
+
         Formula phi;
 
         public SimpleUnaryFormula(Formula phi) {
@@ -198,11 +187,6 @@ public class TestAbstractFormula {
         public Collection<Integer> getVariableIndexes() {
             return phi.getVariableIndexes();
         }
-
-        @Override
-        public List<Signal> getSignals() {
-            return phi.getSignals();
-        }
     }
 
     private Formula[] getFormulaList(int number) {
@@ -216,7 +200,7 @@ public class TestAbstractFormula {
     @Test
     public void testEquality() {
         try {
-            /* 0-ary formulae */
+            // 0-ary formulae //
             for (FormulaType type : FormulaType.values()) {
                 Formula phi = new NaryFormula(null, type);
                 Formula psi = new NaryFormula(null, type);
@@ -243,28 +227,26 @@ public class TestAbstractFormula {
 
     @Test
     public void testUnequality() {
-        /* 0-ary of different type */
+        // 0-ary of different type //
         for (FormulaType type1 : FormulaType.values()) {
             for (FormulaType type2 : FormulaType.values()) {
                 if (!type1.equals(type2)) {
                     assertFalse(
-
-                    new NaryFormula(null, type1).equals(new NaryFormula(null,
+                            new NaryFormula(null, type1).equals(new NaryFormula(null,
                             type2)),
                             "Formulae of different type should not be equal.");
                 }
             }
         }
 
-        /* different subformulae */
+        // different subformulae //
         final int n = 13;
         Formula[] list = getFormulaList(n);
         Formula phi = new NaryFormula(list, TYPE);
         for (int i = 0; i < n; i++) {
             list[i] = new SimpleFormula((i ^ 5) % n + n);
             assertFalse(
-
-            phi.equals(new NaryFormula(list, TYPE)),
+                    phi.equals(new NaryFormula(list, TYPE)),
                     "Formulae with different subformulae should not be equal.");
             list[i] = new SimpleFormula(i);
         }
@@ -277,7 +259,7 @@ public class TestAbstractFormula {
         assertFalse(target.equals(new Object()),
                 "equals() invoked on a non-Formula should return false");
 
-        /* agains a non-Abstract Formula, but equal formula */
+        // agains a non-Abstract Formula, but equal formula //
         Formula phi = new SimpleFormula(1);
         target = new NaryFormula(phi);
         Formula obj = new SimpleUnaryFormula(phi);
@@ -289,17 +271,16 @@ public class TestAbstractFormula {
     @Test
     public void testHashCode() {
         try {
-            /* 0-ary formulae */
+            // 0-ary formulae //
             for (FormulaType type : FormulaType.values()) {
                 Formula phi = new NaryFormula(null, type);
                 Formula psi = new NaryFormula(null, type);
                 assertEquals(
-
-                phi.hashCode(), psi.hashCode(),
+                        phi.hashCode(), psi.hashCode(),
                         "0-ary formulae of the same type should have the same hash code.");
             }
 
-            /* n-ary formulae */
+            // n-ary formulae //
             final int n = 15;
             Formula[] formList = getFormulaList(n);
             for (FormulaType type : FormulaType.values()) {
@@ -315,13 +296,12 @@ public class TestAbstractFormula {
         }
     }
 
-
     private static Collection<Integer> computeVariableIndexes(Formula[] formulae) {
         if (formulae == null) {
             return new ArrayList<>();
         }
         Set<Integer> indexes = new HashSet<>();
-        for (Formula formula: formulae) {
+        for (Formula formula : formulae) {
             indexes.addAll(formula.getVariableIndexes());
         }
         return indexes;
