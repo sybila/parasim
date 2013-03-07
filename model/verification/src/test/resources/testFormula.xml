@@ -32,7 +32,7 @@
 </interval>
 <predicate>
 <variable multiplier="3.87">x</variable>
-<variable multiplier="-2.54">y</variable>
+<variable multiplier="-2.54" frozen="1">y</variable>
 <equals/>
 <value>15.28</value>
 </predicate>
@@ -44,7 +44,7 @@
 <upper type="closed">1.002</upper>
 </interval>
 <predicate>
-<variable multiplier="-2.159">y</variable>
+<variable multiplier="-2.159" frozen="2">y</variable>
 <variable multiplier="0.157">z</variable>
 <greater/>
 <value>0.29</value>
@@ -60,7 +60,7 @@
 </interval>
 <predicate>
 <variable multiplier="-1.004">x</variable>
-<variable multiplier="0.081">z</variable>
+<variable multiplier="0.081" frozen="1">z</variable>
 <lesser/>
 <value>0.23</value>
 </predicate>

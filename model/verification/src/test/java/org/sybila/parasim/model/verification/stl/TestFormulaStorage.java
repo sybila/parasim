@@ -38,6 +38,7 @@ import java.util.Map;
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.verification.stl.LinearPredicate.Type;
 import org.sybila.parasim.model.xml.XMLException;
+import org.sybila.parasim.util.Pair;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -89,27 +90,31 @@ public class TestFormulaStorage {
     }
     private FormulaResource resource;
 
+    private static void putValue(Map<Pair<Integer, Integer>, Float> map, int variable, int star, float value) {
+        map.put(new Pair<>(new Integer(variable), new Integer(star)), new Float(value));
+    }
+
     private static Formula getTestFormula() {
-        Map<Integer, Float> andOrFPterms = new HashMap<Integer, Float>();
-        andOrFPterms.put(new Integer(0), new Float(3.87));
-        andOrFPterms.put(new Integer(1), new Float(-2.54));
+        Map<Pair<Integer, Integer>, Float> andOrFPterms = new HashMap<>();
+        putValue(andOrFPterms, 0, 0, 3.78f);
+        putValue(andOrFPterms, 1, 1, -2.54f);
         Predicate andOrFP = new LinearPredicate(andOrFPterms, 15.28f,
                 Type.EQUALS, new SimpleMapping());
 
-        Map<Integer, Float> andOrGPterms = new HashMap<Integer, Float>();
-        andOrGPterms.put(new Integer(1), new Float(-2.159));
-        andOrGPterms.put(new Integer(2), new Float(0.157));
+        Map<Pair<Integer, Integer>, Float> andOrGPterms = new HashMap<>();
+        putValue(andOrGPterms, 1, 2, -2.159f);
+        putValue(andOrGPterms, 2, 0, 0.157f);
         Predicate andOrGP = new LinearPredicate(andOrGPterms, 0.29f,
                 Type.GREATER, new SimpleMapping());
 
-        Map<Integer, Float> andNotUP1terms = new HashMap<Integer, Float>();
-        andNotUP1terms.put(new Integer(0), new Float(-1.004));
-        andNotUP1terms.put(new Integer(2), new Float(0.081));
+        Map<Pair<Integer, Integer>, Float> andNotUP1terms = new HashMap<>();
+        putValue(andNotUP1terms, 0, 0, -1.004f);
+        putValue(andNotUP1terms, 2, 1, 0.081f);
         Predicate andNotUP1 = new LinearPredicate(andNotUP1terms, 0.23f,
                 Type.LESSER, new SimpleMapping());
 
-        Map<Integer, Float> andNotUP2terms = new HashMap<Integer, Float>();
-        andNotUP2terms.put(new Integer(2), new Float(185.123));
+        Map<Pair<Integer, Integer>, Float> andNotUP2terms = new HashMap<>();
+        putValue(andNotUP2terms, 2, 0, 185.123f);
         Predicate andNotUP2 = new LinearPredicate(andNotUP2terms, 191.25f,
                 Type.EQUALS, new SimpleMapping());
 

@@ -22,8 +22,6 @@ package org.sybila.parasim.model.verification.stl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import org.sybila.parasim.model.verification.Signal;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,7 +37,6 @@ import org.w3c.dom.Element;
 public abstract class AbstractFormula implements Formula {
 
     private final Collection<Integer> variableIndexes;
-    private List<Signal> signals;
 
     public AbstractFormula(Collection<Integer> variableIndexes) {
         if (variableIndexes == null) {

@@ -20,9 +20,12 @@
 package org.sybila.parasim.model.verification.stl;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.Validate;
 
 import org.sybila.parasim.model.ode.PointVariableMapping;
 import org.sybila.parasim.model.trajectory.Distance;
@@ -30,6 +33,8 @@ import org.sybila.parasim.model.trajectory.EuclideanMetric;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointDistanceMetric;
 import org.sybila.parasim.model.xml.XMLRepresentable;
+import org.sybila.parasim.util.Block;
+import org.sybila.parasim.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -134,62 +139,101 @@ public class LinearPredicate extends Predicate {
     }
     private static final PointDistanceMetric<Distance> EUCLIDEAN_DISTANCE = new EuclideanMetric();
     //
-    private Map<Integer, Float> terms;
+    private Map<Pair<Integer, Integer>, Float> terms;
     private float constant, denominator;
     private PointVariableMapping mapping;
     private Type type;
+    private int starNum;
 
-    private static Distance getLength(float[] array) {
+    private static Distance getLength(Float[] array) {
         float[] empty = new float[array.length];
         Arrays.fill(empty, 0);
-        return EUCLIDEAN_DISTANCE.distance(array, empty);
+        return EUCLIDEAN_DISTANCE.distance(ArrayUtils.toPrimitive(array), empty);
     }
 
     private float getLeftSideValue(Point p) {
         float value = 0;
-        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
-            if (term.getKey() >= p.getDimension()) {
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
+            if (term.getKey().first() >= p.getDimension()) {
                 throw new IllegalArgumentException(
                         "The point has too few dimensions to be evaluated.");
             }
-            value += p.getValue(term.getKey()) * term.getValue();
+            if (term.getKey().second() == 0) { //only evaluate predicates without stars
+                value += p.getValue(term.getKey().first()) * term.getValue();
+            }
         }
         return value;
     }
 
     private float getLeftSideValue(float[] p) {
         float value = 0;
-        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
-            if (term.getKey() >= p.length) {
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
+            if (term.getKey().first() >= p.length) {
                 throw new IllegalArgumentException(
                         "The point has too few dimensions to be evaluated.");
             }
-            value += p[term.getKey()] * term.getValue();
+            if (term.getKey().second() == 0) { // only evalueate predicates without stars
+                value += p[term.getKey().first()] * term.getValue();
+            }
         }
         return value;
+    }
+
+    private static Set<Integer> mapFirst(Set<Pair<Integer, Integer>> pairSet) {
+        Set<Integer> result = new HashSet<>();
+        for (Pair<Integer, Integer> pair : pairSet) {
+            Integer first = pair.first();
+            if (first != null) {
+                result.add(first);
+            }
+        }
+        return result;
     }
 
     /**
      * Creates a new linear predicate.
      *
      * @param multipliers List of left-side multipliers, each with associated
-     * variable index.
+     * variable index and frozen time index.
      * @param constant Right-side value.
      * @param type Type of relational operator.
      * @param variables Mapping between variable and indices.
      */
-    public LinearPredicate(Map<Integer, Float> multipliers, float constant,
+    public LinearPredicate(Map<Pair<Integer, Integer>, Float> multipliers, float constant,
             Type type, PointVariableMapping variables) {
-        super(multipliers.keySet());
+        super(mapFirst(multipliers.keySet()));
         if (multipliers.isEmpty()) {
             throw new IllegalArgumentException(
                     "There has to be at least one variable in the predicate.");
         }
+
+        // compute star number and check there are no nulls in multipliers //
+        starNum = 0;
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : multipliers.entrySet()) {
+            Integer star = term.getKey().second();
+            Validate.notNull(term.getKey().first());
+            Validate.notNull(star);
+            Validate.notNull(term.getValue());
+            if (star > starNum) {
+                starNum = star;
+            }
+        }
+
+        // assignments //
         terms = multipliers;
         this.constant = constant;
         mapping = variables;
         this.type = type;
-        denominator = getLength(ArrayUtils.toPrimitive(terms.values().toArray(new Float[0]))).value();
+
+        // compute denominator //
+        Block.Builder<Float> multiVectors = new Block.Builder<>(starNum + 1);
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : multipliers.entrySet()) {
+            multiVectors.getList(term.getKey().second()).add(term.getValue());
+        }
+        denominator = 0;
+        for (int i = 0; i <= starNum; i++) {
+            denominator += getLength(multiVectors.getList(i).toArray(new Float[0])).value();
+        }
     }
 
     private boolean isValid(float leftSide, float rightSide) {
@@ -224,10 +268,11 @@ public class LinearPredicate extends Predicate {
         /*
          * Linear combination
          */
-        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
             Element var = doc.createElement(LinearPredicateFactory.VARIABLE_NAME);
-            var.appendChild(doc.createTextNode(mapping.getName(term.getKey())));
+            var.appendChild(doc.createTextNode(mapping.getName(term.getKey().first())));
             var.setAttribute(LinearPredicateFactory.MULTIPLIER_ATTRIBUTE, term.getValue().toString());
+            var.setAttribute(LinearPredicateFactory.FREEZE_ATTRIBUTE, term.getKey().second().toString());
             predicate.appendChild(var);
         }
 
@@ -244,7 +289,7 @@ public class LinearPredicate extends Predicate {
     public String toString() {
         StringBuilder result = new StringBuilder();
         boolean first = true;
-        for (Map.Entry<Integer, Float> term : terms.entrySet()) {
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
             if (first) {
                 first = false;
             } else if (term.getValue() > 0) {
@@ -252,7 +297,8 @@ public class LinearPredicate extends Predicate {
             }
             result.append(term.getValue());
             result.append("*");
-            result.append(mapping.getName(term.getKey()));
+            result.append(mapping.getName(term.getKey().first()));
+            result.append(term.getKey().second().toString());
         }
         result.append(type.toString());
         result.append(constant);
