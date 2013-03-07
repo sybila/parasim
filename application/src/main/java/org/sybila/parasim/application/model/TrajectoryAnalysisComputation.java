@@ -24,6 +24,8 @@ import dk.ange.octave.OctaveEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
+import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
+import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngine;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
@@ -44,6 +46,7 @@ import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
+@RunWith(executor = SharedMemoryExecutor.class)
 public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryAnalysisComputation.class);
@@ -116,7 +119,6 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
 
     @Override
     public void destroy() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private static class CleanerListener implements PlotterWindowListener {
