@@ -38,7 +38,15 @@ public enum STLStarMonitorFactory implements MonitorFactory<Formula> {
     public StarMonitor createStarMonitor(Trajectory trajectory, Formula property, FormulaStarInfo info) {
         switch (property.getType()) {
             case PREDICATE:
-                return new StarPredicateMonitor(property, trajectory, (Predicate) property, info);
+                return new PredicateStarMonitor(property, trajectory, (Predicate) property, info);
+            case NOT:
+                return new NotStarMonitor(property, info, createStarMonitor(trajectory, property.getSubformula(0), info));
+            case AND:
+                return new AndStarMonitor(property, info, createStarMonitor(trajectory, property.getSubformula(0), info),
+                        createStarMonitor(trajectory, property.getSubformula(1), info));
+            case OR:
+                return new OrStarMonitor(property, info, createStarMonitor(trajectory, property.getSubformula(0), info),
+                        createStarMonitor(trajectory, property.getSubformula(1), info));
             default:
                 throw new UnsupportedOperationException("There is no available monitor for formula type [" + property.getType() + "].");
         }

@@ -22,12 +22,12 @@ import org.sybila.parasim.util.Coordinate;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class StarPredicateMonitor extends AbstractStarMonitor {
+public class PredicateStarMonitor extends AbstractStarMonitor {
 
     private final Trajectory trajectory;
     private final Predicate predicate;
 
-    public StarPredicateMonitor(Formula property, Trajectory trajectory, Predicate predicate, FormulaStarInfo info) {
+    public PredicateStarMonitor(Formula property, Trajectory trajectory, Predicate predicate, FormulaStarInfo info) {
         super(property, info);
         Validate.notNull(trajectory);
         Validate.notNull(predicate);
