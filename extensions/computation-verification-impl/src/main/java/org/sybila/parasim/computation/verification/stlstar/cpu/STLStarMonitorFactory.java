@@ -5,6 +5,7 @@ import org.sybila.parasim.computation.verification.api.MonitorFactory;
 import org.sybila.parasim.computation.verification.cpu.StarMonitor;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.stl.Formula;
+import org.sybila.parasim.model.verification.stl.FreezeFormula;
 import org.sybila.parasim.model.verification.stl.Predicate;
 import org.sybila.parasim.model.verification.stlstar.FormulaStarInfo;
 
@@ -47,6 +48,8 @@ public enum STLStarMonitorFactory implements MonitorFactory<Formula> {
             case OR:
                 return new OrStarMonitor(property, info, createStarMonitor(trajectory, property.getSubformula(0), info),
                         createStarMonitor(trajectory, property.getSubformula(1), info));
+            case FREEZE:
+                return new FreezeMonitor((FreezeFormula) property, info, createStarMonitor(trajectory, property.getSubformula(0), info));
             default:
                 throw new UnsupportedOperationException("There is no available monitor for formula type [" + property.getType() + "].");
         }
