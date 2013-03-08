@@ -10,7 +10,6 @@ import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.Robustness;
 import org.sybila.parasim.model.verification.SimpleRobustness;
-import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.Predicate;
 import org.sybila.parasim.model.verification.stlstar.ArrayMultiPoint;
 import org.sybila.parasim.model.verification.stlstar.FormulaStarInfo;
@@ -27,10 +26,9 @@ public class PredicateStarMonitor extends AbstractStarMonitor {
     private final Trajectory trajectory;
     private final Predicate predicate;
 
-    public PredicateStarMonitor(Formula property, Trajectory trajectory, Predicate predicate, FormulaStarInfo info) {
-        super(property, info);
+    public PredicateStarMonitor(Predicate predicate, Trajectory trajectory, FormulaStarInfo info) {
+        super(predicate, info);
         Validate.notNull(trajectory);
-        Validate.notNull(predicate);
         this.trajectory = trajectory;
         this.predicate = predicate;
     }

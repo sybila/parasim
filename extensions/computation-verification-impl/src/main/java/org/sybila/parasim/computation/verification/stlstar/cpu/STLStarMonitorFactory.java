@@ -38,7 +38,7 @@ public enum STLStarMonitorFactory implements MonitorFactory<Formula> {
     public StarMonitor createStarMonitor(Trajectory trajectory, Formula property, FormulaStarInfo info) {
         switch (property.getType()) {
             case PREDICATE:
-                return new PredicateStarMonitor(property, trajectory, (Predicate) property, info);
+                return new PredicateStarMonitor((Predicate) property, trajectory, info);
             case NOT:
                 return new NotStarMonitor(property, info, createStarMonitor(trajectory, property.getSubformula(0), info));
             case AND:
