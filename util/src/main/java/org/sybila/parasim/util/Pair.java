@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.util;
 
+import java.io.Serializable;
+
 /**
  * Pair of objects of different type. Immutable (references to contained objects cannot be changed).
  *
@@ -27,7 +29,7 @@ package org.sybila.parasim.util;
  * @param F type of first object.
  * @param S type of second object.
  */
-public class Pair<F, S> {
+public class Pair<F, S> implements Serializable {
 
     private F fst;
     private S snd;
