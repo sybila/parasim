@@ -56,6 +56,7 @@ public class ExperimentLauncher {
             return result.get(experiment.getTimeoutAmount(), experiment.getTimeoutUnit());
         } catch (TimeoutException e) {
             LOGGER.error("timeout");
+            result.cancel(true);
             return result.getPartial();
         }
     }
