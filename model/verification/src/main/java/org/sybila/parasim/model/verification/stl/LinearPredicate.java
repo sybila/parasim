@@ -32,6 +32,7 @@ import org.sybila.parasim.model.trajectory.Distance;
 import org.sybila.parasim.model.trajectory.EuclideanMetric;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointDistanceMetric;
+import org.sybila.parasim.model.verification.stlstar.MultiPoint;
 import org.sybila.parasim.model.xml.XMLRepresentable;
 import org.sybila.parasim.util.Block;
 import org.sybila.parasim.util.Pair;
@@ -179,6 +180,23 @@ public class LinearPredicate extends Predicate {
         return value;
     }
 
+    private float getLeftSideValue(MultiPoint mp) {
+        float value = 0;
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
+            int var = term.getKey().first();
+            int freeze = term.getKey().second();
+            if (mp.getDimension() <= freeze) {
+                throw new IllegalArgumentException("The multipoint has too few points to be evaluated.");
+            }
+            Point p = mp.getPoint(freeze);
+            if (p.getDimension() <= var) {
+                throw new IllegalArgumentException("The point has too few dimensions to be evaluated.");
+            }
+            value += p.getValue(var) * term.getValue();
+        }
+        return value;
+    }
+
     private static Set<Integer> mapFirst(Set<Pair<Integer, Integer>> pairSet) {
         Set<Integer> result = new HashSet<>();
         for (Pair<Integer, Integer> pair : pairSet) {
@@ -254,6 +272,16 @@ public class LinearPredicate extends Predicate {
     @Override
     public float getValue(float[] point) {
         return getUnstarValue(getLeftSideValue(point));
+    }
+
+    @Override
+    public float getValue(MultiPoint mp) {
+        return type.getValue(getLeftSideValue(mp), constant) / denominator;
+    }
+
+    @Override
+    public boolean isValid(MultiPoint mp) {
+        return type.isValid(getLeftSideValue(mp), constant);
     }
 
     /**
