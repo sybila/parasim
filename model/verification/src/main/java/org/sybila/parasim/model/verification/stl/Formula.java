@@ -60,11 +60,4 @@ public interface Formula extends XMLRepresentable, Property {
      * @return used variable indexes
      */
     Collection<Integer> getVariableIndexes();
-
-    /**
-     * Returns the number of used frozen times.
-     *
-     * @return number of frozen times.
-     */
-    int getStarNumber();
 }

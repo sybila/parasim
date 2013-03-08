@@ -20,6 +20,7 @@
 package org.sybila.parasim.model.verification.stl;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -145,6 +146,7 @@ public class LinearPredicate extends Predicate {
     private PointVariableMapping mapping;
     private Type type;
     private int starNum;
+    private Set<Integer> stars = new HashSet<>();
 
     private static Distance getLength(Float[] array) {
         float[] empty = new float[array.length];
@@ -232,6 +234,7 @@ public class LinearPredicate extends Predicate {
             Validate.notNull(term.getKey().first());
             Validate.notNull(star);
             Validate.notNull(term.getValue());
+            stars.add(star);
             if (star > starNum) {
                 starNum = star;
             }
@@ -317,6 +320,11 @@ public class LinearPredicate extends Predicate {
     @Override
     public int getStarNumber() {
         return starNum;
+    }
+
+    @Override
+    public Set<Integer> getStars() {
+        return Collections.unmodifiableSet(stars);
     }
 
     @Override

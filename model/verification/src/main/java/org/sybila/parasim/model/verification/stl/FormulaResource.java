@@ -80,11 +80,6 @@ public class FormulaResource extends FileXMLResource<Formula> {
         public Collection<Integer> getVariableIndexes() {
             throw new UnsupportedOperationException("Mockup container.");
         }
-
-        @Override
-        public int getStarNumber() {
-            throw new UnsupportedOperationException("Mockup container.");
-        }
     }
 
     private class FormulaContainerFactory implements XMLRepresentableFactory<Formula> {
