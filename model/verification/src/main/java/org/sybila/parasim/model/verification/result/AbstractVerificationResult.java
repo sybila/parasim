@@ -29,11 +29,9 @@ import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
 import org.sybila.parasim.model.trajectory.ArrayFractionPoint;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.FractionPoint;
-import org.sybila.parasim.model.trajectory.FractionPoint.Fraction;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
-import org.sybila.parasim.model.verification.SimpleRobustness;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -118,9 +116,6 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         for (int i = 0; i < size(); i++) {
             target.appendChild(pointToXML(doc, getPoint(i), getRobustness(i), verified, other));
         }
-        for (Point point: other.keySet()) {
-            target.appendChild(pointToXML(doc, point, null, verified, other));
-        }
 
         return target;
     }
@@ -128,7 +123,6 @@ public abstract class AbstractVerificationResult implements VerificationResult {
     private Element pointToXML(Document doc, Point point, Robustness robustness, Map<Point, Integer> verifiedIndexes, Map<Point, Integer> otherIndexes) {
 
         Element target = doc.createElement(VerificationResultFactory.POINT_NAME);
-        target.setAttribute(VerificationResultFactory.ID_NAME, verifiedIndexes.containsKey(point) ? verifiedIndexes.get(point).toString() : otherIndexes.get(point).toString());
         Element data = doc.createElement(VerificationResultFactory.DATA_NAME);
         target.appendChild(data);
         for (int i = 0; i < point.getDimension(); i++) {
@@ -136,18 +130,9 @@ public abstract class AbstractVerificationResult implements VerificationResult {
             dim.appendChild(doc.createTextNode(Float.toString(point.getValue(i))));
             data.appendChild(dim);
         }
-        if (point instanceof PointWithNeighborhood && !((PointWithNeighborhood) point).getNeighbors().isEmpty()) {
-            Element neighbors = doc.createElement(VerificationResultFactory.NEIGHBORS_NAME);
-            target.appendChild(neighbors);
-            for (Point n: ((PointWithNeighborhood) point).getNeighbors()) {
-                Element neighbor = doc.createElement(VerificationResultFactory.POINT_NAME);
-                neighbor.setAttribute(VerificationResultFactory.ID_NAME, verifiedIndexes.containsKey(n) ? verifiedIndexes.get(n).toString() : otherIndexes.get(n).toString());
-                neighbors.appendChild(neighbor);
-            }
-        }
-        if (robustness != null) {
-            target.setAttribute(VerificationResultFactory.ROBUSTNESS_NAME, Float.toString(robustness.getValue()));
-        }
+
+        target.setAttribute(VerificationResultFactory.ROBUSTNESS_NAME, Float.toString(robustness.getValue()));
+
         return target;
     }
 
@@ -229,76 +214,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
     }
 
     protected Robustness calculateGlobalRobustness() {
-        if (size() == 0) {
-            return Robustness.UNDEFINED;
-        }
-        Map<FractionPoint, Integer> points = new TreeMap<>();
-        Map<Integer, Robustness> cache = new HashMap<>();
-        Map<Integer, Fraction> radiuses = new HashMap<>();
-        for (int i=0; i<size(); i++) {
-            FractionPoint point = getFractionPoint(i);
-            if (points.containsKey(point)) {
-                continue;
-            }
-            points.put(point, i);
-            if (getPoint(i).getNeighbors().size() > 0) {
-                for (Point p: getPoint(i).getNeighbors()) {
-                    radiuses.put(i, point.diffDistance(((ArrayFractionPoint) p).getFractionPoint()).divide(2));
-                    break;
-                }
-            }
-        }
-        float sum = 0;
-        int number = 0;
-        for (FractionPoint root: FractionPoint.extremes(getPoint(0).getDimension())) {
-            Integer rootIndex = points.get(root);
-            if (rootIndex != null) {
-                sum += calculateGlobalRobustness(rootIndex, points, radiuses, cache).getValue();
-                number++;
-            }
-        }
-        FractionPoint middle = FractionPoint.maximum(getPoint(0).getDimension()).middle(FractionPoint.minimum(getPoint(0).getDimension()));
-        Integer middleIndex = points.get(middle);
-        if (middleIndex != null) {
-            sum += calculateGlobalRobustness(middleIndex, points, radiuses, cache).getValue();
-            number++;
-        }
-        if (number == 0) {
-            return Robustness.UNDEFINED;
-        } else {
-            return new SimpleRobustness(sum / number);
-        }
-    }
-
-    protected Robustness calculateGlobalRobustness(int root, Map<FractionPoint, Integer> points, Map<Integer, Fraction> radiuses, Map<Integer, Robustness> cache) {
-        Robustness fromCache = cache.get(root);
-        if (fromCache != null) {
-            return fromCache;
-        }
-        FractionPoint point = getFractionPoint(root);
-        float sum = 0;
-        int number = 0;
-        int validButNotComputed = 0;
-        Fraction radius = radiuses.get(root);
-        if (radius == null) {
-            cache.put(root, getRobustness(root));
-            return getRobustness(root);
-        }
-        for (FractionPoint p: point.surround(radius)) {
-            Integer index = points.get(p);
-            if (index == null) {
-                if (p.isValid()) {
-                    validButNotComputed++;
-                }
-                continue;
-            }
-            sum += calculateGlobalRobustness(index, points, radiuses, cache).getValue();
-            number++;
-
-        }
-        Robustness robustness = new SimpleRobustness((sum + (validButNotComputed + 1) * getRobustness(root).getValue()) / (number + validButNotComputed + 1));
-        cache.put(root, robustness);
-        return robustness;
+        return Robustness.UNDEFINED;
     }
 
     protected FractionPoint getFractionPoint(int i) {

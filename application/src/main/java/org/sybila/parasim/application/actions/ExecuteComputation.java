@@ -20,10 +20,12 @@
 package org.sybila.parasim.application.actions;
 
 import org.sybila.parasim.application.ParasimOptions;
-import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.core.api.Manager;
+import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.model.verification.result.VerificationResult;
+import org.sybila.parasim.model.xml.XMLException;
+import org.sybila.parasim.model.xml.XMLResource;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -44,7 +46,18 @@ public class ExecuteComputation extends AbstractAction<VerificationResult> {
 
     @Override
     public VerificationResult call() throws Exception {
-        return ExperimentLauncher.launch(getManager(), experiment);
+        VerificationResult result = ExperimentLauncher.launch(getManager(), experiment);
+        XMLResource<VerificationResult> output = experiment.getVerificationResultResource();
+        if (output != null) {
+            output.setRoot(result);
+            try {
+                output.store();
+            } catch (XMLException xmle) {
+                LOGGER.error("Unable to store result.", xmle);
+                System.exit(1);
+            }
+        }
+        return result;
     }
 
 }
