@@ -27,7 +27,7 @@ import java.util.Arrays;
  */
 public class Coordinate {
 
-    private int[] dims;
+    private final int[] dims;
 
     /**
      * Create a new vector with a given dimension and coordinates.
@@ -86,7 +86,7 @@ public class Coordinate {
      */
     public static class Builder {
 
-        private int[] dims;
+        private final int[] dims;
 
         /**
          * Create new vector builder. Initially,
@@ -96,6 +96,10 @@ public class Coordinate {
         public Builder(int dimension) {
             dims = new int[dimension];
             Arrays.fill(dims, 0);
+        }
+
+        public Builder(Coordinate basis) {
+            dims = Arrays.copyOf(basis.dims, basis.getDimension());
         }
 
         /**

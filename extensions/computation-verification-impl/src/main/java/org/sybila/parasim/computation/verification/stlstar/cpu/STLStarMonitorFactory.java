@@ -6,6 +6,7 @@ import org.sybila.parasim.computation.verification.cpu.StarMonitor;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.Predicate;
+import org.sybila.parasim.model.verification.stlstar.FormulaStarInfo;
 
 /**
  * Transforms a STL formula into monitor which monitors its "starred" version
@@ -23,7 +24,7 @@ public enum STLStarMonitorFactory implements MonitorFactory<Formula> {
 
     @Override
     public Monitor createMonitor(Trajectory trajectory, Formula property) {
-        return createStarMonitor(trajectory, property);
+        return createStarMonitor(trajectory, property, new FormulaStarInfo(property));
     }
 
     /**
@@ -34,10 +35,10 @@ public enum STLStarMonitorFactory implements MonitorFactory<Formula> {
      * @param property Property to monitor.
      * @return A monitor using frozen-time semantics.
      */
-    public StarMonitor createStarMonitor(Trajectory trajectory, Formula property) {
+    public StarMonitor createStarMonitor(Trajectory trajectory, Formula property, FormulaStarInfo info) {
         switch (property.getType()) {
             case PREDICATE:
-                return new StarPredicateMonitor(property, trajectory, (Predicate) property);
+                return new StarPredicateMonitor(property, trajectory, (Predicate) property, info);
             default:
                 throw new UnsupportedOperationException("There is no available monitor for formula type [" + property.getType() + "].");
         }
