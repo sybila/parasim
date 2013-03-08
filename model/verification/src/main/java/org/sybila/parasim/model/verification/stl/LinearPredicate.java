@@ -140,7 +140,7 @@ public class LinearPredicate extends Predicate {
     private static final PointDistanceMetric<Distance> EUCLIDEAN_DISTANCE = new EuclideanMetric();
     //
     private Map<Pair<Integer, Integer>, Float> terms;
-    private float constant, denominator;
+    private float constant, denominator, unstarDenominator;
     private PointVariableMapping mapping;
     private Type type;
     private int starNum;
@@ -154,11 +154,11 @@ public class LinearPredicate extends Predicate {
     private float getLeftSideValue(Point p) {
         float value = 0;
         for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
-            if (term.getKey().first() >= p.getDimension()) {
-                throw new IllegalArgumentException(
-                        "The point has too few dimensions to be evaluated.");
-            }
             if (term.getKey().second() == 0) { //only evaluate predicates without stars
+                if (term.getKey().first() >= p.getDimension()) {
+                    throw new IllegalArgumentException(
+                            "The point has too few dimensions to be evaluated.");
+                }
                 value += p.getValue(term.getKey().first()) * term.getValue();
             }
         }
@@ -168,11 +168,11 @@ public class LinearPredicate extends Predicate {
     private float getLeftSideValue(float[] p) {
         float value = 0;
         for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
-            if (term.getKey().first() >= p.length) {
-                throw new IllegalArgumentException(
-                        "The point has too few dimensions to be evaluated.");
-            }
             if (term.getKey().second() == 0) { // only evalueate predicates without stars
+                if (term.getKey().first() >= p.length) {
+                    throw new IllegalArgumentException(
+                            "The point has too few dimensions to be evaluated.");
+                }
                 value += p[term.getKey().first()] * term.getValue();
             }
         }
@@ -234,6 +234,7 @@ public class LinearPredicate extends Predicate {
         for (int i = 0; i <= starNum; i++) {
             denominator += getLength(multiVectors.getList(i).toArray(new Float[0])).value();
         }
+        unstarDenominator = getLength(multiVectors.getList(0).toArray(new Float[0])).value();
     }
 
     private boolean isValid(float leftSide, float rightSide) {
@@ -247,19 +248,19 @@ public class LinearPredicate extends Predicate {
 
     @Override
     public float getValue(Point p) {
-        return getValue(getLeftSideValue(p));
+        return getUnstarValue(getLeftSideValue(p));
     }
 
     @Override
     public float getValue(float[] point) {
-        return getValue(getLeftSideValue(point));
+        return getUnstarValue(getLeftSideValue(point));
     }
 
     /**
      * Computes value from left side.
      */
-    private float getValue(float leftSide) {
-        return type.getValue(leftSide, constant) / denominator;
+    private float getUnstarValue(float leftSide) {
+        return type.getValue(leftSide, constant) / unstarDenominator;
     }
 
     @Override

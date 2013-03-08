@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.computation.verification.stl.cpu;
 
@@ -36,9 +36,9 @@ public class STLMonitorFactory implements MonitorFactory<Formula> {
     @Override
     public Monitor createMonitor(Trajectory trajectory, Formula property) {
         if (trajectory.getLastPoint().getTime() < property.getTimeNeeded()) {
-            throw new IllegalArgumentException("The formula " + property + " needs the trajectory simulated at least to time " + property.getTimeNeeded() + ", " + trajectory.getLastPoint().getTime() + " given for trajectory with initial point "+trajectory.getFirstPoint()+".");
+            throw new IllegalArgumentException("The formula " + property + " needs the trajectory simulated at least to time " + property.getTimeNeeded() + ", " + trajectory.getLastPoint().getTime() + " given for trajectory with initial point " + trajectory.getFirstPoint() + ".");
         }
-        switch(property.getType()) {
+        switch (property.getType()) {
             case AND:
                 return new AndMonitor(property, createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)));
             case FUTURE:
@@ -53,9 +53,10 @@ public class STLMonitorFactory implements MonitorFactory<Formula> {
                 return new PredicateMonitor(property, trajectory, (Predicate) property);
             case UNTIL:
                 return new UntilMonitor(property, createMonitor(trajectory, property.getSubformula(0)), createMonitor(trajectory, property.getSubformula(1)), ((UntilFormula) property).getInterval());
+            case FREEZE:
+                return new FreezeIgnoreMonitor(property, createMonitor(trajectory, property.getSubformula(0)));
             default:
                 throw new UnsupportedOperationException("There is no available monitor for formula type [" + property.getType() + "].");
         }
     }
-
 }
