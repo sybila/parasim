@@ -28,8 +28,7 @@ public abstract class AbstractStarMonitor extends AbstractMonitor implements Sta
         unfrozen = info.getUnfrozenIndices(property);
     }
 
-    @Override
-    public Robustness getRobustness(Coordinate index) {
+    protected Coordinate simplify(Coordinate index) {
         if (index.getDimension() <= starNum) {
             throw new IllegalArgumentException("Coordinate is too shor to be evaluated.");
         }
@@ -41,7 +40,12 @@ public abstract class AbstractStarMonitor extends AbstractMonitor implements Sta
                 coord.setCoordinate(i, 0);
             }
         }
-        return computeRobustness(coord.create());
+        return coord.create();
+    }
+
+    @Override
+    public Robustness getRobustness(Coordinate index) {
+        return computeRobustness(simplify(index));
     }
 
     /**
