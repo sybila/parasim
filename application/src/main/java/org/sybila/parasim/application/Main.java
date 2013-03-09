@@ -44,6 +44,9 @@ public class Main {
             System.setProperty("parasim.config.file", options.getConfigFile());
         }
         Manager manager = ManagerImpl.create().start();
+        if (options.getConfigFile() != null) {
+            LOGGER.info("using configuration file: " + options.getConfigFile());
+        }
         Actions actions = new Actions(manager, options);
         try {
             if (actions.help().isEnabled()) {

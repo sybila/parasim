@@ -28,7 +28,6 @@ import java.util.Collection;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.Executor;
 import org.sybila.parasim.computation.lifecycle.api.Selector;
-import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
 
 /**
  * Defines a configuration for the given computation.
@@ -46,7 +45,7 @@ public @interface RunWith {
      * @see org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor
      * @see org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor
      */
-    Class<? extends Executor> executor() default SharedMemoryExecutor.class;
+    Class<? extends Executor> executor() default Executor.class;
 
     Class<? extends Selector<? extends Computation>> balancer() default DefaultSelector.class;
 
