@@ -165,7 +165,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         for (Trajectory t: spawned.getSecondaryTrajectories()) {
             originalSecondaryTrajectories.add(t);
         }
-        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 30), computationLifecycleConfiguration.getCorePoolSize());
+        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 30), 2 * computationLifecycleConfiguration.getCorePoolSize());
         int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
         for (int i=0; i<toSpawn; i++) {
             int batchStart = batchSize * i;
