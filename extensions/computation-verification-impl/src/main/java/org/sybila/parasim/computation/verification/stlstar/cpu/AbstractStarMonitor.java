@@ -33,8 +33,9 @@ public abstract class AbstractStarMonitor extends AbstractMonitor implements Sta
             throw new IllegalArgumentException("Coordinate is too shor to be evaluated.");
         }
 
+        // create a coordinate of correct length //
+        Coordinate.Builder coord = new Coordinate.Builder(index, starNum + 1);
         // set all frozen coordinates to zero //
-        Coordinate.Builder coord = new Coordinate.Builder(index);
         for (int i = 1; i <= starNum; i++) {
             if (!unfrozen.contains(new Integer(i))) {
                 coord.setCoordinate(i, 0);
