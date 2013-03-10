@@ -1,5 +1,6 @@
 package org.sybila.parasim.computation.verification.stlstar.cpu;
 
+import org.sybila.parasim.computation.verification.api.STLVerifier;
 import org.sybila.parasim.computation.verification.cpu.SimpleVerifier;
 import org.sybila.parasim.model.verification.stl.Formula;
 
@@ -9,7 +10,7 @@ import org.sybila.parasim.model.verification.stl.Formula;
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
-public class SimpleSTLStarVerifier extends SimpleVerifier<Formula> {
+public class SimpleSTLStarVerifier extends SimpleVerifier<Formula> implements STLVerifier {
 
     /**
      * Create a frozen-time value semantics verifier.
