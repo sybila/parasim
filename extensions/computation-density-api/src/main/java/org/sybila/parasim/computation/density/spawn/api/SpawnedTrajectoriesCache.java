@@ -17,32 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.lifecycle.api;
+package org.sybila.parasim.computation.density.spawn.api;
+
+import org.sybila.parasim.model.trajectory.FractionPoint;
+import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
- * This service provides available computation instances to the executor.
- * It's mainly internal service and shouldn't be used outside of computation
- * life cycle.
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Offerer extends Emitter, ProgressListener {
+public interface SpawnedTrajectoriesCache {
 
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the execution purpose.
-     */
-    Computation poll();
+    boolean contains(FractionPoint key);
 
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the balancing purpose.
-     */
-    Computation balance();
+    Trajectory load(FractionPoint key, Trajectory trajectory);
 
-    /**
-     * Returns the number of elements in this offerer.
-     */
-    int size();
+    boolean store(FractionPoint key, Trajectory trajectory);
 
 }

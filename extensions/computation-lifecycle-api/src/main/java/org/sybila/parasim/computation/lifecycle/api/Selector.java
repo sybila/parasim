@@ -19,30 +19,13 @@
  */
 package org.sybila.parasim.computation.lifecycle.api;
 
+import java.util.Collection;
+
 /**
- * This service provides available computation instances to the executor.
- * It's mainly internal service and shouldn't be used outside of computation
- * life cycle.
- *
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface Offerer extends Emitter, ProgressListener {
+public interface Selector<T> {
 
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the execution purpose.
-     */
-    Computation poll();
-
-    /**
-     * Retrieves and removes the head of this queue, or null if this offerer
-     * is empty. Computation instance is returned for the balancing purpose.
-     */
-    Computation balance();
-
-    /**
-     * Returns the number of elements in this offerer.
-     */
-    int size();
+    T select(Collection<T> items);
 
 }

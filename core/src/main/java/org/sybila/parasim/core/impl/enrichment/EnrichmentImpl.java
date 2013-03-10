@@ -37,12 +37,13 @@ public class EnrichmentImpl implements Enrichment {
     }
 
     @Override
-    public void enrich(Object target, Context context) {
+    public <T> T enrich(T target, Context context) {
         for (Enricher enricher: serviceRepository.service(Enricher.class)) {
             if (enricher.getType().isAssignableFrom(target.getClass())) {
                 enricher.enrich(target, context);
             }
         }
+        return target;
     }
 
     @Override

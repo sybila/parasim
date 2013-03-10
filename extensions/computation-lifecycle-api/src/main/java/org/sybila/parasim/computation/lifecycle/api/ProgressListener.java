@@ -87,12 +87,12 @@ public interface ProgressListener {
     void finished(UUID node, Mergeable event);
 
     /**
-     * The method is called when an alrady emitted computation instance is rescheduled.
+     * The method is called when an already emitted computation instance is balanced.
      *
-     * @param node node which initiate the rescheduling
+     * @param node node which initiate the balancing
      * @param event rescheduled computation instance
      * @see MutableStatus#reschedule(org.sybila.parasim.computation.lifecycle.api.Computation)
      */
-    void rescheduled(UUID node, Computation event);
+    void balanced(UUID node, Computation event);
 
 }

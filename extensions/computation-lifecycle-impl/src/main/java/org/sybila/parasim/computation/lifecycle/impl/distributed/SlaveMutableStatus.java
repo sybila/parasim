@@ -89,15 +89,15 @@ public class SlaveMutableStatus implements MutableStatus {
     }
 
     @Override
-    public void reschedule(UUID node, Computation event) {
+    public void balance(UUID node, Computation event) {
         try {
-            remoteStatus.reschedule(node, null);
+            remoteStatus.balance(node, null);
         } catch (RemoteException e) {
             throw new IllegalStateException("Can't invoke the remote status.", e);
         }
         synchronized(listeners) {
             for (ProgressListener listener: listeners) {
-                listener.rescheduled(node, event);
+                listener.balanced(node, event);
             }
         }
     }

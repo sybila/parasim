@@ -80,14 +80,14 @@ public class SimpleStatus implements MutableStatus {
     }
 
     @Override
-    public void reschedule(final UUID node, final Computation event) {
+    public void balance(final UUID node, final Computation event) {
         new Thread() {
 
             @Override
             public void run() {
                 synchronized(listeners) {
                     for (ProgressListener listener: listeners) {
-                        listener.rescheduled(node, event);
+                        listener.balanced(node, event);
                     }
                 }
             }

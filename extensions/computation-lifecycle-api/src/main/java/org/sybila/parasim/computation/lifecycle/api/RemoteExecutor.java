@@ -61,10 +61,11 @@ public interface RemoteExecutor extends Remote {
      * Starts a new computation with the given ID on remote node. It creates
      * a new {@link org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope} context assigned to the remote node.
      *
+     * @param computationClass class of the computation
      * @param status status of the master node which is used to monitor the computation
      * @param computation computation IDg
      * @throws RemoteException
      */
-    void startComputation(RemoteMutableStatus status, UUID computation) throws RemoteException;
+    void startComputation(Class<? extends Computation> computationClass, RemoteMutableStatus status, UUID computation) throws RemoteException;
 
 }

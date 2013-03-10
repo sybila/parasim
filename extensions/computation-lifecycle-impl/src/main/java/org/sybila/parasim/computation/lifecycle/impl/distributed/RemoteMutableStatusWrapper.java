@@ -76,8 +76,8 @@ public class RemoteMutableStatusWrapper implements RemoteMutableStatus {
     }
 
     @Override
-    public void reschedule(UUID node, Computation computation) throws RemoteException {
-        status.reschedule(node, computation);
+    public void balance(UUID node, Computation computation) throws RemoteException {
+        status.balance(node, computation);
     }
 
 }

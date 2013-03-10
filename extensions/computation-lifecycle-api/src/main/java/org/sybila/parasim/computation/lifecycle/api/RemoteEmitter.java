@@ -42,6 +42,6 @@ public interface RemoteEmitter extends Remote {
      * @param computation computation instance to be rescheduled
      * @throws RemoteException
      */
-    void reschedule(Computation computation) throws RemoteException;
+    void balance(Computation computation) throws RemoteException;
 
 }

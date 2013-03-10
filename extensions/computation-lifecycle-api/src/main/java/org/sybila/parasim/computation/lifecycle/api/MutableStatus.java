@@ -67,6 +67,6 @@ public interface MutableStatus extends Status {
      * Invoke {@link ProgressListener#rescheduled(org.sybila.parasim.computation.lifecycle.api.Computation) }.
      * This method doesn't increment any counter.
      */
-    void reschedule(UUID node, Computation event);
+    void balance(UUID node, Computation event);
 
 }

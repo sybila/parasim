@@ -21,28 +21,28 @@
 
 -->
 <result xmlns="http://www.sybila.org/parasim/verification-result" dimension="3" robustness="0">
-<point id="1" robustness="0.125">
+<point robustness="0.125">
 <data>
 <dimension>-0.15</dimension>
 <dimension>12.3</dimension>
 <dimension>53.1</dimension>
 </data>
 </point>
-<point id="2" robustness="-0.145">
+<point robustness="-0.145">
 <data>
 <dimension>89.005</dimension>
 <dimension>-74.102</dimension>
 <dimension>376.4</dimension>
 </data>
 </point>
-<point id="3" robustness="-54">
+<point robustness="-54">
 <data>
 <dimension>538.01</dimension>
 <dimension>-35.002</dimension>
 <dimension>55.12</dimension>
 </data>
 </point>
-<point id="4" robustness="-0.005">
+<point robustness="-0.005">
 <data>
 <dimension>124.1</dimension>
 <dimension>25.35</dimension>

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import org.apache.commons.lang3.Validate;
+import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.Emitter;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.Offerer;
@@ -37,11 +38,13 @@ import org.sybila.parasim.computation.lifecycle.api.annotations.Node;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Original;
 import org.sybila.parasim.computation.lifecycle.impl.common.CallableFactory;
 import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationUtils;
 import org.sybila.parasim.computation.lifecycle.impl.common.SimpleOfferer;
 import org.sybila.parasim.computation.lifecycle.impl.common.Mucker;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.api.Binder;
 import org.sybila.parasim.core.api.Context;
+import org.sybila.parasim.core.api.enrichment.Enrichment;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -97,26 +100,30 @@ public class RemoteExecutorImpl implements RemoteExecutor {
     }
 
     @Override
-    public synchronized void startComputation(RemoteMutableStatus status, UUID id) throws RemoteException {
+    public synchronized void startComputation(Class<? extends Computation> computationClass, RemoteMutableStatus status, UUID id) throws RemoteException {
         Validate.notNull(context);
         Validate.notNull(id);
         if (contexts.containsKey(id)) {
             throw new IllegalStateException("The computation " + id + " has already started.");
         }
         Context ctxt = context.context(ComputationScope.class);
-        initServices(ctxt, status);
+        initServices(computationClass, ctxt, status);
         contexts.put(id, ctxt);
     }
 
-    private void initServices(Context context, RemoteMutableStatus remoteStatus) throws RemoteException {
+    private void initServices(Class<? extends Computation> computationClass, Context context, RemoteMutableStatus remoteStatus) throws RemoteException {
         Binder binder = (Binder) context;
         // initialize services
         MutableStatus localStatus = new SlaveMutableStatus(remoteStatus);
         CallableFactory callableFactory = new CallableFactory(context, localStatus);
-        Offerer offerer = new SimpleOfferer(getId(), localStatus);
+        Offerer offerer = new SimpleOfferer(
+                getId(),
+                localStatus,
+                context.resolve(Enrichment.class, Default.class).enrich(ComputationUtils.getOffererSelector(computationClass), context),
+                context.resolve(Enrichment.class, Default.class).enrich(ComputationUtils.getBalancerSelector(computationClass), context));
         ComputationLifecycleConfiguration configuration = context.resolve(ComputationLifecycleConfiguration.class, Default.class);
         RemoteQueue remoteQueue = new RemoteQueueWrapper(offerer, offerer);
-        Mucker mucker = new Mucker(id, localStatus, context.resolve(ExecutorService.class, Default.class), offerer, configuration.getNodeTreshold(), callableFactory);
+        Mucker mucker = new Mucker(id, localStatus, context.resolve(ExecutorService.class, Default.class), offerer, configuration.getNodeThreshold(), callableFactory);
 
         // add progress listeners
         localStatus.addProgressListerner(offerer);

@@ -80,7 +80,7 @@ public class Mucker extends ProgressAdapter {
 
     @Override
     @GuardedBy("this")
-    public void rescheduled(UUID node, Computation event) {
+    public void balanced(UUID node, Computation event) {
         if (this.node.equals(node)) {
             trySubmit();
         }

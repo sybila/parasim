@@ -46,8 +46,8 @@ public class RemoteQueueWrapper implements RemoteQueue {
     }
 
     @Override
-    public Computation reschedule() throws RemoteException {
-        Computation reschedule = offerer.reschedule();
+    public Computation balance() throws RemoteException {
+        Computation reschedule = offerer.balance();
         return reschedule;
     }
 
@@ -62,11 +62,11 @@ public class RemoteQueueWrapper implements RemoteQueue {
     }
 
     @Override
-    public void reschedule(final Computation computation) throws RemoteException {
+    public void balance(final Computation computation) throws RemoteException {
         new Thread() {
             @Override
             public void run() {
-                emitter.reschedule(computation);
+                emitter.balance(computation);
             }
         }.start();
     }

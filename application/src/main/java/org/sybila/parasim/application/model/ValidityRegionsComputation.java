@@ -33,6 +33,8 @@ import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlockWrapper;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.Emitter;
+import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
@@ -57,6 +59,7 @@ import org.sybila.parasim.model.verification.stl.Formula;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
+@RunWith(balancer=ValidityRegionsIterationBalancer.class, offerer=ValidityRegionsIterationOfferer.class)
 public class ValidityRegionsComputation implements Computation<VerificationResult> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidityRegionsComputation.class);
@@ -86,6 +89,8 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
     private DistanceChecker distanceChecker;
     @Inject
     private Emitter emitter;
+    @Inject
+    private ComputationLifecycleConfiguration computationLifecycleConfiguration;
 
 
     private int iterationLimit;
@@ -121,51 +126,39 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
     @Override
     public VerificationResult call() throws Exception {
         if (spawned == null) {
-            spawned = emit(spawner.spawn(initialSpace));
+            spawned = emit(spawner.spawn(initialSpace), true);
         }
-
-        VerificationResult result = null;
-
-        while (spawned != null) {
-            currentIteration++;
-            LOGGER.info("iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned primary and <" + spawned.getSecondaryTrajectories().size() + "> secondary trajectories.");
-            SimulatedDataBlock<TrajectoryWithNeighborhood> simulated = simulator.simulate(simulationConfiguration, spawned);
-            SimulatedDataBlock simulatedSecondary = null;
-            if (spawned.getSecondaryTrajectories().size() > 0) {
-                simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
+        currentIteration++;
+        LOGGER.info("iteration <" + currentIteration + "> started with <" + spawned.size() + "> spawned primary and <" + spawned.getSecondaryTrajectories().size() + "> secondary trajectories.");
+        SimulatedDataBlock<TrajectoryWithNeighborhood> simulated = simulator.simulate(simulationConfiguration, spawned);
+        SimulatedDataBlock simulatedSecondary = null;
+        if (spawned.getSecondaryTrajectories().size() > 0) {
+            simulatedSecondary = simulator.simulate(simulationConfiguration, spawned.getSecondaryTrajectories());
+        }
+        VerifiedDataBlock<TrajectoryWithNeighborhood> verified = verifier.verify(simulated, property);
+        VerificationResult result = new VerifiedDataBlockResultAdapter(verified);
+        if (iterationLimit != 0 && currentIteration == iterationLimit) {
+            if (simulatedSecondary != null) {
+                VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
+                result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
             }
-            VerifiedDataBlock<TrajectoryWithNeighborhood> verified = verifier.verify(simulated, property);
-            if (result == null) {
-                result = new VerifiedDataBlockResultAdapter(verified);
-            } else {
-                result = result.merge(new VerifiedDataBlockResultAdapter(verified));
+            LOGGER.warn("iteration limit <" + iterationLimit + "> reached");
+        } else {
+            DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
+            if (simulatedSecondary != null) {
+                VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
+                result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
             }
-            if (iterationLimit != 0 && currentIteration == iterationLimit) {
-                if (simulatedSecondary != null) {
-                    VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
-                    result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
-                }
-                LOGGER.warn("iteration limit <" + iterationLimit + "> reached");
-                break;
-            } else {
-                DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
-//                for (int t=0; t<distanceChecked.size(); t++) {
-//                    System.out.println(distanceChecked.getTrajectory(t).getFirstPoint() + ": " + verified.getRobustness(t).getValue());
-//                    for (int n=0; n<distanceChecked.getTrajectory(t).getNeighbors().size(); n++) {
-//                        System.out.println("\t" + distanceChecked.getTrajectory(t).getNeighbors().getTrajectory(n).getFirstPoint() + ": " + distanceChecked.getDistance(t, n).value() + ": " + distanceChecked.getDistance(t, n).isValid());
-//                    }
-//                }
-                if (simulatedSecondary != null) {
-                    VerifiedDataBlock<Trajectory> verifiedSecondary = verifier.verify(simulatedSecondary, property);
-                    result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
-                }
-                spawned = emit(spawner.spawn(spawned.getConfiguration(), distanceChecked));
-            }
+            emit(spawner.spawn(spawned.getConfiguration(), distanceChecked), false);
         }
         return result;
     }
 
-    protected SpawnedDataBlock emit(SpawnedDataBlock spawned) {
+    public int getCurrentIteration() {
+        return currentIteration;
+    }
+
+    protected SpawnedDataBlock emit(SpawnedDataBlock spawned, boolean returnOneInsteadOfEmitting) {
         if (spawned.size() == 0) {
             return null;
         }
@@ -174,7 +167,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         for (Trajectory t: spawned.getSecondaryTrajectories()) {
             originalSecondaryTrajectories.add(t);
         }
-        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 20), Runtime.getRuntime().availableProcessors());
+        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 30), 2 * computationLifecycleConfiguration.getCorePoolSize());
         int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
         for (int i=0; i<toSpawn; i++) {
             int batchStart = batchSize * i;
@@ -191,7 +184,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
                     }
                 }
             }
-            if (result == null) {
+            if (returnOneInsteadOfEmitting && result == null) {
                 result = new SpawnedDataBlockWrapper(new ListDataBlock<>(localSpawned), spawned.getConfiguration(), new ListDataBlock<>(localSecondarySpawned));
             } else {
                 ValidityRegionsComputation computation = (ValidityRegionsComputation) cloneComputation();
