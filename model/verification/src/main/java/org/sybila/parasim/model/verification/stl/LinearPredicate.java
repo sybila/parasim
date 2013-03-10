@@ -348,6 +348,25 @@ public class LinearPredicate extends Predicate {
     }
 
     @Override
+    public Predicate substituteStars(Map<Integer, Integer> substitution) {
+        Map<Pair<Integer, Integer>, Float> result = new HashMap<>();
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
+            Integer index = substitution.get(term.getKey().second());
+            if (index == null) {
+                index = term.getKey().second();
+            }
+            Pair<Integer, Integer> key = new Pair<>(term.getKey().first(), index);
+            Float val = result.get(key);
+            if (val == null) {
+                val = 0f;
+            }
+            val += term.getValue();
+            result.put(key, val);
+        }
+        return new LinearPredicate(result, constant, type, mapping);
+    }
+
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         boolean first = true;

@@ -20,6 +20,7 @@
 package org.sybila.parasim.model.verification.stl;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import org.sybila.parasim.model.verification.Signal;
 
@@ -58,6 +59,15 @@ public abstract class Predicate extends AbstractFormula implements Signal {
      * @return Predicate.
      */
     public abstract Predicate mergeFrozenDimensions(Set<Integer> frozen);
+
+    /**
+     * Substitute frozen-time indices. Note, substitution function need not be
+     * injective.
+     *
+     * @param substitution Substitution function.
+     * @return Predicate with substituted froze-time indices.
+     */
+    public abstract Predicate substituteStars(Map<Integer, Integer> substitution);
 
     @Override
     public int getArity() {
