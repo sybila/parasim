@@ -33,6 +33,7 @@ import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
+import org.sybila.parasim.computation.verification.api.annotations.FrozenTime;
 import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.core.annotation.Provide;
@@ -102,6 +103,7 @@ public class TestLorenz84Oscilation extends ParasimTest {
         private AdaptiveStepSimulator simulator;
         @Inject
         private AdaptiveStepConfiguration simulationConfiguration;
+        @FrozenTime
         @Inject
         private STLVerifier verifier;
 

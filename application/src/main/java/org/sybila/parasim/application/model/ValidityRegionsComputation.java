@@ -41,6 +41,7 @@ import org.sybila.parasim.computation.simulation.api.annotations.SimulationSpace
 import org.sybila.parasim.computation.verification.api.STLVerifier;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlock;
 import org.sybila.parasim.computation.verification.api.VerifiedDataBlockResultAdapter;
+import org.sybila.parasim.computation.verification.api.annotations.FrozenTime;
 import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.model.ode.OdeSystem;
@@ -78,6 +79,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
     private AdaptiveStepConfiguration simulationConfiguration;
     @Inject
     private TrajectorySpawner spawner;
+    @FrozenTime
     @Inject
     private STLVerifier verifier;
     @Inject

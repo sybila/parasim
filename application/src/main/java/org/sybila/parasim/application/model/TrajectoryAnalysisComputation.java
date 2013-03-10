@@ -29,6 +29,7 @@ import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngine;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
 import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
+import org.sybila.parasim.computation.verification.api.annotations.FrozenTime;
 import org.sybila.parasim.core.annotation.Inject;
 import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.model.Mergeable;
@@ -61,6 +62,7 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
 
     @Inject
     private OctaveSimulationEngineFactory octaveSimulationEngineFactory;
+    @FrozenTime
     @Inject
     private STLVerifier verifier;
 
