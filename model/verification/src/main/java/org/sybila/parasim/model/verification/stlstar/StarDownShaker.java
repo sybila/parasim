@@ -15,11 +15,17 @@ import org.sybila.parasim.model.verification.stl.TemporalFormula;
 import org.sybila.parasim.model.verification.stl.UntilFormula;
 
 /**
+ * Moves freeze operators down the formula syntactic tree until they reach
+ * either temporal operator or a predicate (leaf). Freeze operator before
+ * predicates are merged with predicates.
  *
  * @author <a href="mailto:xvejpust@fi.muni.cz">Tomáš Vejpustek</a>
  */
 public enum StarDownShaker {
 
+    /**
+     * Singleton instance.
+     */
     INSTANCE;
 
     private Formula reconstructFreezes(Formula subformula, Set<Integer> freezes) {
@@ -41,11 +47,17 @@ public enum StarDownShaker {
         return ((TemporalFormula) target).getInterval();
     }
 
+    /**
+     * Move operators down in given formula.
+     *
+     * @param input Formula to be transformed.
+     * @return Transformed formula.
+     */
     public Formula downShake(Formula input) {
         return downShake(input, createEmptySet());
     }
 
-    public Formula downShake(Formula input, Set<Integer> freezes) {
+    private Formula downShake(Formula input, Set<Integer> freezes) {
         switch (input.getType()) {
             case FREEZE:
                 freezes.add(((FreezeFormula) input).getFreezeIndex());
