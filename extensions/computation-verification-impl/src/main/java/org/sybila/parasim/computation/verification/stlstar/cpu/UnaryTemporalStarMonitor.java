@@ -23,7 +23,7 @@ import org.sybila.parasim.util.LemireDeque;
  */
 public class UnaryTemporalStarMonitor extends TemporalStarMonitor {
 
-    private enum RobustnessComparator implements Comparator<Robustness> {
+    private static enum RobustnessComparator implements Comparator<Robustness> {
 
         GLOBALLY {
 
