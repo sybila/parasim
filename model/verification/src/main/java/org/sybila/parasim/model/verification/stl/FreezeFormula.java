@@ -44,6 +44,16 @@ public class FreezeFormula extends UnaryFormula {
     }
 
     @Override
+    public String toString() {
+        StringBuilder build = new StringBuilder("*");
+        build.append(index);
+        build.append("(");
+        build.append(getSubformula(0).toString());
+        build.append(")");
+        return build.toString();
+    }
+
+    @Override
     public Element toXML(Document doc) {
         Element target = super.toXML(doc);
         target.setAttribute(FormulaFactory.FREEZE_INDEX_NAME, Integer.toString(getFreezeIndex()));

@@ -340,7 +340,13 @@ public class LinearPredicate extends Predicate {
             result.append(term.getValue());
             result.append("*");
             result.append(mapping.getName(term.getKey().first()));
-            result.append(term.getKey().second().toString());
+
+            int star = term.getKey().second();
+            if (star != 0) {
+                result.append("[");
+                result.append(star);
+                result.append("]");
+            }
         }
         result.append(type.toString());
         result.append(constant);
