@@ -68,9 +68,11 @@ public class UnaryTemporalStarMonitor extends TemporalStarMonitor {
                 // check upper time bound //
                 if (memory.getTime() <= currentTime + getInterval().getUpperBound()) {
                     deque.offer(memory);
+                    if (memory.getTime() == currentTime + getInterval().getUpperBound()) {
+                        endReached = true;
+                    }
                     memory = null;
-                }
-                if (memory.getTime() >= currentTime + getInterval().getUpperBound()) {
+                } else {
                     endReached = true;
                 }
             }
