@@ -103,4 +103,19 @@ public class FormulaStarInfo {
     public int getStarNumber() {
         return starNumber;
     }
+
+    /**
+     * Return maximum number of unfrozen indices within one formula.
+     *
+     * @return Number of unfrozen indices.
+     */
+    public int getMaxUnfrozenIndices() {
+        int result = 0;
+        for (Set<Integer> indices : unfrozen.values()) {
+            if (indices.size() > result) {
+                result = indices.size();
+            }
+        }
+        return result;
+    }
 }
