@@ -21,6 +21,7 @@ package org.sybila.parasim.model.verification.stl;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -328,6 +329,25 @@ public class LinearPredicate extends Predicate {
     }
 
     @Override
+    public Predicate mergeFrozenDimensions(Set<Integer> frozen) {
+        Map<Pair<Integer, Integer>, Float> result = new HashMap<>();
+        for (Map.Entry<Pair<Integer, Integer>, Float> term : terms.entrySet()) {
+            if (frozen.contains(term.getKey().second())) {
+                Pair<Integer, Integer> key = new Pair(term.getKey().first(), 0);
+                Float value = result.remove(key);
+                if (value == null) {
+                    value = 0f;
+                }
+                value += term.getValue();
+                result.put(key, value);
+            } else {
+                result.put(term.getKey(), term.getValue());
+            }
+        }
+        return new LinearPredicate(result, constant, type, mapping);
+    }
+
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         boolean first = true;
@@ -365,7 +385,7 @@ public class LinearPredicate extends Predicate {
         if (constant != target.constant) {
             return false;
         }
-        if (terms.equals(target.terms)) {
+        if (!terms.equals(target.terms)) {
             return false;
         }
         if (!mapping.equals(target.mapping)) {

@@ -50,6 +50,15 @@ public abstract class Predicate extends AbstractFormula implements Signal {
      */
     public abstract Set<Integer> getStars();
 
+    /**
+     * Creates a new predicate with given frozen time dimensions merged into
+     * normal time dimension.
+     *
+     * @param frozen Set of frozen time dimensions to be merged.
+     * @return Predicate.
+     */
+    public abstract Predicate mergeFrozenDimensions(Set<Integer> frozen);
+
     @Override
     public int getArity() {
         return 0;
