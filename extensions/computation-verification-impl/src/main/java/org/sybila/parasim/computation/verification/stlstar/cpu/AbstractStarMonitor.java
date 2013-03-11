@@ -30,7 +30,7 @@ public abstract class AbstractStarMonitor extends AbstractMonitor implements Sta
 
     protected Coordinate simplify(Coordinate index) {
         if (index.getDimension() <= starNum) {
-            throw new IllegalArgumentException("Coordinate is too shor to be evaluated.");
+            throw new IllegalArgumentException("Coordinate is too short to be evaluated.");
         }
 
         // create a coordinate of correct length //
