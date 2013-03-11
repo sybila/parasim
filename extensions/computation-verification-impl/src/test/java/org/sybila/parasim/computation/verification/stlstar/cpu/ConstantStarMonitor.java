@@ -42,6 +42,15 @@ public class ConstantStarMonitor implements StarMonitor {
     private final List<Float> values;
     private final int starNum;
 
+    private static Coordinate getCoordinate(int index, int tSize, int stars) {
+        Coordinate.Builder coord = new Coordinate.Builder(stars + 1);
+        for (int i = 0; i <= stars; i++) {
+            coord.setCoordinate(i, index % tSize);
+            index /= tSize;
+        }
+        return coord.create();
+    }
+
     public ConstantStarMonitor(List<Float> times, List<Float> values) {
         Validate.notNull(times);
         Validate.notNull(values);
@@ -123,14 +132,7 @@ public class ConstantStarMonitor implements StarMonitor {
             return false;
         }
         for (int i = 0; i < values.size(); i++) {
-            Coordinate.Builder coord = new Coordinate.Builder(starNum + 1);
-            int rest = i;
-            for (int j = 0; j <= starNum; j++) {
-                coord.setCoordinate(j, rest % times.size());
-                rest /= times.size();
-            }
-
-            Robustness targetRobustness = target.getRobustness(coord.create());
+            Robustness targetRobustness = target.getRobustness(getCoordinate(i, times.size(), starNum));
             if (Math.abs(targetRobustness.getTime() - times.get(i % times.size())) > EPSILON) {
                 return false;
             }
@@ -175,26 +177,33 @@ public class ConstantStarMonitor implements StarMonitor {
 
         int dim = monitors.length;
 
-        int tSize = monitors[0].times.size();
-        int vSize = monitors[0].values.size();
-        for (int i = 1; i < dim; i++) {
-            if (monitors[i].times.size() != tSize) {
-                throw new IllegalArgumentException("All monitors must have same size.");
+        List<Float> times = monitors[0].times;
+        int tSize = times.size();
+        int starNum = monitors[0].starNum;
+        for (int i = 0; i < dim; i++) {
+            int newTSize = monitors[i].times.size();
+            if (newTSize < tSize) {
+                tSize = newTSize;
+                times = monitors[i].times;
             }
-            if (monitors[i].values.size() != vSize) {
-                throw new IllegalArgumentException("All monitors must have same size.");
-            }
+            starNum = Math.max(starNum, monitors[i].starNum);
+        }
+        int vSize = tSize;
+        for (int i = 0; i < starNum; i++) {
+            vSize *= tSize;
         }
 
         List<Float> values = new ArrayList<>();
         for (int i = 0; i < vSize; i++) {
+            Coordinate coord = getCoordinate(i, tSize, starNum);
             float[] arguments = new float[dim];
             for (int j = 0; j < dim; j++) {
-                arguments[j] = monitors[j].values.get(i);
+                arguments[j] = monitors[j].getRobustness(coord).getValue();
             }
             values.add(function.compute(arguments));
         }
-        return new ConstantStarMonitor(monitors[0].times, values);
+
+        return new ConstantStarMonitor(times, values);
     }
 
     public Formula getFormula() {

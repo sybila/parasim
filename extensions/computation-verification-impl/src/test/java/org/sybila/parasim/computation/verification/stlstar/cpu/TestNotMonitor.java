@@ -15,6 +15,15 @@ import org.testng.annotations.Test;
  */
 public class TestNotMonitor {
 
+    private static final ConstantStarMonitor.Function NOT_FUNCTION = new ConstantStarMonitor.Function() {
+
+        @Override
+        public float compute(float[] values) {
+            Validate.notNull(values);
+            Validate.isTrue(values.length > 0);
+            return -values[0];
+        }
+    };
     private ConstantStarMonitor sourceMonitor;
     private ConstantStarMonitor destinationMonitor;
 
@@ -36,14 +45,6 @@ public class TestNotMonitor {
     @Test
     public void testOnComplexMonitor() {
         sourceMonitor = ConstantStarMonitor.createLinearMonitor(10, 4, 0f, 0.5f, 0.8f, 12.53f);
-        destinationMonitor = ConstantStarMonitor.computePointWiseMonitor(new ConstantStarMonitor.Function() {
-
-            @Override
-            public float compute(float[] values) {
-                Validate.notNull(values);
-                Validate.isTrue(values.length > 0);
-                return -values[0];
-            }
-        }, new ConstantStarMonitor[]{sourceMonitor});
+        destinationMonitor = ConstantStarMonitor.computePointWiseMonitor(NOT_FUNCTION, new ConstantStarMonitor[]{sourceMonitor});
     }
 }
