@@ -240,6 +240,7 @@ public class LinearPredicate extends Predicate {
                 starNum = star;
             }
         }
+        stars.remove(0);
 
         // assignments //
         terms = multipliers;
