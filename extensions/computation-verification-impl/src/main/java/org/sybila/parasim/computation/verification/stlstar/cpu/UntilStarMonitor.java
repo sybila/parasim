@@ -59,7 +59,7 @@ public class UntilStarMonitor extends TemporalStarMonitor {
             int windowEnd = current;
             float currentTime = left.getRobustness(index.get(windowEnd)).getTime();
             float windowEndLeft = left.getRobustness(index.get(windowEnd)).getValue();
-            while ((windowEnd < shortestSize - 1) && left.getRobustness(index.get(windowEnd)).getTime() < currentTime + getInterval().getLowerBound()) {
+            while ((windowEnd < shortestSize - 1) && (left.getRobustness(index.get(windowEnd)).getTime() < currentTime + getInterval().getLowerBound())) {
                 windowEnd++;
                 windowEndLeft = Math.min(windowEndLeft, left.getRobustness(index.get(windowEnd)).getValue());
             }
@@ -79,6 +79,7 @@ public class UntilStarMonitor extends TemporalStarMonitor {
                 break;
             }
             result.add(new SimpleRobustness(currentRobustness, currentTime, getProperty()));
+            current++;
         }
         return result;
     }
