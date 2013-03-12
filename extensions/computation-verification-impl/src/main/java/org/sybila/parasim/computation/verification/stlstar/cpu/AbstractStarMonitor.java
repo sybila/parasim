@@ -32,6 +32,9 @@ public abstract class AbstractStarMonitor extends AbstractMonitor implements Sta
         if (index.getDimension() <= starNum) {
             throw new IllegalArgumentException("Coordinate is too short to be evaluated.");
         }
+        for (int i = 0; i <= starNum; i++) {
+            Validate.inclusiveBetween(0, size() - 1, index.getCoordinate(i));
+        }
 
         // create a coordinate of correct length //
         Coordinate.Builder coord = new Coordinate.Builder(index, starNum + 1);
