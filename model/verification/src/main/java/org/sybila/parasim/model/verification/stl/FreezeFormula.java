@@ -59,4 +59,20 @@ public class FreezeFormula extends UnaryFormula {
         target.setAttribute(FormulaFactory.FREEZE_INDEX_NAME, Integer.toString(getFreezeIndex()));
         return target;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof FreezeFormula)) {
+            return false;
+        }
+        return getFreezeIndex() == ((FreezeFormula) obj).getFreezeIndex();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode() * 37 + getFreezeIndex();
+    }
 }
