@@ -398,7 +398,7 @@ public class LinearPredicate extends Predicate {
         if (obj == this) {
             return true;
         }
-        if ((obj instanceof LinearPredicate)) {
+        if (!(obj instanceof LinearPredicate)) {
             return false;
         }
         LinearPredicate target = (LinearPredicate) obj;

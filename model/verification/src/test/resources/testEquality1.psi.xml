@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+    <freeze index="2">
+        <until>
+            <interval>
+                <lower type="closed">0.25</lower>
+                <upper type="closed">2.8</upper>
+            </interval>
+            <not>
+                <freeze index="1">
+                    <globally>
+                        <interval>
+                            <lower type="closed">8.2</lower>
+                            <upper type="closed">15.9</upper>
+                        </interval>
+                        <and>
+                            <freeze index="3">
+                                <predicate>
+                                    <variable multiplier="2">x</variable>
+                                    <variable multiplier="0.6" frozen="3">z</variable>
+                                    <variable multiplier="-12.8" frozen="2">x</variable>
+                                    <lesser/>
+                                    <value>-51.2</value>
+                                </predicate>
+                            </freeze>
+                            <predicate>
+                                <variable multiplier="8" frozen="1">y</variable>
+                                <variable multiplier="-3">y</variable>
+                                <equals/>
+                                <value>0.889</value>
+                            </predicate>
+                        </and>
+                    </globally>
+                </freeze>
+            </not>
+            <freeze index="2">
+                <future>
+                    <interval>
+                        <lower type="closed">1</lower>
+                        <upper type="closed">5</upper>
+                    </interval>
+                    <predicate>
+                        <variable multiplier="0.25" frozen="0">x</variable>
+                        <variable multiplier="2.5" frozen="2">z</variable>
+                        <greater/>
+                        <value>5</value>
+                    </predicate>
+                </future>
+            </freeze>
+        </until>
+    </freeze>
+</formula>
