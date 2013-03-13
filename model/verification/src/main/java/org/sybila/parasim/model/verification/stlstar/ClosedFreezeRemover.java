@@ -47,6 +47,8 @@ public class ClosedFreezeRemover {
                 return new GloballyFormula(removeFreezes(target.getSubformula(0)), ((GloballyFormula) target).getInterval());
             case UNTIL:
                 return new UntilFormula(removeFreezes(target.getSubformula(0)), removeFreezes(target.getSubformula(1)), ((UntilFormula) target).getInterval());
+            case PREDICATE:
+                return target;
             default:
                 throw new IllegalArgumentException("Unknown formula type.");
         }

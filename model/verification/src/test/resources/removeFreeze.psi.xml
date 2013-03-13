@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+    <globally>
+        <interval>
+            <lower type="closed">0.5</lower>
+            <upper type="closed">2.8</upper>
+        </interval>
+        <not>
+            <freeze index="1">
+                <future>
+                    <interval>
+                        <lower type="closed">8.2</lower>
+                        <upper type="closed">12.31</upper>
+                    </interval>
+                    <until>
+                        <interval>
+                            <lower type="closed">3.1</lower>
+                            <upper type="closed">9.13</upper>
+                        </interval>
+                        <or>
+                            <freeze index="3">
+                                <future>
+                                    <interval>
+                                        <lower type="closed">0.001</lower>
+                                        <upper type="closed">0.5</upper>
+                                    </interval>
+                                    <predicate>
+                                        <variable multiplier="9">z</variable>
+                                        <variable multiplier="0.1" frozen="3">x</variable>
+                                        <lesser/>
+                                        <value>-13.21</value>
+                                    </predicate>
+                                </future>
+                            </freeze>
+                            <freeze index="2">
+                                <not>
+                                    <predicate>
+                                        <variable multiplier="12.5" frozen="1">z</variable>
+                                        <variable multiplier="-2.3" frozen="2">z</variable>
+                                        <variable multiplier="-5.8">z</variable>
+                                        <equals/>
+                                        <value>-12.99</value>
+                                    </predicate>
+                                </not>
+                            </freeze>
+                        </or>
+                        <predicate>
+                            <variable multiplier="9.12">x</variable>
+                            <variable multiplier="-3.2" frozen="1">y</variable>
+                            <greater/>
+                            <value>0</value>
+                        </predicate>
+                    </until>
+                </future>
+            </freeze>
+        </not>
+    </globally>
+</formula>
