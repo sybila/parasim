@@ -1,9 +1,9 @@
 package org.sybila.parasim.model.verification.stlstar;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import org.sybila.parasim.model.verification.stl.AndFormula;
 import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.model.verification.stl.FormulaType;
@@ -33,19 +33,8 @@ public class StarMerger {
     private Map<Formula, Integer> substitution = new HashMap<>();
     private int num;
 
-    private Set<Integer> createFullSet(int max) {
-        Set<Integer> result = new HashSet<>();
-        for (int i = 1; i <= max; i++) {
-            result.add(i);
-        }
-        return result;
-    }
-
     private StarMerger(Formula targetFormula) {
         target = targetFormula;
-
-        // remove superfluous freezes //
-        target = ClosedFreezeRemover.removeClosedFreezes(target);
 
         // add freeze operators to the start //
         info = new FormulaStarInfo(target);
@@ -53,8 +42,11 @@ public class StarMerger {
             target = new FreezeFormula(target, index);
         }
 
-        // first shake down freezes //
+        // shake down freezes //
         target = StarDownShaker.INSTANCE.downShake(target);
+
+        // remove superfluous freezes //
+        target = ClosedFreezeRemover.removeClosedFreezes(target);
 
         // remove duplicate freezes //
         num = 0;
@@ -64,7 +56,7 @@ public class StarMerger {
         // compute substitution //
         info = new FormulaStarInfo(target);
         num = info.getMaxUnfrozenIndices();
-        computeSubstitution(target, createFullSet(num), new HashMap<Integer, Integer>());
+        computeSubstitution(target, new HashMap<Integer, Integer>());
         target = substitute(target, new HashMap<Integer, Integer>());
     }
 
@@ -119,29 +111,37 @@ public class StarMerger {
         }
     }
 
-    private void computeSubstitution(Formula input, Set<Integer> freeIndices, Map<Integer, Integer> indexSubstitution) {
-        // free frozen-time indices which are not substituted on this branch//
-        for (Integer index : info.getUnfrozenIndices(input)) {
-            Integer substituted = indexSubstitution.get(index);
-            if (substituted != null) {
-                freeIndices.add(substituted);
+    private void computeSubstitution(Formula input, Map<Integer, Integer> indexSubstitution) {
+        // remove unfrozen indices from substitition //
+        Collection<Integer> freeVars = info.getUnfrozenIndices(input);
+        Iterator<Map.Entry<Integer, Integer>> iter = indexSubstitution.entrySet().iterator();
+        while (iter.hasNext()) {
+            if (!freeVars.contains(iter.next().getKey())) {
+                iter.remove();
             }
         }
 
         // is it freeze? //
         if (input.getType() == FormulaType.FREEZE) {
             int index = ((FreezeFormula) input).getFreezeIndex();
-            // make a substitution //
-            Integer var = freeIndices.iterator().next();
-            freeIndices.remove(var);
-            indexSubstitution.put(index, var);
-            computeSubstitution(input.getSubformula(0), freeIndices, indexSubstitution);
-        } else if (input.getArity() > 0) {
-            // propagate //
-            for (int i = 1; i < input.getArity(); i++) {
-                computeSubstitution(input.getSubformula(i), new HashSet<>(freeIndices), new HashMap<>(indexSubstitution));
+            // get first free index //
+            int var = 1;
+            while (var <= num && indexSubstitution.containsValue(var)) {
+                var++;
             }
-            computeSubstitution(input.getSubformula(0), freeIndices, indexSubstitution);
+            if (var > num) {
+                throw new RuntimeException("There is no other free index. Computation of maximum star number incorrect.");
+            }
+
+            // make a substitution //
+            indexSubstitution.put(index, var);
+            substitution.put(input, var);
+            computeSubstitution(input.getSubformula(0), indexSubstitution);
+        } else {
+            // propagate //
+            for (int i = 0; i < input.getArity(); i++) {
+                computeSubstitution(input.getSubformula(i), new HashMap<>(indexSubstitution));
+            }
         }
     }
 
