@@ -74,4 +74,17 @@ public final class FormulaEquality {
         }
         return true;
     }
+
+    /**
+     * Formulae have the same semantics and same structure barring freeze
+     * operators, which may be moved or merged with predicates (while not
+     * changing formula semantics).
+     *
+     * @return
+     * <code>true</code> when formulae are equal,
+     * <code>false</code> otherwise.
+     */
+    public static boolean equalUpToFreezes(Formula phi, Formula psi) {
+        return equalUpToFreezeIndices(StarMerger.mergeStars(phi), StarMerger.mergeStars(psi));
+    }
 }

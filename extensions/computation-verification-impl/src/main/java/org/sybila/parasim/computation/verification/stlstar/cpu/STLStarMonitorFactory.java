@@ -10,6 +10,7 @@ import org.sybila.parasim.model.verification.stl.Predicate;
 import org.sybila.parasim.model.verification.stl.TemporalFormula;
 import org.sybila.parasim.model.verification.stl.UntilFormula;
 import org.sybila.parasim.model.verification.stlstar.FormulaStarInfo;
+import org.sybila.parasim.model.verification.stlstar.StarMerger;
 
 /**
  * Transforms a STL formula into monitor which monitors its "starred" version
@@ -27,7 +28,8 @@ public enum STLStarMonitorFactory implements MonitorFactory<Formula> {
 
     @Override
     public Monitor createMonitor(Trajectory trajectory, Formula property) {
-        return createStarMonitor(trajectory, property, new FormulaStarInfo(property));
+        Formula simplified = StarMerger.mergeStars(property);
+        return createStarMonitor(trajectory, simplified, new FormulaStarInfo(simplified));
     }
 
     /**
