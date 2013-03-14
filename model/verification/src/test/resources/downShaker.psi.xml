@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+    <and>
+        <not>
+            <freeze index="1">
+                <until>
+                    <interval>
+                        <lower type="closed">23.1</lower>
+                        <upper type="closed">90.1</upper>
+                    </interval>
+                    <or>
+                        <predicate>
+                            <variable multiplier="27.1">x</variable>
+                            <variable multiplier="8.1">z</variable>
+                            <variable multiplier="41.9" frozen="3">z</variable>
+                            <greater/>
+                            <value>18.5</value>
+                        </predicate>
+                        <not>
+                            <freeze index="1">
+                                <future>
+                                    <interval>
+                                        <lower type="closed">57.9</lower>
+                                        <upper type="closed">78.9</upper>
+                                    </interval>
+                                    <predicate>
+                                        <variable multiplier="55.9">y</variable>
+                                        <variable multiplier="-13.2" frozen="1">y</variable>
+                                        <lesser/>
+                                        <value>68.5</value>
+                                    </predicate>
+                                </future>
+                            </freeze>
+                        </not>
+                    </or>
+                    <not>
+                        <predicate>
+                            <variable multiplier="-90.5">z</variable>
+                            <greater/>
+                            <value>-41.3</value>
+                        </predicate>
+                    </not>
+                </until>
+            </freeze>
+        </not>
+        <freeze index="1">
+            <freeze index="2">
+                <globally>
+                    <interval>
+                        <lower type="closed">17.6</lower>
+                        <upper type="closed">39.2</upper>
+                    </interval>
+                    <and>
+                        <freeze index="3">
+                            <freeze index="2">
+                                <future>
+                                    <interval>
+                                        <lower type="closed">39.2</lower>
+                                        <upper type="closed">52</upper>
+                                    </interval>
+                                    <predicate>
+                                        <variable multiplier="65.7">x</variable>
+                                        <variable multiplier="-74.8" frozen="1">x</variable>
+                                        <variable multiplier="62" frozen="3">y</variable>
+                                        <lesser/>
+                                        <value>-15.5</value>
+                                    </predicate>
+                                </future>
+                            </freeze>
+                        </freeze>
+                        <not>
+                            <predicate>
+                                <variable multiplier="83.7">y</variable>
+                                <variable multiplier="46" frozen="1">z</variable>
+                                <lesser/>
+                                <value>-4.1</value>
+                            </predicate>
+                        </not>
+                    </and>
+                </globally>
+            </freeze>
+        </freeze>
+    </and>
+</formula>
