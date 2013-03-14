@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+<future>
+<interval>
+<lower type="closed">1.0</lower>
+<upper type="closed">5.0</upper>
+</interval>
+<and>
+<predicate>
+<variable frozen="0" multiplier="1.0">I</variable>
+<greater/>
+<value>50.0</value>
+</predicate>
+<freeze index="1">
+<globally>
+<interval>
+<lower type="closed">0.25</lower>
+<upper type="closed">5.0</upper>
+</interval>
+<predicate>
+<variable frozen="0" multiplier="-1.0">I</variable>
+<variable frozen="1" multiplier="1.0">I</variable>
+<greater/>
+<value>0.0</value>
+</predicate>
+</globally>
+</freeze>
+</and>
+</future>
+</formula>
