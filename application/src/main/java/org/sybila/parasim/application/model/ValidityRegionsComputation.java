@@ -158,19 +158,15 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         }
         VerifiedDataBlock<TrajectoryWithNeighborhood> verified = getVerifier().verify(simulated, property);
         VerificationResult result = new VerifiedDataBlockResultAdapter(verified);
-        if (iterationLimit != 0 && currentIteration == iterationLimit) {
-            if (simulatedSecondary != null) {
-                VerifiedDataBlock<Trajectory> verifiedSecondary = getVerifier().verify(simulatedSecondary, property);
-                result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
-            }
-            LOGGER.warn("iteration limit <" + iterationLimit + "> reached");
-        } else {
+        if (simulatedSecondary != null) {
+            VerifiedDataBlock<Trajectory> verifiedSecondary = getVerifier().verify(simulatedSecondary, property);
+            result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
+        }
+        if (iterationLimit != 0 && currentIteration != iterationLimit) {
             DistanceCheckedDataBlock distanceChecked = distanceChecker.check(spawned.getConfiguration(), verified);
-            if (simulatedSecondary != null) {
-                VerifiedDataBlock<Trajectory> verifiedSecondary = getVerifier().verify(simulatedSecondary, property);
-                result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
-            }
             emit(spawner.spawn(spawned.getConfiguration(), distanceChecked), false);
+        } else {
+            LOGGER.warn("iteration limit <" + iterationLimit + "> reached");
         }
         return result;
     }
@@ -188,7 +184,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         for (Trajectory t : spawned.getSecondaryTrajectories()) {
             originalSecondaryTrajectories.add(t);
         }
-        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 30), 2 * computationLifecycleConfiguration.getNumberOfThreads());
+        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 30), 4);
         int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
         for (int i = 0; i < toSpawn; i++) {
             int batchStart = batchSize * i;

@@ -231,7 +231,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         }
 
         public void log() {
-            LOGGER.info("spawnining: <{}> primary cache hits, <{}> primary cache misses, <{}>secondary cache hits, <{}> secondary cache misses", primaryCacheHit, primaryCacheMiss, secondaryCacheHit, secondaryCacheMiss);
+            LOGGER.info("spawning: <{}> primary cache hits, <{}> primary cache misses, <{}> secondary cache hits, <{}> secondary cache misses", primaryCacheHit, primaryCacheMiss, secondaryCacheHit, secondaryCacheMiss);
         }
 
     }

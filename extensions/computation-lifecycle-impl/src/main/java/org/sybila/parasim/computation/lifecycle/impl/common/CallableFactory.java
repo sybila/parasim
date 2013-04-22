@@ -22,6 +22,8 @@ package org.sybila.parasim.computation.lifecycle.impl.common;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
@@ -38,6 +40,8 @@ public class CallableFactory {
 
     private final Context parentContext;
     private final MutableStatus status;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CallableFactory.class);
 
     public CallableFactory(Context parentContext, MutableStatus status) {
         this.parentContext = parentContext;
@@ -72,6 +76,9 @@ public class CallableFactory {
                 M result = computation.call();
                 status.done(parentContext.resolve(UUID.class, Node.class), result);
                 return result;
+            } catch(Exception e) {
+                LOGGER.error("There is an exception during computation execution.", e);
+                throw new IllegalStateException("There is an exception during computation execution.", e);
             } finally {
                 computation.destroy();
                 instanceContext.destroy();

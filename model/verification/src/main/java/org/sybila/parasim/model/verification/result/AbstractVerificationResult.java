@@ -21,8 +21,9 @@ package org.sybila.parasim.model.verification.result;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
 import org.sybila.parasim.model.space.OrthogonalSpaceImpl;
@@ -30,8 +31,10 @@ import org.sybila.parasim.model.trajectory.ArrayFractionPoint;
 import org.sybila.parasim.model.trajectory.ArrayPoint;
 import org.sybila.parasim.model.trajectory.FractionPoint;
 import org.sybila.parasim.model.trajectory.Point;
+import org.sybila.parasim.model.trajectory.PointWithNeigborhoodWrapper;
 import org.sybila.parasim.model.trajectory.PointWithNeighborhood;
 import org.sybila.parasim.model.verification.Robustness;
+import org.sybila.parasim.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -44,6 +47,8 @@ import org.w3c.dom.Element;
 public abstract class AbstractVerificationResult implements VerificationResult {
 
     private Robustness totalRobustness;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(AbstractVerificationResult.class);
 
     /**
      * Return smallest space including all points comprising this result.
@@ -175,29 +180,35 @@ public abstract class AbstractVerificationResult implements VerificationResult {
         if (toMerge == null) {
             throw new IllegalArgumentException("The parameter [toMerge] is null.");
         }
+        long duplicates =0;
         // Map with point as a key is performence problem, but it's the only way
         // to remove duplicities
-        Map<PointWithNeighborhood, Robustness> robustnesses = new TreeMap<>();
+        Map<FractionPoint, Pair<PointWithNeighborhood, Robustness>> robustnesses = new TreeMap<>();
         // copy this data
         for (int i=0; i<size(); i++) {
-            if (!robustnesses.containsKey(getPoint(i))) {
-                robustnesses.put(getPoint(i), getRobustness(i));
-            }
+            PointWithNeigborhoodWrapper wrapper= (PointWithNeigborhoodWrapper) getPoint(i);
+            FractionPoint key = ((ArrayFractionPoint) wrapper.unwrap()).getFractionPoint();
+            robustnesses.put(key, new Pair<>(getPoint(i), getRobustness(i)));
         }
         // copy other data
         for (int i=0; i<toMerge.size(); i++) {
-            if (!robustnesses.containsKey(toMerge.getPoint(i))) {
-                robustnesses.put(toMerge.getPoint(i), toMerge.getRobustness(i));
+            PointWithNeigborhoodWrapper wrapper= (PointWithNeigborhoodWrapper) toMerge.getPoint(i);
+            FractionPoint key = ((ArrayFractionPoint) wrapper.unwrap()).getFractionPoint();
+            if (!robustnesses.containsKey(key)) {
+                robustnesses.put(key, new Pair<>(toMerge.getPoint(i), toMerge.getRobustness(i)));
+            } else {
+                duplicates++;
             }
         }
         PointWithNeighborhood[] newPoints = new PointWithNeighborhood[robustnesses.size()];
         Robustness[] newRobustnesses = new Robustness[robustnesses.size()];
         int index = 0;
-        for (Entry<PointWithNeighborhood, Robustness> entry : robustnesses.entrySet()) {
-            newPoints[index] = entry.getKey();
-            newRobustnesses[index] = entry.getValue();
+        for (Pair<PointWithNeighborhood, Robustness> entry : robustnesses.values()) {
+            newPoints[index] = entry.first();
+            newRobustnesses[index] = entry.second();
             index++;
         }
+        LOGGER.info("merging: <{}> duplicates", duplicates);
         return new ArrayVerificationResult(newPoints, newRobustnesses);
     }
 

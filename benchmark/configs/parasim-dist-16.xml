@@ -1,0 +1,29 @@
+<parasim>
+	<extension qualifier="remote">
+		<property name="host">147.251.45.129</property>
+	</extension>
+
+	<extension qualifier="computation-lifecycle">
+		<property name="corePoolSize">2</property>
+		<property name="defaultExecutor">org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor</property>
+		<property name="nodes">
+			<value>pheme01</value>
+			<value>pheme02</value>
+			<value>pheme03</value>
+			<value>pheme04</value>
+			<value>pheme05</value>
+			<value>pheme06</value>
+			<value>pheme07</value>
+			<value>pheme08</value>
+			<value>pheme09</value>
+			<value>pheme10</value>
+			<value>pheme11</value>
+			<value>pheme12</value>
+			<value>pheme13</value>
+			<value>pheme14</value>
+			<value>pheme15</value>
+			<value>pheme16</value>
+		</property>
+	</extension>
+</parasim>
+

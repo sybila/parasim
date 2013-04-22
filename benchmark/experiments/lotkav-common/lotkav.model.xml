@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="1">
+	<model>
+		<listOfCompartments>
+			<compartment id="uVol" size="1"/>
+		</listOfCompartments>
+		<listOfSpecies>
+			<species id="predator" compartment="uVol" initialConcentration="80"/>
+			<species id="prey" compartment="uVol" initialConcentration="40"/>
+		</listOfSpecies>
+		<listOfParameters>
+			<parameter id="natality" value="0.1"/>
+			<parameter id="mortality" value="0.1"/>
+			<parameter id="predation" value="0.002"/>
+		</listOfParameters>
+		<listOfReactions>
+			<reaction id="prey_born" reversible="false">
+				<listOfProducts>
+					<speciesReference species="prey"/>
+				</listOfProducts>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> natality </ci>
+							<ci> prey </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="predator_die" reversible="false">
+				<listOfReactants>
+					<speciesReference species="predator"/>
+				</listOfReactants>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> mortality </ci>
+							<ci> predator </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+			<reaction id="predate" reversible="false">
+				<listOfReactants>
+					<speciesReference species="prey"/>
+				</listOfReactants>
+				<listOfProducts>
+					<speciesReference species="predator"/>
+				</listOfProducts>
+				<kineticLaw>
+					<math xmlns="http://www.w3.org/1998/Math/MathML">
+						<apply>
+							<times/>
+							<ci> predation </ci>
+							<ci> prey </ci>
+							<ci> predator </ci>
+						</apply>
+					</math>
+				</kineticLaw>
+			</reaction>
+		</listOfReactions>
+	</model>
+</sbml>

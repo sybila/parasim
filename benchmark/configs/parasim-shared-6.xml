@@ -1,0 +1,5 @@
+<parasim>
+	<extension qualifier="computation-lifecycle">
+		<property name="numberOfThreads">6</property>
+	</extension>
+</parasim>
