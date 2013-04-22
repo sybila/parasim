@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.density.api.Configuration;
 import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
@@ -53,6 +55,8 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
     private final SpawnedTrajectoriesCache primaryCache;
     private final SpawnedTrajectoriesCache secondaryCache;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FractionTrajectorySpawner.class);
+
     public FractionTrajectorySpawner(SpawnedTrajectoriesCache primaryCache, SpawnedTrajectoriesCache secondaryCache) {
         this.primaryCache = primaryCache;
         this.secondaryCache = secondaryCache;
@@ -60,6 +64,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
 
     @Override
     public SpawnedDataBlock spawn(Configuration configuration, DistanceCheckedDataBlock trajectories) {
+        LogInformation logInformation = new LogInformation();
         boolean[] dimensionsToSkip = new boolean[configuration.getInitialSpace().getDimension()];
         for (int dim=0; dim<dimensionsToSkip.length; dim++) {
             dimensionsToSkip[dim]= configuration.getInitialSpace().getMinBounds().getValue(dim) == configuration.getInitialSpace().getMaxBounds().getValue(dim);
@@ -75,7 +80,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
                 // check distance
                 if (!trajectories.getDistance(i, n).isValid()) {
                     Trajectory neighbor = trajectory.getNeighbors().getTrajectory(n);
-                    TrajectoryWithNeighborhood newTrajectory =  spawn(configuration, trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n), dimensionsToSkip);
+                    TrajectoryWithNeighborhood newTrajectory =  spawn(configuration, trajectory.getReference().getTrajectory(), neighbor.getReference().getTrajectory(), trajectories.getDistance(i, n), dimensionsToSkip, logInformation);
                     if (newTrajectory == null) {
                         continue;
                     }
@@ -87,6 +92,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
 
             }
         }
+        logInformation.log();
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<>(newTrajectories),
                 new DelegatingConfiguration(configuration.getInitialSpace()),
@@ -95,6 +101,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
 
     @Override
     public SpawnedDataBlock spawn(OrthogonalSpace space) {
+        LogInformation logInformation = new LogInformation();
         boolean[] dimensionsToSkip = new boolean[space.getDimension()];
         boolean allSkip = true;
         for (int dim=0; dim<dimensionsToSkip.length; dim++) {
@@ -108,7 +115,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         Map<FractionPoint, Trajectory> surroundings = new HashMap<>();
         for (FractionPoint point: extremes) {
             Trajectory main = new PointTrajectory(createPoint(space, point));
-            primaryCache.store(point, main);
+            logInformation.spawnPrimaryTrajectory(!primaryCache.store(point, main));
             List<Trajectory> neighbors = new ArrayList<>();
             for (FractionPoint n: point.surround(new Fraction(1, 2), dimensionsToSkip)) {
                 if (n.isValid()) {
@@ -117,7 +124,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
                     } else {
                         Trajectory t = new PointTrajectory(createPoint(space, n));
                         surroundings.put(n, t);
-                        secondaryCache.store(n, t);
+                        logInformation.spawnSecondaryTrajectory(!secondaryCache.store(n, t));
                         neighbors.add(t);
                     }
                 }
@@ -129,20 +136,23 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
             Trajectory t = new PointTrajectory(createPoint(space, middle));
             result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(t, new ListDataBlock<>(new ArrayList<>(surroundings.values()))));
         }
+        logInformation.log();
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<>(result),
                 new DelegatingConfiguration(space),
                 new ListDataBlock<>(new ArrayList<>(surroundings.values())));
     }
 
-    protected TrajectoryWithNeighborhood spawn(Configuration configuration, Trajectory trajectory, Trajectory neighbor, LimitedDistance distance, boolean[] skip) {
+    protected TrajectoryWithNeighborhood spawn(Configuration configuration, Trajectory trajectory, Trajectory neighbor, LimitedDistance distance, boolean[] skip, LogInformation logInformation) {
         ArrayFractionPoint tPoint = (ArrayFractionPoint) trajectory.getFirstPoint();
         ArrayFractionPoint nPoint = (ArrayFractionPoint) neighbor.getFirstPoint();
         FractionPoint middle = tPoint.getFractionPoint().middle(nPoint.getFractionPoint());
         Trajectory middleTrajectory = new PointTrajectory(createPoint(configuration.getInitialSpace(), middle));
         if (!primaryCache.store(middle, middleTrajectory)) {
+            logInformation.spawnPrimaryTrajectory(true);
             return null;
         }
+        logInformation.spawnPrimaryTrajectory(false);
         Fraction radius = tPoint.getFractionPoint().diffDistance(nPoint.getFractionPoint()).divide(2);
         Collection<FractionPoint> surroundings = middle.surround(radius, skip);
         List<Trajectory> neighbors = new ArrayList<>();
@@ -150,7 +160,9 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
             if (!point.isValid()) {
                 continue;
             }
-            Trajectory neigh = secondaryCache.load(point, new PointTrajectory(createPoint(configuration.getInitialSpace(), point)));
+            Trajectory candidate = new PointTrajectory(createPoint(configuration.getInitialSpace(), point));
+            Trajectory neigh = secondaryCache.load(point, candidate);
+            logInformation.spawnSecondaryTrajectory(neigh != candidate);
             neighbors.add(neigh);
         }
         return TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(middleTrajectory, new ListDataBlock<>(neighbors));
@@ -174,6 +186,52 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         @Override
         public int getStartIndex(int index, int neighborIndex) {
             return 0;
+        }
+
+    }
+
+    protected static class LogInformation {
+
+        private long secondaryCacheHit = 0;
+        private long secondaryCacheMiss = 0;
+
+        private long primaryCacheHit = 0;
+        private long primaryCacheMiss = 0;
+
+        public void spawnSecondaryTrajectory(boolean cacheHit) {
+            if (cacheHit) {
+                this.secondaryCacheHit++;
+            } else {
+                this.secondaryCacheMiss++;
+            }
+        }
+
+        public void spawnPrimaryTrajectory(boolean cacheHit) {
+            if (cacheHit) {
+                this.primaryCacheHit++;
+            } else {
+                this.primaryCacheMiss++;
+            }
+        }
+
+        public long getSecondaryCacheHits() {
+            return secondaryCacheHit;
+        }
+
+        public long getSecondaryCacheMisses() {
+            return secondaryCacheMiss;
+        }
+
+        public long getPrimaryCacheHits() {
+            return primaryCacheHit;
+        }
+
+        public long getPrimaryCacheMisses() {
+            return primaryCacheMiss;
+        }
+
+        public void log() {
+            LOGGER.info("spawnining: <{}> primary cache hits, <{}> primary cache misses, <{}>secondary cache hits, <{}> secondary cache misses", primaryCacheHit, primaryCacheMiss, secondaryCacheHit, secondaryCacheMiss);
         }
 
     }

@@ -83,7 +83,7 @@ public class DistributedMemoryExecutorImpl extends AbstractExecutor implements D
             }
             // prepare services
             ComputationFuture<M> future = new ComputationFuture<>(computationId, context, status);
-            DistributedMemoryMucker mucker = new DistributedMemoryMucker(context.resolve(ComputationLifecycleConfiguration.class, Default.class).getBalancerThreshold(), remoteQueues);
+            DistributedMemoryMucker mucker = new DistributedMemoryMucker(context.resolve(ComputationLifecycleConfiguration.class, Default.class), remoteQueues);
             // register progress listeners
             status.addProgressListerner(mucker);
             status.addProgressListerner(new RemoteComputationDestroyer(remoteStatus, computationId));

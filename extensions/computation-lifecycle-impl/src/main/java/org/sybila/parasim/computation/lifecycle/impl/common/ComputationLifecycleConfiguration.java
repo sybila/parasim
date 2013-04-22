@@ -29,12 +29,22 @@ public class ComputationLifecycleConfiguration {
 
     private int numberOfThreads = Runtime.getRuntime().availableProcessors();
     private long nodeThreshold = Runtime.getRuntime().availableProcessors() + Runtime.getRuntime().availableProcessors() / 2;
-    private float balancerThreshold = 1.5f;
+    private float balancerMultiplier = 1.5f;
+    private int balancerBusyBound = 1;
+    private int balancerIdleBound = 1;
     private URI[] nodes;
     private String defaultExecutor = SharedMemoryExecutor.class.getName();
 
-    public float getBalancerThreshold() {
-        return balancerThreshold;
+    public float getBalancerMultiplier() {
+        return balancerMultiplier;
+    }
+
+    public int getBalancerBusyBound() {
+        return balancerBusyBound;
+    }
+
+    public int getBalancerIdleBound() {
+        return balancerIdleBound;
     }
 
     public int getNumberOfThreads() {

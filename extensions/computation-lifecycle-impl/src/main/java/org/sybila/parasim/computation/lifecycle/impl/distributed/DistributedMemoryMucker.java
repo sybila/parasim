@@ -32,6 +32,7 @@ import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
 import org.sybila.parasim.computation.lifecycle.api.RemoteDescriptor;
 import org.sybila.parasim.computation.lifecycle.api.RemoteQueue;
+import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -42,9 +43,9 @@ public class DistributedMemoryMucker extends ProgressAdapter {
 
     private final Map<UUID, RemoteDescriptor> descriptors;
     private final SortedSet<RemoteDescriptor> sortedDescriptors;
-    private final float balancerThreshold;
+    private final ComputationLifecycleConfiguration configuration;
 
-    public DistributedMemoryMucker(float balancerThreshold, Map<UUID, RemoteQueue> queues) {
+    public DistributedMemoryMucker(ComputationLifecycleConfiguration configuration, Map<UUID, RemoteQueue> queues) {
         Validate.notNull(queues, "The map with queues can't be null.");
         Validate.isTrue(!queues.isEmpty(), "The map with queues can't be empty.");
         this.descriptors = new HashMap<>(queues.size());
@@ -52,7 +53,7 @@ public class DistributedMemoryMucker extends ProgressAdapter {
             this.descriptors.put(entry.getKey(), new RemoteDescriptor(entry.getValue(), entry.getKey()));
         }
         this.sortedDescriptors = new TreeSet<>(descriptors.values());
-        this.balancerThreshold = balancerThreshold;
+        this.configuration = configuration;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class DistributedMemoryMucker extends ProgressAdapter {
         sortedDescriptors.remove(descriptor);
         descriptor.getSize().decrementAndGet();
         sortedDescriptors.add(descriptor);
-        reschedule();
+        rebalance();
     }
 
     @Override
@@ -70,31 +71,28 @@ public class DistributedMemoryMucker extends ProgressAdapter {
         sortedDescriptors.remove(descriptor);
         descriptor.getSize().incrementAndGet();
         sortedDescriptors.add(descriptor);
-        reschedule();
+        rebalance();
     }
 
-    protected void reschedule() {
+    protected void rebalance() {
         final RemoteDescriptor busy = sortedDescriptors.last();
-        final RemoteDescriptor notBusy = sortedDescriptors.first();
-        if (busy.getSize().get() > 1 && notBusy.getSize().get() <= 1 && busy.getSize().get() > balancerThreshold * notBusy.getSize().get()) {
-            LOGGER.debug("starting balancing from [" + busy.getSize() + "] to [" + notBusy.getSize() + "]");
+        final RemoteDescriptor idle = sortedDescriptors.first();
+        if (busy.getSize().get() >= configuration.getBalancerBusyBound() && idle.getSize().get() <= configuration.getBalancerIdleBound() && busy.getSize().get() > configuration.getBalancerMultiplier() * idle.getSize().get()) {
             try {
                 Computation toBalance = busy.getQueue().balance();
-                LOGGER.debug("balancing " + toBalance);
                 if (toBalance != null) {
-                    notBusy.getQueue().balance(toBalance);
+                    idle.getQueue().balance(toBalance);
                 }
-                LOGGER.debug("balanced " + toBalance);
             } catch (RemoteException e) {
                 throw new IllegalStateException("Can't balance the computation.", e);
             }
             sortedDescriptors.remove(busy);
-            sortedDescriptors.remove(notBusy);
+            sortedDescriptors.remove(idle);
             busy.getSize().decrementAndGet();
-            notBusy.getSize().incrementAndGet();
+            idle.getSize().incrementAndGet();
             sortedDescriptors.add(busy);
-            sortedDescriptors.add(notBusy);
-            StringBuilder builder = new StringBuilder("rescheduling: ");
+            sortedDescriptors.add(idle);
+            StringBuilder builder = new StringBuilder("balancing: ");
             for (RemoteDescriptor descriptor: descriptors.values()) {
                 builder.append(descriptor.getId()).append(" => ").append(descriptor.getSize().get()).append(" ");
             }
