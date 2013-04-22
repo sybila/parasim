@@ -31,11 +31,23 @@ import static org.testng.Assert.*;
 public class TestUntilMonitor extends AbstractMonitorTest {
 
     @Test
-    public void testUntilMonitor() {
+    public void testUntilMonitor1() {
         Monitor left = createTestMonitor(1, 2, 3, 4, 3, 2, -10);
         Monitor right = createTestMonitor(2, 1, -10, 3, 9, 0, 0);
         Monitor until = new UntilMonitor(EMPTY_PROPERTY, left, right, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
         Monitor expected = createTestMonitor(1, 2, 3);
+        assertEquals(until.size(), expected.size());
+        for (int i=0; i<expected.size(); i++) {
+            assertEquals(until.getRobustness(i).getValue(), expected.getRobustness(i).getValue(), "The robustness doesn't match in index <" + i + ">.");
+        }
+    }
+
+    @Test
+    public void testUntilMonitor2() {
+        Monitor left = createTestMonitor(6, 5, 4, 3, 2, 1, 1);
+        Monitor right = createTestMonitor(2, 1, -10, 3, 9, 0, 0);
+        Monitor until = new UntilMonitor(EMPTY_PROPERTY, left, right, new TimeInterval(2, 4, IntervalBoundaryType.CLOSED));
+        Monitor expected = createTestMonitor(3, 3, 2);
         assertEquals(until.size(), expected.size());
         for (int i=0; i<expected.size(); i++) {
             assertEquals(until.getRobustness(i).getValue(), expected.getRobustness(i).getValue(), "The robustness doesn't match in index <" + i + ">.");

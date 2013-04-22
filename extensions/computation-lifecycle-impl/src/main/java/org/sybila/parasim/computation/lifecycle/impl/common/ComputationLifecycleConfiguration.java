@@ -20,7 +20,6 @@
 package org.sybila.parasim.computation.lifecycle.impl.common;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
 
 /**
@@ -28,38 +27,18 @@ import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
  */
 public class ComputationLifecycleConfiguration {
 
-    private int queueSize = Runtime.getRuntime().availableProcessors() * 1000;
-    private int corePoolSize = Runtime.getRuntime().availableProcessors();
-    private int maxPoolSize = corePoolSize * 5;
-    private long keepAliveTimeAmount = 5;
-    private TimeUnit keepAliveTimeUnit = TimeUnit.SECONDS;
+    private int numberOfThreads = Runtime.getRuntime().availableProcessors();
     private long nodeThreshold = Runtime.getRuntime().availableProcessors() + Runtime.getRuntime().availableProcessors() / 2;
     private float balancerThreshold = 1.5f;
     private URI[] nodes;
     private String defaultExecutor = SharedMemoryExecutor.class.getName();
 
-    public int getQueueSize() {
-        return queueSize;
-    }
-
     public float getBalancerThreshold() {
         return balancerThreshold;
     }
 
-    public int getCorePoolSize() {
-        return corePoolSize;
-    }
-
-    public int getMaxPoolSize() {
-        return maxPoolSize;
-    }
-
-    public long getKeepAliveTimeAmount() {
-        return keepAliveTimeAmount;
-    }
-
-    public TimeUnit getKeepAliveTimeUnit() {
-        return keepAliveTimeUnit;
+    public int getNumberOfThreads() {
+        return numberOfThreads;
     }
 
     public long getNodeThreshold() {

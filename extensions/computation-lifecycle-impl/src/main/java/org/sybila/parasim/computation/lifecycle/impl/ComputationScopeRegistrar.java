@@ -19,9 +19,8 @@
  */
 package org.sybila.parasim.computation.lifecycle.impl;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
 import org.sybila.parasim.core.annotation.Observes;
@@ -34,7 +33,7 @@ import org.sybila.parasim.core.event.After;
 @ComputationScope
 public class ComputationScopeRegistrar {
 
-    private ThreadPoolExecutor executorService;
+    private ExecutorService executorService;
 
     public void destroyExecutorService(@Observes After event) throws InterruptedException {
         if (event.getLoad().equals(ComputationScope.class) && executorService != null) {
@@ -44,12 +43,7 @@ public class ComputationScopeRegistrar {
 
     @Provide
     public ExecutorService provideExecutorService(ComputationLifecycleConfiguration configuration) {
-        executorService = new ThreadPoolExecutor(
-                configuration.getCorePoolSize(),
-                configuration.getMaxPoolSize(),
-                configuration.getKeepAliveTimeAmount(),
-                configuration.getKeepAliveTimeUnit(),
-                new ArrayBlockingQueue<Runnable>(configuration.getQueueSize()));
+        executorService =  Executors.newFixedThreadPool(configuration.getNumberOfThreads());
         return executorService;
     }
 

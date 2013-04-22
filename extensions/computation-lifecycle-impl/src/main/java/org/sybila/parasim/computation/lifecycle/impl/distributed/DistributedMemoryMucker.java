@@ -22,18 +22,16 @@ package org.sybila.parasim.computation.lifecycle.impl.distributed;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
+import org.sybila.parasim.computation.lifecycle.api.RemoteDescriptor;
 import org.sybila.parasim.computation.lifecycle.api.RemoteQueue;
-import org.sybila.parasim.model.Mergeable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -58,10 +56,10 @@ public class DistributedMemoryMucker extends ProgressAdapter {
     }
 
     @Override
-    public void done(UUID node, Mergeable event) {
+    public void computing(UUID node, java.util.concurrent.Future event) {
         RemoteDescriptor descriptor = descriptors.get(node);
         sortedDescriptors.remove(descriptor);
-        descriptor.size.decrementAndGet();
+        descriptor.getSize().decrementAndGet();
         sortedDescriptors.add(descriptor);
         reschedule();
     }
@@ -70,7 +68,7 @@ public class DistributedMemoryMucker extends ProgressAdapter {
     public void emitted(UUID node, Computation event) {
         RemoteDescriptor descriptor = descriptors.get(node);
         sortedDescriptors.remove(descriptor);
-        descriptor.size.incrementAndGet();
+        descriptor.getSize().incrementAndGet();
         sortedDescriptors.add(descriptor);
         reschedule();
     }
@@ -78,13 +76,13 @@ public class DistributedMemoryMucker extends ProgressAdapter {
     protected void reschedule() {
         final RemoteDescriptor busy = sortedDescriptors.last();
         final RemoteDescriptor notBusy = sortedDescriptors.first();
-        if (busy.size.get() > 1 && busy.size.get() > balancerThreshold * notBusy.size.get()) {
-            LOGGER.debug("starting balancing from [" + busy.size + "] to [" + notBusy.size + "]");
+        if (busy.getSize().get() > 1 && notBusy.getSize().get() <= 1 && busy.getSize().get() > balancerThreshold * notBusy.getSize().get()) {
+            LOGGER.debug("starting balancing from [" + busy.getSize() + "] to [" + notBusy.getSize() + "]");
             try {
-                Computation toBalance = busy.queue.balance();
+                Computation toBalance = busy.getQueue().balance();
                 LOGGER.debug("balancing " + toBalance);
                 if (toBalance != null) {
-                    notBusy.queue.balance(toBalance);
+                    notBusy.getQueue().balance(toBalance);
                 }
                 LOGGER.debug("balanced " + toBalance);
             } catch (RemoteException e) {
@@ -92,61 +90,16 @@ public class DistributedMemoryMucker extends ProgressAdapter {
             }
             sortedDescriptors.remove(busy);
             sortedDescriptors.remove(notBusy);
-            busy.size.decrementAndGet();
-            notBusy.size.incrementAndGet();
+            busy.getSize().decrementAndGet();
+            notBusy.getSize().incrementAndGet();
             sortedDescriptors.add(busy);
             sortedDescriptors.add(notBusy);
-        }
-
-    }
-
-    private static class RemoteDescriptor implements Comparable<RemoteDescriptor> {
-        private final RemoteQueue queue;
-        private final UUID id;
-        private final AtomicLong size = new AtomicLong();
-
-        public RemoteDescriptor(RemoteQueue queue, UUID id) {
-            this.queue = queue;
-            this.id = id;
-        }
-
-        @Override
-        public int compareTo(RemoteDescriptor other) {
-            int toReturn =  (int) (size.get() - other.size.get());
-            if (toReturn == 0) {
-                return id.compareTo(other.id);
-            } else {
-                return toReturn;
+            StringBuilder builder = new StringBuilder("rescheduling: ");
+            for (RemoteDescriptor descriptor: descriptors.values()) {
+                builder.append(descriptor.getId()).append(" => ").append(descriptor.getSize().get()).append(" ");
             }
+            LOGGER.info(builder.toString());
         }
-
-        @Override
-        public int hashCode() {
-            int hash = 5;
-            hash = 29 * hash + Objects.hashCode(this.id);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final RemoteDescriptor other = (RemoteDescriptor) obj;
-            if (!Objects.equals(this.id, other.id)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "{" + size.get() + "}"  + id.toString();
-        }
-
     }
 
 }
