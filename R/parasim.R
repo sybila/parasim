@@ -1,17 +1,26 @@
 library("rgl");
 
-parasim.plot.data <- function(x, y, robustness, ...) {
+parasim.plot.data <- function(x, y, robustness, z = NULL, ...) {
 	ok.filter <- robustness > 0;
 	nok.filter <- robustness <= 0;
-	ok.data <- data.frame(x = x[ok.filter], y = y[ok.filter], robustness[ok.filter]);
-	nok.data <- data.frame(x = x[nok.filter], y = y[nok.filter], robustness[nok.filter]);
+	if (is.null(z)) {
+		ok.data <- data.frame(x = x[ok.filter], y = y[ok.filter], robustness = robustness[ok.filter]);
+		nok.data <- data.frame(x = x[nok.filter], y = y[nok.filter], robustness = robustness[nok.filter]);
+	} else {
+		ok.data <- data.frame(x = x[ok.filter], y = y[ok.filter], z = z[ok.filter]);
+		nok.data <- data.frame(x = x[nok.filter], y = y[nok.filter], z = z[nok.filter]);
+	}
 	plot3d(ok.data, col="green", ...);
 	plot3d(nok.data, col="red", add=TRUE, ...);
 }
 
-parasim.plot.csv <- function(file, x.name, y.name, robustness.name = "Robustness", ...) {
+parasim.plot.csv <- function(file, x.name, y.name, z.name = "", robustness.name = "Robustness", ...) {
 	data <- read.table(file, header=TRUE);
-	parasim.show.data(data[x.name], data[y.name], data[robustness.name], ...);
+	if (z.name != "") {
+		parasim.plot.data(data[x.name], data[y.name], data[robustness.name], z = data[z.name], ...);
+	} else {
+		parasim.plot.data(data[x.name], data[y.name], data[robustness.name], ...);
+	}
 }
 
 parasim.robustness.future <- function(window.start, window.end, signal) {
