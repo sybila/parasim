@@ -20,7 +20,7 @@ if [ "$CONFIG_FILE" == "" ]; then
 	exit 1;
 fi
 
-for IP in `grep "<value>" parasim.xml | tr '<>' ' ' | awk '{ print $2 }'`; do
+for IP in `grep "<value>" $CONFIG_FILE | tr '<>' ' ' | awk '{ print $2 }'`; do
 	PROCESSES=`ssh $IP -t "ps -ux | grep parasim" | awk '{print $2}'`
 	for PROCESS in $PROCESSES; do
 		ssh $IP -t "kill -9 $PROCESS"

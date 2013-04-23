@@ -208,7 +208,7 @@ public abstract class AbstractVerificationResult implements VerificationResult {
             newRobustnesses[index] = entry.second();
             index++;
         }
-        LOGGER.info("merging: <{}> duplicates", duplicates);
+        LOGGER.info("result merging: <{}> duplicates", duplicates);
         return new ArrayVerificationResult(newPoints, newRobustnesses);
     }
 

@@ -17,7 +17,7 @@ fi
 
 mkdir $SELF_DIR/results-processed;
 
-# generates <experiment>.csv file with the following attributes:
+# generates <experiment>-summary.csv file with the following attributes:
 #	- environment.name
 #	- environment.size
 #	- time
@@ -27,10 +27,10 @@ mkdir $SELF_DIR/results-processed;
 
 for DIR in $SELF_DIR/results/*; do
 	FILE=`basename "$DIR"`
-	echo "processing $FILE";
+	echo "processing summary for $FILE";
 	EXPERIMENT=`echo $FILE | awk -F "__" '{print $1}'`
-	if [ ! -f $SELF_DIR/results-processed/$EXPERIMENT.csv ]; then
-		echo "environment.name, environment.size, time, instances, spawned.hit, spawned.miss, result.duplicates, result.size" > $SELF_DIR/results-processed/$EXPERIMENT.csv;
+	if [ ! -f $SELF_DIR/results-processed/$EXPERIMENT-summary.csv ]; then
+		echo "environment.name, environment.size, time, instances, spawned.hit, spawned.miss, result.duplicates, result.size" > $SELF_DIR/results-processed/$EXPERIMENT-summary.csv;
 	fi
 	CONFIG=`echo $FILE | awk -F "__" '{print $2}'`
 	ENVIRONMENT=`echo $CONFIG | awk -F "-" '{print $2}'`
@@ -84,5 +84,41 @@ for DIR in $SELF_DIR/results/*; do
 
 	RESULT_SIZE=`cat $DIR/data.csv | wc -l`;
 
-	echo "$ENVIRONMENT, $SIZE, $TIME, $INSTANCES, $SPAWNED_HIT, $SPAWNED_MISS, $DUPLICATES, $RESULT_SIZE" >> $SELF_DIR/results-processed/$EXPERIMENT.csv;
+	echo "$ENVIRONMENT, $SIZE, $TIME, $INSTANCES, $SPAWNED_HIT, $SPAWNED_MISS, $DUPLICATES, $RESULT_SIZE" >> $SELF_DIR/results-processed/$EXPERIMENT-summary.csv;
+done
+
+# generates <experiment>-iterations.csv file with the following attributes:
+#	- environment.name
+#	- environment.size
+# 	- iteration
+#	- instances
+
+for DIR in $SELF_DIR/results/*; do
+	FILE=`basename "$DIR"`
+	echo "processing iterations for $FILE";
+	EXPERIMENT=`echo $FILE | awk -F "__" '{print $1}'`
+	if [ ! -f $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv ]; then
+		echo "environment.name, environment.size, iteration, instances" > $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv;
+	fi
+	CONFIG=`echo $FILE | awk -F "__" '{print $2}'`
+	ENVIRONMENT=`echo $CONFIG | awk -F "-" '{print $2}'`
+	SIZE=`echo $CONFIG | awk -F "-" '{print $3}'`
+
+	I=0
+	while true; do
+		I=$((I+1))
+		if [[ $CONFIG =~ .*dist.* ]]; then
+			ITERATIONS=0;
+			for SERVER_LOG in $DIR/servers-logs/*; do
+				ITERATIONS_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | wc -l`;
+				ITERATIONS=$((ITERATIONS + ITERATIONS_LOC))
+			done				
+		else
+			ITERATIONS=`cat $DIR/log.txt | grep "iteration <$I> started with" | wc -l`
+		fi			
+		if [ "$ITERATIONS" == "0" ]; then
+			break;
+		fi
+		echo "$ENVIRONMENT, $SIZE, $I, $ITERATIONS" >> $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv;
+	done
 done
