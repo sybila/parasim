@@ -34,11 +34,16 @@ public class Before<L> {
     }
 
     public static <L> Before<L> of(L context) {
-        return new Before<L>(context);
+        return new Before<>(context);
     }
 
     public L getLoad() {
         return load;
+    }
+
+    @Override
+    public String toString() {
+        return "Before[" + load + "]";
     }
 
 }

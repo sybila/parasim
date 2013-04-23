@@ -17,22 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.simulation.cpu;
+package org.sybila.parasim.computation.simulation;
 
-import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
-import org.sybila.parasim.model.ode.OdeSystem;
-import org.sybila.parasim.model.trajectory.Point;
-import org.sybila.parasim.model.trajectory.Trajectory;
+import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
+import org.sybila.parasim.core.annotation.Observes;
+import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.event.After;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public interface SimulationEngine<E extends SimulationEngine> {
+@ComputationScope
+public class ComputationRegistrar {
 
-    void close();
+    private SimulationEnginePool pool;
 
-    Trajectory simulate(Point point, OdeSystem odeSystem, long stepLimit, double timeLimit, PrecisionConfiguration configuration);
+    @Provide
+    public SimulationEnginePool provideSimulationEnginePool() {
+        this.pool = new SimulationEnginePool();
+        return this.pool;
+    }
 
-    SimulationEngineFactory<E> factory();
+    public void destroySimulationEnginePool(@Observes After after) {
+        if (after.getLoad().equals(ComputationScope.class) && pool != null) {
+            pool.destroy();
+            this.pool = null;
+        }
+    }
 
 }

@@ -28,6 +28,7 @@ cat $BENCHMARK_LIST_FILE | while read LINE ;do
 	IFS=":"
 	set -- $LINE
 	CONFIG=$1
+	CONFIG_SIZE=`echo $CONFIG | awk -F '-' '{print $3}'`;
 	EXPERIMENT=$2
 	echo "## processing experiment <$EXPERIMENT> with configuration <$CONFIG>";
 	if [ -d $SELF_DIR/results/${EXPERIMENT}__${CONFIG} ]; then
@@ -39,5 +40,13 @@ cat $BENCHMARK_LIST_FILE | while read LINE ;do
 		mkdir $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/servers-logs;
 		$BASH_EXEC $SELF_DIR/../servers-start.sh $SELF_DIR/configs/$CONFIG.xml $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/servers-logs;
 	fi
-	(time $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt;
+
+	if [[ $CONFIG =~ .*dist.* ]]; then
+		COMMAND="(time $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
+	else
+		LAST_PROC=$((CONFIG_SIZE-1))
+		COMMAND="(time taskset -c 0-$LAST_PROC $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
+	fi
+	echo $COMMAND > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/command
+	eval $COMMAND
 done

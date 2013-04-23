@@ -55,7 +55,7 @@ public class ImmutableAdaptiveStepConfiguraton implements AdaptiveStepConfigurat
     }
 
     @Override
-    public int getMaxNumberOfIterations() {
+    public long getMaxNumberOfIterations() {
         return configuration.getMaxNumberOfIterations();
     }
 

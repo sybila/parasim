@@ -24,12 +24,17 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
+import org.sybila.parasim.core.annotation.Default;
+import org.sybila.parasim.core.annotation.Observes;
 import org.sybila.parasim.core.annotation.Provide;
+import org.sybila.parasim.core.api.Resolver;
 import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
 import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
 import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
+import org.sybila.parasim.core.event.After;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -39,9 +44,12 @@ public class SimulatorRegistrar {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SimulatorRegistrar.class);
 
+    private SimulationEngine simulationEngine;
+
     @Provide
-    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
-        return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
+    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory, SimulationEnginePool pool) {
+        this.simulationEngine = pool.get(octaveSimulationEngineFactory);
+        return new SimpleAdaptiveStepSimulator(simulationEngine);
     }
 
     @Provide
@@ -52,6 +60,21 @@ public class SimulatorRegistrar {
             mapper.map(extensionDescriptor, configuration);
         }
         return configuration;
+    }
+
+    public void cleanSimulationEngine(@Observes After event, Resolver resolver) {
+        if (!event.getLoad().equals(ComputationInstanceScope.class)) {
+            return;
+        }
+        if (simulationEngine != null) {
+            SimulationEnginePool pool = resolver.resolve(SimulationEnginePool.class, Default.class);
+            if (pool != null) {
+                pool.back(simulationEngine);
+                simulationEngine = null;
+            } else {
+                simulationEngine.close();
+            }
+        }
     }
 
     @Provide

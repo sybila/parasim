@@ -40,7 +40,6 @@ public enum OdePkgEngineFactory implements OctaveSimulationEngineFactory {
     ODERS("oders"),
     ODESX("odesx");
 
-
     private final String function;
 
     private OdePkgEngineFactory(String function) {
@@ -58,22 +57,21 @@ public enum OdePkgEngineFactory implements OctaveSimulationEngineFactory {
     }
 
     @Override
-    public OctaveSimulationEngine simulationEngine(long stepLimit) {
-        return new OdePkgEngine(function, new OctaveEngineFactory().getScriptEngine(), stepLimit);
+    public OctaveSimulationEngine simulationEngine() {
+        return new OdePkgEngine(this, function, new OctaveEngineFactory().getScriptEngine());
     }
-
 
     private final class OdePkgEngine extends OctaveSimulationEngine {
 
         private final String function;
 
-        public OdePkgEngine(String function, OctaveEngine octave, long stepLimit) {
-            super(octave, stepLimit);
+        public OdePkgEngine(OctaveSimulationEngineFactory factory, String function, OctaveEngine octave) {
+            super(factory, octave);
             this.function = function;
         }
 
         @Override
-        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision) {
+        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long stepLimit, long numberOfIterations, PrecisionConfiguration precision) {
             StringBuilder builder = new StringBuilder()
                     .append(odeSystem.octaveString(true))
                     .append("pkg load odepkg;")

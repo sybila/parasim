@@ -49,14 +49,39 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
     }
 
     @Override
-    public OctaveSimulationEngine simulationEngine(long stepLimit) {
-        return new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), integrationMethod, stepLimit);
+    public OctaveSimulationEngine simulationEngine() {
+        new OctaveEngineFactory().getScriptEngine();
+        return new LsodeEngine(this, new OctaveEngineFactory().getScriptEngine(), integrationMethod);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!LsodeEngineFactory.class.equals(obj.getClass())) {
+            return false;
+        };
+        return integrationMethod.equals(((LsodeEngineFactory) obj).integrationMethod);
+    }
+
+    @Override
+    public int hashCode() {
+        return LsodeEngineFactory.class.hashCode() + 23 * integrationMethod.hashCode();
+    }
+
 
     private static class LsodeEngine extends OctaveSimulationEngine {
 
-        public LsodeEngine(OctaveEngine octave, IntegrationMethod integrationMethod, long stepLimit) {
-            super(octave, stepLimit);
+        private final IntegrationMethod integrationMethod;
+
+        public LsodeEngine(OctaveSimulationEngineFactory factory, OctaveEngine octave, IntegrationMethod integrationMethod) {
+            super(factory, octave);
+            this.integrationMethod = integrationMethod;
+        }
+
+        @Override
+        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long stepLimit, long numberOfIterations, PrecisionConfiguration precision) {
             StringBuilder builder = new StringBuilder()
                     .append("lsode_options(\"step limit\", ")
                     .append(Long.toString(stepLimit))
@@ -64,13 +89,7 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
                     .append("lsode_options('integration method', '")
                     .append(integrationMethod.getName())
                     .append("');");
-            LOGGER.debug(builder.toString());
-            getOctave().eval(builder.toString());
-        }
 
-        @Override
-        protected OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision) {
-            StringBuilder builder = new StringBuilder();
             if (precision.getMaxRelativeError() > 0) {
                 builder.append("lsode_options(\"relative tolerance\", ").append(precision.getMaxRelativeError()).append(");");
             }

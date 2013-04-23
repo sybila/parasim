@@ -26,6 +26,6 @@ public interface SimulationEngineFactory<E extends SimulationEngine>{
 
     boolean isAvailable();
 
-    E simulationEngine(long stepLimit);
+    E simulationEngine();
 
 }

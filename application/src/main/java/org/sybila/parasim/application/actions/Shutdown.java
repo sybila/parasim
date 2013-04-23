@@ -39,6 +39,7 @@ public class Shutdown extends AbstractAction<Void> {
     @Override
     public Void call() throws Exception {
         getManager().destroy();
+        System.exit(0);
         return null;
     }
 

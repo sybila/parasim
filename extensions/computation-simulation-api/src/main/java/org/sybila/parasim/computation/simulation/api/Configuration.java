@@ -52,7 +52,7 @@ public interface Configuration extends Serializable {
      *
      * @return amount of work to do inside the simulate method
      */
-    int getMaxNumberOfIterations();
+    long getMaxNumberOfIterations();
 
     /**
      * Returns ODE system which is used for the simulation

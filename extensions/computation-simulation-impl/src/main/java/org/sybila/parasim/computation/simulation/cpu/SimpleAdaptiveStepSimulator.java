@@ -38,41 +38,36 @@ import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
  */
 public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
 
-    private final SimulationEngineFactory simulationEngineFactory;
+    private final SimulationEngine simulationEngine;
 
-    public SimpleAdaptiveStepSimulator(SimulationEngineFactory simulationEngineFactory) {
-        Validate.notNull(simulationEngineFactory);
-        this.simulationEngineFactory = simulationEngineFactory;
+    public SimpleAdaptiveStepSimulator(SimulationEngine simulationEngine) {
+        Validate.notNull(simulationEngine);
+        this.simulationEngine = simulationEngine;
     }
 
     @Override
     public <T extends Trajectory> SimulatedDataBlock<T> simulate(AdaptiveStepConfiguration configuration, DataBlock<T> data) {
-        SimulationEngine simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
-        try {
-            List<T> trajectories = new ArrayList<>(data.size());
-            Status[] statuses = new Status[data.size()];
-            for (int i = 0; i < data.size(); i++) {
-                synchronized(data.getTrajectory(i).getReference().getTrajectory().getFirstPoint()) {
-                    if (data.getTrajectory(i).getReference().getTrajectory().getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
-                        statuses[i] = Status.OK;
-                        trajectories.add((T)data.getTrajectory(i).getReference().getTrajectory());
-                        continue;
-                    }
-                    Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
-                    LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
-                    trajectory.append(simulated);
-                    trajectories.add((T) trajectory);
-                    if (simulated.getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
-                        statuses[i] = Status.TIMEOUT;
-                    } else {
-                        statuses[i] = Status.OK;
-                    }
+        List<T> trajectories = new ArrayList<>(data.size());
+        Status[] statuses = new Status[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            synchronized(data.getTrajectory(i).getReference().getTrajectory().getFirstPoint()) {
+                if (data.getTrajectory(i).getReference().getTrajectory().getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
+                    statuses[i] = Status.OK;
+                    trajectories.add((T)data.getTrajectory(i).getReference().getTrajectory());
+                    continue;
+                }
+                Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getMaxNumberOfIterations(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
+                LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
+                trajectory.append(simulated);
+                trajectories.add((T) trajectory);
+                if (simulated.getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
+                    statuses[i] = Status.TIMEOUT;
+                } else {
+                    statuses[i] = Status.OK;
                 }
             }
-            return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
-        } finally {
-            simulationEngine.close();
         }
+        return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
     }
 
     @Override
@@ -80,8 +75,7 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
         if (trajectory.getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
             return trajectory;
         }
-        SimulationEngine simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
-        Trajectory simulated = simulationEngine.simulate(trajectory.getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
+        Trajectory simulated = simulationEngine.simulate(trajectory.getLastPoint(), configuration.getOdeSystem(), configuration.getMaxNumberOfIterations(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
         LinkedTrajectory result = trajectory instanceof LinkedTrajectory ? (LinkedTrajectory) trajectory : (trajectory instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) trajectory) : LinkedTrajectory.createAndUpdateReference(trajectory));
         result.append(simulated);
         return (T) result;

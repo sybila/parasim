@@ -6,7 +6,10 @@ nbactions.xml
 octave-core
 experiments/*/*result.xml
 experiments/*/result*.xml
+benchmark/experiments/*/*result.xml
 *~
 .RData
 .Rhistory
 *.csv
+benchmark/results
+benchamer/results-processed

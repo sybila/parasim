@@ -68,6 +68,7 @@ public class PlotResults extends AbstractAction<Void> {
             public void windowClosed(PlotterWindowListener.PlotterWindowEvent event) {
                 try {
                     getManager().destroy();
+                    System.exit(0);
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }

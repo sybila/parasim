@@ -117,7 +117,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
             }
 
             @Override
-            public int getMaxNumberOfIterations() {
+            public long getMaxNumberOfIterations() {
                 return 1000;
             }
 

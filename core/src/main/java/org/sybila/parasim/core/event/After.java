@@ -34,11 +34,16 @@ public class After<L> {
     }
 
     public static <L> After<L> of(L load) {
-        return new After<L>(load);
+        return new After<>(load);
     }
 
     public L getLoad() {
         return load;
+    }
+
+    @Override
+    public String toString() {
+        return "After[" + load + "]";
     }
 
 }

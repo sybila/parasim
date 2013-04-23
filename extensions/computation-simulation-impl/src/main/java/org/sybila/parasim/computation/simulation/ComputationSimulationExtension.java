@@ -31,6 +31,7 @@ public class ComputationSimulationExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         builder.extension(SimulatorRegistrar.class);
         builder.extension(ConfigurationRegistrar.class);
+        builder.extension(ComputationRegistrar.class);
     }
 
 }

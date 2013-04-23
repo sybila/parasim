@@ -75,6 +75,7 @@ public class StartGuiManager extends AbstractAction<Void> {
                 loggerWindow.dispose();
                 try {
                     getManager().destroy();
+                    System.exit(0);
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }

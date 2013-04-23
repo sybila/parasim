@@ -107,8 +107,8 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
         try {
             LOGGER.info("analysis of " + point);
             // plot trajectory
-            simulationEgine = octaveSimulationEngineFactory.simulationEngine(100000);
-            Trajectory trajectory = simulationEgine.simulateAndPlot(point, odeSystem, Math.max(simulationSpace.getMaxBounds().getTime(), property.getTimeNeeded()), precision);
+            simulationEgine = octaveSimulationEngineFactory.simulationEngine();
+            Trajectory trajectory = simulationEgine.simulateAndPlot(point, odeSystem, 100000, Math.max(simulationSpace.getMaxBounds().getTime(), property.getTimeNeeded()), precision);
             // plot robustness
             script = new OctaveEngineFactory().getScriptEngine();
             Monitor monitor = verifier.monitor(trajectory, property);

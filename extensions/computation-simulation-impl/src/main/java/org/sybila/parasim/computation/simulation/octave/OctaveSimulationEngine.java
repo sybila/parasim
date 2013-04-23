@@ -20,7 +20,9 @@
 package org.sybila.parasim.computation.simulation.octave;
 
 import dk.ange.octave.OctaveEngine;
+import dk.ange.octave.exec.OctaveExec;
 import dk.ange.octave.type.OctaveDouble;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.Validate;
@@ -28,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Variable;
@@ -40,37 +43,53 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public abstract class OctaveSimulationEngine implements SimulationEngine {
+public abstract class OctaveSimulationEngine implements SimulationEngine<OctaveSimulationEngine> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(OctaveSimulationEngine.class);
 
     private final OctaveEngine octave;
-    private final long stepLimit;
+    private final OctaveSimulationEngineFactory factory;
 
-    public OctaveSimulationEngine(OctaveEngine octave, long stepLimit) {
+    public OctaveSimulationEngine(OctaveSimulationEngineFactory factory, OctaveEngine octave) {
         Validate.notNull(octave);
-        Validate.isTrue(stepLimit > 0);
+        Validate.notNull(factory);
         this.octave = octave;
-        this.stepLimit = stepLimit;
+        this.factory = factory;
     }
 
     @Override
     public void close() {
-        getOctave().close();
+        octave.close();
+        try {
+            // HACK: because of deadlock in javaoctave
+            Field octaveExecField = OctaveEngine.class.getDeclaredField("octaveExec");
+            octaveExecField.setAccessible(true);
+            OctaveExec exec = (OctaveExec) octaveExecField.get(octave);
+            Field processField = OctaveExec.class.getDeclaredField("process");
+            processField.setAccessible(true);
+            Process proces = (Process) processField.get(exec);
+            proces.destroy();
+            proces.getErrorStream().close();
+            proces.getInputStream().close();
+            proces.getOutputStream().close();
+        } catch (Exception e) {
+            LOGGER.error("Can't terminate Octave.", e);
+        }
+
     }
 
     @Override
-    public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
+    public Trajectory simulate(Point point, OdeSystem odeSystem, long stepLimit, double timeLimit, PrecisionConfiguration precision) {
         // load parameter values
         List<ParameterValue> paramValues = loadParameterValues(point, odeSystem);
         // create substituted octave ode system
         OctaveOdeSystem octaveOdeSystem = paramValues.isEmpty() ? new OctaveOdeSystem(odeSystem) : new OctaveOdeSystem(odeSystem.substitute(paramValues));
         // compute
         long numOfIterations = Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep()));
-        if (numOfIterations > getStepLimit()) {
-            throw new IllegalStateException("Can't simulate the trajectory because the number of iterations <" + numOfIterations + "> is higher than the given limit <" + getStepLimit() + ">.");
+        if (numOfIterations > stepLimit) {
+            throw new IllegalStateException("Can't simulate the trajectory because the number of iterations <" + numOfIterations + "> is higher than the given limit <" + stepLimit + ">.");
         }
-        double[] loadedData = rawSimulation(point, octaveOdeSystem, numOfIterations, precision).getData();
+        double[] loadedData = rawSimulation(point, octaveOdeSystem, stepLimit, numOfIterations, precision).getData();
         float[] data = new float[loadedData.length];
         for (int dim = 0; dim < octaveOdeSystem.dimension(); dim++) {
             for (int i = 0; i < loadedData.length / octaveOdeSystem.dimension(); i++) {
@@ -90,8 +109,13 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         }
     }
 
-    public Trajectory simulateAndPlot(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
-        Trajectory trajectory = simulate(point, odeSystem, timeLimit, precision);
+    @Override
+    public SimulationEngineFactory<OctaveSimulationEngine> factory() {
+        return factory;
+    }
+
+    public Trajectory simulateAndPlot(Point point, OdeSystem odeSystem, long stepLimit, double timeLimit, PrecisionConfiguration precision) {
+        Trajectory trajectory = simulate(point, odeSystem, stepLimit, timeLimit, precision);
         boolean first = true;
         StringBuilder timeBuilder = new StringBuilder().append("time = [");
         for (Point p: trajectory) {
@@ -125,10 +149,6 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         return octave;
     }
 
-    protected final long getStepLimit() {
-        return stepLimit;
-    }
-
     protected static boolean absoluteToleranceIsSet(PrecisionConfiguration precision) {
         for (int i=0; i<precision.getDimension(); i++) {
             if (precision.getMaxAbsoluteError(i) != 0) {
@@ -148,5 +168,5 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         return paramValues;
     }
 
-    protected abstract OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision);
+    protected abstract OctaveDouble rawSimulation(Point point, OctaveOdeSystem odeSystem, long stepLimit, long numberOfIterations, PrecisionConfiguration precision);
 }

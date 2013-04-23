@@ -29,7 +29,7 @@ public class ImmutableConfiguration implements Configuration {
 
     public static final int DEFAULT_MAX_NUMBER_OF_ITERATIONS = 100000;
     public static final float DEFAULT_STEP = (float) 0.1;
-    private int maxNumberOfIterations;
+    private long maxNumberOfIterations;
     private OdeSystem odeSystem;
     private OrthogonalSpace space;
     private float[] steps;
@@ -75,7 +75,7 @@ public class ImmutableConfiguration implements Configuration {
     }
 
     @Override
-    public int getMaxNumberOfIterations() {
+    public long getMaxNumberOfIterations() {
         return maxNumberOfIterations;
     }
 

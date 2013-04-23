@@ -23,8 +23,11 @@ import org.sybila.parasim.computation.simulation.AbstractAdaptiveStepSimulationT
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.Simulator;
 import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -33,6 +36,22 @@ import org.testng.annotations.Test;
 public class TestSimulationWithOders extends AbstractAdaptiveStepSimulationTest {
 
     private static final SimulationEngineFactory ENGINE_FACTORY = OdePkgEngineFactory.ODERS;
+
+    private SimulationEngine engine;
+
+    @BeforeMethod
+    public void prepare() {
+        if (ENGINE_FACTORY.isAvailable()) {
+            engine = ENGINE_FACTORY.simulationEngine();
+        }
+    }
+
+    @AfterMethod
+    public void clean() {
+        if (engine != null) {
+            engine = null;
+        }
+    }
 
     @Test
     public void testTimeStep() {
@@ -68,7 +87,7 @@ public class TestSimulationWithOders extends AbstractAdaptiveStepSimulationTest 
 
     @Override
     protected Simulator<AdaptiveStepConfiguration> createSimulator() {
-        return new SimpleAdaptiveStepSimulator(ENGINE_FACTORY);
+        return new SimpleAdaptiveStepSimulator(engine);
     }
 
 }
