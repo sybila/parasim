@@ -23,10 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.density.api.Configuration;
@@ -72,7 +70,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         // note spawned trajectories
         List<TrajectoryWithNeighborhood> newTrajectories = new ArrayList<>();
         // note secondary trajectories
-        Set<Trajectory> newSecondaryTrajectories = new HashSet<>();
+        Map<FractionPoint, Trajectory> newSecondaryTrajectories = new HashMap<>();
         // iterate through all pairs of trajectory and neighbor with invalid distance
         for (int i = 0; i < trajectories.size(); i++) {
             TrajectoryWithNeighborhood trajectory = trajectories.getTrajectory(i);
@@ -85,7 +83,8 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
                         continue;
                     }
                     for (Trajectory neigh: newTrajectory.getNeighbors()) {
-                        newSecondaryTrajectories.add(neigh);
+                        FractionPoint key = ((ArrayFractionPoint) neigh.getFirstPoint()).getFractionPoint();
+                        newSecondaryTrajectories.put(key, neigh);
                     }
                     newTrajectories.add(newTrajectory);
                 }
@@ -96,7 +95,7 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
         return new SpawnedDataBlockWrapper(
                 new ListDataBlock<>(newTrajectories),
                 new DelegatingConfiguration(configuration.getInitialSpace()),
-                new ListDataBlock<>(new ArrayList<>(newSecondaryTrajectories)));
+                new ListDataBlock<>(new ArrayList<>(newSecondaryTrajectories.values())));
     }
 
     @Override
