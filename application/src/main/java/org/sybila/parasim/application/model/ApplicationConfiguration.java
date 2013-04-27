@@ -27,8 +27,10 @@ import java.io.Serializable;
 public class ApplicationConfiguration implements Serializable {
 
     private int warmupComputationSize = 30;
+    private int warmupBranchFactor = 4;
     private int warmupIterationLimit = 2;
     private int computationSize = 2 * warmupComputationSize;
+    private int branchFactor = warmupBranchFactor / 2;
 
     public int getComputationSize() {
         return computationSize;
@@ -36,6 +38,14 @@ public class ApplicationConfiguration implements Serializable {
 
     public int getWarmupIterationLimit() {
         return warmupIterationLimit;
+    }
+
+    public int getBranchFactor() {
+        return branchFactor;
+    }
+
+    public int getWarmupBranchFactor() {
+        return warmupBranchFactor;
     }
 
     public int getWarmupComputationSize() {

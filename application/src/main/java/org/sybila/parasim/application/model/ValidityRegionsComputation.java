@@ -190,10 +190,12 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
             originalSecondaryTrajectories.add(t);
         }
         int compSize = configuration.getComputationSize();
+        int branchFactor = configuration.getBranchFactor();
         if (currentIteration <= configuration.getWarmupIterationLimit()) {
             compSize = configuration.getWarmupComputationSize();
+            branchFactor = configuration.getWarmupBranchFactor();
         }
-        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) compSize), 2);
+        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) compSize), branchFactor);
         int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
         for (int i = 0; i < toSpawn; i++) {
             int batchStart = batchSize * i;
