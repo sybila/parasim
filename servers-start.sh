@@ -30,5 +30,6 @@ fi
 
 for IP in `grep "<value>" $CONFIG_FILE | tr '<>' ' ' | awk '{ print $2 }'`; do
 	nohup ssh $IP -t "java -Dparasim.remote.host=$IP -jar $TARGET_DIST -s -c $CONFIG_FILE" > "$LOG_DIR/log-$IP" &
+	sleep 1
 	echo "server $IP started";
 done

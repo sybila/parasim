@@ -195,7 +195,10 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
             compSize = configuration.getWarmupComputationSize();
             branchFactor = configuration.getWarmupBranchFactor();
         }
-        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) compSize), branchFactor);
+        int toSpawn = (int) Math.ceil(spawned.size() / (float) compSize);
+        if (toSpawn > branchFactor) {
+            toSpawn = branchFactor;
+        }
         int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
         for (int i = 0; i < toSpawn; i++) {
             int batchStart = batchSize * i;

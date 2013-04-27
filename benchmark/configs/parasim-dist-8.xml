@@ -3,6 +3,12 @@
 		<property name="host">anna</property>
 	</extension>
 
+	<extension qualifier="application">
+		<property name="warmupComputationSize">20</property>
+		<property name="computationSize">40</property>
+		<property name="warmupIterationLimit">3</property>
+	</extension>
+
 	<extension qualifier="computation-lifecycle">
 		<property name="numberOfThreads">2</property>
 		<property name="defaultExecutor">org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor</property>
