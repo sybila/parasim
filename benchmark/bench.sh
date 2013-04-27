@@ -44,7 +44,7 @@ for LINE in `cat $BENCHMARK_LIST_FILE`; do
 	if [[ $CONFIG =~ .*dist.* ]]; then
 		COMMAND="(time $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
 	else
-		LAST_PROC=$((CONFIG_SIZE-1))
+		LAST_PROC=$((2*CONFIG_SIZE-1))
 		COMMAND="(time taskset -c 0-$LAST_PROC $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
 	fi
 	echo $COMMAND > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/command

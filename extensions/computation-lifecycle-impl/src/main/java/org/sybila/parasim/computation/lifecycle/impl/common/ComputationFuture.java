@@ -117,7 +117,6 @@ public class ComputationFuture<M extends Mergeable<M>> extends ProgressAdapter i
 
     @Override
     public synchronized void done(UUID node, Mergeable event) {
-        LOGGER.info("merging partial result from " + node);
         if (partial == null) {
             LOGGER.debug("the first partial result is " + event);
             partial = (M) event;

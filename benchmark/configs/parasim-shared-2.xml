@@ -2,4 +2,10 @@
 	<extension qualifier="computation-lifecycle">
 		<property name="numberOfThreads">2</property>
 	</extension>
+
+	<extension qualifier="application">
+		<property name="warmupComputationSize">20</property>
+		<property name="computationSize">40</property>
+		<property name="warmupIterationLimit">3</property>
+	</extension>
 </parasim>
