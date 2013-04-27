@@ -1,14 +1,13 @@
 <parasim>
 	<extension qualifier="remote">
-		<property name="host">147.251.45.129</property>
+		<property name="host">anna</property>
 	</extension>
 
 	<extension qualifier="computation-lifecycle">
-		<property name="corePoolSize">2</property>
+		<property name="numberOfThreads">2</property>
 		<property name="defaultExecutor">org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor</property>
 		<property name="nodes">
 			<value>pheme01</value>
 		</property>
 	</extension>
 </parasim>
-
