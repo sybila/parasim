@@ -28,10 +28,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.Emitter;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.Offerer;
+import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
 import org.sybila.parasim.computation.lifecycle.api.RemoteQueue;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.computation.lifecycle.api.annotations.Node;
@@ -46,6 +49,7 @@ import org.sybila.parasim.core.api.Binder;
 import org.sybila.parasim.core.api.Context;
 import org.sybila.parasim.core.api.enrichment.Enrichment;
 import org.sybila.parasim.core.impl.remote.RemoteConfiguration;
+import org.sybila.parasim.model.Mergeable;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -55,6 +59,8 @@ public class RemoteExecutorImpl implements RemoteExecutor {
     private final Context context;
     private final Map<UUID, Context> contexts = new HashMap<>();
     private final UUID id = UUID.randomUUID();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteExecutorImpl.class);
 
     // for proxies
     protected RemoteExecutorImpl() {
@@ -134,6 +140,7 @@ public class RemoteExecutorImpl implements RemoteExecutor {
         // add progress listeners
         localStatus.addProgressListerner(offerer);
         localStatus.addProgressListerner(mucker);
+        localStatus.addProgressListerner(new LogListener(offerer));
 
         // bind services
         binder.bind(MutableStatus.class, Default.class, localStatus);
@@ -145,6 +152,21 @@ public class RemoteExecutorImpl implements RemoteExecutor {
                 Default.class,
                 (RemoteQueue) UnicastRemoteObject.exportObject(remoteQueue));
         binder.bind(UUID.class, Node.class, getId());
+    }
+
+    private static class LogListener extends ProgressAdapter {
+
+        private final Offerer offerer;
+
+        public LogListener(Offerer offerer) {
+            this.offerer = offerer;
+        }
+
+        @Override
+        public void done(UUID node, Mergeable event) {
+            LOGGER.info("current offerer size is: " + offerer.size());
+        }
+
     }
 
 }

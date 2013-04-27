@@ -141,6 +141,7 @@ public class DistributedMemoryExecutorImpl extends AbstractExecutor implements D
                     LOGGER.error("Can't destroy the remote computation.", e);
                 }
             }
+            LOGGER.info("destroying computatation: " + id);
             try {
                 UnicastRemoteObject.unexportObject(remoteStatus, true);
             } catch (NoSuchObjectException e) {
