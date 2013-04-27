@@ -102,6 +102,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
     private SpawnedDataBlock spawned;
     private final OrthogonalSpace originalSimulationSpace;
     private final boolean useFrozenVerifier;
+    private final ApplicationConfiguration configuration;
 
     private STLVerifier getVerifier() {
         if (useFrozenVerifier) {
@@ -111,7 +112,10 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         }
     }
 
-    public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
+    public ValidityRegionsComputation(ApplicationConfiguration configuration, OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("The parameter [configuration] is null.");
+        }
         if (odeSystem == null) {
             throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
@@ -134,12 +138,13 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         this.initialSpace = initialSpace;
         this.property = property;
         this.iterationLimit = iterationLimit;
+        this.configuration = configuration;
 
         if (new FormulaStarInfo(property).getStarNumber() == 0) {
-            LOGGER.info("Using semantics without frozen-time values.");
+            LOGGER.debug("Using semantics without frozen-time values.");
             useFrozenVerifier = false;
         } else {
-            LOGGER.info("Using semantics with frozen-time values.");
+            LOGGER.debug("Using semantics with frozen-time values.");
             useFrozenVerifier = true;
         }
     }
@@ -184,7 +189,11 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         for (Trajectory t : spawned.getSecondaryTrajectories()) {
             originalSecondaryTrajectories.add(t);
         }
-        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) 30), 4);
+        int compSize = configuration.getComputationSize();
+        if (currentIteration <= configuration.getWarmupIterationLimit()) {
+            compSize = configuration.getWarmupComputationSize();
+        }
+        int toSpawn = (int) Math.min(Math.ceil(spawned.size() / (float) compSize), 2);
         int batchSize = (int) Math.ceil(spawned.size() / (float) toSpawn);
         for (int i = 0; i < toSpawn; i++) {
             int batchStart = batchSize * i;
@@ -213,7 +222,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
     }
 
     public Computation<VerificationResult> cloneComputation() {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, originalSimulationSpace, initialSpace, property, iterationLimit);
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(configuration, odeSystem, precisionConfiguration, originalSimulationSpace, initialSpace, property, iterationLimit);
         computation.currentIteration = this.currentIteration;
         computation.spawned = this.spawned;
         return computation;

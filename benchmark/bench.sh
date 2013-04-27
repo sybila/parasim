@@ -48,5 +48,11 @@ cat $BENCHMARK_LIST_FILE | while read LINE ;do
 		COMMAND="(time taskset -c 0-$LAST_PROC $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
 	fi
 	echo $COMMAND > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/command
+	echo "## computing";
 	eval $COMMAND
+
+	if [[ $CONFIG =~ .*dist.* ]]; then
+		echo "## stopping servers";
+		$BASH_EXEC $SELF_DIR/../servers-shutdown.sh $SELF_DIR/configs/$CONFIG.xml;
+	fi
 done

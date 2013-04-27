@@ -26,7 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.ComputationContainer;
 import org.sybila.parasim.computation.lifecycle.api.Future;
 import org.sybila.parasim.core.annotation.Default;
-import org.sybila.parasim.core.api.Resolver;
+import org.sybila.parasim.core.api.Manager;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
+import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;
+import org.sybila.parasim.core.api.configuration.ParasimDescriptor;
 import org.sybila.parasim.model.ode.OdeSystemVariable;
 import org.sybila.parasim.model.verification.result.VerificationResult;
 import org.sybila.parasim.model.verification.stl.Formula;
@@ -42,13 +45,19 @@ public class ExperimentLauncher {
     private ExperimentLauncher() {
     }
 
-    public static VerificationResult launch(Resolver resolver, Experiment experiment) throws Exception {
-        ComputationContainer container = resolver.resolve(ComputationContainer.class, Default.class);
+    public static VerificationResult launch(Manager manager, Experiment experiment) throws Exception {
+        ApplicationConfiguration configuration = new ApplicationConfiguration();
+        ExtensionDescriptor descriptor = manager.resolve(ParasimDescriptor.class, Default.class).getExtensionDescriptor("application");
+        if (descriptor != null) {
+            manager.resolve(ExtensionDescriptorMapper.class, Default.class).map(descriptor, configuration);
+        }
+        ComputationContainer container = manager.resolve(ComputationContainer.class, Default.class);
         for (OdeSystemVariable variable : experiment.getOdeSystem()) {
             LOGGER.info(variable.getName() + "' = " + variable.getRightSideExpression().toFormula());
         }
         LOGGER.info(getFormulaInfo(experiment.getFormula()));
         Future<VerificationResult> result = container.compute(new ValidityRegionsComputation(
+                configuration,
                 experiment.getOdeSystem(),
                 experiment.getPrecisionConfiguration(),
                 experiment.getSimulationSpace(),
