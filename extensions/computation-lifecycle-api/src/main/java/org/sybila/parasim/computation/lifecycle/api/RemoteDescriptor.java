@@ -11,11 +11,13 @@ public class RemoteDescriptor implements Comparable<RemoteDescriptor> {
 
     private final RemoteQueue queue;
     private final UUID id;
+    private final String host;
     private final AtomicLong size = new AtomicLong();
 
-    public RemoteDescriptor(RemoteQueue queue, UUID id) {
+    public RemoteDescriptor(String host, RemoteQueue queue, UUID id) {
         this.queue = queue;
         this.id = id;
+        this.host = host;
     }
 
     @Override
@@ -57,6 +59,10 @@ public class RemoteDescriptor implements Comparable<RemoteDescriptor> {
 
     public UUID getId() {
         return id;
+    }
+
+    public String getHost() {
+        return host;
     }
 
     public AtomicLong getSize() {

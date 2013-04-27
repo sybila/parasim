@@ -45,6 +45,7 @@ import org.sybila.parasim.core.annotation.Default;
 import org.sybila.parasim.core.api.Binder;
 import org.sybila.parasim.core.api.Context;
 import org.sybila.parasim.core.api.enrichment.Enrichment;
+import org.sybila.parasim.core.impl.remote.RemoteConfiguration;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -87,6 +88,11 @@ public class RemoteExecutorImpl implements RemoteExecutor {
     @Override
     public UUID getId() throws RemoteException {
         return id;
+    }
+
+    @Override
+    public String getHost() throws RemoteException {
+        return context.resolve(RemoteConfiguration.class, Default.class).getHost();
     }
 
     @Override

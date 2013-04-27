@@ -35,9 +35,9 @@ import org.sybila.parasim.computation.lifecycle.api.DistributedMemoryExecutor;
 import org.sybila.parasim.computation.lifecycle.api.Future;
 import org.sybila.parasim.computation.lifecycle.api.MutableStatus;
 import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
+import org.sybila.parasim.computation.lifecycle.api.RemoteDescriptor;
 import org.sybila.parasim.computation.lifecycle.api.RemoteExecutor;
 import org.sybila.parasim.computation.lifecycle.api.RemoteMutableStatus;
-import org.sybila.parasim.computation.lifecycle.api.RemoteQueue;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationScope;
 import org.sybila.parasim.computation.lifecycle.impl.common.AbstractExecutor;
 import org.sybila.parasim.computation.lifecycle.impl.common.ComputationFuture;
@@ -72,18 +72,18 @@ public class DistributedMemoryExecutorImpl extends AbstractExecutor implements D
         MutableStatus status = new SimpleStatus();
         RemoteMutableStatus remoteStatus = new RemoteMutableStatusWrapper(status);
         RemoteMutableStatus exportedRemoteStatus = null;
-        Map<UUID, RemoteQueue> remoteQueues = new HashMap<>(remoteExecutors.size());
+        Map<UUID, RemoteDescriptor> remoteDescriptors = new HashMap<>(remoteExecutors.size());
 
         try {
             exportedRemoteStatus = (RemoteMutableStatus) UnicastRemoteObject.exportObject(remoteStatus);
             // start the computation on slave nodes
             for (RemoteExecutor executor: remoteExecutors) {
                     executor.startComputation(computation.getClass(), exportedRemoteStatus, computationId);
-                    remoteQueues.put(executor.getId(), executor.getQueue(computationId));
+                    remoteDescriptors.put(executor.getId(), new RemoteDescriptor(executor.getHost(), executor.getQueue(computationId), executor.getId()));
             }
             // prepare services
             ComputationFuture<M> future = new ComputationFuture<>(computationId, context, status);
-            DistributedMemoryMucker mucker = new DistributedMemoryMucker(context.resolve(ComputationLifecycleConfiguration.class, Default.class), remoteQueues);
+            DistributedMemoryMucker mucker = new DistributedMemoryMucker(context.resolve(ComputationLifecycleConfiguration.class, Default.class), remoteDescriptors);
             // register progress listeners
             status.addProgressListerner(mucker);
             status.addProgressListerner(new RemoteComputationDestroyer(remoteStatus, computationId));
@@ -102,7 +102,7 @@ public class DistributedMemoryExecutorImpl extends AbstractExecutor implements D
             } finally {
                 for (RemoteExecutor executor: remoteExecutors) {
                     try {
-                        if (remoteQueues.containsKey(executor.getId())) {
+                        if (remoteDescriptors.containsKey(executor.getId())) {
                             executor.destroyComputation(computationId);
                         }
                     } catch (RemoteException ee) {

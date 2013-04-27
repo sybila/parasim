@@ -46,6 +46,12 @@ public interface RemoteExecutor extends Remote {
     UUID getId() throws RemoteException;
 
     /**
+     * @return host of the node
+     * @throws RemoteException
+     */
+    String getHost() throws RemoteException;
+
+    /**
      * The queue is an entry point for emitting and rescheduling the computation
      * instances.
      *

@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.ProgressAdapter;
 import org.sybila.parasim.computation.lifecycle.api.RemoteDescriptor;
-import org.sybila.parasim.computation.lifecycle.api.RemoteQueue;
 import org.sybila.parasim.computation.lifecycle.impl.common.ComputationLifecycleConfiguration;
 
 /**
@@ -45,13 +44,10 @@ public class DistributedMemoryMucker extends ProgressAdapter {
     private final SortedSet<RemoteDescriptor> sortedDescriptors;
     private final ComputationLifecycleConfiguration configuration;
 
-    public DistributedMemoryMucker(ComputationLifecycleConfiguration configuration, Map<UUID, RemoteQueue> queues) {
-        Validate.notNull(queues, "The map with queues can't be null.");
-        Validate.isTrue(!queues.isEmpty(), "The map with queues can't be empty.");
-        this.descriptors = new HashMap<>(queues.size());
-        for (Map.Entry<UUID, RemoteQueue> entry: queues.entrySet()) {
-            this.descriptors.put(entry.getKey(), new RemoteDescriptor(entry.getValue(), entry.getKey()));
-        }
+    public DistributedMemoryMucker(ComputationLifecycleConfiguration configuration, Map<UUID, RemoteDescriptor> descriptors) {
+        Validate.notNull(descriptors, "The map with descriptors can't be null.");
+        Validate.isTrue(!descriptors.isEmpty(), "The map with descriptors can't be empty.");
+        this.descriptors = new HashMap<>(descriptors);
         this.sortedDescriptors = new TreeSet<>(descriptors.values());
         this.configuration = configuration;
     }
@@ -92,9 +88,9 @@ public class DistributedMemoryMucker extends ProgressAdapter {
             idle.getSize().incrementAndGet();
             sortedDescriptors.add(busy);
             sortedDescriptors.add(idle);
-            StringBuilder builder = new StringBuilder("balancing: ");
+            StringBuilder builder = new StringBuilder("balancing:\n");
             for (RemoteDescriptor descriptor: descriptors.values()) {
-                builder.append(descriptor.getId()).append(" => ").append(descriptor.getSize().get()).append(" ");
+                builder.append("\t").append(descriptor.getHost()).append(" => ").append(descriptor.getSize().get()).append("\n");
             }
             LOGGER.info(builder.toString());
         }
