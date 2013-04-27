@@ -24,7 +24,7 @@ if [ -z $BENCHMARK_LIST_FILE ]; then
 	exit 1;
 fi
 
-cat $BENCHMARK_LIST_FILE | while read LINE ;do
+for LINE in `cat $BENCHMARK_LIST_FILE`; do
 	IFS=":"
 	set -- $LINE
 	CONFIG=$1
