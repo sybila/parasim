@@ -25,33 +25,33 @@
     <future>
         <interval>
             <lower type="closed">0.00001</lower>
-            <upper type="closed">100</upper>
+            <upper type="closed">5</upper>
         </interval>
         <globally>
             <interval>
                 <lower type="closed">0.00001</lower>
-                <upper type="closed">6000</upper>
+                <upper type="closed">5</upper>
             </interval>
             <future>
                 <interval>
                     <lower type="closed">0.00001</lower>
-                    <upper type="closed">50</upper>
+                    <upper type="closed">5</upper>
                 </interval>
                 <and>
                     <predicate>
-                        <variable multiplier="1">prey</variable>
+                        <variable multiplier="1">x1</variable>
                         <lesser />
-                        <value>40</value>
+                        <value>-0.01</value>
                     </predicate>
                     <future>
                         <interval>
                             <lower type="closed">0.0001</lower>
-                            <upper type="closed">40</upper>
+                            <upper type="closed">5</upper>
                         </interval>
                         <predicate>
-                            <variable multiplier="1">prey</variable>
+                            <variable multiplier="1">x1</variable>
                             <greater />
-                            <value>50</value>
+                            <value>0.01</value>
                         </predicate>
                     </future>
                 </and>

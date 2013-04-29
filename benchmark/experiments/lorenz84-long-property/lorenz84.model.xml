@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version4" level="2" version="4">
+  <model id="model">
+    <listOfCompartments>
+      <compartment id="only" name="only"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="x0" initialConcentration="0" name="x0" compartment="only"/>
+      <species id="x1" initialConcentration="0" name="x1" compartment="only"/>
+      <species id="x2" initialConcentration="0" name="x2" compartment="only"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="a" name="a" value="0.25"/>
+      <parameter id="b" name="b" value="4"/>
+      <parameter id="F" name="F" value="0.5"/>
+      <parameter id="G" name="G" value="0.5"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="x0removing0" name="x0removing0">
+        <listOfReactants>
+          <speciesReference species="x0"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <plus/>
+              <apply>
+                <plus/>
+                <apply>
+                  <times/>
+                  <ci> x1 </ci>
+                  <ci> x1 </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> x2 </ci>
+                  <ci> x2 </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> a </ci>
+                <ci> x0 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="x0adding" name="x0adding">
+        <listOfProducts>
+          <speciesReference species="x0"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <times/>
+              <ci> a </ci>
+              <ci> F </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="x1removing0" name="x1removing0">
+        <listOfReactants>
+          <speciesReference species="x1"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <plus/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> b </ci>
+                  <ci> x0 </ci>
+                </apply>
+                <ci> x2 </ci>
+              </apply>
+              <ci> x1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="x1adding0" name="x1adding0">
+        <listOfProducts>
+          <speciesReference species="x1"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <plus/>
+              <apply>
+                <times/>
+                <ci> x0 </ci>
+                <ci> x1 </ci>
+              </apply>
+              <ci> G </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="x2removing0" name="x2removing0">
+        <listOfReactants>
+          <speciesReference species="x2"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <ci> x2 </ci>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="x2adding0" name="x2adding0">
+        <listOfProducts>
+          <speciesReference species="x2"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
+            <apply>
+              <plus/>
+              <apply>
+                <times/>
+                <apply>
+                  <times/>
+                  <ci> b </ci>
+                  <ci> x0 </ci>
+                </apply>
+                <ci> x1 </ci>
+              </apply>
+              <apply>
+                <times/>
+                <ci> x0 </ci>
+                <ci> x2 </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
