@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+	<future>
+        <interval>
+            <lower type="closed">0.00001</lower>
+            <upper type="closed">10</upper>
+        </interval>
+		<globally>
+		    <interval>
+		        <lower type="closed">0.00001</lower>
+		        <upper type="closed">50</upper>
+		    </interval>
+			<future>
+				<interval>
+				    <lower type="closed">0.00001</lower>
+				    <upper type="closed">50</upper>
+				</interval>
+				<and>
+					<predicate>
+						<variable multiplier="1.0">CaI</variable>
+						<greater/>
+						<value>100</value>
+					</predicate>
+					<and>
+						<predicate>
+							<variable multiplier="1.0">IP3</variable>
+							<greater/>
+							<value>0.50</value>
+						</predicate>
+						<and>
+							<predicate>
+								<variable multiplier="1.0">g</variable>
+								<greater/>
+								<value>0.9</value>
+							</predicate>
+							<future>
+								<interval>
+									<lower type="closed">20</lower>
+									<upper type="closed">50</upper>
+								</interval>
+								<and>
+									<predicate>
+										<variable multiplier="1.0">CaI</variable>
+										<lesser/>
+										<value>15</value>
+									</predicate>
+									<and>
+										<predicate>
+											<variable multiplier="1.0">IP3</variable>
+											<lesser/>
+											<value>0.2</value>
+										</predicate>
+										<predicate>
+											<variable multiplier="1.0">g</variable>
+											<lesser/>
+											<value>0.4</value>
+										</predicate>
+									</and>
+								</and>
+							</future>
+						</and>			
+					</and>
+				</and>
+			</future>
+		</globally>
+	</future>
+</formula>

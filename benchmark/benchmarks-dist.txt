@@ -43,3 +43,11 @@ parasim-dist-2:lorenz84-long-property
 parasim-dist-4:lorenz84-long-property
 parasim-dist-8:lorenz84-long-property
 parasim-dist-16:lorenz84-long-property
+
+################################################################################
+
+parasim-dist-1:meyer91-common
+parasim-dist-2:meyer91-common
+parasim-dist-4:meyer91-common
+parasim-dist-8:meyer91-common
+parasim-dist-16:meyer91-common
