@@ -163,7 +163,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         }
         VerifiedDataBlock<TrajectoryWithNeighborhood> verified = getVerifier().verify(simulated, property);
         VerificationResult result = new VerifiedDataBlockResultAdapter(verified);
-        if (simulatedSecondary != null) {
+        if (iterationLimit != 0 && currentIteration == iterationLimit && simulatedSecondary != null) {
             VerifiedDataBlock<Trajectory> verifiedSecondary = getVerifier().verify(simulatedSecondary, property);
             result = result.merge(new VerifiedDataBlockResultAdapter(verifiedSecondary));
         }
