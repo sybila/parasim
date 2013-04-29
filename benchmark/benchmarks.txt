@@ -1,8 +1,0 @@
-parasim-shared-1:lotkav-common
-parasim-shared-2:lotkav-common
-parasim-shared-4:lotkav-common
-parasim-dist-1:lotkav-common
-parasim-dist-2:lotkav-common
-parasim-dist-4:lotkav-common
-parasim-dist-8:lotkav-common
-parasim-dist-16:lotkav-common

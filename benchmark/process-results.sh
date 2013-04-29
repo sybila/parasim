@@ -46,7 +46,7 @@ for DIR in $SELF_DIR/results/*; do
 		INSTANCES=0
 		for SERVER_LOG in $DIR/servers-logs/*; do
 			ITER=`cat $SERVER_LOG | grep "started with" | wc -l`
-			INSTANCES=$((ITERATIONS + ITER))
+			INSTANCES=$((INSTANCES + ITER))
 		done
 	else
 		INSTANCES=`cat $DIR/log.txt | grep "started with" | wc -l`
@@ -79,7 +79,9 @@ for DIR in $SELF_DIR/results/*; do
 		for SERVER_LOG in $DIR/servers-logs/*; do
 			DUPLICATES_LOC=`cat $SERVER_LOG | grep "result merging" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$1} END {print sum}'`;
 			DUPLICATES=$((DUPLICATES + DUPLICATES_LOC));
-		done	
+		done
+		DUPLICATES_LOC=`cat $DIR/log.txt | grep "merging" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk '{sum+=$1} END {print sum}'`;
+		DUPLICATES=$((DUPLICATES + DUPLICATES_LOC));
 	else
 		DUPLICATES=`cat $DIR/log.txt | grep "merging" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk '{sum+=$1} END {print sum}'`;
 	fi
@@ -122,7 +124,7 @@ for DIR in $SELF_DIR/results/*; do
 				ITERATIONS=$((ITERATIONS + ITERATIONS_LOC))
 				PRIMARY=$((PRIMARY + PRIMARY_LOC))
 				SECONDARY=$((SECONDARY + SECONDARY_LOC))
-			done				
+			done
 		else
 			ITERATIONS=`cat $DIR/log.txt | grep "iteration <$I> started with" | wc -l`
 			PRIMARY=`cat $DIR/log.txt | grep "iteration <$I> started with" | awk -F "<" '{print $2}' | awk -F ">" '{sum+=$1} END {print sum}'`;

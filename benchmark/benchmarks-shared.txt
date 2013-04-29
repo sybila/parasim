@@ -1,0 +1,15 @@
+parasim-shared-1:lotkav-common
+parasim-shared-2:lotkav-common
+parasim-shared-4:lotkav-common
+
+################################################################################
+
+parasim-shared-1:lotkav-iterations
+parasim-shared-2:lotkav-iterations
+parasim-shared-4:lotkav-iterations
+
+################################################################################
+
+parasim-shared-1:lotkav-long-property
+parasim-shared-2:lotkav-long-property
+parasim-shared-4:lotkav-long-property

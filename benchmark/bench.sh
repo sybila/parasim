@@ -25,6 +25,12 @@ if [ -z $BENCHMARK_LIST_FILE ]; then
 fi
 
 for LINE in `cat $BENCHMARK_LIST_FILE`; do
+	if [[ $LINE =~ .*#.* ]]; then
+		continue
+	fi
+	if [ $LINE == "" ]; then
+		continue;
+	fi
 	IFS=":"
 	set -- $LINE
 	CONFIG=$1
