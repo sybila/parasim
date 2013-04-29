@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<space xmlns="http://www.sybila.org/parasim/space">
+<time max="100.0" min="0.0"/>
+<variable max="10.0" min="0.0" name="CaI"/>
+<variable max="1.0" min="0.0" name="IP3"/>
+<variable max="100000.0" min="0.0" name="CaS"/>
+<variable max="100.0" min="0.0" name="g"/>
+</space>

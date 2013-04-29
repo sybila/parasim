@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+<predicate>
+<variable frozen="0" multiplier="1.0">CaS</variable>
+<greater/>
+<value>0.0</value>
+</predicate>
+</formula>

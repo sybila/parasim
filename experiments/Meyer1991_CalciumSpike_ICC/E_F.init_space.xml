@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <space xmlns="http://www.sybila.org/parasim/space">
 <time max="0.0" min="0.0"/>
-<parameter max="10.0" min="1.0" name="ld"/>
-<parameter max="0.6" min="0.3" name="delta"/>
-<parameter max="270.0" min="5.0" name="alpha_tr"/>
+<parameter max="1.2" min="0.8" name="E"/>
+<parameter max="0.025" min="0.015" name="F"/>
 </space>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<space xmlns="http://www.sybila.org/parasim/space">
+<time max="0.0" min="0.0"/>
+<parameter max="1.6" min="0.6" name="C"/>
+<parameter max="2.5" min="1.5" name="D"/>
+<parameter max="0.9" min="0.1" name="k1"/>
+<parameter max="0.2" min="0.1" name="k2"/>
+</space>
