@@ -30,7 +30,7 @@ for DIR in $SELF_DIR/results/*; do
 	echo "processing summary for $FILE";
 	EXPERIMENT=`echo $FILE | awk -F "__" '{print $1}'`
 	if [ ! -f $SELF_DIR/results-processed/$EXPERIMENT-summary.csv ]; then
-		echo "environment.name, environment.size, time, instances, spawned.hit, spawned.miss, result.duplicates, result.size" > $SELF_DIR/results-processed/$EXPERIMENT-summary.csv;
+		echo "environment.name, environment.size, time, instances, cache.primary.hit, cache.primary.miss, cache.secondary.hit, cache.secondary.miss, result.duplicates, result.size" > $SELF_DIR/results-processed/$EXPERIMENT-summary.csv;
 	fi
 	CONFIG=`echo $FILE | awk -F "__" '{print $2}'`
 	ENVIRONMENT=`echo $CONFIG | awk -F "-" '{print $2}'`
@@ -53,23 +53,25 @@ for DIR in $SELF_DIR/results/*; do
 	fi
 	
 	if [[ $CONFIG =~ .*dist.* ]]; then	
-		SPAWNED_HIT=0
-		SPAWNED_MISS=0
+		PRIMARY_MISS=0;
+		PRIMARY_HIT=0;
+		SECONDARY_MISS=0;
+		SECONDARY_HIT=0;
 		for SERVER_LOG in $DIR/servers-logs/*; do
-			PRIMARY_MISS=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$1} END {print sum}'`;
-			PRIMARY_HIT=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$2} END {print sum}'`;
-			SECONDARY_MISS=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$3} END {print sum}'`;
-			SECONDARY_HIT=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$4} END {print sum}'`;
-			SPAWNED_HIT=$((SPAWNED_HIT + PRIMARY_HIT + SECONDARY_HIT))
-			SPAWNED_MISS=$((SPAWNED_MISS + PRIMARY_MISS + SECONDARY_MISS))
+			PRIMARY_HIT_LOC=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$1} END {print sum}'`;
+			PRIMARY_MISS_LOC=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$2} END {print sum}'`;
+			SECONDARY_HIT_LOC=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$3} END {print sum}'`;
+			SECONDARY_MISS_LOC=`cat $SERVER_LOG | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$4} END {print sum}'`;
+			PRIMARY_MISS=$((PRIMARY_MISS + PRIMARY_MISS_LOC))
+			PRIMARY_HIT=$((PRIMARY_HIT + PRIMARY_HIT_LOC))
+			SECONDARY_MISS=$((SECONDARY_MISS + SECONDARY_MISS_LOC))
+			SECONDARY_HIT=$((SECONDARY_HIT + SECONDARY_HIT_LOC))
 		done
 	else
-		PRIMARY_MISS=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$1} END {print sum}'`;
-		PRIMARY_HIT=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$2} END {print sum}'`;
-		SECONDARY_MISS=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$3} END {print sum}'`;
-		SECONDARY_HIT=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$4} END {print sum}'`;
-		SPAWNED_HIT=$((PRIMARY_HIT + SECONDARY_HIT))
-		SPAWNED_MISS=$((PRIMARY_MISS + SECONDARY_MISS))
+		PRIMARY_HIT=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$1} END {print sum}'`;
+		PRIMARY_MISS=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$2} END {print sum}'`;
+		SECONDARY_HIT=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$3} END {print sum}'`;
+		SECONDARY_MISS=`cat $DIR/log.txt | grep "spawni" | awk -F ":" '{print $4}' | tr -d [:alpha:] | tr -d '<> ' | awk -F "," '{sum+=$4} END {print sum}'`;
 	fi
 	
 	if [[ $CONFIG =~ .*dist.* ]]; then	
@@ -84,7 +86,7 @@ for DIR in $SELF_DIR/results/*; do
 
 	RESULT_SIZE=`cat $DIR/data.csv | wc -l`;
 
-	echo "$ENVIRONMENT, $SIZE, $TIME, $INSTANCES, $SPAWNED_HIT, $SPAWNED_MISS, $DUPLICATES, $RESULT_SIZE" >> $SELF_DIR/results-processed/$EXPERIMENT-summary.csv;
+	echo "$ENVIRONMENT, $SIZE, $TIME, $INSTANCES, $PRIMARY_HIT, $PRIMARY_MISS, $SECONDARY_HIT, $SECONDARY_MISS, $DUPLICATES, $RESULT_SIZE" >> $SELF_DIR/results-processed/$EXPERIMENT-summary.csv;
 done
 
 # generates <experiment>-iterations.csv file with the following attributes:
@@ -92,13 +94,15 @@ done
 #	- environment.size
 # 	- iteration
 #	- instances
+#	- primary
+#	- secondary
 
 for DIR in $SELF_DIR/results/*; do
 	FILE=`basename "$DIR"`
 	echo "processing iterations for $FILE";
 	EXPERIMENT=`echo $FILE | awk -F "__" '{print $1}'`
 	if [ ! -f $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv ]; then
-		echo "environment.name, environment.size, iteration, instances" > $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv;
+		echo "environment.name, environment.size, iteration, instances, primary, secondary" > $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv;
 	fi
 	CONFIG=`echo $FILE | awk -F "__" '{print $2}'`
 	ENVIRONMENT=`echo $CONFIG | awk -F "-" '{print $2}'`
@@ -109,16 +113,24 @@ for DIR in $SELF_DIR/results/*; do
 		I=$((I+1))
 		if [[ $CONFIG =~ .*dist.* ]]; then
 			ITERATIONS=0;
+			PRIMARY=0;
+			SECONDARY=0;
 			for SERVER_LOG in $DIR/servers-logs/*; do
 				ITERATIONS_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | wc -l`;
+				PRIMARY_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | awk -F "<" '{print $2}' | awk -F ">" '{sum+=$1} END {print sum}'`;
+				SECONDARY_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | awk -F "<" '{print $3}' | awk -F ">" '{sum+=$1} END {print sum}'`;
 				ITERATIONS=$((ITERATIONS + ITERATIONS_LOC))
+				PRIMARY=$((PRIMARY + PRIMARY_LOC))
+				SECONDARY=$((SECONDARY + SECONDARY_LOC))
 			done				
 		else
 			ITERATIONS=`cat $DIR/log.txt | grep "iteration <$I> started with" | wc -l`
+			PRIMARY=`cat $DIR/log.txt | grep "iteration <$I> started with" | awk -F "<" '{print $2}' | awk -F ">" '{sum+=$1} END {print sum}'`;
+			SECONDARY=`cat $DIR/log.txt | grep "iteration <$I> started with" | awk -F "<" '{print $3}' | awk -F ">" '{sum+=$1} END {print sum}'`;
 		fi			
 		if [ "$ITERATIONS" == "0" ]; then
 			break;
 		fi
-		echo "$ENVIRONMENT, $SIZE, $I, $ITERATIONS" >> $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv;
+		echo "$ENVIRONMENT, $SIZE, $I, $ITERATIONS, $PRIMARY, $SECONDARY" >> $SELF_DIR/results-processed/$EXPERIMENT-iterations.csv;
 	done
 done
