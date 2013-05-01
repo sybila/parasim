@@ -2,6 +2,7 @@
 SELF=`readlink -f $0`
 SELF_DIR=`dirname $SELF`
 BENCHMARK_LIST_FILE=$1
+set -x
 
 if [ -z $BASH_EXEC ]; then
 	BASH_EXEC=/bin/sh
@@ -56,6 +57,7 @@ for LINE in `cat $BENCHMARK_LIST_FILE`; do
 
 	if [[ $CONFIG =~ .*dist.* ]]; then
 		echo "## stopping servers";
-		$BASH_EXEC $SELF_DIR/../servers-shutdown.sh $SELF_DIR/configs/$CONFIG.xml;
+		COMMAND="$BASH_EXEC $SELF_DIR/../servers-shutdown.sh $SELF_DIR/configs/$CONFIG.xml";
+		eval $COMMAND;
 	fi
 done

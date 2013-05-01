@@ -2,6 +2,7 @@
 SELF=`readlink -f $0`
 SELF_DIR=`dirname $SELF`
 CONFIG_FILE=$1
+set -x;
 
 usage()
 {
@@ -21,9 +22,9 @@ if [ "$CONFIG_FILE" == "" ]; then
 fi
 
 for IP in `grep "<value>" $CONFIG_FILE | tr '<>' ' ' | awk '{ print $2 }'`; do
-	PROCESSES=`ssh $IP -t "ps -ux | grep parasim" | awk '{print $2}'`
+	PROCESSES=`ssh $IP "ps -ux | grep parasim" | awk '{print $2}'`;
 	for PROCESS in $PROCESSES; do
-		ssh $IP -t "kill -9 $PROCESS"
+		ssh $IP "kill -9 $PROCESS";
 	done
 	echo "server $IP killed";
 done
