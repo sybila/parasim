@@ -30,7 +30,7 @@
         <globally>
             <interval>
                 <lower type="closed">0.00001</lower>
-                <upper type="closed">5</upper>
+                <upper type="closed">15</upper>
             </interval>
             <future>
                 <interval>
