@@ -19,7 +19,6 @@
  */
 package org.sybila.parasim.model.verification.result;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import org.slf4j.Logger;
@@ -103,29 +102,17 @@ public abstract class AbstractVerificationResult implements VerificationResult {
 
     @Override
     public Element toXML(Document doc) {
-        Map<Point, Integer> verified = new HashMap<>();
-        Map<Point, Integer> other = new HashMap<>();
-        int index = 0;
-        for (int i = 0; i < size(); i++) {
-            verified.put(getPoint(i), index);
-            index++;
-            for (Point n: getPoint(i).getNeighbors()) {
-                other.put(n, index);
-                index++;
-            }
-        }
-
         Element target = doc.createElement(VerificationResultFactory.RESULT_NAME);
         target.setAttribute(VerificationResultFactory.DIMENSION_NAME, (this.size() > 0 ? Integer.toString(this.getPoint(0).getDimension()) : Integer.toString(0)));
         target.setAttribute(VerificationResultFactory.ROBUSTNESS_NAME, Float.toString(getGlobalRobustness().getValue()));
         for (int i = 0; i < size(); i++) {
-            target.appendChild(pointToXML(doc, getPoint(i), getRobustness(i), verified, other));
+            target.appendChild(pointToXML(doc, getPoint(i), getRobustness(i)));
         }
 
         return target;
     }
 
-    private Element pointToXML(Document doc, Point point, Robustness robustness, Map<Point, Integer> verifiedIndexes, Map<Point, Integer> otherIndexes) {
+    private Element pointToXML(Document doc, Point point, Robustness robustness) {
 
         Element target = doc.createElement(VerificationResultFactory.POINT_NAME);
         Element data = doc.createElement(VerificationResultFactory.DATA_NAME);
