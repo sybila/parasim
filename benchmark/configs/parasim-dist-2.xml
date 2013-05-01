@@ -5,8 +5,9 @@
 
 	<extension qualifier="application">
 		<property name="warmupComputationSize">20</property>
-		<property name="computationSize">40</property>
+		<property name="computationSize">20</property>
 		<property name="warmupIterationLimit">3</property>
+		<property name="branchFactor">4</property>
 	</extension>
 
 	<extension qualifier="computation-lifecycle">
