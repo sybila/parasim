@@ -49,14 +49,14 @@
 		<xsl:call-template name="subformulae"/>
 	</xsl:template>
 	<xsl:template match="f:predicate">
-		<xsl:value-of select="generate-id(.)"/> [label="<xsl:apply-templates select="f:variable"/><xsl:text> </xsl:text><xsl:apply-templates select="f:greater|f:lesser|f:equals"/><xsl:text> </xsl:text><xsl:value-of select="f:value"/>"]
+		<xsl:value-of select="generate-id(.)"/> [label="<xsl:apply-templates select="f:variable"/><xsl:text> </xsl:text><xsl:apply-templates select="f:greater|f:lesser|f:equals"/><xsl:text> </xsl:text><xsl:value-of select="f:value"/>",shape="box"]
 	</xsl:template>
 	<xsl:template match="f:variable">
-		<xsl:choose>
+		<xsl:text> </xsl:text><xsl:choose>
 			<xsl:when test="@multiplier=1">+</xsl:when>
 			<xsl:when test="@multiplier=-1">-</xsl:when>
-			<xsl:when test="@multiplier&gt;0">+<xsl:value-of select="@multiplier"/></xsl:when>
-			<xsl:when test="@multiplier&lt;0"><xsl:value-of select="@multiplier"/></xsl:when>
+			<xsl:when test="@multiplier&gt;0">+<xsl:value-of select="@multiplier"/>*</xsl:when>
+			<xsl:when test="@multiplier&lt;0"><xsl:value-of select="@multiplier"/>*</xsl:when>
 		</xsl:choose>
 		<xsl:value-of select="."/>
 		<xsl:if test="@frozen"><xsl:if test="not(@frozen=0)">[<xsl:value-of select="@frozen"/>]</xsl:if></xsl:if>
