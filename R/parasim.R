@@ -1,25 +1,57 @@
 library("rgl");
 
-parasim.plot.data <- function(x, y, robustness, z = NULL, ...) {
-	ok.filter <- robustness > 0;
-	nok.filter <- robustness <= 0;
-	if (is.null(z)) {
-		ok.data <- data.frame(x = x[ok.filter], y = y[ok.filter], robustness = robustness[ok.filter]);
-		nok.data <- data.frame(x = x[nok.filter], y = y[nok.filter], robustness = robustness[nok.filter]);
-	} else {
-		ok.data <- data.frame(x = x[ok.filter], y = y[ok.filter], z = z[ok.filter]);
-		nok.data <- data.frame(x = x[nok.filter], y = y[nok.filter], z = z[nok.filter]);
+parasim.color.redRamp <- colorRamp(c("#FF9900","#770000"))
+parasim.color.greenRamp <- colorRamp(c("#99FF00","#007700"))
+
+parasim.robustColor <- function(robustness, robustness.max = NULL, robustness.min = NULL) {
+	if (is.null(robustness.max)) {
+		robustness.max <- max(robustness)
 	}
-	plot3d(ok.data, col="green", ...);
-	plot3d(nok.data, col="red", add=TRUE, ...);
+	if (robustness.max == 0) {
+		robustness.max <- 1;
+	}
+	if (is.null(robustness.min)) {
+		robustness.min <- min(robustness)		
+	}
+	if (robustness.min == 0) {
+		robustness.min <- -1;
+	}
+	mapply(
+		function(x) {
+			col <- if (x > 0) {
+				parasim.color.greenRamp(x/robustness.max)
+			} else {
+				parasim.color.redRamp(abs(x/robustness.min))
+			}
+			rgb(col, maxColorValue=255)
+		},
+		robustness);
 }
 
-parasim.plot.csv <- function(file, x.name, y.name, z.name = "", robustness.name = "Robustness", ...) {
-	data <- read.table(file, header=TRUE);
-	if (z.name != "") {
-		parasim.plot.data(data[x.name], data[y.name], data[robustness.name], z = data[z.name], ...);
+parasim.plot.data <- function(x, y, robustness, z = NULL, use.3d = TRUE, ...) {
+	if (use.3d || !is.null(z)) {
+		ok.filter <- robustness > 0;
+		nok.filter <- robustness <= 0;
+		if (is.null(z)) {
+			ok.data <- data.frame(x = x[ok.filter], y = y[ok.filter], robustness = robustness[ok.filter]);
+			nok.data <- data.frame(x = x[nok.filter], y = y[nok.filter], robustness = robustness[nok.filter]);
+		} else {
+			ok.data <- data.frame(x = x[ok.filter], y = y[ok.filter], z = z[ok.filter]);
+			nok.data <- data.frame(x = x[nok.filter], y = y[nok.filter], z = z[nok.filter]);
+		}
+		plot3d(ok.data, col="green", ...);
+		plot3d(nok.data, col="red", add=TRUE, ...);
 	} else {
-		parasim.plot.data(data[x.name], data[y.name], data[robustness.name], ...);
+		plot(x, y, col = parasim.robustColor(robustness), pch=20, ...);
+	}
+}
+
+parasim.plot.csv <- function(file, x.name, y.name, z.name = NULL, robustness.name = "Robustness", use.3d = TRUE, ...) {
+	data <- read.table(file, header=TRUE);
+	if (!is.null(z.name)) {
+		parasim.plot.data(data[[x.name]], data[[y.name]], data[[robustness.name]], z = data[[z.name]], use.3d = use.3d, ...);
+	} else {
+		parasim.plot.data(data[[x.name]], data[[y.name]], data[[robustness.name]], use.3d = use.3d, ...);
 	}
 }
 
