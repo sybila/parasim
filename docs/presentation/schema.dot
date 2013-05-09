@@ -1,0 +1,17 @@
+digraph schema {
+	model [label="model"]
+	par [label="parameters"]
+	traj [label="trajectory"]
+	prop [label="property"]
+	sat [label="satisfaction"]
+	sim [shape="point",label=""]
+	mon [shape="point",label=""]
+	model -> sim [dir="none",constraint="false"]
+	sim -> par [dir="back"]
+	sim -> traj [constraint="false",label="simulation"]
+	traj -> mon [dir="none",constraint="false"]
+	mon -> prop [dir="back"]
+	mon -> sat [constraint="false",label="monitoring"]
+	model -> par [style="invisible",dir="none"]
+	traj -> prop [style="invisible",dir="none"]
+}

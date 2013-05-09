@@ -1,0 +1,42 @@
+CO CHCI ŘÍCT
+-> snažíme se automaticky rozhodnout, zda model splňuje vlastnost
+-> problém je spojitost domény modelu
+-> pracujeme s robustností -- co vyjadřuje
+-> jak ji používáme
+
+-> budou tam potřeba obrázky -- ale kdyby měly být ve slidech, upsal bych se => na tabuli
+	-- vzít symbol pro nakreslení obrázku -- pencil/hand (dingbat package) -- možná labelovat
+
+OSNOVA
+-> automatické rozhodování
+	$M\models\phi$
+
+-> proveditelné (náročné) pro diskrétní systémy, obtížné pro spojité
+	feasible (albeit time-consuming) for discrete systems -- difficult for continuous ones
+-> setting -- máme model a množinu parametrů, které generují chování
+	-> model -- soustava diferenciálních rovnic
+	-> parametry -- vstupní podmínky, parametry rovnic
+	-> chování <= simulace
+	-> vlastnost -- typicky formule temporální logiky
+-> množina parametrů -- hyperobdelník v R^n (součin intervalů)
+	-- chceme zjistit jak závisí splněnost vlastnosti na parametrech
+-> jak se na to dívat
+	-- pro všechny/splněno
+	-- poměr splněných a nesplněných (míra množiny)
+	-- množiny splněných a nesplněných
+	-> jde nám o aproximaci -- dostatečnou, ale hlavně proveditelnou a rychlou
+-> potřebujeme hodnoty mnoha chování
+	=> samplování -- náhodné, rovnoměrné, ... (aproximace)
+	-> nutných samplů může být opravdu hodně
+-> chceme to dělat inteligentně => robustnost
+	-> hodnota závislá na vlastnosti a chování
+	-> underaproximuje robustní okolí
+	-> robustní okolí signálu == trubka
+-> naše heuristika (tyhle předpoklady domyslet)
+	-> předpokládáme, že okolí signálu nějakým způsobem odpovídá okolí parametrů
+	-> tzn. posunem parametrů se signál nemění moc divoce
+	-> lépe, mezi dvěma signály se pohybujeme bez nějakých velkých výchylek
+	(když ten pro parametry nalevo vypadá takhle, ten pro parametry napravo vypadá takhle, jsme pro parametry mezi někde mezi nimi)
+-> takže parasim funguje takhle (pobavit se s Papim)
+
+primární × sekundární -- počítá se robustnost × nepočítá se
