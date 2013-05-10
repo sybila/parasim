@@ -31,6 +31,7 @@ public class ApplicationConfiguration implements Serializable {
     private int warmupIterationLimit = 2;
     private int computationSize = 2 * warmupComputationSize;
     private int branchFactor = warmupBranchFactor / 2;
+    private boolean showingRobustnessComputation = true;
 
     public int getComputationSize() {
         return computationSize;
@@ -52,4 +53,7 @@ public class ApplicationConfiguration implements Serializable {
         return warmupComputationSize;
     }
 
+    public boolean isShowingRobustnessComputation() {
+        return showingRobustnessComputation;
+    }
 }

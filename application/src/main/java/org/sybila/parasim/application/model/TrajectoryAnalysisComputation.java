@@ -4,18 +4,18 @@
  *
  * This file is part of Parasim.
  *
- * Parasim is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Parasim is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.application.model;
 
@@ -51,7 +51,6 @@ import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrajectoryAnalysisComputation.class);
-
     @Provide
     private final OdeSystem odeSystem;
     @Provide
@@ -62,9 +61,10 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
     private final OrthogonalSpace simulationSpace;
     private final Plotter plotter;
     private final Formula property;
-
     @Inject
     private OctaveSimulationEngineFactory octaveSimulationEngineFactory;
+    @Inject
+    private ApplicationConfiguration config;
     @FrozenTime
     @Inject
     private STLVerifier verifier;
@@ -110,9 +110,11 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
             simulationEgine = octaveSimulationEngineFactory.simulationEngine(100000);
             Trajectory trajectory = simulationEgine.simulateAndPlot(point, odeSystem, Math.max(simulationSpace.getMaxBounds().getTime(), property.getTimeNeeded()), precision);
             // plot robustness
-            script = new OctaveEngineFactory().getScriptEngine();
-            Monitor monitor = verifier.monitor(trajectory, property);
-            ResultUtils.plotRecursively(monitor, script);
+            if (config.isShowingRobustnessComputation()) {
+                script = new OctaveEngineFactory().getScriptEngine();
+                Monitor monitor = verifier.monitor(trajectory, property);
+                ResultUtils.plotRecursively(monitor, script);
+            }
         } finally {
             plotter.addPlotterWindowListener(new CleanerListener(simulationEgine, script));
         }
@@ -142,7 +144,5 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
                 script.close();
             }
         }
-
     }
-
 }

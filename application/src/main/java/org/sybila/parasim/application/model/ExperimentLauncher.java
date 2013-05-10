@@ -41,11 +41,14 @@ import org.sybila.parasim.model.verification.stlstar.FormulaStarInfo;
 public class ExperimentLauncher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentLauncher.class);
+    //@Inject
+    //private static ApplicationConfiguration configuration;
 
     private ExperimentLauncher() {
     }
 
     public static VerificationResult launch(Manager manager, Experiment experiment) throws Exception {
+        //ApplicationConfiguration configuration = manager.resolve(ApplicationConfiguration.class, Default.class);
         ApplicationConfiguration configuration = new ApplicationConfiguration();
         ExtensionDescriptor descriptor = manager.resolve(ParasimDescriptor.class, Default.class).getExtensionDescriptor("application");
         if (descriptor != null) {
