@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+	<globally>
+		<interval>
+			<lower type="closed">0</lower>
+			<upper type="closed">300</upper>
+		</interval>
+		<and>
+			<and>
+				<predicate>
+					<variable multiplier="1.0" frozen="0">prey</variable>
+					<greater/>
+					<value>1</value>
+				</predicate>
+				<predicate>
+					<variable multiplier="1.0" frozen="0">predator</variable>
+					<greater/>
+					<value>0</value>
+				</predicate>
+			</and>
+			<future>
+				<interval>
+					<lower type="closed">0</lower>
+					<upper type="closed">50</upper>
+				</interval>
+				<freeze index="1">
+					<and>
+						<future>
+							<interval>
+								<lower type="closed">0</lower>
+								<upper type="closed">75</upper>
+							</interval>
+							<predicate>
+								<variable multiplier="1.0" frozen="1">prey</variable>
+								<variable multiplier="-1.0" frozen="0">prey</variable>
+								<greater/>
+								<value>25</value>
+							</predicate>
+						</future>
+						<future>
+							<interval>
+								<lower type="closed">0</lower>
+								<upper type="closed">75</upper>
+							</interval>
+							<predicate>
+								<variable multiplier="1.0" frozen="0">prey</variable>
+								<variable multiplier="-1.0" frozen="1">prey</variable>
+								<greater/>
+								<value>25</value>
+							</predicate>
+						</future>
+					</and>
+				</freeze>
+			</future>
+		</and>
+	</globally>
+</formula>

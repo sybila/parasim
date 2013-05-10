@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<space xmlns="http://www.sybila.org/parasim/space">
+<time max="0.0" min="0.0"/>
+<parameter max="0.35" min="0.01" name="natality"/>
+<parameter max="0.0025" min="0.001" name="predation"/>
+</space>
