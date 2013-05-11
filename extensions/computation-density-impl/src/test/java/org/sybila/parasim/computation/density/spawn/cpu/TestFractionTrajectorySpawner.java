@@ -19,71 +19,27 @@
  */
 package org.sybila.parasim.computation.density.spawn.cpu;
 
-import java.util.Iterator;
-import org.sybila.parasim.computation.density.api.Configuration;
-import org.sybila.parasim.computation.density.api.DistanceMetricDataBlock;
-import org.sybila.parasim.computation.density.distancecheck.api.DistanceCheckedDataBlock;
-import org.sybila.parasim.computation.density.distancecheck.api.DistanceChecker;
-import org.sybila.parasim.computation.density.distancecheck.cpu.OnePairDistanceChecker;
-import org.sybila.parasim.computation.density.spawn.api.SpawnedDataBlock;
 import org.sybila.parasim.computation.density.spawn.api.TrajectorySpawner;
-import org.sybila.parasim.model.trajectory.LimitedPointDistanceMetric;
-import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
 import org.testng.annotations.Test;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
 public class TestFractionTrajectorySpawner extends AbstractTrajectorySpawnerTest {
 
-    @Test(enabled=false)
+    @Test
     public void testNumberOfTrajectoriesAfterSpawn() {
-        // initial sampling
-        final SpawnedDataBlock initSpawned = initialSpawn(createOrthogonalSpace(4.0f * (4 - 1), DIMENSION), 4);
-        final LimitedPointDistanceMetric distanceMetric = createPointDistanceMetric(1.5f, DIMENSION);
-        // load configuration
-        Configuration configuration = createConfiguration(initSpawned.getConfiguration().getInitialSpace());
-        // distance checking
-        DistanceChecker distanceChecker = new OnePairDistanceChecker();
-        DistanceCheckedDataBlock distanceChecked = distanceChecker.check(configuration, new DistanceMetricDataBlock<TrajectoryWithNeighborhood>() {
-            @Override
-            public LimitedPointDistanceMetric getDistanceMetric(int index) {
-                return distanceMetric;
-            }
-            @Override
-            public TrajectoryWithNeighborhood getTrajectory(int index) {
-                return initSpawned.getTrajectory(index);
-            }
-            @Override
-            public int size() {
-                return initSpawned.size();
-            }
-            @Override
-            public Iterator<TrajectoryWithNeighborhood> iterator() {
-                return initSpawned.iterator();
-            }
-        });
-        // assertions in distances
-        for (int t=0; t<distanceChecked.size(); t++) {
-            TrajectoryWithNeighborhood trajectory = initSpawned.getTrajectory(t);
-            for (int n=0; n<trajectory.getNeighbors().size(); n++) {
-                assertFalse(distanceChecked.getDistance(t, n).isValid(), "Validity of distance of trajectories [" + t + ", " + n + "] doesn't match. Distance is [" + distanceChecked.getDistance(t, n).value() + "].");
-            }
+        for (int dim = 1; dim <= 5; dim++) {
+            super.testNumberOfTrajectoriesAfterInitialSpawn(dim);
         }
-        // create spawner
-        TrajectorySpawner spawner = createTrajectorySpawner();
-        // continue in sampling
-        SpawnedDataBlock nextSpawned = spawner.spawn(configuration, distanceChecked);
-        // assertion
-        int expectedSpawned = 0;
-        for (TrajectoryWithNeighborhood trajectory: initSpawned) {
-            expectedSpawned += trajectory.getNeighbors().size();
-        }
-        assertEquals(nextSpawned.size(), expectedSpawned);
     }
 
+    @Test
+    public void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn() {
+        for (int dim = 1; dim <= 5; dim++) {
+            super.testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn(dim);
+        }
+    }
     @Override
     protected TrajectorySpawner createTrajectorySpawner() {
         return new FractionTrajectorySpawner(new SpawnedTrajectoriesCacheImpl(), new SpawnedTrajectoriesCacheImpl());

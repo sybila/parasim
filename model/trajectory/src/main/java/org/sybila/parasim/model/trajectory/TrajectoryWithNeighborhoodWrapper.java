@@ -96,7 +96,12 @@ public class TrajectoryWithNeighborhoodWrapper implements TrajectoryWithNeighbor
 
     @Override
     public Trajectory withoutNeighbors() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return trajectory;
+    }
+
+    @Override
+    public String toString() {
+        return trajectory.toString();
     }
 
 }

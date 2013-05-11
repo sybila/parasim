@@ -100,46 +100,60 @@ public class FractionTrajectorySpawner implements TrajectorySpawner {
 
     @Override
     public SpawnedDataBlock spawn(OrthogonalSpace space) {
+
+        List<TrajectoryWithNeighborhood> allPrimary = new ArrayList<>();
+        List<Trajectory> allSecondary = new ArrayList<>();
+
         LogInformation logInformation = new LogInformation();
         boolean[] dimensionsToSkip = new boolean[space.getDimension()];
-        boolean allSkip = true;
         for (int dim=0; dim<dimensionsToSkip.length; dim++) {
             dimensionsToSkip[dim]= space.getMinBounds().getValue(dim) == space.getMaxBounds().getValue(dim);
-            if (!dimensionsToSkip[dim]) {
-                allSkip = false;
-            }
         }
-        List<TrajectoryWithNeighborhood> result = new ArrayList<>();
-        Collection<FractionPoint> extremes = FractionPoint.extremes(space.getDimension(), dimensionsToSkip);
-        Map<FractionPoint, Trajectory> surroundings = new HashMap<>();
-        for (FractionPoint point: extremes) {
-            Trajectory main = new PointTrajectory(createPoint(space, point));
-            logInformation.spawnPrimaryTrajectory(!primaryCache.store(point, main));
-            List<Trajectory> neighbors = new ArrayList<>();
-            for (FractionPoint n: point.surround(new Fraction(1, 2), dimensionsToSkip)) {
-                if (n.isValid()) {
-                    if (surroundings.containsKey(n)) {
-                        neighbors.add(surroundings.get(n));
+        FractionPoint middleFraction = FractionPoint.maximum(space.getDimension()).middle(FractionPoint.minimum(space.getDimension()));
+        Trajectory middleTrajectory = new PointTrajectory(createPoint(space, middleFraction));
+        logInformation.spawnPrimaryTrajectory(!primaryCache.store(middleFraction, middleTrajectory));
+        List<Trajectory> spawnedFresh = new ArrayList<>();
+        spawnedFresh.add(middleTrajectory);
+        boolean primary = true;
+        while (!spawnedFresh.isEmpty()) {
+            List<Trajectory> newSpawnedFresh = new ArrayList<>();
+            for (Trajectory t: spawnedFresh) {
+                List<Trajectory> neighbors = new ArrayList<>();
+                FractionPoint fraction = ((ArrayFractionPoint) t.getFirstPoint()).getFractionPoint();
+                for (FractionPoint spawnedFraction: fraction.surround(new Fraction(1, 2), dimensionsToSkip)) {
+                    if (!spawnedFraction.isValid()) {
+                        continue;
+                    }
+                    Trajectory spawnedTrajectory = new PointTrajectory(createPoint(space, spawnedFraction));
+                    boolean stored;
+                    if (primary) {
+                        stored = secondaryCache.store(spawnedFraction, spawnedTrajectory);
+                        neighbors.add(spawnedTrajectory);
+                        logInformation.spawnSecondaryTrajectory(!stored);
                     } else {
-                        Trajectory t = new PointTrajectory(createPoint(space, n));
-                        surroundings.put(n, t);
-                        logInformation.spawnSecondaryTrajectory(!secondaryCache.store(n, t));
-                        neighbors.add(t);
+                        stored = primaryCache.store(spawnedFraction, spawnedTrajectory);
+                        logInformation.spawnPrimaryTrajectory(!stored);
+                    }
+                    if (stored) {
+                        newSpawnedFresh.add(spawnedTrajectory);
+                        if (primary) {
+                            allSecondary.add(spawnedTrajectory);
+                        }
                     }
                 }
+                if (primary) {
+                    allPrimary.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(t, new ListDataBlock<>(neighbors)));
+                }
             }
-            result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(main, new ListDataBlock<>(neighbors)));
+            spawnedFresh = newSpawnedFresh;
+            primary = !primary;
         }
-        if (!allSkip) {
-            FractionPoint middle = FractionPoint.maximum(space.getDimension()).middle(FractionPoint.minimum(space.getDimension()));
-            Trajectory t = new PointTrajectory(createPoint(space, middle));
-            result.add(TrajectoryWithNeighborhoodWrapper.createAndUpdateReference(t, new ListDataBlock<>(new ArrayList<>(surroundings.values()))));
-        }
+
         logInformation.log();
         return new SpawnedDataBlockWrapper(
-                new ListDataBlock<>(result),
+                new ListDataBlock<>(allPrimary),
                 new DelegatingConfiguration(space),
-                new ListDataBlock<>(new ArrayList<>(surroundings.values())));
+                new ListDataBlock<>(allSecondary));
     }
 
     protected TrajectoryWithNeighborhood spawn(Configuration configuration, Trajectory trajectory, Trajectory neighbor, LimitedDistance distance, boolean[] skip, LogInformation logInformation) {

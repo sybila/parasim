@@ -43,7 +43,6 @@ import static org.testng.Assert.*;
  */
 public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest {
 
-    protected static final int DIMENSION = 4;
     protected static final int TO_SPAWN = 3;
 
     protected void testInitialSpawn() {
@@ -72,13 +71,13 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         }
     }
 
-    protected void testNumberOfTrajectoriesAfterInitialSpawn() {
-        SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
-        assertEquals(spawned.size(), (int) Math.pow(TO_SPAWN, DIMENSION));
+    protected void testNumberOfTrajectoriesAfterInitialSpawn(int dimension) {
+        SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, dimension), TO_SPAWN);
+        assertEquals(spawned.size() + spawned.getSecondaryTrajectories().size(), (int) Math.pow(TO_SPAWN, dimension));
     }
 
-    protected void testDistanceOfTrajectoriesAfterInitialSpawn()     {
-        SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((TO_SPAWN - 1) * 4.0f, DIMENSION), TO_SPAWN);
+    protected void testDistanceOfTrajectoriesAfterInitialSpawn(int dimension)     {
+        SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((TO_SPAWN - 1) * 4.0f, dimension), TO_SPAWN);
         for (TrajectoryWithNeighborhood trajectory: spawned) {
             for (Trajectory neighbor: trajectory.getNeighbors()) {
                 boolean distanceMatches = false;
@@ -95,11 +94,19 @@ public abstract class AbstractTrajectorySpawnerTest extends AbstractDensityTest 
         }
     }
 
-    protected void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn() {
-        SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, DIMENSION), TO_SPAWN);
+    protected void testNumberOfTrajectoriesInNeighborhoodAfterInitialSpawn(int dimension) {
+        SpawnedDataBlock spawned = initialSpawn(createOrthogonalSpace((float) 7.82, dimension), TO_SPAWN);
         for (TrajectoryWithNeighborhood trajectory : spawned) {
-            assertTrue(trajectory.getNeighbors().size() <= 2 * DIMENSION, "The number of trajectories in neigborhood has to be lower or equal to 2 * dimension <" + DIMENSION +">, but it is <" + trajectory.getNeighbors().size() +">.");
+            assertTrue(trajectory.getNeighbors().size() <= 2 * dimension, "The number of trajectories in neigborhood has to be lower or equal to 2 * dimension <" + dimension +">, but it is <" + trajectory.getNeighbors().size() +">.");
+            assertTrue(trajectory.getNeighbors().size() >= dimension, "The number of trajectories in neigborhood has to be greater than dimension <" + dimension + ">");
         }
+        int expected;
+        if (dimension % 2 == 1) {
+            expected = ((int) Math.pow(TO_SPAWN, dimension)) / 2 + 1;
+        } else {
+            expected = ((int) Math.pow(TO_SPAWN, dimension)) / 2;
+        }
+        assertEquals(spawned.getSecondaryTrajectories().size(), expected, "The number of spawned secondary trahectories doesn't match for dimension <" + dimension + ">");
     }
 
     protected OrthogonalSpaceImpl createOrthogonalSpace(float base, int dimension) {
