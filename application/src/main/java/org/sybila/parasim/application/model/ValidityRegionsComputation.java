@@ -97,12 +97,13 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
     private Emitter emitter;
     @Inject
     private ComputationLifecycleConfiguration computationLifecycleConfiguration;
+    @Inject
+    private ApplicationConfiguration configuration;
     private int iterationLimit;
     private int currentIteration = 0;
     private SpawnedDataBlock spawned;
     private final OrthogonalSpace originalSimulationSpace;
     private final boolean useFrozenVerifier;
-    private final ApplicationConfiguration configuration;
 
     private STLVerifier getVerifier() {
         if (useFrozenVerifier) {
@@ -112,10 +113,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         }
     }
 
-    public ValidityRegionsComputation(ApplicationConfiguration configuration, OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
-        if (configuration == null) {
-            throw new IllegalArgumentException("The parameter [configuration] is null.");
-        }
+    public ValidityRegionsComputation(OdeSystem odeSystem, PrecisionConfiguration precisionConfiguration, OrthogonalSpace simulationSpace, OrthogonalSpace initialSpace, Formula property, int iterationLimit) {
         if (odeSystem == null) {
             throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
@@ -138,7 +136,6 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
         this.initialSpace = initialSpace;
         this.property = property;
         this.iterationLimit = iterationLimit;
-        this.configuration = configuration;
 
         if (new FormulaStarInfo(property).getStarNumber() == 0) {
             LOGGER.debug("Using semantics without frozen-time values.");
@@ -227,7 +224,7 @@ public class ValidityRegionsComputation implements Computation<VerificationResul
     }
 
     public Computation<VerificationResult> cloneComputation() {
-        ValidityRegionsComputation computation = new ValidityRegionsComputation(configuration, odeSystem, precisionConfiguration, originalSimulationSpace, initialSpace, property, iterationLimit);
+        ValidityRegionsComputation computation = new ValidityRegionsComputation(odeSystem, precisionConfiguration, originalSimulationSpace, initialSpace, property, iterationLimit);
         computation.currentIteration = this.currentIteration;
         computation.spawned = this.spawned;
         return computation;
