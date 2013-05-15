@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formula xmlns="http://www.sybila.org/parasim/stl-formula">
+	<globally>
+		<interval>
+			<lower type="closed">0</lower>
+			<upper type="closed">300</upper>
+		</interval>
+		<freeze index="1">
+			<future>
+				<interval>
+					<lower type="closed">0</lower>
+					<upper type="closed">100</upper>
+				</interval>
+				<predicate>
+					<variable multiplier="1.0" frozen="0">prey</variable>
+					<variable multiplier="-1.0" frozen="1">predator</variable>
+					<greater/>
+					<value>0</value>
+				</predicate>
+			</future>
+		</freeze>
+	</globally>
+</formula>
