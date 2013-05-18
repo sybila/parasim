@@ -119,16 +119,16 @@ for DIR in $SELF_DIR/results/*; do
 			SECONDARY=0;
 			for SERVER_LOG in $DIR/servers-logs/*; do
 				ITERATIONS_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | wc -l`;
-				PRIMARY_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | awk -F "<" '{print $2}' | awk -F ">" '{sum+=$1} END {print sum}'`;
-				SECONDARY_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | awk -F "<" '{print $3}' | awk -F ">" '{sum+=$1} END {print sum}'`;
+				PRIMARY_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | awk -F "<" '{print $3}' | awk -F ">" '{sum+=$1} END {print sum}'`;
+				SECONDARY_LOC=`cat $SERVER_LOG | grep "iteration <$I> started with" | awk -F "<" '{print $4}' | awk -F ">" '{sum+=$1} END {print sum}'`;
 				ITERATIONS=$((ITERATIONS + ITERATIONS_LOC))
 				PRIMARY=$((PRIMARY + PRIMARY_LOC))
 				SECONDARY=$((SECONDARY + SECONDARY_LOC))
 			done
 		else
 			ITERATIONS=`cat $DIR/log.txt | grep "iteration <$I> started with" | wc -l`
-			PRIMARY=`cat $DIR/log.txt | grep "iteration <$I> started with" | awk -F "<" '{print $2}' | awk -F ">" '{sum+=$1} END {print sum}'`;
-			SECONDARY=`cat $DIR/log.txt | grep "iteration <$I> started with" | awk -F "<" '{print $3}' | awk -F ">" '{sum+=$1} END {print sum}'`;
+			PRIMARY=`cat $DIR/log.txt | grep "iteration <$I> started with" | awk -F "<" '{print $3}' | awk -F ">" '{sum+=$1} END {print sum}'`;
+			SECONDARY=`cat $DIR/log.txt | grep "iteration <$I> started with" | awk -F "<" '{print $4}' | awk -F ">" '{sum+=$1} END {print sum}'`;
 		fi			
 		if [ "$ITERATIONS" == "0" ]; then
 			break;

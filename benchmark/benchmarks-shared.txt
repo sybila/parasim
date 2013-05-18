@@ -1,33 +1,46 @@
 parasim-shared-1:lotkav-common
 parasim-shared-2:lotkav-common
 parasim-shared-4:lotkav-common
+parasim-shared-8:lotkav-common
 
 ################################################################################
 
 parasim-shared-1:lotkav-iterations
 parasim-shared-2:lotkav-iterations
 parasim-shared-4:lotkav-iterations
+parasim-shared-8:lotkav-iterations
 
 ################################################################################
 
 parasim-shared-1:lotkav-long-property
 parasim-shared-2:lotkav-long-property
 parasim-shared-4:lotkav-long-property
+parasim-shared-8:lotkav-long-property
 
 ################################################################################
 
 parasim-shared-1:lorenz84-common
 parasim-shared-2:lorenz84-common
 parasim-shared-4:lorenz84-common
+parasim-shared-8:lorenz84-common
 
 ################################################################################
 
 parasim-shared-1:lorenz84-iterations
 parasim-shared-2:lorenz84-iterations
 parasim-shared-4:lorenz84-iterations
+parasim-shared-8:lorenz84-common
 
 ################################################################################
 
 parasim-shared-1:lorenz84-long-property
 parasim-shared-2:lorenz84-long-property
 parasim-shared-4:lorenz84-long-property
+parasim-shared-8:lorenz84-common
+
+################################################################################
+
+parasim-shared-1:meyer91-common
+parasim-shared-2:meyer91-common
+parasim-shared-4:meyer91-common
+parasim-shared-8:meyer91-common
