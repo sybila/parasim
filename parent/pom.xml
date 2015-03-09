@@ -56,16 +56,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>eclipse-testing</id>
-            <url>http://maven.eclipse.org/nexus/content/repositories/testing</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>javaoctave</id>
             <url>https://kenai.com/svn/javaoctave~maven-repository/maven2/</url>
             <releases>
