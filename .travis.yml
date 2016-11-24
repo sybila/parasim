@@ -1,0 +1,12 @@
+language: java
+sudo: false
+
+env:
+  global:
+    - GRADLE_OPTS="-XX:MaxPermSize=3072m"   #Set memory limit for gradle tasks other than tests
+
+before_script:
+  - pip install --user codecov
+
+after_success:
+  - codecov

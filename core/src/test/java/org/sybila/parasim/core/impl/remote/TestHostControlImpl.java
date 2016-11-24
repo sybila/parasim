@@ -31,19 +31,19 @@ import org.testng.annotations.Test;
 
 public class TestHostControlImpl extends RemoteParasimTest {
 
-    @Test
+    @Test(enabled = false)
     public void testIsRunningOnLocalhost() throws URISyntaxException {
         HostControl hostControl = new HostControlImpl(new URI("localhost"));
         Assert.assertTrue(hostControl.isRunning(true));
     }
 
-    @Test
+    @Test(enabled = false)
     public void testIsRunningOnLocalIP() throws URISyntaxException {
         HostControl hostControl = new HostControlImpl(new URI("127.0.0.1"));
         Assert.assertTrue(hostControl.isRunning(true));
     }
 
-    @Test
+    @Test(enabled = false)
     public void testCounter() throws URISyntaxException, IOException {
         HostControl hostControl = new HostControlImpl(new URI("127.0.0.1"));
         for (int i=0; i<10; i++) {

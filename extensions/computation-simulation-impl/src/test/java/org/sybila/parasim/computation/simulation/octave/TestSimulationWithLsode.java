@@ -34,7 +34,7 @@ public class TestSimulationWithLsode extends AbstractAdaptiveStepSimulationTest 
 
     private static final SimulationEngineFactory ENGINE_FACTORY = new LsodeEngineFactory(LsodeEngineFactory.IntegrationMethod.NONSTIFF);
 
-    @Test
+    @Test(enabled = false)
     public void testTimeStep() {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
@@ -42,7 +42,7 @@ public class TestSimulationWithLsode extends AbstractAdaptiveStepSimulationTest 
         super.testTimeStep(10, 10);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testMinimalNumberOfPoints() {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
@@ -50,7 +50,7 @@ public class TestSimulationWithLsode extends AbstractAdaptiveStepSimulationTest 
         super.testMinimalNumberOfPoints(10, 10);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testValidNumberOfTrajectories() {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
@@ -58,7 +58,7 @@ public class TestSimulationWithLsode extends AbstractAdaptiveStepSimulationTest 
         super.testValidNumberOfTrajectories(10, 10);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testParameters() {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");

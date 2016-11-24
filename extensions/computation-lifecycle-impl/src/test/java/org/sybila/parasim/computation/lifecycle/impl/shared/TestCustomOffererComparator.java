@@ -44,7 +44,7 @@ import org.testng.annotations.Test;
  */
 public class TestCustomOffererComparator extends RemoteParasimTest {
 
-    @Test
+    @Test(enabled = false)
     public void test() throws InterruptedException, ExecutionException, TimeoutException {
         ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
         MergeableString result = container.compute(new StringComputation("AHOJ")).get(10, TimeUnit.SECONDS);

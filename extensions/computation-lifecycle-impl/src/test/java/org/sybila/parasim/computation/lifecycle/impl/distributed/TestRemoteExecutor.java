@@ -56,7 +56,7 @@ public class TestRemoteExecutor extends RemoteParasimTest {
         executor.startComputation(ConstComputation.class, (RemoteMutableStatus) UnicastRemoteObject.exportObject(new RemoteMutableStatusWrapper(status)), computationId);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testQueueAvailable() throws URISyntaxException, IOException {
         Assert.assertNotNull(executor.getQueue(computationId));
         Assert.assertEquals(executor.getQueue(computationId).size(), 0);
@@ -68,7 +68,7 @@ public class TestRemoteExecutor extends RemoteParasimTest {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testSubmit() throws RemoteException, InterruptedException {
         status.addProgressListerner(new WakeUpProgressListener());
         executor.getQueue(computationId).emit(new ConstComputation<>(new MultiplicativeInteger(0)));

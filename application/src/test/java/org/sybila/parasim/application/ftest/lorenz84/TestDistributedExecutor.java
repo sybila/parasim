@@ -43,7 +43,7 @@ import org.testng.annotations.Test;
  */
 public class TestDistributedExecutor extends RemoteParasimTest {
 
-    @Test
+    @Test(enabled = false)
     public void testSimple() throws IOException, InterruptedException, ExecutionException, TimeoutException {
         Experiment experiment = TestLorenz84Oscilation.loadExperiment();
         Point initialPoint = new ArrayPoint(0f, 0f, 0f, 0f, 1.75f, 0.5625f);
@@ -64,7 +64,7 @@ public class TestDistributedExecutor extends RemoteParasimTest {
         Assert.assertEquals(timeNeeded.getRobustness(0).getValue(), simulationTime.getRobustness(0).getValue(), 0.005f, "Analysis shouldn't be dependent on simulation length.");
     }
 
-    @Test
+    @Test(enabled = false)
     public void testReal() throws ParseException, Exception {
         String[] args = new String[] {"-t", "-e", TestDistributedExecutor.class.getClassLoader().getResource("org/sybila/parasim/application/ftest/lorenz84/experiment-oscil.properties").getFile(), "-b"};
         ParasimOptions options = ParasimOptions.create(args);

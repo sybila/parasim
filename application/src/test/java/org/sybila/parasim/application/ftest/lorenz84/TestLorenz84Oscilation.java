@@ -59,7 +59,7 @@ import org.testng.annotations.Test;
  */
 public class TestLorenz84Oscilation extends ParasimTest {
 
-    @Test
+    @Test(enabled = false)
     public void testSimple() throws IOException, InterruptedException, ExecutionException, TimeoutException {
         Experiment experiment = loadExperiment();
         Point initialPoint = new ArrayPoint(0f, 0f, 0f, 0f, 1.75f, 0.5625f);
