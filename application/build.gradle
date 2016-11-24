@@ -1,3 +1,7 @@
+apply plugin: 'application'
+
+mainClassName = 'org.sybila.parasim.application.Main'
+
 group = 'org.sybila.parasim.application'
 
 dependencies {
@@ -15,4 +19,14 @@ dependencies {
 	compile project(':extensions:result-export-impl')
 	compile project(':extensions:project-manager-simple')
 	compile project(':extensions:progress-logger')
+}
+
+distributions {
+	main {
+		baseName = 'parasim'
+	}
+}
+
+startScripts {
+	applicationName = 'parasim'
 }
