@@ -1,0 +1,7 @@
+group = 'org.sybila.parasim.computation.density.api'
+
+dependencies {
+	compile project(':core')
+	compile project(':model:space')
+	compile project(':model:trajectory')
+}

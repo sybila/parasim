@@ -1,0 +1,5 @@
+group = 'org.sybila.parasim.model.core'
+
+dependencies {
+	compile 'org.testng:testng:6.9.12'
+}

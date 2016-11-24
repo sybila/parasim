@@ -1,0 +1,7 @@
+group = 'org.sybila.parasim.model.space'
+
+dependencies {
+	compile project(':model:model-core')
+	compile project(':model:trajectory')
+	compile project(':model:ode')
+}

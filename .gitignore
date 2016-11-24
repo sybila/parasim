@@ -13,3 +13,12 @@ benchmark/experiments/*/*result.xml
 *.csv
 benchmark/results
 benchamer/results-processed
+
+# Gradle cache and build directories
+.gradle
+build
+*.ipr
+*.iws
+
+# Idea project files
+.idea

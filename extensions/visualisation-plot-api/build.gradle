@@ -1,0 +1,6 @@
+group = 'org.sybila.parasim.visualisation.plot.api'
+
+dependencies {
+	compile project(':core')
+	compile project(':model:verification')
+}

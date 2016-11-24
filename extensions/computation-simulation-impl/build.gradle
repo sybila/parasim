@@ -1,0 +1,7 @@
+group = 'org.sybila.parasim.computation.simulation.impl'
+
+dependencies {
+	compile project(':core')
+	compile project(':extensions:computation-simulation-api')
+	compile project(':extensions:computation-lifecycle-api')
+}

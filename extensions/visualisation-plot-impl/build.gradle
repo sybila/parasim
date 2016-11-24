@@ -1,0 +1,7 @@
+group = 'org.sybila.parasim.visualisation.plot.impl'
+
+dependencies {
+	compile project(':extensions:visualisation-plot-api')
+	compile project(':core')
+	compile project(':util')
+}

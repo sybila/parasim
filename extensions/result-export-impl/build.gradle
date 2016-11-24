@@ -1,0 +1,5 @@
+group = 'org.sybila.parasim.extension.exporter.impl'
+
+dependencies {
+	compile project(':extensions:result-export-api')
+}

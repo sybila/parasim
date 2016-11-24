@@ -1,0 +1,8 @@
+group = 'org.sybila.parasim.computation.density.impl'
+
+dependencies {
+	testCompile project(':extensions:computation-lifecycle-impl')
+	compile project(':core')
+	compile project(':extensions:computation-density-api')
+	compile project(':extensions:computation-lifecycle-api')
+}

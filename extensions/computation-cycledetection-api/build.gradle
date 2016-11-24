@@ -1,0 +1,5 @@
+group = 'org.sybila.parasim.computation.cycledetection.api'
+
+dependencies {
+	compile project(':model:trajectory')
+}

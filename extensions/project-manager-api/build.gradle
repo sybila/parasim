@@ -1,0 +1,11 @@
+group = 'org.sybila.parasim.extension.projectmanager.api'
+
+dependencies {
+	compile project(':core')
+	compile project(':resources')
+	compile project(':util')
+	compile project(':model:ode')
+	compile project(':model:space')
+	compile project(':model:verification')
+	compile project(':extensions:computation-simulation-api')
+}

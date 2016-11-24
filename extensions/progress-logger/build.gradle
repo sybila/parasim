@@ -1,0 +1,8 @@
+group = 'org.sybila.parasim.extension.progresslogger'
+
+dependencies {
+	compile project(':core')
+	compile project(':util')
+	compile project(':resources')
+	compile project(':model:verification')	
+}

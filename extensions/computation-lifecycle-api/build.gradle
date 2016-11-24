@@ -1,0 +1,6 @@
+group = 'org.sybila.parasim.computation.lifecycle.api'
+
+dependencies {
+	compile project(':core')
+	compile project(':model:model-core')	
+}

@@ -1,0 +1,10 @@
+group = 'org.sybila.parasim.computation.simulation.api'
+
+dependencies {
+	compile project(':model:ode')
+	compile project(':model:trajectory')
+	compile project(':model:space')
+	compile project(':core')
+	compile "dk.ange:javaoctave:$javaoctave"
+	compile "commons-logging:commons-logging:$commonsLogging"
+}

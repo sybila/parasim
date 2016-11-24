@@ -1,0 +1,6 @@
+group = 'org.sybila.parasim.extension.exporter.api'
+
+dependencies {
+	compile project(':core')
+	compile project(':model:verification')
+}
