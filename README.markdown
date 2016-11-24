@@ -3,24 +3,18 @@ Parasim is a tool for robustness analysis. For information not covered in this R
 
 ## Requirements
 
-* java (at least version 7)
-* maven
-* octave (simulation framework is based on octave)
-* git (optional)
+* Runtime: Java (7+), octave (simulation framework is based on octave)
+* Building: gradle (available through wrapper)
 
-## Packaging, Installation, Deployment
+## Running Parasim
 
-From the root directory:
+You can download latest Parasim prebuilt as a zip archive in the release section [LINK NEEDED]. Then use bin/parasim (Unix) or bin/parasim.bat (Windows) to execute Parasim.
 
-    ./build-all.sh clean [deploy|install|package]
+Note: In the latest version of Parasim, all distributed components have been deprecated. However, the shared memory parallelisation should be still usable.
 
-or:
+## Parasim options
 
-    mvn clean [deploy|install|package] -P[application|core|extensions|license|model|parent|util]
-
-## Executing
-
-On unix-like operation systes parasim may be executed from command line using the [`parasim.sh`](https://github.com/sybila/parasim/blob/master/parasim-cli.sh) script after building it.
+Parasim can be executed either in GUI mode (no command line arguments), or in command line mode (argument -t or --terminal).
 
 ### Command Line Options
 * `-v`, `--version` Print parasim version and exits.
@@ -31,7 +25,7 @@ On unix-like operation systes parasim may be executed from command line using th
 * `-r`, `--result` Do not execute experiment, only print result contained in file specified by experiment file (see above). **Note:** This will result in error when the result file is not present.
 * `-csv <file>`, `--csv <file>` Specify destination file for CSV export.
 * `-b`, `--batch` Disable result plotting.
-* `-s`, `--server` Start Parasim server only.
+* `-s`, `--server` [Deprecated] Start Parasim server only.
 * `-t`, `--terminal` Use command line interface.
 
 ### Examples
@@ -46,8 +40,25 @@ parasim.sh -e experiment.properties -r
 Load result from file referenced in `experiment.properties` and plot it. Do not execute the experiment.
 **Note:** The result file must exist, i.e. the experiment has already had to be executed.
 
-## Generate License Headers
+## Building Parasim
 
-Go to the module where you want to update license headers:
+To build and test Parasim, run:
 
-    ./build-all.sh clean validate -Pgenerate-license
+    ./gradlew clean build
+
+You can also use `assemble` to build without testing or `check` to explicitly run tests.
+
+If you want to run Parasim directly, withouth creating distribution binaries, use:
+
+    ./gradlew run
+
+If you want to create the distribution archive, run:
+
+    ./gradlew distZip
+
+The distribution .zip will then be located in the application/build/distributions folder. Alternatively, you can generated the contents of the .zip file into application/build/install by calling:
+
+    ./gradlew installDist
+    
+Finally, to regenerate license headers use gradle commands `license` and `licenseFormat`
+(If you have your own Gradle insallation, you can run gradle instead of ./gradlew)
