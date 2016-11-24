@@ -1,14 +1,16 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        //place for global plugins
+        classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.13.1"
     }
 }
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: "com.github.hierynomus.license"
 
     version = '2.1.0-SNAPSHOT'
     group = 'org.sybila.parasim'
@@ -43,6 +45,13 @@ allprojects {
         compile 'org.javassist:javassist:3.22.0-CR1'
         compile 'org.slf4j:slf4j-log4j12:1.7.21'
         compile 'org.apache.commons:commons-lang3:3.5'
+    }
+
+    license {
+        header rootProject.file('license_template.txt')
+        strictCheck true
+        ext.year = '2011-2016'
+        ext.name = 'Sybila, Systems Biology Laboratory'
     }
 
 }
