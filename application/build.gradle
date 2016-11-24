@@ -24,6 +24,10 @@ dependencies {
 distributions {
 	main {
 		baseName = 'parasim'
+		contents {
+			from rootProject.file('README.markdown')
+			from rootProject.file('LICENSE.txt')
+		}
 	}
 }
 
