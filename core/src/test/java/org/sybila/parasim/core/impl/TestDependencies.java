@@ -42,6 +42,7 @@ public class TestDependencies extends ParasimTest {
         Assert.assertEquals(getManager().resolve(String.class, Default.class), DependencyExtension2.TO_RETURN);
     }
 
+    // FIXME: 25/11/2016
     @Test(enabled = false)
     public void testDependencyInMoreExtensions() {
         Assert.assertNotNull(getManager().resolve(String.class, DependentQualifier.class));

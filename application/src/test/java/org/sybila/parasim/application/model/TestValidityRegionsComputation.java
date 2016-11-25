@@ -55,7 +55,7 @@ import org.w3c.dom.Element;
  */
 public class TestValidityRegionsComputation extends ParasimTest {
 
-    @Test(enabled = false)
+    @Test
     public void testComputation() throws ExecutionException, InterruptedException, TimeoutException {
         ValidityRegionsComputation computation = new ValidityRegionsComputation(createOdeSystem(), createPrecisionConfiguration(), createSimulationSpace(), createInitialSpace(), createFutureFormula(-1f), 0);
         ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
