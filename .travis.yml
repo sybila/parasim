@@ -1,6 +1,11 @@
 language: java
 sudo: false
 
+addons:
+    apt:
+        packages:
+        - octave
+
 env:
   global:
     - GRADLE_OPTS="-XX:MaxPermSize=3072m"   #Set memory limit for gradle tasks other than tests
