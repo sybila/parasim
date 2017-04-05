@@ -4,4 +4,7 @@ dependencies {
 	compile project(':core')
 	compile project(':extensions:computation-simulation-api')
 	compile project(':extensions:computation-lifecycle-api')
+
+	//Simulation Core dependency - must be in resources folder, otherwise exception due to strict project structure
+	compile fileTree(dir: 'resources/libs/odeSolvers/', include: 'SimulationCoreLibrary_v1.4_incl-libs.jar')
 }
