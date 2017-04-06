@@ -6,5 +6,5 @@ dependencies {
 	compile project(':extensions:computation-lifecycle-api')
 
 	//Simulation Core dependency - must be in resources folder, otherwise exception
-//	compile files('src/main/resources/libs/odeSolvers/SimulationCoreLibrary_v1.4_incl-libs.jar')
+	compile files('libs/odeSolvers/SimulationCoreLibrary_v1.4_incl-libs-nolog4j.jar')
 }
