@@ -31,7 +31,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 
 
     @Override
-    public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration configuration) {
+    public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
         Model model = odeSystem.getOriginalModel();
 
         System.out.println("PARAMETER VALUES: " + odeSystem.getAvailableParameters() +" VARIABLES: " + odeSystem.getVariables());
@@ -40,10 +40,10 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         //SETTING VARIABLES
         for(Variable variable : odeSystem.getVariables().values()){
             System.out.println(variable.getName() + " - VALUE: " + variable.evaluate(point));
-            System.out.println("INITIAL: " + odeSystem.getInitialVariableValue(variable).getExpression().evaluate(point));
+            System.out.println("INITIAL: " + point.getValue(odeSystem.getInitialVariableValue(variable).getExpression().getIndex()));
             if (!variable.isSubstituted()) {
                 //set species (variables) values in model
-                model.getSpecies(variable.getName()).setValue(variable.evaluate(point));
+                model.getSpecies(variable.getName()).setValue(point.getValue(variable.getIndex()));
                 //TODO throw exceptions if no variables with this name are found?
             }
         }
@@ -54,9 +54,9 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         //SETTING PARAMETERS
         for(Parameter parameter : odeSystem.getAvailableParameters().values()){
             if (!parameter.isSubstituted()) {
-                System.out.println(parameter.getName() + " - VALUE: " + parameter.evaluate(point));
+                System.out.println(parameter.getName() + " - VALUE: " + point.getValue(parameter.getIndex()));
                 //set parameters values in model
-                model.getParameter(parameter.getName()).setValue(parameter.evaluate(point));//what is the difference?? "parameter.evaluate(point)" vs "point.getValue(parameter.getIndex())"
+                model.getParameter(parameter.getName()).setValue(point.getValue(parameter.getIndex()));//what is the difference?? "parameter.evaluate(point)" - doesnt work if parameter is not substituted vs "point.getValue(parameter.getIndex())" - works
             }
         }
         //DONE Vojta - set parameter value in model according to ode system parameter value
@@ -71,7 +71,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         }
 
         //TODO find out what is 'size' parameter
-        AbstractDESSolver solver = new RosenbrockSolver(0,configuration.getTimeStep()); //TODO Vojta - set timestep
+        AbstractDESSolver solver = new RosenbrockSolver(0, precision.getTimeStep()); //TODO Vojta - set timestep
         //DONE Vojta - where to get time array or start time and end time
         MultiTable solution = null;
         try {
@@ -86,25 +86,29 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 
         //PARSING DATA TO TRAJECTORY
         //TODO Vojta - how to create new trajectory from multitable
-
-//        float[] data = new float[loadedData.length];
+        if (solution == null) {
+            //throw exception
+        }
+        System.out.println("blocks: " + solution.getBlockCount() + " columns: " + solution.getColumnCount());
+        //doubles to float
+//        float[] data = new float[];
 //        for (int dim = 0; dim < octaveOdeSystem.dimension(); dim++) {
 //            for (int i = 0; i < loadedData.length / octaveOdeSystem.dimension(); i++) {
-//                data[dim + i * octaveOdeSystem.dimension()] = (float) loadedData[dim * (loadedData.length / octaveOdeSystem.dimension()) + i];
+//                data[dim + i * solution.getBlockCount()] = (float) solution[dim * (loadedData.length / octaveOdeSystem.dimension()) + i];
 //            }
 //        }
-//        float[] times = new float[loadedData.length / octaveOdeSystem.dimension()];
+//
+//        float[] times = new float[solution.getTimePoints().length];
 //        float time = point.getTime();
 //        for (int i = 0; i < times.length; i++) {
 //            time += precision.getTimeStep();
 //            times[i] = time;
 //        }
-//        if (paramValues.isEmpty()) {
+//        if (odeSystem.getAvailableParameters().isEmpty()) {
 //            return new ArrayTrajectory(data, times, point.getDimension());
 //        } else {
 //            return new ArrayTrajectory(point, data, times, octaveOdeSystem.dimension());
 //        }
-
         return null;
     }
 }
