@@ -33,48 +33,79 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 
     @Override
     public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
+        //start time: point.getTime() ?
+        //end time: timeLimit?
+
         Model model = odeSystem.getOriginalModel();
 
-        System.out.println("PARAMETER VALUES: " + odeSystem.getAvailableParameters().keySet() +" VARIABLES: " + odeSystem.getVariables().keySet());
-        // DONE Vojta - how to recognize if the index is same as in my Model (corresponding parameters and variables)
-
-        //SETTING VARIABLES
+//        System.out.println("PARAMETER VALUES: " + odeSystem.getAvailableParameters().keySet() +" VARIABLES: " + odeSystem.getVariables().keySet());
+//        // DONE Vojta - how to recognize if the index is same as in my Model (corresponding parameters and variables)
+//
+//        //SETTING VARIABLES
+//        for(Variable variable : odeSystem.getVariables().values()){
+//            System.out.println(variable.getName() + " - VALUE: " + variable.evaluate(point));
+//            System.out.println("INITIAL: " + point.getValue(odeSystem.getInitialVariableValue(variable).getExpression().getIndex()));
+//            if (!variable.isSubstituted()) {
+//                //set species (variables) values in model
+//                model.getSpecies(variable.getName()).setValue(point.getValue(variable.getIndex()));
+//            }
+//        }
+        //DONE!! SET VARIABLES
         for(Variable variable : odeSystem.getVariables().values()){
-            System.out.println(variable.getName() + " - VALUE: " + variable.evaluate(point));
-            System.out.println("INITIAL: " + point.getValue(odeSystem.getInitialVariableValue(variable).getExpression().getIndex()));
             if (!variable.isSubstituted()) {
                 //set species (variables) values in model
                 model.getSpecies(variable.getName()).setValue(point.getValue(variable.getIndex()));
                 //TODO throw exceptions if no variables with this name are found?
+                //TODO Vojta - how does initial conditions setting work (or perturbating over variables not parameters) ->need to debug on linux? //I think it works like expected (get set values from the current point)
             }
         }
-        //odeSystem.getAvailableParameters() returns only parameters, use odeSystem.getVariables() to get variables
-        //DONE findOut if parameters are also variables (if it is synonym)
-        ////TODO Vojta - how does initial conditions setting work (or perturbating over variables not parameters) ->need to debug on linux?
 
-        //SETTING PARAMETERS
+//        //odeSystem.getAvailableParameters() returns only parameters, use odeSystem.getVariables() to get variables
+//        //DONE findOut if parameters are also variables (if it is synonym)
+//
+//        //SETTING PARAMETERS
+//        for(Parameter parameter : odeSystem.getAvailableParameters().values()){
+//            if (!parameter.isSubstituted()) {
+//                System.out.println(parameter.getName() + " - VALUE: " + point.getValue(parameter.getIndex()));
+//                //set parameters values in model
+//                model.getParameter(parameter.getName()).setValue(point.getValue(parameter.getIndex()));//what is the difference?? "parameter.evaluate(point)" - doesnt work if parameter is not substituted vs "point.getValue(parameter.getIndex())" - works
+//            }
+//        }
+//        //DONE Vojta - set parameter value in model according to ode system parameter value
+//        //DONE Vojta - create substituted odeSystem (model)
+//
+
+        //DONE!! SET PARAMETERS
         for(Parameter parameter : odeSystem.getAvailableParameters().values()){
-            if (!parameter.isSubstituted()) {
-                System.out.println(parameter.getName() + " - VALUE: " + point.getValue(parameter.getIndex()));
+            if (!parameter.isSubstituted()) { //substituted are those that are set at the beginning (not perturbating over them)
                 //set parameters values in model
                 model.getParameter(parameter.getName()).setValue(point.getValue(parameter.getIndex()));//what is the difference?? "parameter.evaluate(point)" - doesnt work if parameter is not substituted vs "point.getValue(parameter.getIndex())" - works
             }
         }
-        //DONE Vojta - set parameter value in model according to ode system parameter value
-        //DONE Vojta - create substituted odeSystem (model)
 
-//        long numOfIterations = Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep()));
-//        if (numOfIterations > getStepLimit()) {
+
+        //TODO!! SET SIMULATION TIME (NUM OF ITERATIONS) - START, END, NUM OF ITERATION, TIME STEP
+        long numOfIterations = Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep())); //magical constant 1.05 taked from Jan Papousek's implementation => guess it is for rendering reasons (to simulate a bit more data than a user excpects)
+//        if (numOfIterations > getStepLimit()) { //TODO max num iterations limit is Integer.MAX_VALUE because I have to change the type to integer
 //            throw new IllegalStateException("Can't simulate the trajectory because the number of iterations <" + numOfIterations + "> is higher than the given limit <" + getStepLimit() + ">.");
 //        }
-
-        //TIME - need to be float
-        double[] times = new double[(int)Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep()))]; //TODO rewrite this - compute correct time length of simulation
+        //TIME - need to be float //TODO use only double? ask Safranek
+        float[] timesFloat = new float[(int) numOfIterations];
+        float timeFloat = point.getTime();
+        for (int j = 0; j < timesFloat.length; j++) {
+            timeFloat += precision.getTimeStep();
+            timesFloat[j] = timeFloat;
+        } //TODO remove redundant code (twice creating time array)
+        double[] times = new double[(int) numOfIterations];
         double time = point.getTime();
         for (int j = 0; j < times.length; j++) {
             time += precision.getTimeStep();
             times[j] = time;
         }
+
+        //TODO!! SET MAX REALTIVE AND ABSOLUTE ERROR
+
+        //DONE!! SIMULATION
         //SIMULATION
         SBMLinterpreter interpreter = null;
         try {
@@ -82,71 +113,63 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         } catch (ModelOverdeterminedException e) {
             e.printStackTrace();
         }
+        if(interpreter == null){
+            //TODO throw exception
+        }
 
-        //TODO find out what is 'size' parameter
-        AbstractDESSolver solver = new RosenbrockSolver(0, precision.getTimeStep()); //TODO Vojta - set timestep
-        //DONE Vojta - where to get time array or start time and end time
+//        //TODO find out what is 'size' parameter -> use this constructor
+//        AbstractDESSolver solver = new RosenbrockSolver(0, precision.getTimeStep());
+//        in case of useage of the second constructor: solution = solver.solve(interpreter, interpreter.getInitialValues(), point.getTime(), timeLimit);
+
+//        //DONE Vojta - where to get time array or start time and end time
+
+        AbstractDESSolver solver = new RosenbrockSolver();
         MultiTable solution = null;
         try {
-            solution = solver.solve(interpreter, interpreter.getInitialValues(), point.getTime(), timeLimit);
             solution = solver.solve(interpreter, interpreter.getInitialValues(), times);
-            //TODO!!!! how to set start and end time correctly
-            //start: point.getTime() ?
-            //end: timeLimit?
         } catch (DerivativeException e) {
             e.printStackTrace();
         }
-
-
-        //PARSING DATA TO TRAJECTORY
-        //TODO Vojta - how to create new trajectory from multitable - correct data parsing
         if (solution == null) {
-            //throw exception
+//            //throw exception
         }
 
-        //HELP PRINTING
-        for (int i = 0; i < solution.getBlockCount(); i++) {
-            System.out.println("block" + i + " name: " + solution.getBlock(i).getName());
-            for (int c = 1; c < solution.getBlock(i).getColumnCount(); c++) {
-                System.out.println("\tcolumn" + c + " name: " + solution.getBlock(i).getColumn(c).getColumnName());
+        //DONE!! DATA FROM MULTITABLE TO FLOAT ARRAY
+//        //PARSING DATA TO TRAJECTORY
+        //help printing
+//        for (int i = 0; i < solution.getBlockCount(); i++) {
+//            System.out.println("block" + i + " name: " + solution.getBlock(i).getName());
+//            for (int c = 1; c < solution.getBlock(i).getColumnCount(); c++) {
+//                System.out.println("\tcolumn" + c + " name: " + solution.getBlock(i).getColumn(c).getColumnName());
+//            }
+//        }
+//        System.out.println("COLUMNS:");
+//        for (Parameter p : odeSystem.getAvailableParameters().values()){
+//            System.out.println("parameter: " + p.getName() + " column: " + solution.getColumn(p.getName()).getColumnName());
+//        }
+//        for (Variable v : odeSystem.getVariables().values()){
+//            System.out.println("variable: " + v.getName() + " column: " + solution.getColumn(v.getName()).getColumnName());
+//        }
+        System.out.println("Start time: " + point.getTime() + " End Time: " + timeLimit);
+        System.out.println("Number of iterations: " + numOfIterations);
+
+        float[] simulatedData = new float[solution.getRowCount()*odeSystem.getVariables().size()];
+        for (int currentVariable = 0; currentVariable < odeSystem.getVariables().size(); currentVariable++) { //simulating only variables, not parameters
+            System.out.println(odeSystem.getVariable(currentVariable).getName());
+            for (int i = 0; i < solution.getRowCount(); i++) {
+                System.out.println("row: " + i + " time: " + times[i] + " value: " + solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i));
+                simulatedData[currentVariable + i * odeSystem.getVariables().size()] = (float) solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i);
             }
         }
-        System.out.println("COLUMNS:");
-        for (Parameter p : odeSystem.getAvailableParameters().values()){
-            System.out.println("parameter: " + p.getName() + " column: " + solution.getColumn(p.getName()).getColumnName());
-        }
-        for (Variable v : odeSystem.getVariables().values()){
-            System.out.println("variable: " + v.getName() + " column: " + solution.getColumn(v.getName()).getColumnName());
-        }
 
-        //DOUBLES TO FLOATS //TODO correct and optimise loading data from multitable
-        float[] data = new float[odeSystem.dimension() * solution.getTimePoints().length];
-        //DONE figure out the correct format of data
-        //timePoints array is to big? larger than simulation
 
-        int dim = 0;
-        for (Variable v : odeSystem.getVariables().values()){
-            for (int i = 0; i < solution.getColumn(v.getName()).getRowCount(); i++){
-////////////////TODO correct data retrival TODOTODOTODOTODOTODOTODOTODO!!!!!!!!!!! maybe works but needs to check
-                double d = solution.getColumn(v.getName()).getValue(i);
-                data[i * odeSystem.getVariables().size() + dim] = (float) d;
-            }
-            dim++;
-        }
-
-//        solution.getTimePoints() == solution.getColumn(0)
-
-        //TIME - TODO fix duplicate code of time array
-        float[] timesFloat = new float[(int)Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep()))]; //TODO rewrite this - compute correct time length of simulation
-        float timefloat = point.getTime();
-        for (int j = 0; j < timesFloat.length; j++) {
-            timefloat += precision.getTimeStep();
-            timesFloat[j] = timefloat;
-        }
+        //TODO - top priority - correct sizes of arrays, dimensions and so
+        //TODO!! OUTPUT TRAJECTORY
+//        //TODO Vojta - how to create new trajectory from multitable - correct data parsing
         if (odeSystem.getAvailableParameters().isEmpty()) {
-            return new ArrayTrajectory(data, timesFloat, point.getDimension());
+            return new ArrayTrajectory(simulatedData, timesFloat, point.getDimension());
         } else {
-            return new ArrayTrajectory(point, data, timesFloat, odeSystem.dimension());
+            return new ArrayTrajectory(point, simulatedData, timesFloat, odeSystem.dimension());
         }
     }
 }
