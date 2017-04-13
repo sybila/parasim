@@ -155,7 +155,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 
         float[] simulatedData = new float[solution.getRowCount()*odeSystem.getVariables().size()];
         for (int currentVariable = 0; currentVariable < odeSystem.getVariables().size(); currentVariable++) { //simulating only variables, not parameters
-            System.out.println(odeSystem.getVariable(currentVariable).getName());
+//            System.out.println(odeSystem.getVariable(currentVariable).getName());
             for (int i = 0; i < solution.getRowCount(); i++) {
 //                System.out.println("row: " + i + " time: " + times[i] + " value: " + solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i));
                 simulatedData[currentVariable + i * odeSystem.getVariables().size()] = (float) solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i);
