@@ -8,15 +8,13 @@ import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.computation.simulation.api.SimulationException;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.model.math.Parameter;
-import org.sybila.parasim.model.math.ParameterValue;
 import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Vojtech Bruza
@@ -130,9 +128,9 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         } catch (DerivativeException e) {
             e.printStackTrace();
         }
-        if (solution == null) {
-//            //throw exception
-        }
+//        if (solution == null) {
+////            //TODO throw exception?
+//        }
 
         //DONE!! DATA FROM MULTITABLE TO FLOAT ARRAY
 //        //PARSING DATA TO TRAJECTORY
@@ -153,7 +151,13 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 //        System.out.println("Start time: " + point.getTime() + " End Time: " + timeLimit);
 //        System.out.println("Number of iterations: " + numOfIterations);
 
-        float[] simulatedData = new float[solution.getRowCount()*odeSystem.getVariables().size()];
+        int numberOfSteps = 0;
+        try{
+            numberOfSteps = solution.getRowCount();
+        } catch (NullPointerException e) {
+            e.printStackTrace(); //if solver failed and solution is null
+        }
+        float[] simulatedData = new float[numberOfSteps*odeSystem.getVariables().size()];
         for (int currentVariable = 0; currentVariable < odeSystem.getVariables().size(); currentVariable++) { //simulating only variables, not parameters
 //            System.out.println(odeSystem.getVariable(currentVariable).getName());
             for (int i = 0; i < solution.getRowCount(); i++) {
