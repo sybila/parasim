@@ -28,7 +28,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 
     @Override
     public void close() {
-        //TODO ?
+        //TODO dont have to close this one - remove from SimulationEngine interface
     }
 
     @Override
@@ -150,26 +150,26 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 //        for (Variable v : odeSystem.getVariables().values()){
 //            System.out.println("variable: " + v.getName() + " column: " + solution.getColumn(v.getName()).getColumnName());
 //        }
-        System.out.println("Start time: " + point.getTime() + " End Time: " + timeLimit);
-        System.out.println("Number of iterations: " + numOfIterations);
+//        System.out.println("Start time: " + point.getTime() + " End Time: " + timeLimit);
+//        System.out.println("Number of iterations: " + numOfIterations);
 
         float[] simulatedData = new float[solution.getRowCount()*odeSystem.getVariables().size()];
         for (int currentVariable = 0; currentVariable < odeSystem.getVariables().size(); currentVariable++) { //simulating only variables, not parameters
             System.out.println(odeSystem.getVariable(currentVariable).getName());
             for (int i = 0; i < solution.getRowCount(); i++) {
-                System.out.println("row: " + i + " time: " + times[i] + " value: " + solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i));
+//                System.out.println("row: " + i + " time: " + times[i] + " value: " + solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i));
                 simulatedData[currentVariable + i * odeSystem.getVariables().size()] = (float) solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i);
             }
         }
 
 
-        //TODO - top priority - correct sizes of arrays, dimensions and so
-        //TODO!! OUTPUT TRAJECTORY
-//        //TODO Vojta - how to create new trajectory from multitable - correct data parsing
+        //TODO - top priority - verification of sizes of arrays, dimensions and so
+        //DONE!! OUTPUT TRAJECTORY
+        //DONE Vojta - how to create new trajectory from multitable - correct data parsing
         if (odeSystem.getAvailableParameters().isEmpty()) {
             return new ArrayTrajectory(simulatedData, timesFloat, point.getDimension());
         } else {
-            return new ArrayTrajectory(point, simulatedData, timesFloat, odeSystem.dimension());
+            return new ArrayTrajectory(point, simulatedData, timesFloat, odeSystem.getVariables().size());
         }
     }
 }
