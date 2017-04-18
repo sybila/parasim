@@ -4,6 +4,7 @@ import org.apache.commons.math.ode.DerivativeException;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.math.odes.AbstractDESSolver;
+import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
 import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.SBMLinterpreter;
@@ -101,8 +102,6 @@ public class SimCoreSimulationEngine implements SimulationEngine {
             times[j] = time;
         }
 
-        //TODO!! SET MAX REALTIVE AND ABSOLUTE ERROR
-
         //DONE!! SIMULATION
         //SIMULATION
         SBMLinterpreter interpreter = null;
@@ -121,8 +120,19 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 
 //        //DONE Vojta - where to get time array or start time and end time
 
-        AbstractDESSolver solver = new RosenbrockSolver();
+        AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
         MultiTable solution = null;
+
+        //DONE!! SET MAX REALTIVE
+        solver.setRelTol(precision.getMaxRelativeError());
+        //TODO SET MAX ABSOLUTE ERROR
+//        float maxAbsoluteError = precision.getMaxAbsoluteError(0);
+//        for (int i = 0; i < precision.getDimension(); i++){
+//            if(precision.getMaxAbsoluteError(i) < maxAbsoluteError){
+//                maxAbsoluteError = precision.getMaxAbsoluteError(i); //taking the smallest error
+//            }
+//        }
+//        solver.setAbsTol(maxAbsoluteError); //TODO correct dimension setting???
         try {
             solution = solver.solve(interpreter, interpreter.getInitialValues(), times);
         } catch (DerivativeException e) {
