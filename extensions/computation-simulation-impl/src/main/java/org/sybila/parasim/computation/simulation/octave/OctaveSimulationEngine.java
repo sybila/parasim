@@ -61,6 +61,7 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
 
     @Override
     public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
+        long settingStartTime = System.nanoTime();
         // load parameter values
         List<ParameterValue> paramValues = loadParameterValues(point, odeSystem);
         // create substituted octave ode system
@@ -70,19 +71,37 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         if (numOfIterations > getStepLimit()) {
             throw new IllegalStateException("Can't simulate the trajectory because the number of iterations <" + numOfIterations + "> is higher than the given limit <" + getStepLimit() + ">.");
         }
+        long settingTime = System.nanoTime() - settingStartTime;
+
+        long simulationStartTime = System.nanoTime();
         double[] loadedData = rawSimulation(point, octaveOdeSystem, numOfIterations, precision).getData();
+        long simulationTime = System.nanoTime() - simulationStartTime;
+
+
+        long parsingStartTime = System.nanoTime();
         float[] data = new float[loadedData.length];
         for (int dim = 0; dim < octaveOdeSystem.dimension(); dim++) {
             for (int i = 0; i < loadedData.length / octaveOdeSystem.dimension(); i++) {
                 data[dim + i * octaveOdeSystem.dimension()] = (float) loadedData[dim * (loadedData.length / octaveOdeSystem.dimension()) + i];
             }
         }
+        long parsingTime = System.nanoTime() - parsingStartTime;
+
+        long timeStartTime = System.nanoTime();
         float[] times = new float[loadedData.length / octaveOdeSystem.dimension()];
         float time = point.getTime();
         for (int i = 0; i < times.length; i++) {
             time += precision.getTimeStep();
             times[i] = time;
         }
+        long timeTime = System.nanoTime() - timeStartTime;
+
+        System.out.println("TIME");
+        System.out.printf("Setting time: %.9f ms\n", settingTime / 1000000000.0);
+        System.out.printf("Simulation time: %.9f ms\n", simulationTime / 1000000000.0);
+        System.out.printf("Time time: %.9f ms\n", timeTime / 1000000000.0);
+        System.out.printf("Parsing time: %.9f ms\n", parsingTime / 1000000000.0);
+
         if (paramValues.isEmpty()) {
             return new ArrayTrajectory(data, times, point.getDimension());
         } else {
