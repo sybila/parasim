@@ -96,11 +96,11 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         }
         long timeTime = System.nanoTime() - timeStartTime;
 
-        System.out.println("TIME");
-        System.out.printf("Setting time: %.9f ms\n", settingTime / 1000000000.0);
-        System.out.printf("Simulation time: %.9f ms\n", simulationTime / 1000000000.0);
-        System.out.printf("Time time: %.9f ms\n", timeTime / 1000000000.0);
-        System.out.printf("Parsing time: %.9f ms\n", parsingTime / 1000000000.0);
+//        System.out.println("TIME");
+//        System.out.printf("Setting time: %.9f ms\n", settingTime / 1000000000.0);
+//        System.out.printf("Simulation time: %.9f ms\n", simulationTime / 1000000000.0);
+//        System.out.printf("Time time: %.9f ms\n", timeTime / 1000000000.0);
+//        System.out.printf("Parsing time: %.9f ms\n", parsingTime / 1000000000.0);
 
         if (paramValues.isEmpty()) {
             return new ArrayTrajectory(data, times, point.getDimension());
