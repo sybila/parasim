@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.computation.simulation.cpu;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -27,5 +29,7 @@ public interface SimulationEngineFactory<E extends SimulationEngine>{
     boolean isAvailable();
 
     E simulationEngine(long stepLimit);
+
+    ConcurrentHashMap<Thread,SimulationEngine> THREAD_SIMULATION_ENGINE_MAP = new ConcurrentHashMap<>();
 
 }

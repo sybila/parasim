@@ -23,7 +23,11 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.Arrays;
+import java.util.function.Function;
+
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
 import org.sybila.parasim.model.trajectory.Point;
 
@@ -49,8 +53,9 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
     }
 
     @Override
-    public OctaveSimulationEngine simulationEngine(long stepLimit) {
-        return new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), integrationMethod, stepLimit);
+    public OctaveSimulationEngine simulationEngine(long stepLimit) {//TODO correct retyping?
+        return (OctaveSimulationEngine) SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.computeIfAbsent(Thread.currentThread(), thread ->
+                new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), integrationMethod, stepLimit));
     }
 
     private static class LsodeEngine extends OctaveSimulationEngine {
