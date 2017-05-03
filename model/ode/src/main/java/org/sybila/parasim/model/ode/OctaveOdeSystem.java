@@ -22,6 +22,8 @@ package org.sybila.parasim.model.ode;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.sbml.jsbml.Model;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -50,6 +52,11 @@ public class OctaveOdeSystem implements OdeSystem {
             throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
         this.odeSystem = odeSystem;
+    }
+
+    @Override
+    public Model getOriginalModel() {
+        return odeSystem.getOriginalModel();
     }
 
     @Override

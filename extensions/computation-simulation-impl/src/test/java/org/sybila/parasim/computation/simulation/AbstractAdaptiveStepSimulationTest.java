@@ -103,7 +103,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 @Override
                 public Element toXML(Document doc) {
                     throw new UnsupportedOperationException("Not supported yet.");
-                }
+                } //TODO Vojta - obligatory - export to xml
 
                 @Override
                 public float getTimeStep() {
