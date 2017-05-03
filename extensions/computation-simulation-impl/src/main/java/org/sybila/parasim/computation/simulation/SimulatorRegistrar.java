@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
-import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
 import org.sybila.parasim.computation.simulation.simulationcore.SimCoreSimulationEngineFactory;
@@ -42,13 +41,8 @@ public class SimulatorRegistrar {
     private final Logger LOGGER = LoggerFactory.getLogger(SimulatorRegistrar.class);
 
     @Provide
-    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, SimCoreSimulationEngineFactory simCoreSimulationEngineFactory, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
-        String path = System.getenv("PATH");
-        if(path.contains("octave")){
-            return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
-        } else {
-            return new SimpleAdaptiveStepSimulator(simCoreSimulationEngineFactory);
-        }
+    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
+        return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
     }
 
     @Provide
@@ -62,25 +56,19 @@ public class SimulatorRegistrar {
     }
 
     @Provide
-    public SimulationEngineFactory provideOctaveSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
-        String path = System.getenv("PATH");
-        if(path.contains("octave")){
-            if (configuration.getOdepkgFunction() == null) {
-                LOGGER.debug("using default LSODE simulation engine");
-                return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
-            } else {
-                if (configuration.getOdepkgFunction().isAvailable()) {
-                    LOGGER.debug("using '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg");
-                    return configuration.getOdepkgFunction();
-                } else {
-                    LOGGER.warn("requested '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg isn't available, LSODE is used instead");
-                    return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
-                }
-
-            }
+    public OctaveSimulationEngineFactory provideOctaveSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
+        if (configuration.getOdepkgFunction() == null) {
+            LOGGER.debug("using default LSODE simulation engine");
+            return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
         } else {
-            LOGGER.debug("using Simulation Core SimulationEngineFactory");
-            return new SimCoreSimulationEngineFactory();
+            if (configuration.getOdepkgFunction().isAvailable()) {
+                LOGGER.debug("using '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg");
+                return configuration.getOdepkgFunction();
+            } else {
+                LOGGER.warn("requested '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg isn't available, LSODE is used instead");
+                return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
+            }
+
         }
     }
 }

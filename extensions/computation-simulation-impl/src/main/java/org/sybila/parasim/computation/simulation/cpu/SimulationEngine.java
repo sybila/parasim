@@ -30,7 +30,6 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public interface SimulationEngine {
 
-    @Deprecated
     void close();
 
     /**
