@@ -41,8 +41,8 @@ public class SimulatorRegistrar {
     private final Logger LOGGER = LoggerFactory.getLogger(SimulatorRegistrar.class);
 
     @Provide
-    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
-        return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
+    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, SimCoreSimulationEngineFactory simCoreSimulationEngineFactory) {
+        return new SimpleAdaptiveStepSimulator(simCoreSimulationEngineFactory);
     }
 
     @Provide
@@ -56,19 +56,8 @@ public class SimulatorRegistrar {
     }
 
     @Provide
-    public OctaveSimulationEngineFactory provideOctaveSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
-        if (configuration.getOdepkgFunction() == null) {
-            LOGGER.debug("using default LSODE simulation engine");
-            return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
-        } else {
-            if (configuration.getOdepkgFunction().isAvailable()) {
-                LOGGER.debug("using '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg");
-                return configuration.getOdepkgFunction();
-            } else {
-                LOGGER.warn("requested '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg isn't available, LSODE is used instead");
-                return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
-            }
-
-        }
+    public SimCoreSimulationEngineFactory provideSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
+        LOGGER.debug("using Simulation Core SimulationEngineFactory");
+        return new SimCoreSimulationEngineFactory();
     }
 }
