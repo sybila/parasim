@@ -19,8 +19,6 @@
  */
 package org.sybila.parasim.application.model;
 
-import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
-import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
@@ -64,12 +62,6 @@ public class ExperimentLauncher {
             LOGGER.error("timeout");
             result.cancel(true);
             return result.getPartial();
-        }
-        finally {
-            for (SimulationEngine simulationEngine : SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.values()) {
-                simulationEngine.close();
-            }
-            SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.clear();
         }
     }
 

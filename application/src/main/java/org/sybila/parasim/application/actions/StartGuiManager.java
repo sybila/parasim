@@ -25,6 +25,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.sybila.parasim.application.ParasimOptions;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.extension.projectmanager.api.Experiment;
 import org.sybila.parasim.application.model.ExperimentLauncher;
 import org.sybila.parasim.application.model.TrajectoryAnalysisComputation;
@@ -136,18 +138,26 @@ public class StartGuiManager extends AbstractAction<Void> {
                     return null;
                 }
                 logger.simulationStopped(result.getGlobalRobustness());
-
-                //save result
-                XMLResource<VerificationResult> output = experiment.getVerificationResultResource();
-                if (output != null) {
-                    output.setRoot(result);
-                    try {
-                        output.store();
-                    } catch (XMLException xmle) {
-                        LOGGER.warn("Unable to store result.", xmle);
+                try {
+                    //save result
+                    XMLResource<VerificationResult> output = experiment.getVerificationResultResource();
+                    if (output != null) {
+                        output.setRoot(result);
+                        try {
+                            output.store();
+                        } catch (XMLException xmle) {
+                            LOGGER.warn("Unable to store result.", xmle);
+                        }
                     }
+                    return result;
+                } finally {
+                    System.out.println("\n\nFINALLY\n\n");
+                    //closing simulation engine (must be done after saving result)
+                    for (SimulationEngine simulationEngine : SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.values()) {
+                        simulationEngine.close();
+                    }
+                    SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.clear();
                 }
-                return result;
             }
 
             @Override
