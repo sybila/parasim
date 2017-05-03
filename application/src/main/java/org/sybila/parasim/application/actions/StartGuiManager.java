@@ -151,7 +151,6 @@ public class StartGuiManager extends AbstractAction<Void> {
                     }
                     return result;
                 } finally {
-                    System.out.println("\n\nFINALLY\n\n");
                     //closing simulation engine (must be done after saving result)
                     for (SimulationEngine simulationEngine : SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.values()) {
                         simulationEngine.close();
