@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.computation.simulation;
 
+import dk.ange.octave.OctaveEngine;
+import dk.ange.octave.OctaveEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
@@ -40,9 +42,27 @@ public class SimulatorRegistrar {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SimulatorRegistrar.class);
 
+    private static boolean octaveAvailable = false;
+
+    static {
+        try {
+            //Checking if octave is available on this machine
+            OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
+            octaveAvailable = true;
+            octave.close();
+        } catch (Exception ignored) {
+            octaveAvailable = false;
+        }
+    }
+
     @Provide
-    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, SimCoreSimulationEngineFactory simCoreSimulationEngineFactory) {
-        return new SimpleAdaptiveStepSimulator(simCoreSimulationEngineFactory);
+    public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
+        if (octaveAvailable) {
+            return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
+        } else {
+            //TODO parameter does not work, but it works even this way
+            return new SimpleAdaptiveStepSimulator(new SimCoreSimulationEngineFactory());
+        }
     }
 
     @Provide
@@ -56,8 +76,26 @@ public class SimulatorRegistrar {
     }
 
     @Provide
-    public SimCoreSimulationEngineFactory provideSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
-        LOGGER.debug("using Simulation Core SimulationEngineFactory");
-        return new SimCoreSimulationEngineFactory();
+    public OctaveSimulationEngineFactory provideOctaveSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
+        if (octaveAvailable) {
+            if (configuration.getOdepkgFunction() == null) {
+                LOGGER.debug("using default LSODE simulation engine");
+                return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
+            } else {
+                if (configuration.getOdepkgFunction().isAvailable()) {
+                    LOGGER.debug("using '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg");
+                    return configuration.getOdepkgFunction();
+                } else {
+                    LOGGER.warn("requested '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg isn't available, LSODE is used instead");
+                    return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
+                }
+
+            }
+        } else {
+            LOGGER.debug("using Simulation Core SimulationEngineFactory");
+//            return new SimCoreSimulationEngineFactory();
+            //TODO generics - but works even with null
+            return null;
+        }
     }
 }
