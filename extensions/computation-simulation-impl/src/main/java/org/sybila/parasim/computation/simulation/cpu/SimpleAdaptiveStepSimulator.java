@@ -21,12 +21,16 @@ package org.sybila.parasim.computation.simulation.cpu;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import dk.ange.octave.OctaveEngine;
+import dk.ange.octave.OctaveEngineFactory;
 import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.ArraySimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
 import org.sybila.parasim.computation.simulation.api.Status;
+import org.sybila.parasim.computation.simulation.simulationcore.SimCoreSimulationEngine;
 import org.sybila.parasim.model.trajectory.DataBlock;
 import org.sybila.parasim.model.trajectory.LinkedTrajectory;
 import org.sybila.parasim.model.trajectory.ListDataBlock;
@@ -45,9 +49,30 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
         this.simulationEngineFactory = simulationEngineFactory;
     }
 
+    private static boolean octaveAvailable = false;
+
+    static {
+        try {
+            //Checking if octave is available on this machine
+//            OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
+//            octave.close();
+            Process p = Runtime.getRuntime().exec("octave",new String[]{"--version"});
+            p.waitFor();
+            if (p.exitValue() == 0)
+            octaveAvailable = true;
+        } catch (Exception ignored) {
+            octaveAvailable = false;
+        }
+    }
+
     @Override
     public <T extends Trajectory> SimulatedDataBlock<T> simulate(AdaptiveStepConfiguration configuration, DataBlock<T> data) {
-        SimulationEngine simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
+        SimulationEngine simulationEngine;
+        if (octaveAvailable){
+            simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
+        } else {
+            simulationEngine = new SimCoreSimulationEngine();
+        }
         try {
             List<T> trajectories = new ArrayList<>(data.size());
             Status[] statuses = new Status[data.size()];

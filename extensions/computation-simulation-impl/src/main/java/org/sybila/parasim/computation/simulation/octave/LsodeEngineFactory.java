@@ -46,6 +46,7 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
     public boolean isAvailable() {
         try {
             new OctaveEngineFactory().getScriptEngine();
+//            octave.close(); //todo add octave close
             return true;
         } catch (Exception ignored) {
             return false;
