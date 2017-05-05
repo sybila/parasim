@@ -27,6 +27,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -36,6 +37,8 @@ import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
+
+import javax.management.ServiceNotFoundException;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>

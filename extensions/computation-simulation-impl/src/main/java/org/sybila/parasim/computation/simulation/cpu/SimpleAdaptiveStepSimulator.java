@@ -45,6 +45,10 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
 
     private static boolean octaveAvailable = false;
 
+    public static boolean isOctaveAvailable(){
+        return octaveAvailable;
+    }
+
     static {
         try {
             //Checking if octave is available on this machine

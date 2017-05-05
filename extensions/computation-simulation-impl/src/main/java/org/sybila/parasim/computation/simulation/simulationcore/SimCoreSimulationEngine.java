@@ -79,7 +79,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
             times[j] = timeFloat;
         }
 
-        //SIMULATION
+        //SIMULATION METHOD CHOICE
         SBMLinterpreter interpreter = null;
         try {
             interpreter = new SBMLinterpreter(model);
@@ -89,16 +89,17 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         AdaptiveStepsizeIntegrator solver = new RosenbrockSolver();
         MultiTable solution = null;
         //TOLERANCE SETTING
+        //relative error
         solver.setRelTol(precision.getMaxRelativeError());
-        //TODO SET MAX ABSOLUTE ERROR
-//        float maxAbsoluteError = precision.getMaxAbsoluteError(0);
-//        for (int i = 0; i < odeSystem.getVariables().size(); i++){
-//            if(precision.getMaxAbsoluteError(i) < maxAbsoluteError){
-//                maxAbsoluteError = precision.getMaxAbsoluteError(i); //taking the smallest error
-//            }
-//        }
-//        solver.setAbsTol(maxAbsoluteError);
-
+        //absolute error for each variable not supported => using minimum of all variables as the tolerance for each of them
+        float maxAbsoluteError = precision.getMaxAbsoluteError(0);
+        for (int i = 0; i < odeSystem.getVariables().size(); i++){
+            if(precision.getMaxAbsoluteError(i) < maxAbsoluteError){
+                maxAbsoluteError = precision.getMaxAbsoluteError(i);
+            }
+        }
+        solver.setAbsTol(maxAbsoluteError);
+        //SIMULATION
         try {
             solution = solver.solve(interpreter, interpreter.getInitialValues(), times);
         } catch (DerivativeException e) {
