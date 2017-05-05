@@ -19,12 +19,19 @@
  */
 package org.sybila.parasim.computation.simulation.cpu;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.LoggerFactory;
+import org.sybila.parasim.computation.simulation.SimulatorRegistrar;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
 import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.api.ArraySimulatedDataBlock;
@@ -54,14 +61,15 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
     static {
         try {
             //Checking if octave is available on this machine
-//            OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
-//            octave.close();
-            Process p = Runtime.getRuntime().exec("octave",new String[]{"--version"});
+            Process p = Runtime.getRuntime().exec(new String[]{"octave", "--version"});
             p.waitFor();
-            if (p.exitValue() == 0)
-            octaveAvailable = true;
-        } catch (Exception ignored) {
+            if (p.exitValue() == 0) {
+                octaveAvailable = true;
+                LoggerFactory.getLogger(SimulatorRegistrar.class).info("Using Octave simulation engine");
+            }
+        } catch (IOException | InterruptedException ignored) {
             octaveAvailable = false;
+            LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not available, using Simulation Core simulation engine");
         }
     }
 
