@@ -33,6 +33,7 @@ import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:433392@fi.muni.cz">Vojtech Bruza</a>
  */
 public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
 
@@ -46,7 +47,7 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
     public boolean isAvailable() {
         try {
             new OctaveEngineFactory().getScriptEngine();
-//            octave.close(); //todo add octave close
+//            octave.close(); //closing octave after opening? but this method seems to work not
             return true;
         } catch (Exception ignored) {
             return false;

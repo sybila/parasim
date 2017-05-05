@@ -26,7 +26,6 @@ import org.sybila.parasim.model.trajectory.Trajectory;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- * @documentation Vojtech Bruza
  */
 public interface SimulationEngine {
 
@@ -34,11 +33,11 @@ public interface SimulationEngine {
 
     /**
      * Performs simulation of a differential equation system from given point in time to timelimit
-     * @param point where to start simulation
+     * @param point where to start simulation, contains start time
      * @param odeSystem differential equation system
      * @param timeLimit end time of simulation
      * @param configuration relative error, absolute error and time step configuration
-     * @return simulated trajectory
+     * @return computed trajectory
      */
     Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration configuration);
 

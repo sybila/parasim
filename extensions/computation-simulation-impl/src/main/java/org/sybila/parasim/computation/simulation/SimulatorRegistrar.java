@@ -42,29 +42,9 @@ public class SimulatorRegistrar {
 
     private final Logger LOGGER = LoggerFactory.getLogger(SimulatorRegistrar.class);
 
-//    private static boolean octaveAvailable = false;
-//
-//    static {
-//        try {
-//            //Checking if octave is available on this machine
-//            OctaveEngine octave = new OctaveEngineFactory().getScriptEngine();
-//            octave.close();
-//            octaveAvailable = true;
-//        } catch (Exception ignored) {
-//            octaveAvailable = false;
-//        }
-//    }
-
     @Provide
     public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
-        //TODO doesnt work, because it looks like it chooses the right implementation based on the method parameters, not the actual code of the method
-//        if (octaveAvailable) {
             return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
-//        } else {
-//            //TODO parameter does not work, but it works even this way
-//            LOGGER.info("Using Simulation Core simulation engine");
-//            return new SimpleAdaptiveStepSimulator(new SimCoreSimulationEngineFactory());
-//        }
     }
 
     @Provide
@@ -79,25 +59,18 @@ public class SimulatorRegistrar {
 
     @Provide
     public OctaveSimulationEngineFactory provideOctaveSimulationEngineFactory(ComputationSimulationConfiguration configuration) {
-//        if (octaveAvailable) {
-            if (configuration.getOdepkgFunction() == null) {
-                LOGGER.debug("using default LSODE simulation engine");
-                return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
+        if (configuration.getOdepkgFunction() == null) {
+            LOGGER.debug("using default LSODE simulation engine");
+            return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
+        } else {
+            if (configuration.getOdepkgFunction().isAvailable()) {
+                LOGGER.debug("using '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg");
+                return configuration.getOdepkgFunction();
             } else {
-                if (configuration.getOdepkgFunction().isAvailable()) {
-                    LOGGER.debug("using '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg");
-                    return configuration.getOdepkgFunction();
-                } else {
-                    LOGGER.warn("requested '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg isn't available, LSODE is used instead");
-                    return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
-                }
-
+                LOGGER.warn("requested '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg isn't available, LSODE is used instead");
+                return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
             }
-//        } else {
-//            LOGGER.debug("using Simulation Core SimulationEngineFactory");
-////            return new SimCoreSimulationEngineFactory();
-//            //TODO generics - but works even with null
-//            return null;
-//        }
+
+        }
     }
 }

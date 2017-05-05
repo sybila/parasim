@@ -4,13 +4,12 @@ import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 
 /**
- * @author Vojtech Bruza
+ * @author <a href="mailto:433392@fi.muni.cz">Vojtech Bruza</a>
  */
 public class SimCoreSimulationEngineFactory implements SimulationEngineFactory {
     @Override
     public boolean isAvailable() {
-        //TODO
-        return false;
+        return true;
     }
 
     @Override

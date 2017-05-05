@@ -19,33 +19,20 @@
  */
 package org.sybila.parasim.computation.simulation.cpu;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-import dk.ange.octave.OctaveEngine;
-import dk.ange.octave.OctaveEngineFactory;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.simulation.SimulatorRegistrar;
-import org.sybila.parasim.computation.simulation.api.AdaptiveStepConfiguration;
-import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
-import org.sybila.parasim.computation.simulation.api.ArraySimulatedDataBlock;
-import org.sybila.parasim.computation.simulation.api.SimulatedDataBlock;
-import org.sybila.parasim.computation.simulation.api.Status;
+import org.sybila.parasim.computation.simulation.api.*;
 import org.sybila.parasim.computation.simulation.simulationcore.SimCoreSimulationEngine;
-import org.sybila.parasim.model.trajectory.DataBlock;
-import org.sybila.parasim.model.trajectory.LinkedTrajectory;
-import org.sybila.parasim.model.trajectory.ListDataBlock;
-import org.sybila.parasim.model.trajectory.Trajectory;
-import org.sybila.parasim.model.trajectory.TrajectoryWithNeighborhood;
+import org.sybila.parasim.model.trajectory.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:433392@fi.muni.cz">Vojtech Bruza</a>
  */
 public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
 
@@ -66,6 +53,9 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
             if (p.exitValue() == 0) {
                 octaveAvailable = true;
                 LoggerFactory.getLogger(SimulatorRegistrar.class).info("Using Octave simulation engine");
+            } else {
+                octaveAvailable = false;
+                LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not working, using Simulation Core simulation engine");
             }
         } catch (IOException | InterruptedException ignored) {
             octaveAvailable = false;
@@ -81,31 +71,27 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
         } else {
             simulationEngine = new SimCoreSimulationEngine();
         }
-        try {
-            List<T> trajectories = new ArrayList<>(data.size());
-            Status[] statuses = new Status[data.size()];
-            for (int i = 0; i < data.size(); i++) {
-                synchronized(data.getTrajectory(i).getReference().getTrajectory().getFirstPoint()) {
-                    if (data.getTrajectory(i).getReference().getTrajectory().getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
-                        statuses[i] = Status.OK;
-                        trajectories.add((T)data.getTrajectory(i).getReference().getTrajectory());
-                        continue;
-                    }
-                    Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
-                    LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
-                    trajectory.append(simulated);
-                    trajectories.add((T) trajectory);
-                    if (simulated.getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
-                        statuses[i] = Status.TIMEOUT;
-                    } else {
-                        statuses[i] = Status.OK;
-                    }
+        List<T> trajectories = new ArrayList<>(data.size());
+        Status[] statuses = new Status[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            synchronized(data.getTrajectory(i).getReference().getTrajectory().getFirstPoint()) {
+                if (data.getTrajectory(i).getReference().getTrajectory().getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
+                    statuses[i] = Status.OK;
+                    trajectories.add((T)data.getTrajectory(i).getReference().getTrajectory());
+                    continue;
+                }
+                Trajectory simulated = simulationEngine.simulate(data.getTrajectory(i).getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
+                LinkedTrajectory trajectory = data.getTrajectory(i) instanceof LinkedTrajectory ? (LinkedTrajectory) data.getTrajectory(i) : (data.getTrajectory(i) instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) data.getTrajectory(i)) : LinkedTrajectory.createAndUpdateReference(data.getTrajectory(i)));
+                trajectory.append(simulated);
+                trajectories.add((T) trajectory);
+                if (simulated.getLastPoint().getTime() < configuration.getSpace().getMaxBounds().getTime()) {
+                    statuses[i] = Status.TIMEOUT;
+                } else {
+                    statuses[i] = Status.OK;
                 }
             }
-            return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
-        } finally {
-//            simulationEngine.get().close();
         }
+        return new ArraySimulatedDataBlock<>(new ListDataBlock<>(trajectories), statuses);
     }
 
     @Override
