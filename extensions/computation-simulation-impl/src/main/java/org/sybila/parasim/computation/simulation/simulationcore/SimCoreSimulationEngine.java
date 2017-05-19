@@ -26,6 +26,28 @@ public class SimCoreSimulationEngine implements SimulationEngine {
     public void close() {
     }
 
+    /**
+     * array for caching time of simulations for Parasim
+     */
+    float[] l_times;
+    /**
+     * array for caching time of simulations for Simulatin Core Library
+     */
+    double [] l_timesDouble;
+    /**
+     * start of last simulation
+     */
+    float l_startTime;
+    /**
+     * end of last simulation
+     */
+    double l_endTime;
+    /**
+     * time step of previous simulation
+     */
+    float timeStep;
+
+
     @Override
     public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
         Model model = odeSystem.getOriginalModel();
@@ -69,14 +91,20 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         if (numOfIterations > Integer.MAX_VALUE) { // step limit is max integer value, because it needs to be retyped from long later on
             throw new IllegalStateException("Can't simulate the trajectory because the number of iterations <" + numOfIterations + "> has exceeded its maximum <" + Integer.MAX_VALUE + ">.");
         }
-        //TIME - needs to be float due to communication with Parasim
-        float[] timesFloat = new float[(int) numOfIterations];
-        double[] times = new double[(int) numOfIterations];
-        float timeFloat = point.getTime();
-        for (int j = 0; j < timesFloat.length; j++) {
-            timeFloat += precision.getTimeStep();
-            timesFloat[j] = timeFloat;
-            times[j] = timeFloat;
+
+        //TIME - needs to be float due to communication with Parasim and double due to SimCore
+        if(l_startTime != point.getTime() || l_endTime != timeLimit || timeStep != precision.getTimeStep()){
+            l_startTime = point.getTime();
+            l_endTime = timeLimit;
+            timeStep = precision.getTimeStep();
+            l_times = new float[(int) numOfIterations];
+            float timeFloat = point.getTime();
+            l_timesDouble = new double[(int) numOfIterations];
+            for (int j = 0; j < l_times.length; j++) {
+                timeFloat += precision.getTimeStep();
+                l_times[j] = timeFloat;
+                l_timesDouble[j] = timeFloat;
+            }
         }
 
         //SIMULATION METHOD CHOICE
@@ -101,7 +129,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         solver.setAbsTol(maxAbsoluteError);
         //SIMULATION
         try {
-            solution = solver.solve(interpreter, interpreter.getInitialValues(), times);
+            solution = solver.solve(interpreter, interpreter.getInitialValues(), l_timesDouble);
         } catch (DerivativeException e) {
             e.printStackTrace();
         }
@@ -137,9 +165,9 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         }
         //OUTPUT TRAJECTORY
         if (odeSystem.getAvailableParameters().isEmpty()) {
-            return new ArrayTrajectory(simulatedData, timesFloat, point.getDimension());
+            return new ArrayTrajectory(simulatedData, l_times, point.getDimension());
         } else {
-            return new ArrayTrajectory(point, simulatedData, timesFloat, odeSystem.getVariables().size());
+            return new ArrayTrajectory(point, simulatedData, l_times, odeSystem.getVariables().size());
         }
     }
 }

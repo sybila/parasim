@@ -57,6 +57,24 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         this.stepLimit = stepLimit;
     }
 
+
+    /**
+     * caching simulation time (can save time if the last simulation lasts the same time as the previous)
+     */
+    float[] l_times;
+    /**
+     * start time of last simulation
+     */
+    float l_startTime;
+    /**
+     * end of last simulation
+     */
+    double l_endTime;
+    /**
+     * time step of last simulation
+     */
+    float timeStep;
+
     @Override
     public void close() {
         getOctave().close();
@@ -91,12 +109,20 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         long parsingTime = System.nanoTime() - parsingStartTime;
 
         long timeStartTime = System.nanoTime();
-        float[] times = new float[loadedData.length / octaveOdeSystem.dimension()];
-        float time = point.getTime();
-        for (int i = 0; i < times.length; i++) {
-            time += precision.getTimeStep();
-            times[i] = time;
+
+        //if simulation time changed, rewrite cached time array
+        if(l_startTime != point.getTime() || l_endTime != timeLimit || timeStep != precision.getTimeStep()){
+            l_startTime = point.getTime();
+            l_endTime = timeLimit;
+            timeStep = precision.getTimeStep();
+            float[] l_times = new float[loadedData.length / octaveOdeSystem.dimension()];
+            float time = point.getTime();
+            for (int i = 0; i < l_times.length; i++) {
+                time += precision.getTimeStep();
+                l_times[i] = time;
+            }
         }
+
         long timeTime = System.nanoTime() - timeStartTime;
 
 //        System.out.println("TIME");
@@ -106,9 +132,9 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
 //        System.out.printf("Parsing time: %.9f ms\n", parsingTime / 1000000000.0);
 
         if (paramValues.isEmpty()) {
-            return new ArrayTrajectory(data, times, point.getDimension());
+            return new ArrayTrajectory(data, l_times, point.getDimension());
         } else {
-            return new ArrayTrajectory(point, data, times, octaveOdeSystem.dimension());
+            return new ArrayTrajectory(point, data, l_times, octaveOdeSystem.dimension());
         }
     }
 
