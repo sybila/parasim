@@ -23,6 +23,8 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +82,23 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         getOctave().close();
     }
 
+    private static AtomicLong totalSettingTime;
+    private static AtomicLong totalSimulationTime;
+    private static AtomicLong totalParsingTime;
+
+    private static AtomicLong numOfSimulations;
+
+    static {
+        totalSettingTime = new AtomicLong();
+        totalSettingTime.set(0);
+        totalSimulationTime = new AtomicLong();
+        totalSimulationTime.set(0);
+        totalParsingTime = new AtomicLong();
+        totalParsingTime.set(0);
+        numOfSimulations = new AtomicLong();
+        numOfSimulations.set(0);
+    }
+
     @Override
     public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
         long settingStartTime = System.nanoTime();
@@ -115,7 +134,7 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
             l_startTime = point.getTime();
             l_endTime = timeLimit;
             timeStep = precision.getTimeStep();
-            float[] l_times = new float[loadedData.length / octaveOdeSystem.dimension()];
+            l_times = new float[loadedData.length / octaveOdeSystem.dimension()];
             float time = point.getTime();
             for (int i = 0; i < l_times.length; i++) {
                 time += precision.getTimeStep();
@@ -125,11 +144,19 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
 
         long timeTime = System.nanoTime() - timeStartTime;
 
-//        System.out.println("TIME");
-//        System.out.printf("Setting time: %.9f ms\n", settingTime / 1000000000.0);
-//        System.out.printf("Simulation time: %.9f ms\n", simulationTime / 1000000000.0);
+        totalSettingTime.addAndGet(settingTime);
+        totalSimulationTime.addAndGet(simulationTime);
+        totalParsingTime.addAndGet(parsingTime + timeTime);
+        numOfSimulations.addAndGet(1);
+
+        System.out.println("AVERAGE TIME");
+        System.out.printf("Setting time: %.9f ms\n", (totalSettingTime.get()/numOfSimulations.get()) / 1000000000.0);
+        System.out.printf("Simulation time: %.9f ms\n", (totalSimulationTime.get()/numOfSimulations.get()) / 1000000000.0);
 //        System.out.printf("Time time: %.9f ms\n", timeTime / 1000000000.0);
-//        System.out.printf("Parsing time: %.9f ms\n", parsingTime / 1000000000.0);
+        System.out.printf("Parsing time: %.9f ms\n", (totalParsingTime.get()/numOfSimulations.get()) / 1000000000.0);
+        System.out.println("Number of simulated trajectories: " + numOfSimulations.get());
+
+
 
         if (paramValues.isEmpty()) {
             return new ArrayTrajectory(data, l_times, point.getDimension());

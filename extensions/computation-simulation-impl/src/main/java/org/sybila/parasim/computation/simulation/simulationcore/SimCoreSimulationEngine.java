@@ -16,6 +16,8 @@ import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.*;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 
 /**
  * @author <a href="mailto:433392@fi.muni.cz">Vojtech Bruza</a>
@@ -48,8 +50,27 @@ public class SimCoreSimulationEngine implements SimulationEngine {
     float timeStep;
 
 
+    private static AtomicLong totalSettingTime;
+    private static AtomicLong totalSimulationTime;
+    private static AtomicLong totalParsingTime;
+
+    private static AtomicLong numOfSimulations;
+
+    static {
+        totalSettingTime = new AtomicLong();
+        totalSettingTime.set(0);
+        totalSimulationTime = new AtomicLong();
+        totalSimulationTime.set(0);
+        totalParsingTime = new AtomicLong();
+        totalParsingTime.set(0);
+        numOfSimulations = new AtomicLong();
+        numOfSimulations.set(0);
+    }
+
+
     @Override
     public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
+        long settingStartTime = System.nanoTime();
         Model model = odeSystem.getOriginalModel();
 
 //        System.out.println("PARAMETER VALUES: " + odeSystem.getAvailableParameters().keySet() +" VARIABLES: " + odeSystem.getVariables().keySet());
@@ -127,12 +148,16 @@ public class SimCoreSimulationEngine implements SimulationEngine {
             }
         }
         solver.setAbsTol(maxAbsoluteError);
+        long settingTime = System.nanoTime() - settingStartTime;
+
         //SIMULATION
+        long simulationStartTime = System.nanoTime();
         try {
             solution = solver.solve(interpreter, interpreter.getInitialValues(), l_timesDouble);
         } catch (DerivativeException e) {
             e.printStackTrace();
         }
+        long simulationTime = System.nanoTime() - simulationStartTime;
         //PARSING DATA TO TRAJECTORY
 
         //help printing
@@ -151,6 +176,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
 //        }
 //        System.out.println("Start time: " + point.getTime() + " End Time: " + timeLimit);
 //        System.out.println("Number of iterations: " + numOfIterations);
+        long parsingStartTime = System.nanoTime();
         int numberOfSteps = 0;
         try{
             numberOfSteps = solution.getRowCount();
@@ -163,6 +189,20 @@ public class SimCoreSimulationEngine implements SimulationEngine {
                 simulatedData[currentVariable + i * odeSystem.getVariables().size()] = (float) solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i);
             }
         }
+        long parsingTime = System.nanoTime() - parsingStartTime;
+
+        totalSettingTime.addAndGet(settingTime);
+        totalSimulationTime.addAndGet(simulationTime);
+        totalParsingTime.addAndGet(parsingTime);
+        numOfSimulations.addAndGet(1);
+
+        System.out.println("AVERAGE TIME");
+        System.out.printf("Setting time: %.9f ms\n", (totalSettingTime.get()/numOfSimulations.get()) / 1000000000.0);
+        System.out.printf("Simulation time: %.9f ms\n", (totalSimulationTime.get()/numOfSimulations.get()) / 1000000000.0);
+//        System.out.printf("Time time: %.9f ms\n", timeTime / 1000000000.0);
+        System.out.printf("Parsing time: %.9f ms\n", (totalParsingTime.get()/numOfSimulations.get()) / 1000000000.0);
+        System.out.println("Number of simulated trajectories: " + numOfSimulations.get());
+
         //OUTPUT TRAJECTORY
         if (odeSystem.getAvailableParameters().isEmpty()) {
             return new ArrayTrajectory(simulatedData, l_times, point.getDimension());
