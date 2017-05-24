@@ -19,8 +19,6 @@
  */
 package org.sybila.parasim.computation.simulation;
 
-import dk.ange.octave.OctaveEngine;
-import dk.ange.octave.OctaveEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.annotations.ComputationInstanceScope;
@@ -28,7 +26,6 @@ import org.sybila.parasim.computation.simulation.api.AdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.octave.LsodeEngineFactory;
 import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
-import org.sybila.parasim.computation.simulation.simulationcore.SimCoreSimulationEngineFactory;
 import org.sybila.parasim.core.annotation.Provide;
 import org.sybila.parasim.core.api.configuration.ExtensionDescriptor;
 import org.sybila.parasim.core.api.configuration.ExtensionDescriptorMapper;

@@ -23,13 +23,10 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
-import org.sybila.parasim.computation.simulation.cpu.SimpleAdaptiveStepSimulator;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -39,8 +36,6 @@ import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
-
-import javax.management.ServiceNotFoundException;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
@@ -63,45 +58,27 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
     /**
      * caching simulation time (can save time if the last simulation lasts the same time as the previous)
      */
-    float[] l_times;
+    private float[] l_times;
     /**
      * start time of last simulation
      */
-    float l_startTime;
+    private float l_startTime;
     /**
      * end of last simulation
      */
-    double l_endTime;
+    private double l_endTime;
     /**
      * time step of last simulation
      */
-    float timeStep;
+    private float timeStep;
 
     @Override
     public void close() {
         getOctave().close();
     }
 
-    private static AtomicLong totalSettingTime;
-    private static AtomicLong totalSimulationTime;
-    private static AtomicLong totalParsingTime;
-
-    private static AtomicLong numOfSimulations;
-
-    static {
-        totalSettingTime = new AtomicLong();
-        totalSettingTime.set(0);
-        totalSimulationTime = new AtomicLong();
-        totalSimulationTime.set(0);
-        totalParsingTime = new AtomicLong();
-        totalParsingTime.set(0);
-        numOfSimulations = new AtomicLong();
-        numOfSimulations.set(0);
-    }
-
     @Override
     public Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
-        long settingStartTime = System.nanoTime();
         // load parameter values
         List<ParameterValue> paramValues = loadParameterValues(point, odeSystem);
         // create substituted octave ode system
@@ -111,24 +88,13 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         if (numOfIterations > getStepLimit()) {
             throw new IllegalStateException("Can't simulate the trajectory because the number of iterations <" + numOfIterations + "> is higher than the given limit <" + getStepLimit() + ">.");
         }
-        long settingTime = System.nanoTime() - settingStartTime;
-
-        long simulationStartTime = System.nanoTime();
         double[] loadedData = rawSimulation(point, octaveOdeSystem, numOfIterations, precision).getData();
-        long simulationTime = System.nanoTime() - simulationStartTime;
-
-
-        long parsingStartTime = System.nanoTime();
         float[] data = new float[loadedData.length];
         for (int dim = 0; dim < octaveOdeSystem.dimension(); dim++) {
             for (int i = 0; i < loadedData.length / octaveOdeSystem.dimension(); i++) {
                 data[dim + i * octaveOdeSystem.dimension()] = (float) loadedData[dim * (loadedData.length / octaveOdeSystem.dimension()) + i];
             }
         }
-        long parsingTime = System.nanoTime() - parsingStartTime;
-
-        long timeStartTime = System.nanoTime();
-
         //if simulation time changed, rewrite cached time array
         if(l_startTime != point.getTime() || l_endTime != timeLimit || timeStep != precision.getTimeStep()){
             l_startTime = point.getTime();
@@ -141,23 +107,6 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
                 l_times[i] = time;
             }
         }
-
-        long timeTime = System.nanoTime() - timeStartTime;
-
-        totalSettingTime.addAndGet(settingTime);
-        totalSimulationTime.addAndGet(simulationTime);
-        totalParsingTime.addAndGet(parsingTime + timeTime);
-        numOfSimulations.addAndGet(1);
-
-        System.out.println("AVERAGE TIME");
-        System.out.printf("Setting time: %.9f ms\n", (totalSettingTime.get()/numOfSimulations.get()) / 1000000000.0);
-        System.out.printf("Simulation time: %.9f ms\n", (totalSimulationTime.get()/numOfSimulations.get()) / 1000000000.0);
-//        System.out.printf("Time time: %.9f ms\n", timeTime / 1000000000.0);
-        System.out.printf("Parsing time: %.9f ms\n", (totalParsingTime.get()/numOfSimulations.get()) / 1000000000.0);
-        System.out.println("Number of simulated trajectories: " + numOfSimulations.get());
-
-
-
         if (paramValues.isEmpty()) {
             return new ArrayTrajectory(data, l_times, point.getDimension());
         } else {

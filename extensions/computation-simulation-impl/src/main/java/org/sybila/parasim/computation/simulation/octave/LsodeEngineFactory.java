@@ -23,10 +23,8 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.Arrays;
-import java.util.function.Function;
 
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
-import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
 import org.sybila.parasim.model.trajectory.Point;
@@ -47,7 +45,7 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
     public boolean isAvailable() {
         try {
             new OctaveEngineFactory().getScriptEngine();
-//            octave.close(); //closing octave after opening? but this method seems to work not
+//            octave.close(); //should close octave after opening? -- luckily this method is not called anywhere (old one)
             return true;
         } catch (Exception ignored) {
             return false;
@@ -55,7 +53,7 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
     }
 
     @Override
-    public OctaveSimulationEngine simulationEngine(long stepLimit) {//TODO correct retyping?
+    public OctaveSimulationEngine simulationEngine(long stepLimit) {
         return (OctaveSimulationEngine) SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.computeIfAbsent(Thread.currentThread(), thread ->
                 new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), integrationMethod, stepLimit));
     }
