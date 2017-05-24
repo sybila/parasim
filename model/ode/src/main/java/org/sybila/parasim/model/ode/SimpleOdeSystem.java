@@ -56,10 +56,16 @@ public class SimpleOdeSystem implements OdeSystem {
      */
     @Deprecated
     public SimpleOdeSystem(Collection<OdeSystemVariable> variables, Collection<VariableValue> initialVariableValues, Collection<ParameterValue> parameterValues) {
-        //TODO Vojta - notUrgent - Safely remove this constructor
         this(variables, initialVariableValues, parameterValues, null);
     }
 
+    /**
+     * Default constructor, which allows creation of ODESystem with original SBML model.
+     * @param variables
+     * @param initialVariableValues
+     * @param parameterValues
+     * @param originalModel original SBML model
+     */
     public SimpleOdeSystem(Collection<OdeSystemVariable> variables, Collection<VariableValue> initialVariableValues, Collection<ParameterValue> parameterValues, Model originalModel) {
         this.originalModel = originalModel;
         if (variables == null) {

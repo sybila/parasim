@@ -107,7 +107,7 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
         //TODO fix drawing and remove this condition
         boolean octaveAvailable = false;
         try {
-            //Checking if octave is available on this machine
+            //Checking if octave is available on this machine to analyze the plot
             Process p = Runtime.getRuntime().exec(new String[]{"octave", "--version"});
             p.waitFor();
             if (p.exitValue() == 0) {
