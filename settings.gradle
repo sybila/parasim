@@ -1,0 +1,35 @@
+rootProject.name = 'parasim'
+
+// main application module
+include ':application'
+
+// core parts
+include ':core'
+include ':resources'
+include ':util'
+
+// model modules
+include ':model:ode'
+include ':model:model-core'
+include ':model:space'
+include ':model:trajectory'
+include ':model:verification'
+
+// extensions
+include ':extensions:computation-cycledetection-api'
+include ':extensions:computation-cycledetection-impl'
+include ':extensions:computation-density-api'
+include ':extensions:computation-density-impl'
+include ':extensions:computation-lifecycle-api'
+include ':extensions:computation-lifecycle-impl'
+include ':extensions:computation-simulation-api'
+include ':extensions:computation-simulation-impl'
+include ':extensions:computation-verification-api'
+include ':extensions:computation-verification-impl'
+include ':extensions:progress-logger'
+include ':extensions:project-manager-api'
+include ':extensions:project-manager-simple'
+include ':extensions:result-export-api'
+include ':extensions:result-export-impl'
+include ':extensions:visualisation-plot-api'
+include ':extensions:visualisation-plot-impl'

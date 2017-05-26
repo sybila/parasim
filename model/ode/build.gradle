@@ -1,0 +1,7 @@
+group = 'org.sybila.parasim.model.ode'
+
+dependencies {
+	compile project(':model:trajectory')
+	compile "commons-logging:commons-logging:$commonsLogging"
+	compile "org.sbml.jsbml:jsbml:$jsbml"	
+}

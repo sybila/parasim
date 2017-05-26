@@ -1,0 +1,8 @@
+group = 'org.sybila.parasim.computation.verification.api'
+
+dependencies {
+	compile project(':model:verification')
+	compile project(':model:trajectory')
+	compile project(':extensions:computation-density-api')
+	compile project(':extensions:computation-cycledetection-api')
+}

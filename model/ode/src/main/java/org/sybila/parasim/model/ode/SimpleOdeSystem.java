@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.sbml.jsbml.Model;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -38,6 +40,7 @@ import org.sybila.parasim.model.math.VariableValue;
  */
 public class SimpleOdeSystem implements OdeSystem {
 
+    private Model originalModel;
     private final Map<Integer, OdeSystemVariable> variables = new HashMap<>();
     private final Map<String, OdeSystemVariable> variablesByName = new HashMap<>();
     private final Map<Integer, Parameter> parameters = new HashMap<>();
@@ -45,7 +48,26 @@ public class SimpleOdeSystem implements OdeSystem {
     private final Map<String, VariableValue> initialVariableValues = new HashMap<>();
     private final Map<Parameter, ParameterValue> parameterValues = new HashMap<>();
 
+    /**
+     * This constructor is here only for test purposes
+     * @param variables
+     * @param initialVariableValues
+     * @param parameterValues
+     */
+    @Deprecated
     public SimpleOdeSystem(Collection<OdeSystemVariable> variables, Collection<VariableValue> initialVariableValues, Collection<ParameterValue> parameterValues) {
+        this(variables, initialVariableValues, parameterValues, null);
+    }
+
+    /**
+     * Default constructor, which allows creation of ODESystem with original SBML model.
+     * @param variables
+     * @param initialVariableValues
+     * @param parameterValues
+     * @param originalModel original SBML model
+     */
+    public SimpleOdeSystem(Collection<OdeSystemVariable> variables, Collection<VariableValue> initialVariableValues, Collection<ParameterValue> parameterValues, Model originalModel) {
+        this.originalModel = originalModel;
         if (variables == null) {
             throw new IllegalArgumentException("The parameter [variables] is null.");
         }
@@ -66,6 +88,11 @@ public class SimpleOdeSystem implements OdeSystem {
             this.parameterValues.put(value.getExpression(), value);
         }
         reloadParameters();
+    }
+
+    @Override
+    public Model getOriginalModel() {
+        return originalModel;
     }
 
     @Override
@@ -129,7 +156,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.release(expressions).getIndex(), var.getRightSideExpression().release(expressions)));
         }
-        return new SimpleOdeSystem(newVars, initialVariableValues.values(), parameterValues.values());
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), parameterValues.values(), originalModel);
     }
 
     @Override
@@ -138,7 +165,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.release(expressions).getIndex(), var.getRightSideExpression().release(expressions)));
         }
-        return new SimpleOdeSystem(newVars, initialVariableValues.values(), parameterValues.values());
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), parameterValues.values(), originalModel);
     }
 
     @Override
@@ -147,7 +174,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.substitute(parameterValues).getIndex(), var.getRightSideExpression().substitute(parameterValues)));
         }
-        return new SimpleOdeSystem(newVars, initialVariableValues.values(), this.parameterValues.values());
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), this.parameterValues.values(), originalModel);
     }
 
     @Override
@@ -158,7 +185,7 @@ public class SimpleOdeSystem implements OdeSystem {
         for (OdeSystemVariable var: variables.values()) {
             newVars.add(new OdeSystemVariable(var.getName(), var.substitute(substitution).getIndex(), var.getRightSideExpression().substitute(substitution)));
         }
-        return new SimpleOdeSystem(newVars, initialVariableValues.values(), this.parameterValues.values());
+        return new SimpleOdeSystem(newVars, initialVariableValues.values(), this.parameterValues.values(), originalModel);
     }
 
     @Override

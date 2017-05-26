@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -23,24 +23,10 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import org.sybila.parasim.extension.projectmanager.api.Experiment;
@@ -84,6 +70,7 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     //
     private ProjectLoader projectCreator, projectLoader;
     private final Action newAction, loadAction, saveAction, launchAction, showAction, quitAction;
+//    private JToggleButton useOctaveSimulationEngineToggle;
     private JPanel projectPanel = null;
     private ExperimentModel experimentModel;
     private final ExperimentAvailableListener experimentModelListener;
@@ -91,6 +78,17 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
     public ProjectManagerWindow() {
         projectCreator = new ProjectImporter();
         projectLoader = new ProjectOpener();
+
+//        useOctaveSimulationEngineToggle = new JToggleButton("Use Octave Simulation Engine",true);
+//        useOctaveSimulationEngineToggle.addItemListener(new ItemListener() {
+//            public void itemStateChanged(ItemEvent ev) {
+//                if(ev.getStateChange()==ItemEvent.SELECTED){
+//
+//                } else if(ev.getStateChange()==ItemEvent.DESELECTED){
+//
+//                }
+//            }
+//        });
 
         newAction = IconSource.getNewAction(new ActionListener() {
 
@@ -206,6 +204,8 @@ public class ProjectManagerWindow extends JFrame implements ProjectManager {
         toolBar.addSeparator();
         toolBar.add(launchAction);
         toolBar.add(showAction);
+//        toolBar.addSeparator();
+//        toolBar.add(useOctaveSimulationEngineToggle);
         add(toolBar, BorderLayout.PAGE_START);
     }
 

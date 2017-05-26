@@ -1,5 +1,9 @@
 # Parasim Benchmark
 
+WARNING: Distributed computation is now deprecated.
+
+In order to run benchmarks, parasim must be built using the `installDist` command.
+
 This folder contains tool to benchmark Parasim. Configuration files are placed
 in the `config` directory and are written for execution on `anna.fi.muni.cz`.
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -23,12 +23,15 @@ import dk.ange.octave.OctaveEngine;
 import dk.ange.octave.OctaveEngineFactory;
 import dk.ange.octave.type.OctaveDouble;
 import java.util.Arrays;
+
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
+import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
 import org.sybila.parasim.model.trajectory.Point;
 
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
+ * @author <a href="mailto:433392@fi.muni.cz">Vojtech Bruza</a>
  */
 public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
 
@@ -42,6 +45,7 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
     public boolean isAvailable() {
         try {
             new OctaveEngineFactory().getScriptEngine();
+//            octave.close(); //should close octave after opening? -- luckily this method is not called anywhere (old one)
             return true;
         } catch (Exception ignored) {
             return false;
@@ -50,7 +54,8 @@ public class LsodeEngineFactory implements OctaveSimulationEngineFactory {
 
     @Override
     public OctaveSimulationEngine simulationEngine(long stepLimit) {
-        return new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), integrationMethod, stepLimit);
+        return (OctaveSimulationEngine) SimulationEngineFactory.THREAD_SIMULATION_ENGINE_MAP.computeIfAbsent(Thread.currentThread(), thread ->
+                new LsodeEngine(new OctaveEngineFactory().getScriptEngine(), integrationMethod, stepLimit));
     }
 
     private static class LsodeEngine extends OctaveSimulationEngine {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -43,22 +43,22 @@ import org.testng.annotations.Test;
  */
 public class TestSharedMemoryComputationContainer extends AbstractComputationLifecycleTest {
 
-    @Test
+    @Test(enabled = false)
     public void testSeqFactorial() throws InterruptedException, ExecutionException, TimeoutException {
         checkSeqFactorial(new SequentialFactorial(10), 10);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testParFactorial() throws InterruptedException, ExecutionException, TimeoutException {
         checkParFactorial(new ParallelFactorial(10), 10);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testInfiniteSeqFactorial() throws InterruptedException, ExecutionException, TimeoutException {
         checkInfiniteSeqFactorial(new InfiniteSequentialFactorial(10), 10);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testDestroy() throws InterruptedException, ExecutionException, TimeoutException {
         ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
         final int n = 10;

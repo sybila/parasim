@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -44,7 +44,7 @@ import org.testng.annotations.Test;
  */
 public class TestCustomOffererComparator extends RemoteParasimTest {
 
-    @Test
+    @Test(enabled = false)
     public void test() throws InterruptedException, ExecutionException, TimeoutException {
         ComputationContainer container = getManager().resolve(ComputationContainer.class, Default.class);
         MergeableString result = container.compute(new StringComputation("AHOJ")).get(10, TimeUnit.SECONDS);

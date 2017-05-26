@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -22,6 +22,8 @@ package org.sybila.parasim.model.ode;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+
+import org.sbml.jsbml.Model;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -33,6 +35,11 @@ import org.sybila.parasim.model.math.VariableValue;
  */
 public interface OdeSystem extends Iterable<OdeSystemVariable>, Serializable {
 
+    /**
+     * Method to get the original SBML model, from which was the ODE system loaded
+     * @return original model if available (was loaded from a file), otherwise null
+     */
+    Model getOriginalModel();
     /**
      * @return dimension of the ODE system including parameters.
      */

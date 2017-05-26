@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -103,7 +103,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
                 @Override
                 public Element toXML(Document doc) {
                     throw new UnsupportedOperationException("Not supported yet.");
-                }
+                } //TODO Vojta - obligatory - export to xml
 
                 @Override
                 public float getTimeStep() {

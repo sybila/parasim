@@ -1,0 +1,36 @@
+apply plugin: 'application'
+
+mainClassName = 'org.sybila.parasim.application.Main'
+
+group = 'org.sybila.parasim.application'
+
+dependencies {
+	compile 'org.mod4j.org.apache.commons:cli:1.0.0'
+	compile project(':model:ode')
+	compile project(':model:space')
+	compile project(':model:trajectory')
+	compile project(':model:verification')
+	compile project(':extensions:computation-simulation-impl')
+	compile project(':extensions:computation-density-impl')
+	compile project(':extensions:computation-verification-impl')
+	compile project(':extensions:computation-lifecycle-impl')
+	compile project(':extensions:computation-cycledetection-impl')
+	compile project(':extensions:visualisation-plot-impl')
+	compile project(':extensions:result-export-impl')
+	compile project(':extensions:project-manager-simple')
+	compile project(':extensions:progress-logger')
+}
+
+distributions {
+	main {
+		baseName = 'parasim'
+		contents {
+			from rootProject.file('README.markdown')
+			from rootProject.file('LICENSE.txt')
+		}
+	}
+}
+
+startScripts {
+	applicationName = 'parasim'
+}

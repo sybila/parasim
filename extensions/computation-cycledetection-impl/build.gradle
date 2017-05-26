@@ -1,0 +1,7 @@
+group = 'org.sybila.parasim.computation.cycledetection.impl'
+
+dependencies {
+	compile project(':core')
+	compile project(':util')
+	compile project(':extensions:computation-cycledetection-api')
+}

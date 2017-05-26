@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -55,6 +55,13 @@ public class ArrayTrajectory extends AbstractTrajectory {
         this.dimension = dimension;
     }
 
+    /**
+     *
+     * @param parent starting point
+     * @param points simulated points in format [variable1-value1, variable2-value1, variable1-value2, variable2-value2...]
+     * @param times of length points/number of variables
+     * @param dimension Number of variables in one point of this trajectory
+     */
     public ArrayTrajectory(Point parent, float[] points, float[] times, final int dimension) {
         this(parent, points, times, dimension, times.length, new DefaultArrayPointLocator(dimension));
     }

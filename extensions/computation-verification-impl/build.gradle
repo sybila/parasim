@@ -1,0 +1,7 @@
+group = 'org.sybila.parasim.computation.verification.impl'
+
+dependencies {
+	compile project(':core')
+	compile project(':util')
+	compile project(':extensions:computation-verification-api')
+}

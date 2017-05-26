@@ -1,0 +1,8 @@
+group = 'org.sybila.parasim.model.verification'
+
+dependencies {
+	compile project(':util')
+	compile project(':model:ode')
+	compile project(':model:model-core')
+	compile project(':model:space')
+}

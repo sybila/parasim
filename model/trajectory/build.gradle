@@ -1,0 +1,5 @@
+group = 'org.sybila.parasim.model.trajectory'
+
+dependencies {
+	compile project(':model:model-core')
+}

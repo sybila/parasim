@@ -1,6 +1,6 @@
 #!/bin/bash
 SELF=`readlink -f $0`
-SELF_DIR=`dirname $SELF`
+SELF_DIR=`pwd` #`dirname $SELF`
 BENCHMARK_LIST_FILE=$1
 set -x
 
@@ -46,10 +46,10 @@ for LINE in `cat $BENCHMARK_LIST_FILE`; do
 	fi
 
 	if [[ $CONFIG =~ .*dist.* ]]; then
-		COMMAND="(time $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
+		COMMAND="(time $BASH_EXEC $SELF_DIR/../application/build/install/parasim/bin/parasim -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
 	else
 		LAST_PROC=$((2*CONFIG_SIZE-1))
-		COMMAND="(time taskset -c 0-$LAST_PROC $BASH_EXEC $SELF_DIR/../parasim.sh -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
+		COMMAND="(time taskset -c 0-$LAST_PROC $BASH_EXEC $SELF_DIR/../application/build/install/parasim/bin/parasim -e $SELF_DIR/experiments/$EXPERIMENT/benchmark.experiment.properties -b -csv $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/data.csv -c $SELF_DIR/configs/$CONFIG.xml > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/log.txt) 2> $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/time.txt";
 	fi
 	echo $COMMAND > $SELF_DIR/results/${EXPERIMENT}__${CONFIG}/command
 	echo "## computing";

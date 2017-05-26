@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -22,6 +22,8 @@ package org.sybila.parasim.model.ode;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.sbml.jsbml.Model;
 import org.sybila.parasim.model.math.Expression;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
@@ -50,6 +52,11 @@ public class OctaveOdeSystem implements OdeSystem {
             throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
         this.odeSystem = odeSystem;
+    }
+
+    @Override
+    public Model getOriginalModel() {
+        return odeSystem.getOriginalModel();
     }
 
     @Override
@@ -111,6 +118,7 @@ public class OctaveOdeSystem implements OdeSystem {
             }
             builder.append("xdot = zeros(").append(dimension()).append(", 1);");
             for (OdeSystemVariable variable: odeSystem) {
+//                System.out.println("Variable: " + variable.getName() + " - right side: " + variable.getRightSideExpression().toFormula(VARIABLE_RENDERER));
                 builder.append("xdot(").append(variable.getIndex() + 1).append(") = ").append(variable.getRightSideExpression().toFormula(VARIABLE_RENDERER)).append("; ");
             }
             octaveString = builder.append("endfunction;").toString();

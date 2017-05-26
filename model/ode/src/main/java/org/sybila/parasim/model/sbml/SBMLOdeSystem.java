@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - 2013, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.
@@ -63,6 +63,11 @@ public class SBMLOdeSystem implements OdeSystem {
 
     public SBMLOdeSystem(Model model) {
         this.odeSystem = setup(model);
+    }
+
+    @Override
+    public Model getOriginalModel() {
+        return odeSystem.getOriginalModel();
     }
 
     @Override
@@ -315,7 +320,7 @@ public class SBMLOdeSystem implements OdeSystem {
             }
             result.add(new OdeSystemVariable(variable, rs.substitute(substitutionValues)));
         }
-        return new SimpleOdeSystem(result, variableValues, parameterValues);
+        return new SimpleOdeSystem(result, variableValues, parameterValues, model);
     }
 
 }
