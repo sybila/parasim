@@ -44,6 +44,8 @@ import org.sybila.parasim.model.verification.stl.Formula;
 import org.sybila.parasim.visualisation.plot.api.Plotter;
 import org.sybila.parasim.visualisation.plot.api.PlotterWindowListener;
 
+import java.io.IOException;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -102,6 +104,26 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
 
     @Override
     public Void call() throws Exception {
+        //TODO fix drawing and remove this condition
+        boolean octaveAvailable = false;
+        try {
+            //Checking if octave is available on this machine to analyze the plot
+            Process p = Runtime.getRuntime().exec(new String[]{"octave", "--version"});
+            p.waitFor();
+            if (p.exitValue() == 0) {
+                octaveAvailable = true;
+            } else {
+                octaveAvailable = false;
+            }
+        } catch (IOException | InterruptedException ignored) {
+            octaveAvailable = false;
+        }
+        if(!octaveAvailable){
+            LOGGER.error("Drawing engine not available");
+            return null;
+        }
+        //TODO fix this and remove this condition
+
         OctaveSimulationEngine simulationEgine = null;
         OctaveEngine script = null;
         try {

@@ -29,8 +29,20 @@ import org.sybila.parasim.model.trajectory.Trajectory;
  */
 public interface SimulationEngine {
 
+    /**
+     * Closes SimulationEngine. This method is called after the simulation of the whole space is performed.
+     * Enables to close external software e.g. GNU Octave
+     */
     void close();
 
+    /**
+     * Performs simulation of a differential equation system from given point.
+     * @param point initial point where to start simulation, contains start time and values of state variables and parameters
+     * @param odeSystem differential equation system
+     * @param timeLimit end time of simulation
+     * @param configuration contains relative error, absolute error and time step configuration
+     * @return computed trajectory
+     */
     Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration configuration);
 
 }

@@ -41,7 +41,7 @@ public class SimulatorRegistrar {
 
     @Provide
     public AdaptiveStepSimulator registerAdaptiveStepSimulator(ComputationSimulationConfiguration configuration, OctaveSimulationEngineFactory octaveSimulationEngineFactory) {
-        return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
+            return new SimpleAdaptiveStepSimulator(octaveSimulationEngineFactory);
     }
 
     @Provide
@@ -61,10 +61,10 @@ public class SimulatorRegistrar {
             return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
         } else {
             if (configuration.getOdepkgFunction().isAvailable()) {
-                LOGGER.debug("using '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg");
+                LOGGER.debug("using '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg");
                 return configuration.getOdepkgFunction();
             } else {
-                LOGGER.warn("requested '"+configuration.getOdepkgFunction().name()+"' simulation engine from odepkg isn't available, LSODE is used instead");
+                LOGGER.warn("requested '" + configuration.getOdepkgFunction().name() + "' simulation engine from odepkg isn't available, LSODE is used instead");
                 return new LsodeEngineFactory(configuration.getLsodeIntegrationMethod());
             }
 

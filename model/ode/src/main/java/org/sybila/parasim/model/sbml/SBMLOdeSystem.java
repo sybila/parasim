@@ -66,6 +66,11 @@ public class SBMLOdeSystem implements OdeSystem {
     }
 
     @Override
+    public Model getOriginalModel() {
+        return odeSystem.getOriginalModel();
+    }
+
+    @Override
     public int dimension() {
         return odeSystem.dimension();
     }
@@ -315,7 +320,7 @@ public class SBMLOdeSystem implements OdeSystem {
             }
             result.add(new OdeSystemVariable(variable, rs.substitute(substitutionValues)));
         }
-        return new SimpleOdeSystem(result, variableValues, parameterValues);
+        return new SimpleOdeSystem(result, variableValues, parameterValues, model);
     }
 
 }

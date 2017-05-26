@@ -19,6 +19,8 @@
  */
 package org.sybila.parasim.computation.simulation.cpu;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
@@ -26,6 +28,17 @@ public interface SimulationEngineFactory<E extends SimulationEngine>{
 
     boolean isAvailable();
 
+    /**
+     * To get simulation engine for the thread which this method is called from.
+     * New SimulationeEngine instance is constructed, if none exists according to THREAD_SIMULATION_ENGINE_MAP.
+     * @param stepLimit max number of simulation steps of the simulation engine
+     * @return SimulationEngine
+     */
     E simulationEngine(long stepLimit);
+
+    /**
+     * Hash map that allows closing of all SimulationEngine instances after the simulation of the whole space finishes
+     */
+    ConcurrentHashMap<Thread,SimulationEngine> THREAD_SIMULATION_ENGINE_MAP = new ConcurrentHashMap<>();
 
 }
