@@ -56,13 +56,12 @@ public class SimCoreSimulationEngine implements SimulationEngine {
         }
         //SETTING PARAMETERS
         for(Parameter parameter : odeSystem.getAvailableParameters().values()){
-            if (!parameter.isSubstituted()) { //substituted are those that are set at the beginning (not perturbating over them)
-                //set parameters values in model
-                model.getParameter(parameter.getName()).setValue(point.getValue(parameter.getIndex()));//what is the difference?? "parameter.evaluate(point)" - doesn't work if parameter is not substituted vs "point.getValue(parameter.getIndex())" - works
+            if (!parameter.isSubstituted()) { //substituted are those that are set at the beginning (not perturbing over them)
+                model.getParameter(parameter.getName()).setValue(point.getValue(parameter.getIndex()));
             }
         }
         //SET SIMULATION TIME (NUM OF ITERATIONS) - START, END, NUM OF ITERATION, TIME STEP
-        long numOfIterations = Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep())); //magical constant 1.05 taken from Jan Papousek's implementation => guessing it is for rendering reasons (to simulate a bit more data than a user expects)
+        long numOfIterations = Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep()));
         if (numOfIterations > Integer.MAX_VALUE) { // step limit is max integer value, because it needs to be retyped from long later on
             throw new IllegalStateException("Can't simulate the trajectory because the number of iterations <" + numOfIterations + "> has exceeded its maximum <" + Integer.MAX_VALUE + ">.");
         }
@@ -113,7 +112,7 @@ public class SimCoreSimulationEngine implements SimulationEngine {
             e.printStackTrace(); //if solver failed and solution is null
         }
         float[] simulatedData = new float[numberOfSteps*odeSystem.getVariables().size()];
-        for (int currentVariable = 0; currentVariable < odeSystem.getVariables().size(); currentVariable++) { //of course simulating only variables, not parameters
+        for (int currentVariable = 0; currentVariable < odeSystem.getVariables().size(); currentVariable++) {
             for (int i = 0; i < solution.getRowCount(); i++) {
                 simulatedData[currentVariable + i * odeSystem.getVariables().size()] = (float) solution.getColumn(odeSystem.getVariable(currentVariable).getName()).getValue(i);
             }
