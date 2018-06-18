@@ -32,8 +32,22 @@ public class ArrayTrajectory extends AbstractTrajectory {
 
     private float[] points;
     private ArrayPointLocator pointLocator;
+
+    public float[] getPoints() {
+        return points;
+    }
+
+    public float[] getTimes() {
+        return times;
+    }
+
     private float[] times;
     private final Point parentPoint;
+
+    public int getVarDimension() {
+        return dimension;
+    }
+
     private final int dimension;
 
     public ArrayTrajectory(float[] points, float[] times, final int dimension) {

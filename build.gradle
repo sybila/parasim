@@ -23,6 +23,8 @@ allprojects {
         maven { url "http://jsbml.sourceforge.net/m2repo" }
         // mangosdk
         maven { url 'http://www.ebi.ac.uk/~maven/m2repo' }
+        //lt_downsampling_java8
+        maven { url 'https://jitpack.io' }
     }
 
     //global configuration
@@ -39,6 +41,8 @@ allprojects {
         compile 'org.javassist:javassist:3.22.0-CR1'
         compile 'org.slf4j:slf4j-log4j12:1.7.2'
         compile 'org.apache.commons:commons-lang3:3.5'
+        compile 'org.knowm.xchart:xchart:3.5.2'
+        compile 'com.github.ggalmazor:lt_downsampling_java8:0.0.6'
         compile files("${project.rootProject.rootDir}/lib/javaoctave-0.6.4.jar")
     }
 

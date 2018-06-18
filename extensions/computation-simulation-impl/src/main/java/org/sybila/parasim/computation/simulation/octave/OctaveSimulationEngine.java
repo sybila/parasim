@@ -30,7 +30,6 @@ import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
-import org.sybila.parasim.model.math.Variable;
 import org.sybila.parasim.model.ode.OctaveOdeSystem;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.ArrayTrajectory;
@@ -114,36 +113,7 @@ public abstract class OctaveSimulationEngine implements SimulationEngine {
         }
     }
 
-    public Trajectory simulateAndPlot(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration precision) {
-        Trajectory trajectory = simulate(point, odeSystem, timeLimit, precision);
-        boolean first = true;
-        StringBuilder timeBuilder = new StringBuilder().append("time = [");
-        for (Point p: trajectory) {
-            if (first) {
-                first = false;
-            } else {
-                timeBuilder.append(", ");
-            }
-            timeBuilder.append(p.getTime());
-        }
-        timeBuilder.append("];");
-        getOctave().eval(timeBuilder.toString());
-        getOctave().eval("plot(time, y);");
-        StringBuilder legendBuilder = new StringBuilder().append("legend(");
-        first = true;
-        for (Variable var: odeSystem) {
-            if (first) {
-                first = false;
-            } else {
-                legendBuilder.append(", ");
-            }
-            legendBuilder.append("'").append(var.getName()).append("'");
-        }
-        legendBuilder.append(");");
-        getOctave().eval(legendBuilder.toString());
-        getOctave().eval("drawnow();");
-        return trajectory;
-    }
+
 
     protected final OctaveEngine getOctave() {
         return octave;

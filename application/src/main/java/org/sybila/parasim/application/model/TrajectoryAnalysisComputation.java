@@ -20,7 +20,6 @@
 package org.sybila.parasim.application.model;
 
 import dk.ange.octave.OctaveEngine;
-import dk.ange.octave.OctaveEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
@@ -38,6 +37,7 @@ import org.sybila.parasim.model.Mergeable;
 import org.sybila.parasim.model.Mergeable.Void;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.space.OrthogonalSpace;
+import org.sybila.parasim.model.trajectory.ArrayTrajectory;
 import org.sybila.parasim.model.trajectory.Point;
 import org.sybila.parasim.model.trajectory.Trajectory;
 import org.sybila.parasim.model.verification.stl.Formula;
@@ -128,14 +128,18 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
         OctaveEngine script = null;
         try {
             LOGGER.info("analysis of " + point);
-            // plot trajectory
             simulationEgine = octaveSimulationEngineFactory.simulationEngine(100000);
-            Trajectory trajectory = simulationEgine.simulateAndPlot(point, odeSystem, Math.max(simulationSpace.getMaxBounds().getTime(), property.getTimeNeeded()), precision);
-            // plot robustness
+            Trajectory trajectory =
+                    simulationEgine.simulate(point, odeSystem,
+                                                    Math.max(simulationSpace.getMaxBounds().getTime(),
+                                                             property.getTimeNeeded()),
+                                                             precision);
+
             if (config.isShowingRobustnessComputation()) {
-                script = new OctaveEngineFactory().getScriptEngine();
                 Monitor monitor = verifier.monitor(trajectory, property);
-                ResultUtils.plotRecursively(monitor, script);
+                ResultUtils.plotGraphs(point.toString(), monitor, (ArrayTrajectory) trajectory, odeSystem);
+            } else {
+                ResultUtils.plotTrajectory((ArrayTrajectory) trajectory, odeSystem);
             }
         } finally {
             plotter.addPlotterWindowListener(new CleanerListener(simulationEgine, script));
