@@ -28,6 +28,10 @@ import org.sybila.parasim.model.trajectory.Point;
  */
 public interface Expression<E extends Expression> extends Serializable {
 
+    class position {
+        public int index;
+    }
+
     float evaluate(Point point);
 
     float evaluate(float[] point);
@@ -49,6 +53,10 @@ public interface Expression<E extends Expression> extends Serializable {
     StringBuilder toFormula(StringBuilder builder);
 
     StringBuilder toFormula(StringBuilder builder, VariableRenderer renderer);
+
+    int getNodeCount();
+
+    void serialize(byte[] info, float[] constants, int[] variables, position p);
 
     public static interface TraverseFunction<T> {
 

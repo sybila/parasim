@@ -88,6 +88,18 @@ public final class Constant implements Expression<Constant> {
         return function.apply(this);
     }
 
+    @Override
+    public int getNodeCount() {
+        return 1;
+    }
+
+    @Override
+    public void serialize(byte[] info, float[] constants, int[] variables, position p) {
+        info[p.index] = 'C';
+        constants[p.index] = value;
+        p.index++;
+    }
+
     public float getValue() {
         return value;
     }

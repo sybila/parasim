@@ -29,6 +29,8 @@ public class OdeSystemVariable extends Variable {
 
     private final Expression rightSideExpression;
 
+    private int nodeCount;
+
     public OdeSystemVariable(String name, int index, Expression rightSideExpression) {
         super(name, index);
         if (rightSideExpression == null) {
@@ -45,4 +47,10 @@ public class OdeSystemVariable extends Variable {
         return rightSideExpression;
     }
 
+    public final int getNodeCount() {
+        if (nodeCount == 0) {
+            nodeCount = rightSideExpression.getNodeCount();
+        }
+        return nodeCount;
+    }
 }

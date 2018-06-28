@@ -80,7 +80,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration> {
         return simulator;
     }
 
-    protected void testMinimalNumberOfPoints(int dimension, int size) {
+    protected void testMinimalNumberOfPoints(int dimension, int size) throws Exception {
         SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         for(int s = 0; s < size; s++) {
             for(Point p : result.getTrajectory(s)) {
@@ -89,7 +89,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration> {
         }
     }
 
-    protected void testValidNumberOfTrajectories(int dimension, int size) {
+    protected void testValidNumberOfTrajectories(int dimension, int size) throws Exception {
         SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         assertEquals(size, result.size());
         for(int s = 0; s < size; s++) {
@@ -100,7 +100,7 @@ public abstract class AbstractSimulatorTest<Conf extends Configuration> {
         }
     }
 
-    protected void testParameters(int dimension) {
+    protected void testParameters(int dimension) throws Exception {
         float[] data = new float[dimension*2];
         for (int dim = 0; dim < dimension * 2; dim++) {
             data[dim] = dim;

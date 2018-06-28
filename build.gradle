@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-allprojects {
+configure(subprojects.findAll {it.name != 'lsodacpp'}) {
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: "com.github.hierynomus.license"
@@ -18,7 +18,7 @@ allprojects {
 
     repositories {
         jcenter()
-        mavenCentral()        
+        mavenCentral()
         // jsbml
         maven { url "http://jsbml.sourceforge.net/m2repo" }
         // mangosdk
@@ -35,8 +35,9 @@ allprojects {
 
     //common dependencies for everyone
     dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.11'  
+        testCompile group: 'junit', name: 'junit', version: '4.11'
         testCompile 'org.testng:testng:6.9.12'
+        compile 'org.testng:testng:6.9.12'
         compile 'net.jcip:jcip-annotations:1.0'
         compile 'org.javassist:javassist:3.22.0-CR1'
         compile 'org.slf4j:slf4j-log4j12:1.7.2'
@@ -72,4 +73,26 @@ allprojects {
         }
     }
 
+    test {
+        systemProperties = [
+                'java.library.path' : "${rootProject.projectDir}/lsodacpp/build/libs/sim/shared"
+        ]
+    }
 }
+
+task build {
+    dependsOn gradle.includedBuild('lsodacpp').task(':build')
+}
+
+task assemble {
+    dependsOn gradle.includedBuild('lsodacpp').task(':assemble')
+}
+
+task clean {
+    dependsOn gradle.includedBuild('lsodacpp').task(':clean')
+}
+
+tasks.withType(Test) {
+    systemProperty "java.library.path", "/lsodacpp/build/libs/sim/shared"
+}
+

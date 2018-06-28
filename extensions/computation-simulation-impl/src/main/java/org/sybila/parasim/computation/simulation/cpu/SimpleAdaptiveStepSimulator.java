@@ -23,6 +23,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.simulation.SimulatorRegistrar;
 import org.sybila.parasim.computation.simulation.api.*;
+import org.sybila.parasim.computation.simulation.lsoda.LsodaSimulationEngine;
 import org.sybila.parasim.computation.simulation.simulationcore.SimCoreSimulationEngine;
 import org.sybila.parasim.model.trajectory.*;
 
@@ -33,6 +34,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  * @author <a href="mailto:433392@fi.muni.cz">Vojtech Bruza</a>
+ * @author <a href="mailto:pejznoch@gmail.com">Ales Pejznoch</a>
  */
 public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
 
@@ -43,6 +45,8 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
         this.simulationEngineFactory = simulationEngineFactory;
     }
 
+    private static boolean lsodaAvailable = true;//quickhack
+
     private static boolean octaveAvailable = false;
 
     public static boolean isOctaveAvailable(){
@@ -50,27 +54,34 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
     }
 
     static {
-        try {
-            //Checking if octave is available on this machine
-            Process p = Runtime.getRuntime().exec(new String[]{"octave", "--version"});
-            p.waitFor();
-            if (p.exitValue() == 0) {
-                octaveAvailable = true;
-                LoggerFactory.getLogger(SimulatorRegistrar.class).info("Using Octave simulation engine");
-            } else {
+        if (lsodaAvailable) {
+            LoggerFactory.getLogger(SimulatorRegistrar.class).info("Using ODEPACK LSODA simulation engine");
+        } else {
+            try {
+                //Checking if octave is available on this machine
+                Process p = Runtime.getRuntime().exec(new String[]{"octave", "--version"});
+                p.waitFor();
+                if (p.exitValue() == 0) {
+                    octaveAvailable = true;
+                    LoggerFactory.getLogger(SimulatorRegistrar.class).info("Using Octave simulation engine");
+                } else {
+                    octaveAvailable = false;
+                    LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not working, using Simulation Core simulation engine");
+                }
+            } catch (IOException | InterruptedException ignored) {
                 octaveAvailable = false;
-                LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not working, using Simulation Core simulation engine");
+                LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not available, using Simulation Core simulation engine");
             }
-        } catch (IOException | InterruptedException ignored) {
-            octaveAvailable = false;
-            LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not available, using Simulation Core simulation engine");
         }
     }
 
     @Override
-    public <T extends Trajectory> SimulatedDataBlock<T> simulate(AdaptiveStepConfiguration configuration, DataBlock<T> data) {
+    public <T extends Trajectory> SimulatedDataBlock<T> simulate(AdaptiveStepConfiguration configuration, DataBlock<T> data)
+            throws Exception {
         SimulationEngine simulationEngine;
-        if (octaveAvailable){
+        if (lsodaAvailable) {
+            simulationEngine = new LsodaSimulationEngine();
+        } else if (octaveAvailable){
             simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
         } else {
             simulationEngine = new SimCoreSimulationEngine();
@@ -99,11 +110,12 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
     }
 
     @Override
-    public <T extends Trajectory> T simulate(AdaptiveStepConfiguration configuration, T trajectory) {
+    public <T extends Trajectory> T simulate(AdaptiveStepConfiguration configuration, T trajectory)
+    throws Exception {
         if (trajectory.getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
             return trajectory;
         }
-        SimulationEngine simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
+        SimulationEngine simulationEngine = new LsodaSimulationEngine();
         Trajectory simulated = simulationEngine.simulate(trajectory.getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
         LinkedTrajectory result = trajectory instanceof LinkedTrajectory ? (LinkedTrajectory) trajectory : (trajectory instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) trajectory) : LinkedTrajectory.createAndUpdateReference(trajectory));
         result.append(simulated);

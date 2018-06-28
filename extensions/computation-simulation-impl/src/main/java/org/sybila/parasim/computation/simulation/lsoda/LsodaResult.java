@@ -17,17 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sybila.parasim.computation.simulation.api;
+package org.sybila.parasim.computation.simulation.lsoda;
 
-import org.sybila.parasim.model.trajectory.DataBlock;
-import org.sybila.parasim.model.trajectory.Trajectory;
-
-/**
- * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
- */
-public interface Simulator<Conf extends Configuration> {
-
-    <T extends Trajectory> SimulatedDataBlock<T> simulate(Conf configuration, DataBlock<T> trajectories) throws Exception;
-
-    <T extends Trajectory> T simulate(Conf configuration, T trajectory) throws Exception;
+public class LsodaResult {
+    public float[] output;
+    public long failed = 0;
+    public String errorMsg = "";
 }

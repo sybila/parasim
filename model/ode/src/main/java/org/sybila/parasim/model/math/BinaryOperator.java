@@ -102,6 +102,11 @@ public abstract class BinaryOperator<E extends BinaryOperator> implements Expres
         return builder;
     }
 
+    @Override
+    public int getNodeCount() {
+        return (1 + (left.getNodeCount() + right.getNodeCount()));
+    }
+
     abstract protected BinaryOperator create(Expression left, Expression right);
 
     abstract protected int getPriority();

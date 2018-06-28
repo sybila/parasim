@@ -228,4 +228,19 @@ public final class Parameter implements Expression<Parameter>, Indexable {
     public <T> T traverse(TraverseFunction<T> function) {
         return function.apply(this);
     }
+
+    @Override
+    public int getNodeCount() {
+        return 1;
+    }
+
+    @Override
+    public void serialize(byte[] info, float[] constants, int[] variables, position p) {
+        if (substitution == null) {
+            throw new IllegalArgumentException("The paramater [substitution] is null.");
+        }
+        info[p.index] = 'C';
+        constants[p.index] = ((Constant)substitution.getSubstitution()).getValue();
+        p.index++;
+    }
 }

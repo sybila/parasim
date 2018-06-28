@@ -25,7 +25,7 @@ package org.sybila.parasim.model.math;
 public final class ParameterValue implements SubstitutionValue<Parameter> {
 
     private final Parameter parameter;
-    private final Expression substitution;
+    Expression substitution;
 
     public ParameterValue(Parameter paramater, Expression substitution) {
         if (paramater == null) {
@@ -57,4 +57,7 @@ public final class ParameterValue implements SubstitutionValue<Parameter> {
         return parameter.getName() + ": " + substitution.toString();
     }
 
+    public void setSubstitution(Expression substitution) {
+        this.substitution = substitution;
+    }
 }

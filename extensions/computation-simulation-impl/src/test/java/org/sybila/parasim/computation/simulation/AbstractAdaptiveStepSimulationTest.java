@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulatorTest<AdaptiveStepConfiguration> {
 
-    protected void testAbsoluteStep(int dimension, int size) {
+    protected void testAbsoluteStep(int dimension, int size) throws Exception {
         SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         for (int s = 0; s < size; s++) {
             Point previous = null;
@@ -55,7 +55,7 @@ public abstract class AbstractAdaptiveStepSimulationTest extends AbstractSimulat
 
 
 
-    protected void testTimeStep(int dimension, int size) {
+    protected void testTimeStep(int dimension, int size) throws Exception {
         SimulatedDataBlock result = getSimulator().simulate(getConfiguration(dimension), createDataBlock(dimension, size));
         for (int s = 0; s < size; s++) {
             Point previous = null;

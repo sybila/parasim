@@ -113,4 +113,11 @@ public final class Divide extends BinaryOperator<Divide> {
         return "/";
     }
 
+    @Override
+    public void serialize(byte[] info, float[] constants, int[] variables, position p) {
+        info[p.index] = '/';
+        p.index++;
+        getLeft().serialize(info, constants, variables, p);
+        getRight().serialize(info, constants, variables, p);
+    }
 }

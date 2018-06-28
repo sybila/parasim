@@ -96,4 +96,20 @@ public class Negation implements Expression<Negation> {
         return function.apply(this);
     }
 
+    @Override
+    public int getNodeCount() {
+        return (2 + expression.getNodeCount());
+    }
+
+    @Override
+    public void serialize(byte[] info, float[] constants, int[] variables, position p) {
+        info[p.index] = '*';
+        p.index++;
+
+        info[p.index] = 'C';
+        constants[p.index] = -1;
+        p.index++;
+
+        expression.serialize(info, constants, variables, p);
+    }
 }

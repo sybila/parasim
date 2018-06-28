@@ -21,7 +21,7 @@ model {
         withType(SharedLibraryBinarySpec) {
             cppCompiler.args "-I/usr/lib/jvm/java-8-openjdk/include",
                     "-I/usr/lib/jvm/java-8-openjdk/include/linux",
-                    "-march=native", "-O3", "-std=c++14", "-Wall"
+                    "-march=native", "", "-std=c++14", "-Wall", "-Wextra", "-pedantic"
 
             linker.args "-lm", "-flto"
         }

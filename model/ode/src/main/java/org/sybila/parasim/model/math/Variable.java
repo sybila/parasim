@@ -228,4 +228,16 @@ public class Variable implements Expression<Variable>, Indexable {
     public <T> T traverse(TraverseFunction<T> function) {
         return function.apply(this);
     }
+
+    @Override
+    public int getNodeCount() {
+        return 1;
+    }
+
+    @Override
+    public void serialize(byte[] info, float[] constants, int[] variables, position p) {
+        info[p.index] = 'V';
+        variables[p.index] = index+1;
+        p.index++;
+    }
 }

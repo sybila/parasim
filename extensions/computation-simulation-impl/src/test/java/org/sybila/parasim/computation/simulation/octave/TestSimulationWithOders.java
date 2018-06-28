@@ -35,7 +35,7 @@ public class TestSimulationWithOders extends AbstractAdaptiveStepSimulationTest 
     private static final SimulationEngineFactory ENGINE_FACTORY = OdePkgEngineFactory.ODERS;
 
     @Test
-    public void testTimeStep() {
+    public void testTimeStep() throws Exception {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
@@ -43,7 +43,7 @@ public class TestSimulationWithOders extends AbstractAdaptiveStepSimulationTest 
     }
 
     @Test
-    public void testMinimalNumberOfPoints() {
+    public void testMinimalNumberOfPoints() throws Exception {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
@@ -51,7 +51,7 @@ public class TestSimulationWithOders extends AbstractAdaptiveStepSimulationTest 
     }
 
     @Test
-    public void testValidNumberOfTrajectories() {
+    public void testValidNumberOfTrajectories() throws Exception {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }
@@ -59,7 +59,7 @@ public class TestSimulationWithOders extends AbstractAdaptiveStepSimulationTest 
     }
 
     @Test
-    public void testParameters() {
+    public void testParameters() throws Exception {
         if (!ENGINE_FACTORY.isAvailable()) {
             throw new SkipException("The Octave is not available.");
         }

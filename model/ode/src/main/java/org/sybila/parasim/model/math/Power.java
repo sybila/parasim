@@ -76,4 +76,11 @@ public class Power extends BinaryOperator<Power> {
         return "^";
     }
 
+    @Override
+    public void serialize(byte[] info, float[] constants, int[] variables, position p) {
+        info[p.index] = '^';
+        p.index++;
+        getLeft().serialize(info, constants, variables, p);
+        getRight().serialize(info, constants, variables, p);
+    }
 }

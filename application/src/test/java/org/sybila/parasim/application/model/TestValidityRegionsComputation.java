@@ -127,12 +127,12 @@ public class TestValidityRegionsComputation extends ParasimTest {
 
             @Override
             public float getMaxAbsoluteError(int dim) {
-                return 0;
+                return 1E-3f;
             }
 
             @Override
             public float getMaxRelativeError() {
-                return 0;
+                return 1E-3f;
             }
 
             @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2018, Sybila, Systems Biology Laboratory and individual
+ * Copyright 2011-2016, Sybila, Systems Biology Laboratory and individual
  * contributors by the @authors tag.
  *
  * This file is part of Parasim.

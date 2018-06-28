@@ -43,6 +43,7 @@ public interface SimulationEngine {
      * @param configuration contains relative error, absolute error and time step configuration
      * @return computed trajectory
      */
-    Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration configuration);
+    Trajectory simulate(Point point, OdeSystem odeSystem, double timeLimit, PrecisionConfiguration configuration)
+    throws Exception;
 
 }

@@ -102,4 +102,13 @@ public class Function implements Expression<Function> {
         return body.toFormula(builder, renderer);
     }
 
+    @Override
+    public int getNodeCount() {
+        return body.getNodeCount();
+    }
+
+    @Override
+    public void serialize(byte[] info, float[] constants, int[] variables, position p) {
+        body.serialize(info, constants, variables, p);
+    }
 }
