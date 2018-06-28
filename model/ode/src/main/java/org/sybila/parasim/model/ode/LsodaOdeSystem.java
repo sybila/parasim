@@ -34,10 +34,9 @@ import org.sybila.parasim.model.math.VariableValue;
 /**
  * @author <a href="mailto:xpapous1@fi.muni.cz">Jan Papousek</a>
  */
-public class OctaveOdeSystem implements OdeSystem {
+public class LsodaOdeSystem implements OdeSystem {
 
     private final OdeSystem odeSystem;
-    private String octaveString;
 
     private static final VariableRenderer VARIABLE_RENDERER = new VariableRenderer() {
 
@@ -47,7 +46,7 @@ public class OctaveOdeSystem implements OdeSystem {
         }
     };
 
-    public OctaveOdeSystem(OdeSystem odeSystem) {
+    public LsodaOdeSystem(OdeSystem odeSystem) {
         if (odeSystem == null) {
             throw new IllegalArgumentException("The parameter [odeSystem] is null.");
         }
@@ -104,28 +103,6 @@ public class OctaveOdeSystem implements OdeSystem {
         return odeSystem.isVariable(dimension);
     }
 
-    public String octaveName() {
-        return "f";
-    }
-
-    public String octaveString(boolean timeFirst) {
-        if (octaveString == null) {
-            StringBuilder builder = new StringBuilder();
-            if (timeFirst) {
-                builder.append("function xdot = f(t, x) ");
-            } else {
-                builder.append("function xdot = f(x, t) ");
-            }
-            builder.append("xdot = zeros(").append(dimension()).append(", 1);");
-            for (OdeSystemVariable variable: odeSystem) {
-//                System.out.println("Variable: " + variable.getName() + " - right side: " + variable.getRightSideExpression().toFormula(VARIABLE_RENDERER));
-                builder.append("xdot(").append(variable.getIndex() + 1).append(") = ").append(variable.getRightSideExpression().toFormula(VARIABLE_RENDERER)).append("; ");
-            }
-            octaveString = builder.append("endfunction;").toString();
-        }
-        return octaveString;
-    }
-
     @Override
     public Iterator<OdeSystemVariable> iterator() {
         return odeSystem.iterator();
@@ -143,12 +120,12 @@ public class OctaveOdeSystem implements OdeSystem {
 
     @Override
     public OdeSystem substitute(ParameterValue... parameterValues) {
-        return new OctaveOdeSystem(odeSystem.substitute(parameterValues));
+        return new LsodaOdeSystem(odeSystem.substitute(parameterValues));
     }
 
     @Override
     public OdeSystem substitute(Collection<ParameterValue> parameterValues) {
-        return new OctaveOdeSystem(odeSystem.substitute(parameterValues));
+        return new LsodaOdeSystem(odeSystem.substitute(parameterValues));
     }
 
 }

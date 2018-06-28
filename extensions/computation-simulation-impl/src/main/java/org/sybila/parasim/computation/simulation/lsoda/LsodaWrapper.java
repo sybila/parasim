@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.simulation.SimulatorRegistrar;
 import org.sybila.parasim.model.math.*;
 import org.sybila.parasim.model.trajectory.Point;
-import org.sybila.parasim.model.ode.OctaveOdeSystem;
+import org.sybila.parasim.model.ode.LsodaOdeSystem;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 
 /**
@@ -30,7 +30,7 @@ import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
  */
 public class LsodaWrapper {
 
-    float[] rawSimulation(Point point, OctaveOdeSystem odeSystem,
+    float[] rawSimulation(Point point, LsodaOdeSystem odeSystem,
                           long numberOfIterations, PrecisionConfiguration precision)
             throws Exception {
 

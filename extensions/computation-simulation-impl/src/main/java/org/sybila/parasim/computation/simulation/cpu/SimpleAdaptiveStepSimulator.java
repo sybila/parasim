@@ -45,33 +45,15 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
         this.simulationEngineFactory = simulationEngineFactory;
     }
 
-    private static boolean lsodaAvailable = true;//quickhack
+    private static boolean lsodaAvailable = true;
 
-    private static boolean octaveAvailable = false;
-
-    public static boolean isOctaveAvailable(){
-        return octaveAvailable;
-    }
 
     static {
         if (lsodaAvailable) {
             LoggerFactory.getLogger(SimulatorRegistrar.class).info("Using ODEPACK LSODA simulation engine");
         } else {
-            try {
-                //Checking if octave is available on this machine
-                Process p = Runtime.getRuntime().exec(new String[]{"octave", "--version"});
-                p.waitFor();
-                if (p.exitValue() == 0) {
-                    octaveAvailable = true;
-                    LoggerFactory.getLogger(SimulatorRegistrar.class).info("Using Octave simulation engine");
-                } else {
-                    octaveAvailable = false;
-                    LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not working, using Simulation Core simulation engine");
-                }
-            } catch (IOException | InterruptedException ignored) {
-                octaveAvailable = false;
-                LoggerFactory.getLogger(SimulatorRegistrar.class).info("Octave not available, using Simulation Core simulation engine");
-            }
+            lsodaAvailable = false;
+            LoggerFactory.getLogger(SimulatorRegistrar.class).info("LSODA not available, using Simulation Core simulation engine");
         }
     }
 
@@ -80,8 +62,6 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
             throws Exception {
         SimulationEngine simulationEngine;
         if (lsodaAvailable) {
-            simulationEngine = new LsodaSimulationEngine();
-        } else if (octaveAvailable){
             simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
         } else {
             simulationEngine = new SimCoreSimulationEngine();
@@ -115,7 +95,7 @@ public class SimpleAdaptiveStepSimulator implements AdaptiveStepSimulator {
         if (trajectory.getLastPoint().getTime() >= configuration.getSpace().getMaxBounds().getTime()) {
             return trajectory;
         }
-        SimulationEngine simulationEngine = new LsodaSimulationEngine();
+        SimulationEngine simulationEngine = simulationEngineFactory.simulationEngine(configuration.getMaxNumberOfIterations());
         Trajectory simulated = simulationEngine.simulate(trajectory.getLastPoint(), configuration.getOdeSystem(), configuration.getSpace().getMaxBounds().getTime(), configuration.getPrecisionConfiguration());
         LinkedTrajectory result = trajectory instanceof LinkedTrajectory ? (LinkedTrajectory) trajectory : (trajectory instanceof TrajectoryWithNeighborhood ? LinkedTrajectory.createAndUpdateReferenceWithNeighborhood((TrajectoryWithNeighborhood) trajectory) : LinkedTrajectory.createAndUpdateReference(trajectory));
         result.append(simulated);

@@ -24,24 +24,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.math.ode.DerivativeException;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.lang3.Validate;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.model.math.Parameter;
 import org.sybila.parasim.model.math.ParameterValue;
-import org.sybila.parasim.model.math.Variable;
-import org.sybila.parasim.model.ode.OctaveOdeSystem;
-import org.sybila.parasim.model.ode.OdeSystem;
+import org.sybila.parasim.model.ode.LsodaOdeSystem;
 import org.sybila.parasim.model.ode.OdeSystem;
 import org.sybila.parasim.model.trajectory.*;
 
 /**
  * @author <a href="mailto:pejznoch@gmail.com">Ales Pejznoch</a>
  */
-public class LsodaSimulationEngine implements SimulationEngine {
+public abstract class LsodaSimulationEngine implements SimulationEngine {
 
     LsodaWrapper lsodaWrapper = new LsodaWrapper();
+
+    private final long stepLimit;
+
+    public LsodaSimulationEngine(long stepLimit) {
+        Validate.isTrue(stepLimit > 0);
+        this.stepLimit = stepLimit;
+    }
 
     /**
      * caching simulation time (can save time if the last simulation lasts the same time as the previous)
@@ -71,11 +76,11 @@ public class LsodaSimulationEngine implements SimulationEngine {
 
         // load parameter values
         List<ParameterValue> paramValues = loadParameterValues(point, odeSystem);
-        // create substituted octave ode system
-        OctaveOdeSystem octaveOdeSystem = paramValues.isEmpty() ? new OctaveOdeSystem(odeSystem) : new OctaveOdeSystem(odeSystem.substitute(paramValues));
+        // create substituted lsoda ode system
+        LsodaOdeSystem lsodaOdeSystem = paramValues.isEmpty() ? new LsodaOdeSystem(odeSystem) : new LsodaOdeSystem(odeSystem.substitute(paramValues));
         // compute
         long numOfIterations = Math.round(Math.ceil((1.05 * timeLimit - point.getTime()) / precision.getTimeStep()));
-        float[] loadedData = lsodaWrapper.rawSimulation(point, octaveOdeSystem, numOfIterations, precision);
+        float[] loadedData = lsodaWrapper.rawSimulation(point, lsodaOdeSystem, numOfIterations, precision);
 /*/
         try {
             BufferedWriter outputWriter = null;
@@ -90,7 +95,7 @@ public class LsodaSimulationEngine implements SimulationEngine {
             l_startTime = point.getTime();
             l_endTime = timeLimit;
             timeStep = precision.getTimeStep();
-            l_times = new float[loadedData.length / octaveOdeSystem.dimension()];
+            l_times = new float[loadedData.length / lsodaOdeSystem.dimension()];
             float time = point.getTime();
             for (int i = 0; i < l_times.length; i++) {
                 time += precision.getTimeStep();
@@ -100,7 +105,7 @@ public class LsodaSimulationEngine implements SimulationEngine {
         if (paramValues.isEmpty()) {
             return new ArrayTrajectory(loadedData, l_times, point.getDimension());
         } else {
-            return new ArrayTrajectory(point, loadedData, l_times, octaveOdeSystem.dimension());
+            return new ArrayTrajectory(point, loadedData, l_times, lsodaOdeSystem.dimension());
         }
     }
 
@@ -113,4 +118,7 @@ public class LsodaSimulationEngine implements SimulationEngine {
         }
         return paramValues;
     }
+
+    protected abstract float[] rawSimulation(Point point, LsodaOdeSystem odeSystem, long numberOfIterations, PrecisionConfiguration precision)
+            throws Exception;
 }

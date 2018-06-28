@@ -19,15 +19,14 @@
  */
 package org.sybila.parasim.application.model;
 
-import dk.ange.octave.OctaveEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sybila.parasim.computation.lifecycle.api.Computation;
 import org.sybila.parasim.computation.lifecycle.api.SharedMemoryExecutor;
 import org.sybila.parasim.computation.lifecycle.api.annotations.RunWith;
 import org.sybila.parasim.computation.simulation.api.PrecisionConfiguration;
-import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngine;
-import org.sybila.parasim.computation.simulation.octave.OctaveSimulationEngineFactory;
+import org.sybila.parasim.computation.simulation.lsoda.LsodaSimulationEngine;
+import org.sybila.parasim.computation.simulation.lsoda.LsodaSimulationEngineFactory;
 import org.sybila.parasim.computation.verification.api.Monitor;
 import org.sybila.parasim.computation.verification.api.STLVerifier;
 import org.sybila.parasim.computation.verification.api.annotations.FrozenTime;
@@ -64,7 +63,7 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
     private final Plotter plotter;
     private final Formula property;
     @Inject
-    private OctaveSimulationEngineFactory octaveSimulationEngineFactory;
+    private LsodaSimulationEngineFactory lsodaSimulationEngineFactory;
     @Inject
     private ApplicationConfiguration config;
     @FrozenTime
@@ -104,31 +103,12 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
 
     @Override
     public Void call() throws Exception {
-        //TODO fix drawing and remove this condition
-        boolean octaveAvailable = false;
-        try {
-            //Checking if octave is available on this machine to analyze the plot
-            Process p = Runtime.getRuntime().exec(new String[]{"octave", "--version"});
-            p.waitFor();
-            if (p.exitValue() == 0) {
-                octaveAvailable = true;
-            } else {
-                octaveAvailable = false;
-            }
-        } catch (IOException | InterruptedException ignored) {
-            octaveAvailable = false;
-        }
-        if(!octaveAvailable){
-            LOGGER.error("Drawing engine not available");
-            return null;
-        }
         //TODO fix this and remove this condition
 
-        OctaveSimulationEngine simulationEgine = null;
-        OctaveEngine script = null;
+        LsodaSimulationEngine simulationEgine = null;
         try {
             LOGGER.info("analysis of " + point);
-            simulationEgine = octaveSimulationEngineFactory.simulationEngine(100000);
+            simulationEgine = lsodaSimulationEngineFactory.simulationEngine(100000);
             Trajectory trajectory =
                     simulationEgine.simulate(point, odeSystem,
                                                     Math.max(simulationSpace.getMaxBounds().getTime(),
@@ -142,7 +122,7 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
                 ResultUtils.plotTrajectory((ArrayTrajectory) trajectory, odeSystem);
             }
         } finally {
-            plotter.addPlotterWindowListener(new CleanerListener(simulationEgine, script));
+            plotter.addPlotterWindowListener(new CleanerListener(simulationEgine));
         }
         return Mergeable.Void.INSTANCE;
     }
@@ -153,21 +133,16 @@ public class TrajectoryAnalysisComputation implements Computation<Mergeable.Void
 
     private static class CleanerListener implements PlotterWindowListener {
 
-        private final OctaveSimulationEngine octaveSimulationEngine;
-        private final OctaveEngine script;
+        private final LsodaSimulationEngine lsodaSimulationEngine;
 
-        public CleanerListener(OctaveSimulationEngine octaveSimulationEngine, OctaveEngine script) {
-            this.octaveSimulationEngine = octaveSimulationEngine;
-            this.script = script;
+        public CleanerListener(LsodaSimulationEngine lsodaSimulationEngine) {
+            this.lsodaSimulationEngine = lsodaSimulationEngine;
         }
 
         @Override
         public void windowClosed(PlotterWindowEvent event) {
-            if (octaveSimulationEngine != null) {
-                octaveSimulationEngine.close();
-            }
-            if (script != null) {
-                script.close();
+            if (lsodaSimulationEngine != null) {
+                lsodaSimulationEngine.close();
             }
         }
     }

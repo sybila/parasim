@@ -18,20 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sybila.parasim.computation.simulation.lsoda;
-import org.sybila.parasim.computation.simulation.cpu.SimulationEngine;
 import org.sybila.parasim.computation.simulation.cpu.SimulationEngineFactory;
 
 /**
  * @author <a href="mailto:pejznoch@gmail.com">Ales Pejznoch</a>
  */
-public class LsodaSimulationEngineFactory implements SimulationEngineFactory {
-    @Override
-    public boolean isAvailable() {
-        return true;
-    }
-
-    @Override
-    public SimulationEngine simulationEngine(long stepLimit) {
-        return new LsodaSimulationEngine();
-    }
+public interface LsodaSimulationEngineFactory extends SimulationEngineFactory<LsodaSimulationEngine> {
 }

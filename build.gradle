@@ -44,7 +44,6 @@ configure(subprojects.findAll {it.name != 'lsodacpp'}) {
         compile 'org.apache.commons:commons-lang3:3.5'
         compile 'org.knowm.xchart:xchart:3.5.2'
         compile 'com.github.ggalmazor:lt_downsampling_java8:0.0.6'
-        compile files("${project.rootProject.rootDir}/lib/javaoctave-0.6.4.jar")
     }
 
     license {
