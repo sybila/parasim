@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <precision xmlns="http://www.sybila.org/parasim/precision" maxRelativeError="0.005" timeStep="0.005">
-<dimension maxAbsoluteError="0.0"/>
-<dimension maxAbsoluteError="0.0"/>
-<dimension maxAbsoluteError="0.0"/>
+<dimension maxAbsoluteError="1.0E-6"/>
+<dimension maxAbsoluteError="1.0E-6"/>
+<dimension maxAbsoluteError="1.0E-6"/>
 </precision>
