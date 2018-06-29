@@ -386,7 +386,7 @@ public:
 
 private:
     RealType computeEta() {
-        RealType eta = nextafter(static_cast<RealType>(1), static_cast<RealType>(2));
+        RealType eta = std::nextafter(static_cast<RealType>(1), static_cast<RealType>(2));
         eta -= static_cast<RealType>(1);
         return eta;
     }
