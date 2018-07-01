@@ -11,19 +11,36 @@ model {
                 cpp {
                     source {
                         srcDir "src"
+                        lib library: 'jdk', linkage: 'api'
                     }
                 }
             }
         }
     }
 
+    repositories {
+        libs(PrebuiltLibraries) {
+            jdk {
+                headers.srcDirs "${System.properties['java.home']}/../include",
+               "${System.properties['java.home']}/include",
+               "${System.properties['java.home']}/../include/win32",
+               "${System.properties['java.home']}/include/win32",
+               "${System.properties['java.home']}/../include/darwin",
+               "${System.properties['java.home']}/../include/linux"
+            }
+        }
+    }
+
     binaries {
         withType(SharedLibraryBinarySpec) {
-            cppCompiler.args "-I/usr/lib/jvm/java-8-openjdk/include",
-                    "-I/usr/lib/jvm/java-8-openjdk/include/linux",
-                    "-march=native", "", "-std=c++14", "-Wall", "-Wextra", "-pedantic"
-
-            linker.args "-lm", "-flto"
+            if (toolChain in Gcc) {
+                cppCompiler.args "-march=native", "-std=c++14", "-Wall", "-Wextra", "-pedantic"
+                linker.args "-lm", "-flto"
+            }
+            if (toolChain in VisualCpp) {
+                cppCompiler.define "DLL_EXPORT"
+                cppCompiler.args "/O2", "/std:c++14", "/EHsc"
+            }
         }
     }
 
