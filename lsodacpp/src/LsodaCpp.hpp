@@ -455,8 +455,14 @@ private:
     CODE errorCode = CODE::OK;
     std::string errorMsg, warningMsg, infoMsg;
 
-    const RealType sm1[13] = {0,   0.5,  0.575, 0.55,  0.45, 0.35, 0.25,
-                              0.2, 0.15, 0.1,   0.075, 0.05, 0.025};
+    const RealType sm1[13] = {
+        static_cast<const RealType>(0),   static_cast<const RealType>(0.5),
+        static_cast<const RealType>(0.575), static_cast<const RealType>(0.55),
+        static_cast<const RealType>(0.45), static_cast<const RealType>(0.35),
+        static_cast<const RealType>(0.25), static_cast<const RealType>(0.2),
+        static_cast<const RealType>(0.15), static_cast<const RealType>(0.1),
+        static_cast<const RealType>(0.075), static_cast<const RealType>(0.05),
+        static_cast<const RealType>(0.025)};
 
     static thread_local constexpr unsigned int MAX_NQ = 100;
 };
