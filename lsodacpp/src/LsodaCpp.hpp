@@ -153,6 +153,15 @@ namespace LsodaCpp {
      */
     template<typename RealType>
     struct Result {
+        Result(){}
+        Result(CODE code, std::string msg) :
+            code(code), msg(msg), reachedTime(0) {}
+        Result(CODE code, std::string msg, float reachedTime):
+            code(code), msg(msg), reachedTime(reachedTime) {}
+        Result(CODE code, std::string msg, double reachedTime):
+            code(code), msg(msg), reachedTime(reachedTime) {}
+        Result(CODE code, std::string msg, long double reachedTime):
+            code(code), msg(msg), reachedTime(reachedTime) {}
         CODE code = CODE::OK;
         std::string msg;
         RealType reachedTime = 0;
