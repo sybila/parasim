@@ -63,4 +63,7 @@ distributions {
 
 startScripts {
 	applicationName = 'parasim'
+	if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+		classpath = files('$APP_HOME/lib/*')
+	}
 }
