@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.13.1"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
     }
 }
 
@@ -36,7 +37,7 @@ allprojects {
         testCompile group: 'junit', name: 'junit', version: '4.11'  
         testCompile 'org.testng:testng:6.9.12'
         compile 'net.jcip:jcip-annotations:1.0'
-        compile 'org.javassist:javassist:3.22.0-CR1'
+        compile 'org.javassist:javassist:3.26.0-GA'
         compile 'org.slf4j:slf4j-log4j12:1.7.2'
         compile 'org.apache.commons:commons-lang3:3.5'
         compile files("${project.rootProject.rootDir}/lib/javaoctave-0.6.4.jar")
