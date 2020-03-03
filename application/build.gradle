@@ -35,3 +35,59 @@ distributions {
 startScripts {
 	applicationName = 'parasim'
 }
+
+/*
+	A short story of pain and suffering:
+
+	The dependency injection in Parasim uses org.sybila.parasim.core.spi.LoadableExtension resource files to
+	determine which classes should be loaded (see SPIExtensionLoader). This works ok on unix if you use standard
+	distribution, because each jar carries its own copy of the LoadableExtension file and so you load
+	everything from every jar.
+
+	However, on Windows, this approach does not work (not sure why). Only one resource file is actually visible
+	to the JVM. Also, if you want to distribute a fat jar with all dependencies, the process breaks.
+
+	To fix this, following modifications will concatenate all the LoadableExtension files into a single file
+	that can be included in the jar file. This should fix fat jar problems on unix (everything is in one merged
+	file) as well as problems on Windows with any of the distributions (for the standard case, everything is now
+	in the "main" jar, so it should be ok).
+
+	May God have mercy on the poor soul who will have to deal with this when I am gone.
+ */
+
+// modify jar generator
+jar {
+	doFirst {
+		// Create a merged resource file
+		def extensionDir = file("$buildDir/META-INF/services")
+		extensionDir.delete()
+		extensionDir.mkdirs()
+		def extensionFile = new File(extensionDir, "org.sybila.parasim.core.spi.LoadableExtension")
+		extensionFile.delete()
+
+		// merge all extension files from deps to buildDir
+		for(file in configurations.runtime) {
+			zipTree(file).matching{ include 'META-INF/services/org.sybila.parasim.core.spi.LoadableExtension' }.each { f ->
+				extensionFile << f.getText("UTF-8") << "\n"
+			}
+		}
+
+		// Also append extensions defined in this module
+		def myExtensions = file("$buildDir/resources/main/META-INF/services/org.sybila.parasim.core.spi.LoadableExtension")
+		extensionFile << myExtensions.getText("UTF-8") << "\n"
+
+		// Remove the extension file of this module to avoid conflict
+		myExtensions.delete()
+	}
+
+	// Include extension files from the buildDir.
+	from fileTree(buildDir).matching{ include 'META-INF/services/*' }
+}
+
+// Fastest way to make shadowJar also include all de merged files is to make it depend on jar...
+shadowJar {
+	dependsOn "jar"
+
+	// Include extension files from the buildDir.
+	from fileTree(buildDir).matching{ include 'META-INF/services/*' }
+}
