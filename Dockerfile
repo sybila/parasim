@@ -1,4 +1,4 @@
-# Download base image ubuntu 20.04
+# Download base image ubuntu 16.04
 FROM ubuntu:16.04
 MAINTAINER Matej Trojak <xtrojak@fi.muni.cz>
 
