@@ -1,3 +1,5 @@
+[![Docker Pulls](https://badgen.net//docker/pulls/sybila/parasim?icon=docker)](https://hub.docker.com/r/sybila/parasim/)
+
 # Parasim
 Parasim is a tool for robustness analysis. For information not covered in this README visit the [Parasim wiki](https://github.com/sybila/parasim/wiki).
 
